@@ -133,9 +133,3 @@ dist
 
 # Mac .DS_Store
 .DS_Store
-
-# DB
-adopt-a-cat.db
-
-# File to store the pictures
-files
