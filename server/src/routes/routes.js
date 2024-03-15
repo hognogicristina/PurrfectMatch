@@ -1,0 +1,38 @@
+const express = require('express')
+const multer = require('multer')
+const router = express.Router()
+const authController = require('../controllers/authController')
+const userController = require('../controllers/userController')
+const catController = require('../controllers/catController')
+const mailController = require('../controllers/mailController')
+
+const authMiddleware = require('../middlewares/authMiddleware')
+
+const storage = multer.memoryStorage()
+const upload = multer({storage: storage})
+
+router.post('/register', authController.register)
+router.get('/activate/:id', authController.activate)
+router.post('/login', authMiddleware.authenticateLogin, authController.login)
+router.post('/logout', authController.logout)
+router.post('/refresh/token', authMiddleware.validateRefreshToken, authController.refresh)
+
+router.get('/users', authMiddleware.authenticateToken, userController.getOneUser)
+router.put('/users', authMiddleware.authenticateToken, upload.single('file'), userController.editUser)
+router.put('/users/address', authMiddleware.authenticateToken, userController.editAddressUser)
+router.put('/users/username', authMiddleware.authenticateToken, userController.editUsername)
+router.put('/users/password', authMiddleware.authenticateToken, userController.editPassword)
+router.delete('/users', authMiddleware.authenticateToken, userController.deleteUser)
+
+router.get('/cats', catController.getAllCats)
+router.get('/cats/:id', catController.getOneCat)
+router.post('/cats', authMiddleware.authorizationToken, upload.single('file'), catController.addCat)
+router.put('/cats/:id', authMiddleware.authorizationToken, upload.single('file'), catController.editCat)
+router.delete('/cats/:id', authMiddleware.authorizationToken, catController.deleteCat)
+
+router.post('/adopt/:id', authMiddleware.authenticateToken, mailController.adoptCat)
+router.put('/adopt/:id', authMiddleware.authenticateToken, mailController.handleAdoptionRequest)
+router.get('/mails', authMiddleware.authenticateToken, mailController.getMails)
+router.delete('/mails/:id', authMiddleware.authenticateToken, mailController.deleteMail)
+
+module.exports = router

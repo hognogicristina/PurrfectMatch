@@ -1,0 +1,18 @@
+{
+  "Kitten": {
+    "min": 0,
+    "max": 1
+  },
+  "Young Adult": {
+    "min": 1,
+    "max": 6
+  },
+  "Mature Adult": {
+    "min": 7,
+    "max": 10
+  },
+  "Senior": {
+    "min": 11,
+    "max": null
+  }
+}

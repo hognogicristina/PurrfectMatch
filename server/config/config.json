@@ -1,0 +1,7 @@
+{
+  "development": {
+    "dialect": "sqlite",
+    "storage": "./db/adopt-a-cat.db",
+    "database": "adopt-a-cat"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "admin": {
+    "firstname": "Cristina",
+    "lastname": "Hognogi",
+    "username": "admin",
+    "password": "admin",
+    "email": "admin@meow.com",
+    "birthday": "2002-02-04",
+    "role": "admin",
+    "status": "active"
+  }
+}
