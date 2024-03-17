@@ -12,11 +12,18 @@ async function transformCatToDTO(cat) {
     } else if (cat.userId) {
         const user = await User.findByPk(cat.userId)
         const address = await Address.findOne({where: {id: user.addressId}})
-        userInfo = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            country: address.country,
-            city: address.city,
+        if (!address) {
+            userInfo = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+            }
+        } else {
+            userInfo = {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                country: address.country,
+                city: address.city,
+            }
         }
     }
 

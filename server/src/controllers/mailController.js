@@ -13,9 +13,9 @@ const adoptCat = async (req, res) => {
 
         const cat = await Cat.findByPk(id)
         const mail = await Mail.create({catId: cat.id, message})
-        await UserMail.create({userId: userId, mailId: mail.id, role: 'sender'});
-        await UserMail.create({userId: cat.userId, mailId: mail.id, role: 'receiver'});
-        return res.status(200).json({success: 'Adoption request sent successfully'})
+        await UserMail.create({userId: userId, mailId: mail.id, role: 'sender'})
+        await UserMail.create({userId: cat.userId, mailId: mail.id, role: 'receiver'})
+        return res.status(200).json({status: 'Adoption request sent successfully'})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }
@@ -29,10 +29,10 @@ const handleAdoptionRequest = async (req, res) => {
 
         const mail = await Mail.findByPk(id)
         const cat = await Cat.findOne({where: {id: mail.catId}})
-        const senderUserMail = await UserMail.findOne({where: {mailId: id, role: 'sender'}});
-        const receiverUserMail = await UserMail.findOne({where: {mailId: id, role: 'receiver'}});
-        const sender = await User.findByPk(senderUserMail.userId);
-        const receiver = await User.findByPk(receiverUserMail.userId);
+        const senderUserMail = await UserMail.findOne({where: {mailId: id, role: 'sender'}})
+        const receiverUserMail = await UserMail.findOne({where: {mailId: id, role: 'receiver'}})
+        const sender = await User.findByPk(senderUserMail.userId)
+        const receiver = await User.findByPk(receiverUserMail.userId)
         const userAddress = await Address.findOne({where: {id: req.user.addressId}})
 
         if (status === 'accepted') {
@@ -65,10 +65,10 @@ const handleAdoptionRequest = async (req, res) => {
                 await emailServ.sendAdoptionEmail(sender, receiver, cat, userAddress)
             })
 
-            return res.status(200).json({data: 'Adoption request accepted successfully'})
+            return res.status(200).json({status: 'Adoption request accepted successfully'})
         } else {
             await Mail.update({status}, {where: {id}})
-            return res.status(200).json({data: 'Adoption request rejected successfully'})
+            return res.status(200).json({status: 'Adoption request rejected successfully'})
         }
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
@@ -77,11 +77,11 @@ const handleAdoptionRequest = async (req, res) => {
 
 const getMails = async (req, res) => {
     try {
-        const messages = await Mail.findAll()
-        for (const message of messages) {
-            message.address = await Address.findOne({where: {id: message.addressId}})
+        const mails = await Mail.findAll()
+        for (const mail of mails) {
+            mail.address = await Address.findOne({where: {id: mail.addressId}})
         }
-        return res.status(200).json({data: messages.map(message => mailDTO(message, message.address))})
+        return res.status(200).json({data: mails.map(mail => mailDTO(mail, mail.address))})
     } catch (error) {
         return res.status(500).json({error: 'Internal server error'})
     }
@@ -89,12 +89,28 @@ const getMails = async (req, res) => {
 
 const deleteMail = async (req, res) => {
     try {
-        const userId = req.user.id
-        const mailId = req.params.id
-        const mail = await Mail.findByPk(mailId)
         if (await validator.deleteMailValidator(req, res)) return
-        await mail.destroy()
-        return res.status(200).json({success: 'Mail deleted successfully'})
+        const mailId = req.params.id
+        const userId = req.user.id
+        const userMail = await UserMail.findOne({where: {userId, mailId}})
+        const userMails = await UserMail.findAll({where: {mailId}})
+
+        let visibleCount = 0
+        for (const userMail of userMails) {
+            if (userMail.isVisible) {
+                visibleCount++
+            }
+        }
+
+        if (visibleCount === 1) {
+            await UserMail.destroy({where: {mailId}})
+            await Mail.destroy({where: {id: mailId}})
+            return res.status(200).json({status: 'Mail deleted successfully'})
+        } else {
+            await userMail.update({isVisible: !userMail.isVisible})
+            return res.status(200).json({status: 'Mail deleted successfully'})
+        }
+
     } catch (error) {
         console.error(error)
         return res.status(500).json({error: 'Internal server error'})

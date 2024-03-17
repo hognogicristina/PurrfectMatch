@@ -4,21 +4,49 @@ const path = require("path")
 const {Cat} = require('../../models')
 
 const catExistValidator = async (req, res) => {
-    const errors = []
-
     const cats = await Cat.findAll()
-    if (cats.length === 0) {
-        errors.push({field: 'id', error: 'The list of cats is empty!'})
-    }
 
     if (req.params.id) {
         const cat = await Cat.findByPk(req.params.id)
         if (!cat) {
-            errors.push({field: 'id', error: 'Cat not found!'})
+            return res.status(404).json({error: 'Cat not found!'})
+        }
+    } else {
+        if (cats.length === 0) {
+            return res.status(404).json({error: 'No cats found!'})
         }
     }
 
-    return errors.length > 0 ? res.status(400).json({errors}) : null
+    return null
+}
+
+const userValidator = async (req, res) => {
+    if (req.method !== 'POST') {
+        const cat = await Cat.findByPk(req.params.id)
+        if (!cat) {
+            return res.status(404).json({error: 'Cat not found'})
+        }
+
+        const user = req.user
+        if (cat.ownerId === null) {
+            if (cat.userId !== user.id) {
+                return res.status(403).json({error: 'You are not authorized to perform this action'})
+            }
+        } else {
+            if (cat.ownerId !== user.id) {
+                return res.status(403).json({error: 'You are not authorized to perform this action'})
+            }
+        }
+    }
+
+    if (req.method === 'POST') {
+        const user = req.user
+        if (!user.addressId) {
+            return res.status(403).json({error: 'Address is required in order for you to add a cat'})
+        }
+    }
+
+    return null
 }
 
 const catValidator = async (req, res) => {
@@ -74,20 +102,8 @@ const catValidator = async (req, res) => {
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
-const deleteCatValidator = async (req, res) => {
-    const errors = []
-
-    const cat = await Cat.findByPk(req.params.id)
-    if (!cat) {
-        errors.push({field: 'id', error: 'Cat not found!'})
-    }
-
-    return errors.length > 0 ? res.status(400).json({errors}) : null
-
-}
-
 module.exports = {
     catExistValidator,
-    catValidator,
-    deleteCatValidator
+    userValidator,
+    catValidator
 }

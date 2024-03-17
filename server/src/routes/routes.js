@@ -26,9 +26,9 @@ router.delete('/users', authMiddleware.authenticateToken, userController.deleteU
 
 router.get('/cats', catController.getAllCats)
 router.get('/cats/:id', catController.getOneCat)
-router.post('/cats', authMiddleware.authorizationToken, upload.single('file'), catController.addCat)
-router.put('/cats/:id', authMiddleware.authorizationToken, upload.single('file'), catController.editCat)
-router.delete('/cats/:id', authMiddleware.authorizationToken, catController.deleteCat)
+router.post('/cats', authMiddleware.authenticateToken, upload.single('file'), catController.addCat)
+router.put('/cats/:id', authMiddleware.authenticateToken, upload.single('file'), catController.editCat)
+router.delete('/cats/:id', authMiddleware.authenticateToken, catController.deleteCat)
 
 router.post('/adopt/:id', authMiddleware.authenticateToken, mailController.adoptCat)
 router.put('/adopt/:id', authMiddleware.authenticateToken, mailController.handleAdoptionRequest)

@@ -1,14 +1,15 @@
 const fs = require("fs")
 const path = require('path')
-const {Cat, Image, CatUser, Message} = require('../../models')
+const {Cat, Image, CatUser, Mail, UserMail, User} = require('../../models')
 const catValidator = require('../validators/catValidator')
+const emailService = require('../services/emailService')
 const {transformCatToDTO} = require('../dto/catDTO')
 
 const getAllCats = async (req, res) => {
     try {
         if (await catValidator.catExistValidator(req, res)) return
         const cats = await Cat.findAll()
-        return res.status(200).json({success: cats})
+        return res.status(200).json({data: cats})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }
@@ -19,7 +20,7 @@ const getOneCat = async (req, res) => {
         if (await catValidator.catExistValidator(req, res)) return
         const cat = await Cat.findByPk(req.params.id)
         const catDTO = await transformCatToDTO(cat)
-        return res.status(200).json({success: catDTO})
+        return res.status(200).json({data: catDTO})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }
@@ -28,6 +29,7 @@ const getOneCat = async (req, res) => {
 const addCat = async (req, res) => {
     try {
         if (await catValidator.catValidator(req, res)) return
+        if (await catValidator.userValidator(req, res)) return
         const catData = {}
         const fieldsForCat = ['name', 'breed', 'gender', 'age', 'healthProblem', 'description']
         fieldsForCat.forEach(field => {
@@ -66,7 +68,7 @@ const addCat = async (req, res) => {
         await catUser.save()
 
         fs.writeFileSync(imagePath, req.file.buffer)
-        res.status(201).json({success: 'Cat added successfully'})
+        res.status(201).json({status: 'Cat added successfully'})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }
@@ -75,6 +77,7 @@ const addCat = async (req, res) => {
 const editCat = async (req, res) => {
     try {
         if (await catValidator.catValidator(req, res)) return
+        if (await catValidator.userValidator(req, res)) return
         const fieldsToUpdate = ['name', 'breed', 'gender', 'age', 'healthProblem', 'description']
         const cat = await Cat.findByPk(req.params.id)
         fieldsToUpdate.forEach(field => {
@@ -111,9 +114,8 @@ const editCat = async (req, res) => {
             fs.writeFileSync(imagePath, req.file.buffer)
         }
 
-        return res.json({success: 'Cat updated successfully'})
+        return res.json({status: 'Cat updated successfully'})
     } catch (error) {
-        console.log(error)
         return res.status(500).json({error: 'Internal Server Error'})
     }
 }
@@ -122,40 +124,45 @@ const deleteCat = async (req, res) => {
     const transaction = await Cat.sequelize.transaction()
 
     try {
-        if (await catValidator.catExistValidator(req, res)) {
+        if (await catValidator.userValidator(req, res)) {
             await transaction.rollback()
             return
         }
 
-        const cat = await Cat.findByPk(req.params.id, { transaction })
-        const messages = await Message.findAll({ where: { catId: cat.id } }, { transaction })
-        const catUsers = await CatUser.findAll({ where: { catId: cat.id } }, { transaction })
-        let image = await Image.findByPk(cat.imageId, { transaction })
+        const cat = await Cat.findByPk(req.params.id)
+        const receiver = req.user
+        const mails = await Mail.findAll({where: {catId: cat.id}})
 
-        const hasPendingMessages = messages.some(message => message.status === 'pending')
-        if (hasPendingMessages) {
-            await transaction.rollback()
-            return res.status(400).json({ error: 'Cat cannot be deleted because there are pending messages.' })
+        for (const mail of mails) {
+            if (mail.status === 'pending') {
+                const userMails = await UserMail.findAll({where: {mailId: mail.id}})
+                for (let userMail of userMails) {
+                    if (userMail.role === 'sender') {
+                        const sender = await User.findOne({where: {id: userMail.userId}})
+                        await emailService.sendDeclineAdoption(sender, receiver, cat)
+                    }
+                }
+                await UserMail.destroy({where: {mailId: mail.id}})
+                await mail.destroy()
+            } else {
+                await UserMail.destroy({where: {mailId: mail.id}})
+                await mail.destroy()
+            }
         }
 
-        for (let message of messages) {
-            await message.destroy({ transaction })
-        }
+        await CatUser.destroy({where: {catId: cat.id}})
 
-        for (let catUser of catUsers) {
-            await catUser.destroy({ transaction })
-        }
+        const image = await Image.findOne({where: {id: cat.imageId}})
+        const imagePath = path.join('public', 'files', image.filename)
+        await fs.unlinkSync(imagePath)
 
-        await cat.destroy({ transaction })
-        const oldImagePath = path.join('public', 'files', image.filename)
-        fs.unlinkSync(oldImagePath)
-        await image.destroy({ transaction })
+        await cat.destroy()
+        await Image.destroy({where: {id: cat.imageId}})
         await transaction.commit()
-        return res.status(200).json({ success: 'Cat deleted successfully' })
+        return res.status(200).json({status: 'Cat deleted successfully'})
     } catch (error) {
         await transaction.rollback()
-        console.log(error)
-        return res.status(500).json({ error: 'Internal Server Error' })
+        return res.status(500).json({error: 'Internal Server Error'})
     }
 }
 

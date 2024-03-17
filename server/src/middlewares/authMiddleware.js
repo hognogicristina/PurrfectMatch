@@ -91,59 +91,8 @@ const validateRefreshToken = async (req, res, next) => {
     }
 }
 
-const authorizationToken = async (req, res, next) => {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-
-    if (!token) {
-        return res.status(401).json({error: 'No token provided'})
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET)
-        const user = await User.findByPk(decoded.id)
-
-        if (!user) {
-            return res.status(404).json({error: 'User not found'})
-        }
-
-        if (!user.addressId) {
-            return res.status(403).json({error: 'Address is required in order for you to add a cat'})
-        }
-
-        if (req.params.id) {
-            const cat = await Cat.findByPk(req.params.id)
-            if (!cat) {
-                return res.status(404).json({error: 'Cat not found'})
-            }
-
-            if (cat.ownerId) {
-                if (cat.ownerId !== user.id) {
-                    return res.status(403).json({error: 'You are not authorized to perform this action'})
-                }
-            } else {
-                if (cat.userId !== user.id) {
-                    return res.status(403).json({error: 'You are not authorized to perform this action'})
-                }
-            }
-        }
-
-        req.user = user
-        next()
-    } catch (err) {
-        if (err instanceof jwt.TokenExpiredError) {
-            return res.status(401).json({error: 'Token expired'})
-        } else if (err instanceof jwt.JsonWebTokenError) {
-            return res.status(403).json({error: 'Failed to authenticate token'})
-        } else {
-            return res.status(500).json({error: 'Internal Server Error'})
-        }
-    }
-}
-
 module.exports = {
     authenticateToken,
     authenticateLogin,
-    validateRefreshToken,
-    authorizationToken
+    validateRefreshToken
 }
