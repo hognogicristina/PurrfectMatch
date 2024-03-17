@@ -132,6 +132,3 @@ dist
 
 # Mac .DS_Store
 .DS_Store
-
-# sequelize
-models/index.js
