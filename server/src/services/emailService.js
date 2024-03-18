@@ -112,7 +112,7 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
                         <li>Age: ${cat.age}</li>
                         <li>Breed: ${cat.breed}</li>
                         <li>Gender: ${cat.gender}</li>
-                        <li>Health Problems: ${cat.healthProblem}</li>
+                        ${cat.healthProblem !== null ? `<li>Health Problem: ${cat.healthProblem}</li>` : ''}
                         <li>Description: ${cat.description}</li>
                     </ul></div>
                     <p>Also, here is the address of where you can pick up your new friend:</p>

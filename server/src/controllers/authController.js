@@ -20,7 +20,7 @@ const register = async (req, res) => {
         })
 
         await emailServ.sendActivationEmail(user)
-        res.status(201).json({success: 'User registered successfully'})
+        res.status(201).json({status: 'User registered successfully'})
 
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error'})
@@ -38,9 +38,9 @@ const activate = async (req, res) => {
 
         await emailServ.sendConfirmationEmail(user)
         await user.save()
-        res.status(201).json({ success: 'Account activated successfully' })
+        res.status(201).json({status: 'Account activated successfully'})
     } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' })
+        res.status(500).json({error: 'Internal Server Error'})
     }
 }
 
@@ -69,7 +69,7 @@ const logout = async (req, res) => {
         const user = await User.findByPk(decoded.id)
         await RefreshToken.destroy({where: {userId: user.id}})
         res.clearCookie('refreshToken')
-        res.status(200).json({success: 'Logged out successfully'})
+        res.status(200).json({status: 'Logged out successfully'})
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error'})
     }
@@ -80,7 +80,7 @@ const refresh = async (req, res) => {
         const newToken = jwt.sign({id: req.user.id, username: req.user.username}, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_TTL
         })
-        res.status(200).json({success: {token: newToken}})
+        res.status(200).json({newToken})
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error'})
     }

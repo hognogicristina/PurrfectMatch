@@ -157,7 +157,7 @@ const deleteCat = async (req, res) => {
         await fs.unlinkSync(imagePath)
 
         await cat.destroy()
-        await Image.destroy({where: {id: cat.imageId}})
+        await image.destroy()
         await transaction.commit()
         return res.status(200).json({status: 'Cat deleted successfully'})
     } catch (error) {

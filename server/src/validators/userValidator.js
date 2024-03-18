@@ -1,6 +1,8 @@
 const validator = require('validator')
-const {User} = require('../../models')
+const {User, Cat, CatUser, Image} = require('../../models')
 const bcrypt = require("bcrypt")
+const path = require("path");
+const fs = require("fs");
 
 const userExistValidator = async (req, res) => {
     const user = await User.findByPk(req.user.id)
@@ -141,10 +143,70 @@ const editPasswordValidation = async (req, res) => {
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
+const deleteUserValidation = async (req, res) => {
+    const errors = []
+
+    const user = await User.findByPk(req.user.id)
+    if (!user) {
+        return res.status(404).json({error: 'User not found'})
+    }
+
+    if (validator.isEmpty(req.body.password || '')) {
+        errors.push({field: 'password', error: 'Password is required!'})
+    } else {
+        const user = await User.findByPk(req.user.id)
+        if (!await bcrypt.compare(req.body.password, user.password)) {
+            errors.push({field: 'password', error: 'Invalid password!'})
+        }
+    }
+
+    const catUsers = await CatUser.findAll({where: {userId: req.user.id}})
+    if (catUsers.length > 0) {
+        for (let catUser of catUsers) {
+            if (catUser.ownerId !== null) {
+                catUser.userId = null
+                await catUser.save()
+            }
+        }
+    }
+
+    const cats = await Cat.findAll({where: {userId: req.user.id}})
+    if (cats.length > 0) {
+        for (let cat of cats) {
+            if (cat.ownerId !== null) {
+                cat.userId = null
+                await cat.save()
+            }
+        }
+    }
+
+    const catUsersOwner = await CatUser.findAll({where: {ownerId: req.user.id}})
+    if (catUsersOwner.length > 0) {
+        for (let catUser of catUsersOwner) {
+            await catUser.destroy()
+        }
+    }
+
+    const catsOwner = await Cat.findAll({where: {ownerId: req.user.id}})
+    if (catsOwner.length > 0) {
+        for (let cat of catsOwner) {
+            const image = await Image.findOne({where: {id: cat.imageId}})
+            const imagePath = path.join('public', 'files', image.filename)
+            await fs.unlinkSync(imagePath)
+
+            await cat.destroy()
+            await image.destroy()
+        }
+    }
+
+    return errors.length > 0 ? res.status(400).json({errors}) : null
+}
+
 module.exports = {
     userExistValidator,
     editUserValidation,
     editAddressValidation,
     editUsernameValidation,
-    editPasswordValidation
+    editPasswordValidation,
+    deleteUserValidation
 }
