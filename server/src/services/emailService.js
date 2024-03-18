@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer')
-const {Image} = require('../../models')
-const {generateTokenAndSignature} = require('../helpers/emailHelper')
+const {User} = require('../../models')
+const emailHelper = require('../helpers/emailHelper')
 const pug = require('pug')
+const path = require('path')
 
 const transporter = nodemailer.createTransport({
     host: '127.0.0.1',
@@ -10,19 +11,29 @@ const transporter = nodemailer.createTransport({
     ignoreTLS: true,
 })
 
-
 async function sendActivationEmail(user) {
-    await generateTokenAndSignature(user)
+    const {activationLink, sender} = await emailHelper.generateTokenAndSignature(user)
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'activationEmail.pug'))
+
+    const imageUrls = {
+        doneIconUrl: 'emailIcons/happy.png',
+        emailIconUrl: 'emailIcons/email.png',
+        happyIconUrl: 'emailIcons/happy.png'
+    };
+
     const mailOptions = {
-        from: 'admin@meow.com',
+        from: sender.email,
         to: user.email,
         subject: 'Account Validation',
-        html: `
-            <h>Welcome ${user.firstName},</h>
-            <p>Please validate your account by clicking the link below.</p>
-            <p>Click here: <a href="${activationLink}">Activate Account</a></p>
-        `,
-    };
+        html: compiledFunction({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            activationLink: activationLink,
+            doneIconUrl: imageUrls.doneIconUrl,
+            emailIconUrl: imageUrls.emailIconUrl,
+            happyIconUrl: imageUrls.happyIconUrl
+        }),
+    }
 
     try {
         const info = await transporter.sendMail(mailOptions);
@@ -33,26 +44,14 @@ async function sendActivationEmail(user) {
 }
 
 async function sendResetEmail(user) {
-    const {token, signature} = generateTokenAndSignature();
-    const expires = new Date();
-    expires.setHours(expires.getHours() + 24);
-
-    user.token = token;
-    user.signature = signature;
-    user.expires = expires;
-    await user.save();
-
-    const resetLink = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
+    const {resetLink, sender} = await emailHelper.generateTokenAndSignature(user);
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'resetEmail.pug'));
 
     const mailOptions = {
-        from: 'admin@meow.com',
+        from: sender.email,
         to: user.email,
         subject: 'Account Reactivation',
-        html: `
-            <h>Hello ${user.firstName},</h>
-            <p>Please reactivate your account by clicking the link below.</p>
-            <p>Click here: <a href="${resetLink}">Reactivate Account</a></p>
-        `,
+        html: compiledFunction({firstName: user.firstName, lastName: user.lastName, resetLink: resetLink}),
     };
 
     try {
@@ -64,15 +63,15 @@ async function sendResetEmail(user) {
 }
 
 async function sendConfirmationEmail(user) {
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'confirmationEmail.pug'))
+    const sender = await User.findOne({where: {role: 'admin'}})
+
     const mailOptions = {
-        from: 'admin@meow.com',
+        from: sender.email,
         to: user.email,
         subject: 'Account Activation Confirmation',
-        html: `
-            <h>Hello ${user.firstName},</h>
-            <p>Your account has been successfully activated. You can now log in and enjoy our services.</p>
-        `,
-    };
+        html: compiledFunction({firstName: user.firstName, sender: sender.firstName}),
+    }
 
     try {
         const info = await transporter.sendMail(mailOptions);
@@ -83,48 +82,12 @@ async function sendConfirmationEmail(user) {
 }
 
 async function sendAdoptionEmail(sender, receiver, cat, address) {
-    const image = await Image.findOne({where: {id: cat.imageId}})
-    const imageUrl = `${process.env.SERVER_BASE_URL}/files/${image.filename}`
-    const emailContent = `
-        <body>
-            <div class="container">
-                <p class="header">Confirmation of Your Successful Cat Adoption</p>
-                <div class="content">
-                    <p>Dear ${sender.firstName},</p>
-                    <p>I am thrilled to inform you that your cat adoption process has been successfully completed. Congratulations on welcoming a new feline friend into your home! Below are the details of the cat you have adopted:</p>
-                    <ul>
-                        <li><img src="${imageUrl}" alt="Cat Image" width="200"></li>
-                        <li>Name: ${cat.name}</li>
-                        <li>Age: ${cat.age}</li>
-                        <li>Breed: ${cat.breed}</li>
-                        <li>Gender: ${cat.gender}</li>
-                        ${cat.healthProblem !== null ? `<li>Health Problem: ${cat.healthProblem}</li>` : ''}
-                        <li>Description: ${cat.description}</li>
-                    </ul></div>
-                    <p>Also, here is the address of where you can pick up your new friend:</p>
-                    <ul>
-                        <li>County: ${address.county}</li>
-                        <li>City: ${address.city}</li>
-                        <li>Street: ${address.street}</li>
-                        <li>Number: ${address.number}</li>
-                        ${address.floor !== null ? `<li>Floor: ${address.floor}</li>` : ''}
-                        ${address.apartment !== null ? `<li>Apartment: ${address.apartment}</li>` : ''}
-                        <li>Postal Code: ${address.postalCode}</li>
-                    </ul>
-                <div class="footer">
-                    Best regards,<br>
-                    ${receiver.firstName} ${receiver.lastName}<br>
-                </div>
-            </div>
-        </body>
-        </html>
-    `
-
+    const html = await emailHelper.sendAdoptionContent(sender, receiver, cat, address)
     const mailOptions = {
         from: receiver.email,
         to: sender.email,
         subject: 'Confirmation of Your Successful Cat Adoption',
-        html: emailContent,
+        html: html,
     }
 
     try {
@@ -136,21 +99,12 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
 }
 
 async function sendDeclineAdoption(sender, receiver, cat) {
-    const emailContent = `
-        <h>Hello ${sender.firstName},</h>
-        <p>I regret to inform you that your adoption request for the cat ${cat.name} has been declined.</p>
-        <p>Thank you for your interest in adopting a cat.</p>
-        <div class="footer">
-            Best regards,<br>
-            ${receiver.firstName} ${receiver.lastName}<br>
-        </div>
-    `
-
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'declineAdoption.pug'))
     const mailOptions = {
         from: receiver.email,
         to: sender.email,
         subject: 'Declined the Adoption',
-        html: emailContent,
+        html: compiledFunction({firstName: sender.firstName, lastName: sender.lastName, catName: cat.name}),
     }
 
     try {
