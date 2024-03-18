@@ -5,9 +5,7 @@ const authController = require('../controllers/authController')
 const userController = require('../controllers/userController')
 const catController = require('../controllers/catController')
 const mailController = require('../controllers/mailController')
-
 const authMiddleware = require('../middlewares/authMiddleware')
-
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
 

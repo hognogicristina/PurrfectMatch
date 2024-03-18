@@ -34,10 +34,7 @@ const authenticateToken = async (req, res, next) => {
 
 const authenticateLogin = async (req, res, next) => {
     try {
-        const validationErrors = await validation.loginValidation(req) || []
-        if (validationErrors.length > 0) {
-            return res.status(400).json({errors: validationErrors})
-        }
+        if (await validation.loginValidation(req, res)) return
 
         const {username, password} = req.body
         const user = await User.findOne({where: {username}})
@@ -51,12 +48,6 @@ const authenticateLogin = async (req, res, next) => {
             return res.status(401).json({error: 'Invalid username or password'})
         }
 
-        if (user.status === 'active_pending') {
-            return res.status(401).json({error: 'Please activate your account by clicking the link sent to your email'})
-        } else if (user.status === 'blocked') {
-            return res.status(401).json({error: 'Admin has blocked your account until activation'})
-        }
-
         req.user = user
         next()
     } catch (error) {
@@ -67,7 +58,6 @@ const authenticateLogin = async (req, res, next) => {
 const validateRefreshToken = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken || req.body.refreshToken
-
         if (!refreshToken) {
             return res.status(401).json({error: 'Refresh token is required'})
         }
@@ -84,15 +74,10 @@ const validateRefreshToken = async (req, res, next) => {
 
         req.user = user
         req.refreshToken = refreshToken
-
         next()
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
 
-module.exports = {
-    authenticateToken,
-    authenticateLogin,
-    validateRefreshToken
-}
+module.exports = {authenticateToken, authenticateLogin, validateRefreshToken}

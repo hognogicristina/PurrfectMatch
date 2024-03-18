@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer')
-const crypto = require('crypto')
 const {Image} = require('../../models')
+const {generateTokenAndSignature} = require('../helpers/emailHelper')
+const pug = require('pug')
 
 const transporter = nodemailer.createTransport({
     host: '127.0.0.1',
@@ -9,24 +10,9 @@ const transporter = nodemailer.createTransport({
     ignoreTLS: true,
 })
 
-function generateTokenAndSignature() {
-    const token = crypto.randomBytes(16).toString('hex')
-    const signature = crypto.createHmac('sha256', process.env.JWT_SECRET).update(token).digest('hex')
-    return {token, signature}
-}
 
 async function sendActivationEmail(user) {
-    const {token, signature} = generateTokenAndSignature();
-    const expires = new Date();
-    expires.setHours(expires.getHours() + 24);
-
-    user.token = token;
-    user.signature = signature;
-    user.expires = expires;
-    await user.save();
-
-    const activationLink = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
-
+    await generateTokenAndSignature(user)
     const mailOptions = {
         from: 'admin@meow.com',
         to: user.email,
@@ -56,7 +42,7 @@ async function sendResetEmail(user) {
     user.expires = expires;
     await user.save();
 
-    const resetLink = `${process.env.SERVER_BASE_URL}/reset/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
+    const resetLink = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
 
     const mailOptions = {
         from: 'admin@meow.com',

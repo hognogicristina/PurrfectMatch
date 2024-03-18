@@ -3,10 +3,7 @@ const {User, RefreshToken} = require('../../models')
 const bcrypt = require('bcrypt')
 const validation = require('../validators/authValidator')
 const emailServ = require('../services/emailService')
-
-const generateRefreshToken = () => {
-    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-}
+const {generateRefreshToken} = require('../helpers/authHelper')
 
 const register = async (req, res) => {
     try {
@@ -21,7 +18,6 @@ const register = async (req, res) => {
 
         await emailServ.sendActivationEmail(user)
         res.status(201).json({status: 'User registered successfully'})
-
     } catch (error) {
         res.status(500).json({error: 'Internal Server Error'})
     }
@@ -86,10 +82,4 @@ const refresh = async (req, res) => {
     }
 }
 
-module.exports = {
-    register,
-    activate,
-    login,
-    logout,
-    refresh
-}
+module.exports = {register, activate, login, logout, refresh}
