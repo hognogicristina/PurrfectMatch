@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer')
 const crypto = require('crypto')
+const {Image} = require('../../models')
 
 const transporter = nodemailer.createTransport({
     host: '127.0.0.1',
@@ -96,6 +97,8 @@ async function sendConfirmationEmail(user) {
 }
 
 async function sendAdoptionEmail(sender, receiver, cat, address) {
+    const image = await Image.findOne({where: {id: cat.imageId}})
+    const imageUrl = `${process.env.SERVER_BASE_URL}/files/${image.filename}`
     const emailContent = `
         <body>
             <div class="container">
@@ -104,7 +107,7 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
                     <p>Dear ${sender.firstName},</p>
                     <p>I am thrilled to inform you that your cat adoption process has been successfully completed. Congratulations on welcoming a new feline friend into your home! Below are the details of the cat you have adopted:</p>
                     <ul>
-                        <li>${cat.image}</li>
+                        <li><img src="${imageUrl}" alt="Cat Image" width="200"></li>
                         <li>Name: ${cat.name}</li>
                         <li>Age: ${cat.age}</li>
                         <li>Breed: ${cat.breed}</li>
@@ -118,8 +121,8 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
                         <li>City: ${address.city}</li>
                         <li>Street: ${address.street}</li>
                         <li>Number: ${address.number}</li>
-                        <li>Floor: ${address.floor}</li>
-                        <li>Apartment: ${address.apartment}</li>
+                        ${address.floor !== null ? `<li>Floor: ${address.floor}</li>` : ''}
+                        ${address.apartment !== null ? `<li>Apartment: ${address.apartment}</li>` : ''}
                         <li>Postal Code: ${address.postalCode}</li>
                     </ul>
                 <div class="footer">
