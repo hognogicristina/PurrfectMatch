@@ -1,34 +1,53 @@
-'use strict';
+'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('CatUsers', {
+        await queryInterface.createTable('Cats', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            catId: {
+            name: {
+                type: Sequelize.STRING
+            },
+            imageId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'Cats',
+                    model: 'Images',
                     key: 'id',
                 },
-                allowNull: false,
+                allowNull: false
+            },
+            breed: {
+                type: Sequelize.STRING
+            },
+            gender: {
+                type: Sequelize.STRING
+            },
+            age: {
+                type: Sequelize.INTEGER
+            },
+            healthProblem: {
+                type: Sequelize.STRING,
+                allowNull: true
+            },
+            description: {
+                type: Sequelize.TEXT
             },
             userId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'Users',
+                    model: 'users',
                     key: 'id',
                 },
             },
             ownerId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'Users',
+                    model: 'users',
                     key: 'id',
                 },
             },
@@ -40,10 +59,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             }
-        });
+        })
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('CatUsers');
+        await queryInterface.dropTable('Cats')
     }
-};
+}

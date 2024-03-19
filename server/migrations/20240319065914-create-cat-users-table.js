@@ -1,53 +1,34 @@
-'use strict';
+'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Cats', {
+        await queryInterface.createTable('CatUsers', {
             id: {
                 allowNull: false,
                 autoIncrement: true,
                 primaryKey: true,
                 type: Sequelize.INTEGER
             },
-            name: {
-                type: Sequelize.STRING
-            },
-            imageId: {
+            catId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'Images',
+                    model: 'Cats',
                     key: 'id',
                 },
-                allowNull: false
-            },
-            breed: {
-                type: Sequelize.STRING
-            },
-            gender: {
-                type: Sequelize.STRING
-            },
-            age: {
-                type: Sequelize.INTEGER
-            },
-            healthProblem: {
-                type: Sequelize.STRING,
-                allowNull: true
-            },
-            description: {
-                type: Sequelize.TEXT
+                allowNull: false,
             },
             userId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'users',
+                    model: 'Users',
                     key: 'id',
                 },
             },
             ownerId: {
                 type: Sequelize.INTEGER,
                 references: {
-                    model: 'users',
+                    model: 'Users',
                     key: 'id',
                 },
             },
@@ -59,10 +40,10 @@ module.exports = {
                 allowNull: false,
                 type: Sequelize.DATE
             }
-        });
+        })
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('Cats');
+        await queryInterface.dropTable('CatUsers')
     }
-};
+}

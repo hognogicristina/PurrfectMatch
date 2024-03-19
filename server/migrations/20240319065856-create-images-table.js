@@ -1,26 +1,26 @@
-'use strict';
+'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('RefreshTokens', {
+        await queryInterface.createTable('Images', {
             id: {
-                type: Sequelize.INTEGER,
                 allowNull: false,
+                autoIncrement: true,
                 primaryKey: true,
-                autoIncrement: true
+                type: Sequelize.INTEGER
             },
-            userId: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: 'Users',
-                    key: 'id'
-                },
-                allowNull: false
+            filename: {
+                type: Sequelize.STRING
             },
-            token: {
-                type: Sequelize.STRING,
-                allowNull: false
+            filetype: {
+                type: Sequelize.STRING
+            },
+            filesize: {
+                type: Sequelize.INTEGER
+            },
+            url: {
+                type: Sequelize.STRING
             },
             createdAt: {
                 allowNull: false,
@@ -34,6 +34,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('RefreshTokens');
+        await queryInterface.dropTable('Images')
     }
-};
+}

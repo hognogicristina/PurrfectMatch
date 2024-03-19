@@ -1,42 +1,39 @@
-'use strict';
+'use strict'
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('UserMails', {
+        await queryInterface.createTable('Mails', {
             id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                primaryKey: true,
-                autoIncrement: true
+                autoIncrement: true,
+                primaryKey: true
             },
-            userId: {
+            catId: {
                 type: Sequelize.INTEGER,
-                references: {
-                    model: 'Users',
-                    key: 'id'
-                },
-                allowNull: false
-            },
-            mailId: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: 'Mails',
-                    key: 'id'
-                },
-                allowNull: false
-            },
-            role: {
-                type: Sequelize.STRING,
                 allowNull: false,
-                validate: {
-                    isIn: [['sender', 'receiver']]
-                }
+                references: {
+                    model: 'Cats',
+                    key: 'id',
+                },
             },
-            isVisible: {
-                type: Sequelize.BOOLEAN,
-                defaultValue: true,
-                allowNull: false
+            message: {
+                type: Sequelize.TEXT,
+                allowNull: false,
+            },
+            addressId: {
+                type: Sequelize.INTEGER,
+                allowNull: true,
+                references: {
+                    model: 'Addresses',
+                    key: 'id',
+                },
+            },
+            status: {
+                type: Sequelize.STRING,
+                defaultValue: 'pending',
+                allowNull: false,
             },
             createdAt: {
                 allowNull: false,
@@ -50,6 +47,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('UserMails');
+        await queryInterface.dropTable('Mails')
     }
-};
+}
