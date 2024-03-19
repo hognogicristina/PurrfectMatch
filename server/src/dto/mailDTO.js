@@ -1,4 +1,4 @@
-function mailDTO(message, address = null) {
+function transformMailToDTO(message, address = null) {
     return {
         id: message.id,
         senderId: message.senderId,
@@ -11,6 +11,4 @@ function mailDTO(message, address = null) {
     }
 }
 
-module.exports = {
-    mailDTO: mailDTO
-}
+module.exports = {transformMailToDTO}

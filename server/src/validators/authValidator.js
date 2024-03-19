@@ -1,5 +1,6 @@
 const validator = require('validator')
-const {User} = require('../../models')
+const {User, PasswordHistory} = require('../../models')
+const bcrypt = require("bcrypt")
 
 const validateUser = async (req, res) => {
     const errors = []
@@ -8,7 +9,7 @@ const validateUser = async (req, res) => {
         errors.push({field: 'id', error: 'User not found!'})
     }
 
-    const { token, signature } = req.query
+    const {token, signature} = req.query
     if (new Date() > new Date(user.expires)) {
         errors.push({field: 'token', error: 'Token has expired!'})
     }
@@ -100,8 +101,43 @@ const loginValidation = async (req, res) => {
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
+const resetValidationEmail = async (req, res) => {
+    if (validator.isEmpty(req.body.email || '')) {
+        return res.status(400).json({error: 'Email is required!'})
+    } else if (!validator.isEmail(req.body.email)) {
+        return res.status(400).json({error: 'Invalid email format!'})
+    }
+
+    return null
+}
+
+const resetValidationPassword = async (req, res) => {
+    if (validator.isEmpty(req.body.password || '')) {
+        return res.status(400).json({error: 'Password is required!'})
+    } else if (!validator.isStrongPassword(req.body.password)) {
+        return res.status(400).json({error: 'Password must contain at least 8 characters, 1 lowercase, 1 uppercase, 1 number and 1 special character!'})
+    } else if (req.body.password !== req.body.confirmPassword) {
+        return res.status(400).json({error: 'Passwords do not match!'})
+    }
+
+    const password = req.body.password
+    const passwordHistories = await PasswordHistory.findAll({
+        where: {userId: req.params.id},
+        order: [['createdAt', 'DESC']],
+        limit: 3
+    })
+    const isPasswordUsed = passwordHistories.some(history => bcrypt.compareSync(password, history.password))
+    if (isPasswordUsed) {
+        return res.status(400).json({error: 'You cannot reuse one of your last three passwords'})
+    }
+
+    return null
+}
+
 module.exports = {
     validateUser,
     registerValidation,
-    loginValidation
+    loginValidation,
+    resetValidationEmail,
+    resetValidationPassword
 }

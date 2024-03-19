@@ -51,6 +51,5 @@ module.exports = (sequelize, DataTypes) => {
         signature: DataTypes.STRING,
         expires: DataTypes.DATE,
         token: DataTypes.STRING,
-
     })
 }

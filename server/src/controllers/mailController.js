@@ -1,8 +1,8 @@
-const {Mail, Cat, User, Address, CatUser, UserMail} = require('../../models')
+const {Mail, Cat, User, Address, UserMail} = require('../../models')
+const emailServ = require("../services/emailService")
 const validator = require('../validators/mailValidator')
-const {mailDTO} = require('../dto/mailDTO')
 const mailHelper = require('../helpers/mailHelper')
-const emailServ = require("../services/emailService");
+const mailDTO = require('../dto/mailDTO')
 
 const adoptCat = async (req, res) => {
     try {
@@ -52,19 +52,26 @@ const getMails = async (req, res) => {
         for (const mail of mails) {
             mail.address = await Address.findOne({where: {id: mail.addressId}})
         }
-        return res.status(200).json({data: mails.map(mail => mailDTO(mail, mail.address))})
+        return res.status(200).json({data: mails.map(mail => mailDTO.transformMailToDTO(mail, mail.address))})
     } catch (error) {
         return res.status(500).json({error: 'Internal server error'})
     }
 }
 
 const deleteMail = async (req, res) => {
+    const transaction = await Mail.sequelize.transaction()
     try {
-        if (await validator.deleteMailValidator(req, res)) return
+        if (await validator.deleteMailValidator(req, res)) {
+            await transaction.rollback()
+            return
+        }
         const userMail = await UserMail.findOne({where: {mailId: req.params.id, userId: req.user.id}})
         const userMails = await UserMail.findAll({where: {mailId: req.params.id}})
         await mailHelper.deleteMail(userMail, userMails, req.params.id, res)
+        await transaction.commit()
+        return res.status(200).json({status: 'Mail deleted successfully'})
     } catch (error) {
+        await transaction.rollback()
         return res.status(500).json({error: 'Internal server error'})
     }
 }

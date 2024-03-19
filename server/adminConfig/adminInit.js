@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { User } = require('../models')
+const {User, PasswordHistory} = require('../models')
 const {hash} = require("bcrypt")
 
 const initializeAdmin = async () => {
@@ -12,7 +12,7 @@ const initializeAdmin = async () => {
             const adminDetails = adminUser.admin
 
             const hashedPassword = await hash(adminDetails.password, 10)
-            await User.create({
+            const user = await User.create({
                 firstName: adminDetails.firstname,
                 lastName: adminDetails.lastname,
                 username: adminDetails.username,
@@ -21,6 +21,10 @@ const initializeAdmin = async () => {
                 birthday: adminDetails.birthday,
                 role: adminDetails.role,
                 status: adminDetails.status
+            })
+            await PasswordHistory.create({
+                userId: user.id,
+                password: hashedPassword
             })
             console.log('Admin user created')
         }

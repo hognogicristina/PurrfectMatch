@@ -1,9 +1,9 @@
 const {Cat, Image, CatUser} = require('../../models')
 const catValidator = require('../validators/catValidator')
-const {transformCatToDTO} = require('../dto/catDTO')
 const catHelper = require('../helpers/catHelper')
 const fileHelper = require('../helpers/fileHelper')
 const mailHelper = require('../helpers/mailHelper')
+const catDTO = require('../dto/catDTO')
 
 const getAllCats = async (req, res) => {
     try {
@@ -19,8 +19,8 @@ const getOneCat = async (req, res) => {
     try {
         if (await catValidator.catExistValidator(req, res)) return
         const cat = await Cat.findByPk(req.params.id)
-        const catDTO = await transformCatToDTO(cat)
-        return res.status(200).json({data: catDTO})
+        const catDetails = await catDTO.transformCatToDTO(cat)
+        return res.status(200).json({data: catDetails})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }
@@ -38,7 +38,6 @@ const addCat = async (req, res) => {
         catData.userId = req.user.id
         const newCat = await Cat.create(catData)
         await CatUser.create({catId: newCat.id, userId: req.user.id})
-
         res.status(201).json({status: 'Cat added successfully'})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
@@ -54,7 +53,6 @@ const editCat = async (req, res) => {
         cat = await catHelper.updateCatData(cat, req.body)
         cat.imageId = await fileHelper.updateImage(cat, req.file)
         await cat.save()
-
         return res.json({status: 'Cat updated successfully'})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
@@ -76,12 +74,10 @@ const deleteCat = async (req, res) => {
         await CatUser.destroy({where: {catId: cat.id}})
         await cat.destroy()
         await fileHelper.deleteImage(image)
-
         await transaction.commit()
         return res.status(200).json({status: 'Cat deleted successfully'})
     } catch (error) {
         await transaction.rollback()
-        console.log(error)
         return res.status(500).json({error: 'Internal Server Error'})
     }
 }

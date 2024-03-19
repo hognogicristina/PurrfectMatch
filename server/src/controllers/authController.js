@@ -1,21 +1,20 @@
 const jwt = require('jsonwebtoken')
-const {User, RefreshToken} = require('../../models')
 const bcrypt = require('bcrypt')
-const validation = require('../validators/authValidator')
+const {User, RefreshToken, PasswordHistory} = require('../../models')
 const emailServ = require('../services/emailService')
-const {generateRefreshToken} = require('../helpers/authHelper')
+const validation = require('../validators/authValidator')
+const authHelper = require('../helpers/authHelper')
 
 const register = async (req, res) => {
     try {
         if (await validation.registerValidation(req, res)) return
-
         const {firstName, lastName, username, email, password, birthday} = req.body
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = await User.create({
             firstName, lastName, username, email, password: hashedPassword, birthday,
             status: 'active_pending'
         })
-
+        await PasswordHistory.create({userId: user.id, password: hashedPassword})
         await emailServ.sendActivationEmail(user)
         res.status(201).json({status: 'User registered successfully'})
     } catch (error) {
@@ -27,11 +26,7 @@ const activate = async (req, res) => {
     try {
         if (await validation.validateUser(req, res)) return
         const user = await User.findByPk(req.params.id)
-        user.status = 'active'
-        user.token = null
-        user.signature = null
-        user.expires = null
-
+        user.update({status: 'active', token: null, signature: null, expires: null})
         await emailServ.sendConfirmationEmail(user)
         await user.save()
         res.status(201).json({status: 'Account activated successfully'})
@@ -40,14 +35,13 @@ const activate = async (req, res) => {
     }
 }
 
-
 const login = async (req, res) => {
     try {
         if (await validation.loginValidation(req, res)) return
         const token = jwt.sign({id: req.user.id, username: req.user.username}, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_TTL + 's'
         })
-        const refreshToken = generateRefreshToken()
+        const refreshToken = authHelper.generateRefreshToken()
         await RefreshToken.create({userId: req.user.id, token: refreshToken})
         res.cookie('refreshToken', refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         res.status(200).json({token})
@@ -56,10 +50,35 @@ const login = async (req, res) => {
     }
 }
 
+const resetPasswordRequest = async (req, res) => {
+    try {
+        if (await validation.resetValidationEmail(req, res)) return
+        const {email} = req.body
+        const user = await User.findOne({where: {email}})
+        await emailServ.sendResetPassword(user)
+        res.status(200).json({status: 'Reset password email sent successfully'})
+    } catch (error) {
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        if (await validation.validateUser(req, res)) return
+        if (await validation.resetValidationPassword(req, res)) return
+        const user = await User.findByPk(req.params.id)
+        user.password = await bcrypt.hash(req.body.password, 10)
+        await user.save()
+        await PasswordHistory.create({userId: user.id, password: user.password})
+        res.status(200).json({status: 'Password reset successfully'})
+    } catch (error) {
+        res.status(500).json({error: 'Internal Server Error'})
+    }
+}
+
 const logout = async (req, res) => {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET)
         const user = await User.findByPk(decoded.id)
@@ -82,4 +101,4 @@ const refresh = async (req, res) => {
     }
 }
 
-module.exports = {register, activate, login, logout, refresh}
+module.exports = {register, activate, login, resetPasswordRequest, resetPassword, logout, refresh}

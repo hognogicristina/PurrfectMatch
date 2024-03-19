@@ -12,14 +12,8 @@ const transporter = nodemailer.createTransport({
 })
 
 async function sendActivationEmail(user) {
-    const {activationLink, sender} = await emailHelper.generateTokenAndSignature(user)
+    const {link, sender} = await emailHelper.generateTokenAndSignature(user, 'activation')
     const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'activationEmail.pug'))
-
-    const imageUrls = {
-        doneIconUrl: 'emailIcons/happy.png',
-        emailIconUrl: 'emailIcons/email.png',
-        happyIconUrl: 'emailIcons/happy.png'
-    };
 
     const mailOptions = {
         from: sender.email,
@@ -28,56 +22,54 @@ async function sendActivationEmail(user) {
         html: compiledFunction({
             firstName: user.firstName,
             lastName: user.lastName,
-            activationLink: activationLink,
-            doneIconUrl: imageUrls.doneIconUrl,
-            emailIconUrl: imageUrls.emailIconUrl,
-            happyIconUrl: imageUrls.happyIconUrl
+            link: link,
         }),
     }
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Activation email sent: %s', info.messageId);
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Activation email sent: %s', info.messageId)
     } catch (error) {
-        console.error('Error sending activation email: ', error);
+        console.error('Error sending activation email: ', error)
     }
 }
 
 async function sendResetEmail(user) {
-    const {resetLink, sender} = await emailHelper.generateTokenAndSignature(user);
-    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'resetEmail.pug'));
+    const {link, sender} = await emailHelper.generateTokenAndSignature(user, 'activation')
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'resetEmail.pug'))
 
     const mailOptions = {
         from: sender.email,
         to: user.email,
         subject: 'Account Reactivation',
-        html: compiledFunction({firstName: user.firstName, lastName: user.lastName, resetLink: resetLink}),
-    };
+        html: compiledFunction({firstName: user.firstName, lastName: user.lastName, link: link}),
+    }
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Reset email sent: %s', info.messageId);
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Reset email sent: %s', info.messageId)
     } catch (error) {
-        console.error('Error sending reset email: ', error);
+        console.error('Error sending reset email: ', error)
     }
 }
 
 async function sendConfirmationEmail(user) {
     const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'confirmationEmail.pug'))
     const sender = await User.findOne({where: {role: 'admin'}})
+    const loginLink = `${process.env.SERVER_BASE_URL}/login`
 
     const mailOptions = {
         from: sender.email,
         to: user.email,
-        subject: 'Account Activation Confirmation',
-        html: compiledFunction({firstName: user.firstName, sender: sender.firstName}),
+        subject: 'Account Activated',
+        html: compiledFunction({firstName: user.firstName, lastName: user.lastName, loginLink: loginLink}),
     }
 
     try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Confirmation email sent: %s', info.messageId);
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Confirmation email sent: %s', info.messageId)
     } catch (error) {
-        console.error('Error sending confirmation email: ', error);
+        console.error('Error sending confirmation email: ', error)
     }
 }
 
@@ -115,10 +107,48 @@ async function sendDeclineAdoption(sender, receiver, cat) {
     }
 }
 
+async function sendDeleteAccount(user) {
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'deleteAccount.pug'))
+    const sender = await User.findOne({where: {role: 'admin'}})
+    const mailOptions = {
+        from: sender.email,
+        to: user.email,
+        subject: 'Account Deleted',
+        html: compiledFunction({firstName: user.firstName}),
+    }
+
+    try {
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Message sent: %s', info.messageId)
+    } catch (error) {
+        console.error('Error sending email: ', error)
+    }
+}
+
+async function sendResetPassword(user) {
+    const {link, sender} = await emailHelper.generateTokenAndSignature(user, 'reset')
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'resetPassword.pug'))
+    const mailOptions = {
+        from: sender.email,
+        to: user.email,
+        subject: 'Reset Password',
+        html: compiledFunction({firstName: user.firstName, lastName: user.lastName, link: link}),
+    }
+
+    try {
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Reset email sent: %s', info.messageId)
+    } catch (error) {
+        console.error('Error sending reset email: ', error)
+    }
+}
+
 module.exports = {
     sendActivationEmail,
     sendResetEmail,
     sendConfirmationEmail,
     sendAdoptionEmail,
-    sendDeclineAdoption
+    sendDeclineAdoption,
+    sendDeleteAccount,
+    sendResetPassword,
 }

@@ -1,10 +1,11 @@
 const crypto = require('crypto')
-const pug = require("pug");
-const {User} = require("../../models");
+const pug = require("pug")
+const {User} = require("../../models")
 
-const generateTokenAndSignature = async (user) => {
+const generateTokenAndSignature = async (user, linkType) => {
     const token = crypto.randomBytes(16).toString('hex')
     const signature = crypto.createHmac('sha256', process.env.JWT_SECRET).update(token).digest('hex')
+    const sender = await User.findOne({ where: { role: 'admin' } })
 
     const expires = new Date()
     expires.setHours(expires.getHours() + 24)
@@ -13,10 +14,15 @@ const generateTokenAndSignature = async (user) => {
     user.signature = signature
     user.expires = expires
     await user.save()
-    const sender = await User.findOne({where: {role: 'admin'}})
-    const activationLink = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`
 
-    return {activationLink, sender}
+    let link
+    if (linkType === 'activation') {
+        link = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`
+    } else if (linkType === 'reset') {
+        link = `${process.env.SERVER_BASE_URL}/reset/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`
+    }
+
+    return {link, sender }
 }
 
 const sendAdoptionContent = async (sender, receiver, cat, address) => {

@@ -12,6 +12,8 @@ const upload = multer({storage: storage})
 router.post('/register', authController.register)
 router.get('/activate/:id', authController.activate)
 router.post('/login', authMiddleware.authenticateLogin, authController.login)
+router.post('/reset', authMiddleware.authenticateToken, authController.resetPasswordRequest)
+router.post('/reset/:id', authController.resetPassword)
 router.post('/logout', authController.logout)
 router.post('/refresh/token', authMiddleware.validateRefreshToken, authController.refresh)
 

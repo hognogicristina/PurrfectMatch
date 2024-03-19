@@ -42,6 +42,4 @@ async function transformCatToDTO(cat) {
     }
 }
 
-module.exports = {
-    transformCatToDTO,
-}
+module.exports = {transformCatToDTO}

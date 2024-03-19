@@ -5,6 +5,7 @@ const path = require('path')
 const cookieParser = require("cookie-parser")
 const fs = require('fs')
 const setupMailCronJob = require('./src/cronjob/mailcron')
+const setupPasswordCronJob = require('./src/cronjob/passwordcron')
 
 require('dotenv').config({path: './.env'})
 // Comment the line below if you want to use the .env file and not the .env.local file
@@ -24,6 +25,7 @@ app.use(cookieParser())
 app.use('/', routes)
 app.use('/files', express.static('public/files'))
 setupMailCronJob()
+setupPasswordCronJob()
 
 const PORT = process.env.PORT || 3000
 

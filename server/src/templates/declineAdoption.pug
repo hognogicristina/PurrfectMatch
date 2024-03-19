@@ -1,7 +1,30 @@
 doctype html
 html
+    head
+        title Adoption Request Declined
+        style.
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }
+
+            h1 {
+                margin-bottom: 20px;
+            }
+
+            p {
+                line-height: 1.6;
+                margin-bottom: 10px;
+            }
+
+            .footer p {
+                margin-bottom: 5px;
+            }
+
     body
-        h1 Hello #{sender.firstName} #{sender.lastName},
+        h1(style="color: black;") Hello #{sender.firstName} #{sender.lastName},
         p I regret to inform you that your adoption request for the cat #{cat.name} has been declined.
         p Thank you for your interest in adopting a cat.
         .footer
