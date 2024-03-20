@@ -9,7 +9,12 @@ const getAllCats = async (req, res) => {
     try {
         if (await catValidator.catExistValidator(req, res)) return
         const cats = await Cat.findAll()
-        return res.status(200).json({data: cats})
+        const catsDetails = []
+        for (let cat of cats) {
+            const catsDetail = await catDTO.catsDTO(cat)
+            catsDetails.push(catsDetail)
+        }
+        return res.status(200).json({data: catsDetails})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
     }

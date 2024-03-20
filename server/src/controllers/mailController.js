@@ -42,24 +42,15 @@ const handleAdoptionRequest = async (req, res) => {
             return res.status(200).json({status: 'Adoption request rejected successfully'})
         }
     } catch (error) {
-        console.error(error)
         return res.status(500).json({error: 'Internal Server Error'})
     }
 }
 
 const getMails = async (req, res) => {
     try {
-        const sortOrder = req.headers['sort-order'] || 'DESC'
-        const sortBy = 'createdAt'
-        const userMails = await UserMail.findAll({where: {userId: req.user.id, isVisible: true}})
-        const mailIds = userMails.map(userMail => userMail.mailId)
-        const mails = await Mail.findAll({where: {id: mailIds}, order: [[sortBy, sortOrder]]})
-
-        for (const mail of mails) {
-            mail.address = await Address.findOne({where: {id: mail.addressId}})
-        }
-
-        const mailDTOs = mails.map(mail => mailDTO.transformMailToDTO(mail, mail.address, req.user.id, userMails.find(userMail => userMail.mailId === mail.id)))
+        if (await validator.getMailsValidator(req, res)) return
+        const sortOrder = req.headers['sort-order'] ? req.headers['sort-order'].toUpperCase() : 'DESC'
+        const mailDTOs = await mailDTO.transformMailToDTO(req.user, sortOrder)
         return res.status(200).json({data: mailDTOs})
     } catch (error) {
         return res.status(500).json({error: 'Internal server error'})

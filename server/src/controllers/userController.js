@@ -5,14 +5,12 @@ const validator = require('../validators/userValidator')
 const catHelper = require('../helpers/catHelper')
 const mailHelper = require('../helpers/mailHelper')
 const fileHelper = require("../helpers/fileHelper")
-const UserDTO = require('../dto/userDTO')
+const userDTO = require('../dto/userDTO')
 
 const getOneUser = async (req, res) => {
     try {
         if (await validator.userExistValidator(req, res)) return
-        const userDetails = new UserDTO(req.user)
-        const addressId = req.user.addressId
-        userDetails.address = await Address.findByPk(addressId)
+        const userDetails = await userDTO.transformUserToDTO(req.user)
         return res.json({data: userDetails})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})

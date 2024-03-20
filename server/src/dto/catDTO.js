@@ -1,45 +1,33 @@
-const {User, Address} = require('../../models')
+const {User, Address, Image} = require('../../models')
 
 async function transformCatToDTO(cat) {
-    let userInfo = {}
+    const image = await Image.findOne({ where: { id: cat.imageId } })
+    const guardian = await User.findByPk(cat.userId)
+    const owner = await User.findByPk(cat.ownerId)
+    const address = await Address.findOne({ where: { id: guardian.addressId } })
 
-    if (cat.ownerId) {
-        const owner = await User.findByPk(cat.ownerId)
-        userInfo = {
-            firstName: owner.firstName,
-            lastName: owner.lastName,
-        }
-    } else if (cat.userId) {
-        const user = await User.findByPk(cat.userId)
-        const address = await Address.findOne({where: {id: user.addressId}})
-        if (!address) {
-            userInfo = {
-                firstName: user.firstName,
-                lastName: user.lastName,
-            }
-        } else {
-            userInfo = {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                country: address.country,
-                city: address.city,
-            }
-        }
+    return {
+        name: cat.name,
+        image: image ? image.url : null,
+        breed: cat.breed,
+        gender: cat.gender,
+        age: cat.age,
+        healthProblem: cat.healthProblem ? cat.healthProblem : null,
+        description: cat.description,
+        user: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
+        owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
+        address: address ? address.country : null,
+        city: address ? address.city : null,
     }
+}
 
-    const catInfo = {
+async function catsDTO(cat) {
+    return {
         name: cat.name,
         breed: cat.breed,
         gender: cat.gender,
         age: cat.age,
-        healthProblem: cat.healthProblem,
-        description: cat.description
-    }
-
-    return {
-        catInfo,
-        userInfo
     }
 }
 
-module.exports = {transformCatToDTO}
+module.exports = {transformCatToDTO, catsDTO}

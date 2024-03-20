@@ -105,8 +105,25 @@ const deleteMailValidator = async (req, res) => {
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
+const getMailsValidator = async (req, res) => {
+    const sortOrder = req.headers['sort-order'] || 'DESC'
+
+    const userMails = await UserMail.findAll({where: {userId: req.user.id}})
+    if (userMails.length === 0) {
+        return res.status(404).json({error: 'No mails found'})
+    }
+
+    if (sortOrder !== 'ASC' && sortOrder !== 'DESC') {
+        return res.status(400).json({error: 'Invalid sort order'})
+    }
+
+    return null
+
+}
+
 module.exports = {
     adoptValidator,
     handleAdoptionRequestValidator,
-    deleteMailValidator
+    deleteMailValidator,
+    getMailsValidator
 }
