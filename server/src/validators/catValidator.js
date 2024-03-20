@@ -15,6 +15,15 @@ const catExistValidator = async (req, res) => {
         if (cats.length === 0) {
             return res.status(404).json({error: 'No cats found!'})
         }
+
+        // validate for query parameters
+        if (req.query.breed) {
+            const breed = req.query.breed.toLowerCase()
+            const breedExists = cats.some(cat => cat.breed.toLowerCase().includes(breed))
+            if (!breedExists) {
+                return res.status(404).json({error: 'No cats found with that breed!'})
+            }
+        }
     }
 
     return null

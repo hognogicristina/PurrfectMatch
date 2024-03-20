@@ -50,8 +50,19 @@ const getMails = async (req, res) => {
     try {
         if (await validator.getMailsValidator(req, res)) return
         const sortOrder = req.headers['sort-order'] ? req.headers['sort-order'].toUpperCase() : 'DESC'
-        const mailDTOs = await mailDTO.transformMailToDTO(req.user, sortOrder)
+        const mailDTOs = await mailDTO.transformMailsToDTO(req.user, sortOrder)
         return res.status(200).json({data: mailDTOs})
+    } catch (error) {
+        return res.status(500).json({error: 'Internal server error'})
+    }
+}
+
+const getMail = async (req, res) => {
+    try {
+        if (await validator.getMailsValidator(req, res)) return
+        const mail = await Mail.findByPk(req.params.id)
+        const mailDetails = await mailDTO.transformMailToDTO(mail, req.user)
+        return res.status(200).json({data: mailDetails})
     } catch (error) {
         return res.status(500).json({error: 'Internal server error'})
     }
@@ -75,4 +86,4 @@ const deleteMail = async (req, res) => {
     }
 }
 
-module.exports = {adoptCat, handleAdoptionRequest, getMails, deleteMail}
+module.exports = {adoptCat, handleAdoptionRequest, getMails, getMail, deleteMail}

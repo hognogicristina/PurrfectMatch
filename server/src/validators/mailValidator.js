@@ -108,13 +108,29 @@ const deleteMailValidator = async (req, res) => {
 const getMailsValidator = async (req, res) => {
     const sortOrder = req.headers['sort-order'] || 'DESC'
 
-    const userMails = await UserMail.findAll({where: {userId: req.user.id}})
-    if (userMails.length === 0) {
-        return res.status(404).json({error: 'No mails found'})
-    }
+    if (req.params.id) {
+        const mail = await Mail.findByPk(req.params.id)
+        if (!mail) {
+            return res.status(404).json({error: 'Mail not found'})
+        }
 
-    if (sortOrder !== 'ASC' && sortOrder !== 'DESC') {
-        return res.status(400).json({error: 'Invalid sort order'})
+        const userMail = await UserMail.findOne({where: {mailId: req.params.id, userId: req.user.id}})
+        if (!userMail) {
+            return res.status(403).json({error: 'You are not allowed to view this mail'})
+        }
+
+        if (!userMail.isVisible) {
+            return res.status(400).json({error: 'Mail not found'})
+        }
+    } else {
+        const userMails = await UserMail.findAll({where: {userId: req.user.id}})
+        if (userMails.length === 0) {
+            return res.status(404).json({error: 'No mails found'})
+        }
+
+        if (sortOrder !== 'ASC' && sortOrder !== 'DESC') {
+            return res.status(400).json({error: 'Invalid sort order'})
+        }
     }
 
     return null

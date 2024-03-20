@@ -21,7 +21,7 @@ async function transformCatToDTO(cat) {
     }
 }
 
-async function catsDTO(cat) {
+async function transformCatsToDTO(cat) {
     return {
         name: cat.name,
         breed: cat.breed,
@@ -30,4 +30,4 @@ async function catsDTO(cat) {
     }
 }
 
-module.exports = {transformCatToDTO, catsDTO}
+module.exports = {transformCatToDTO, transformCatsToDTO}

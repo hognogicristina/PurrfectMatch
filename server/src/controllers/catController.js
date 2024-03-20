@@ -1,3 +1,4 @@
+const {Op} = require('sequelize')
 const {Cat, Image, CatUser} = require('../../models')
 const catValidator = require('../validators/catValidator')
 const catHelper = require('../helpers/catHelper')
@@ -8,10 +9,18 @@ const catDTO = require('../dto/catDTO')
 const getAllCats = async (req, res) => {
     try {
         if (await catValidator.catExistValidator(req, res)) return
-        const cats = await Cat.findAll()
+        const breedQuery = req.query.breed ? req.query.breed.toLowerCase() : null
+
+        let cats
+        if (breedQuery) {
+            cats = await Cat.findAll({where: {breed: {[Op.like]: `%${breedQuery}%`}}})
+        } else {
+            cats = await Cat.findAll()
+        }
+
         const catsDetails = []
         for (let cat of cats) {
-            const catsDetail = await catDTO.catsDTO(cat)
+            const catsDetail = await catDTO.transformCatsToDTO(cat)
             catsDetails.push(catsDetail)
         }
         return res.status(200).json({data: catsDetails})

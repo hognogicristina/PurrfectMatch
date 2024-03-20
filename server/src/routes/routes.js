@@ -33,6 +33,7 @@ router.delete('/cats/:id', authMiddleware.authenticateToken, catController.delet
 router.post('/adopt/:id', authMiddleware.authenticateToken, mailController.adoptCat)
 router.put('/adopt/:id', authMiddleware.authenticateToken, mailController.handleAdoptionRequest)
 router.get('/mails', authMiddleware.authenticateToken, mailController.getMails)
+router.get('/mails/:id', authMiddleware.authenticateToken, mailController.getMail)
 router.delete('/mails/:id', authMiddleware.authenticateToken, mailController.deleteMail)
 
 module.exports = router
