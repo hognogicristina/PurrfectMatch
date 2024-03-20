@@ -56,8 +56,9 @@ const resetPasswordRequest = async (req, res) => {
         const {email} = req.body
         const user = await User.findOne({where: {email}})
         await emailServ.sendResetPassword(user)
-        res.status(200).json({status: 'Reset password email sent successfully'})
+        res.status(200).json({status: 'If the email exists, a reset link will be sent'})
     } catch (error) {
+        console.log(error)
         res.status(500).json({error: 'Internal Server Error'})
     }
 }
@@ -68,6 +69,7 @@ const resetPassword = async (req, res) => {
         if (await validation.resetValidationPassword(req, res)) return
         const user = await User.findByPk(req.params.id)
         user.password = await bcrypt.hash(req.body.password, 10)
+        user.update({token: null, signature: null, expires: null})
         await user.save()
         await PasswordHistory.create({userId: user.id, password: user.password})
         res.status(200).json({status: 'Password reset successfully'})

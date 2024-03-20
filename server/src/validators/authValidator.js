@@ -58,7 +58,7 @@ const registerValidation = async (req, res) => {
     } else {
         const user = await User.findOne({where: {email: req.body.email}})
         if (user) {
-            errors.push({field: 'email', error: 'Email is already in use!'})
+            errors.push({field: 'email', error: 'Email is already in use by another user!'})
         }
     }
 
@@ -102,13 +102,20 @@ const loginValidation = async (req, res) => {
 }
 
 const resetValidationEmail = async (req, res) => {
+    const errors = []
+    const user = await User.findOne({where: {email: req.body.email}})
+
     if (validator.isEmpty(req.body.email || '')) {
-        return res.status(400).json({error: 'Email is required!'})
+        return res.status(400).json({error: 'Email is required in order to reset your password!'})
     } else if (!validator.isEmail(req.body.email)) {
-        return res.status(400).json({error: 'Invalid email format!'})
+        return res.status(400).json({error: User.rawAttributes.email.validate.isEmail.msg})
     }
 
-    return null
+    if (!user) {
+        return res.status(400).json({status: 'If the email exists, a reset link will be sent'})
+    }
+
+    return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
 const resetValidationPassword = async (req, res) => {

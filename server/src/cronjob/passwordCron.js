@@ -1,6 +1,6 @@
 const cron = require('node-cron')
 const {Op} = require("sequelize")
-const {PasswordHistory} = require('../../models')
+const {PasswordHistory, User} = require('../../models')
 
 const setupPasswordCronJob = () => {
     cron.schedule('0 0 * * 0', async () => {
@@ -14,8 +14,16 @@ const setupPasswordCronJob = () => {
                 where: {
                     createdAt: {
                         [Op.lt]: dateThreshold
+                    },
+                    '$User.password$': null,
+                    password: {
+                        [Op.not]: User.sequelize.literal('`User`.`password`')
                     }
-                }
+                },
+                include: [{
+                    model: User,
+                    required: false
+                }]
             })
 
             console.log('Old password records deleted successfully')
