@@ -13,8 +13,8 @@ const initializeAdmin = async () => {
 
             const hashedPassword = await hash(adminDetails.password, 10)
             const user = await User.create({
-                firstName: adminDetails.firstname,
-                lastName: adminDetails.lastname,
+                firstName: adminDetails.firstName,
+                lastName: adminDetails.lastName,
                 username: adminDetails.username,
                 password: hashedPassword,
                 email: adminDetails.email,
@@ -33,4 +33,4 @@ const initializeAdmin = async () => {
     }
 }
 
-initializeAdmin()
+await initializeAdmin()

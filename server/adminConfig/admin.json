@@ -1,7 +1,7 @@
 {
   "admin": {
-    "firstname": "Cristina",
-    "lastname": "Hognogi",
+    "firstName": "Cristina",
+    "lastName": "Hognogi",
     "username": "admin",
     "password": "admin",
     "email": "admin@meow.com",

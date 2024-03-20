@@ -54,7 +54,7 @@ const registerValidation = async (req, res) => {
     if (validator.isEmpty(req.body.email || '')) {
         errors.push({field: 'email', error: 'Email is required!'})
     } else if (!validator.isEmail(req.body.email)) {
-        errors.push({field: 'email', error: User.rawAttributes.email.validate.isEmail.msg})
+        errors.push({field: 'email', error: User.email.validate.isEmail.msg})
     } else {
         const user = await User.findOne({where: {email: req.body.email}})
         if (user) {
@@ -108,7 +108,7 @@ const resetValidationEmail = async (req, res) => {
     if (validator.isEmpty(req.body.email || '')) {
         return res.status(400).json({error: 'Email is required in order to reset your password!'})
     } else if (!validator.isEmail(req.body.email)) {
-        return res.status(400).json({error: User.rawAttributes.email.validate.isEmail.msg})
+        return res.status(400).json({error: User.email.validate.isEmail.msg})
     }
 
     if (!user) {

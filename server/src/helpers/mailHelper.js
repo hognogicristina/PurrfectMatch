@@ -1,7 +1,7 @@
-const {Mail, UserMail, User, Cat, CatUser} = require("../../models");
-const emailService = require("../services/emailService");
-const {Op} = require("sequelize");
-const emailServ = require("../services/emailService");
+const {Op} = require("sequelize")
+const {Mail, UserMail, User, Cat, CatUser} = require("../../models")
+const emailService = require("../services/emailService")
+const emailServ = require("../services/emailService")
 
 const deleteMailCat = async (cat, receiver) => {
     const mails = await Mail.findAll({where: {catId: cat.id}})

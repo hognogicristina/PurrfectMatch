@@ -1,6 +1,7 @@
 const crypto = require('crypto')
 const pug = require("pug")
-const {User} = require("../../models")
+const path = require("path")
+const {User, Image} = require("../../models")
 
 const generateTokenAndSignature = async (user, linkType) => {
     const token = crypto.randomBytes(16).toString('hex')
@@ -28,11 +29,10 @@ const generateTokenAndSignature = async (user, linkType) => {
 const sendAdoptionContent = async (sender, receiver, cat, address) => {
     const image = await Image.findOne({where: {id: cat.imageId}})
     const imageUrl = `${process.env.SERVER_BASE_URL}/files/${image.filename}`
-
-    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'adoptionEmail.pug'))
+    const compiledFunction = pug.compileFile(path.join(__dirname, '..', 'templates', 'adoptionEmail.pug'), {filename: 'adoptionEmail.pug'})
 
     return compiledFunction({
-        senderName: {firstName: sender.firstName, lastName: sender.lastName},
+        sender: {firstName: sender.firstName, lastName: sender.lastName},
         imageUrl: imageUrl,
         cat: {
             name: cat.name,
@@ -51,7 +51,7 @@ const sendAdoptionContent = async (sender, receiver, cat, address) => {
             apartment: address.apartment,
             postalCode: address.postalCode
         },
-        receiverName: {firstName: receiver.firstName, lastName: receiver.lastName},
+        receiver: {firstName: receiver.firstName, lastName: receiver.lastName},
     })
 }
 

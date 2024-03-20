@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require("bcrypt")
-const {User, Cat, RefreshToken} = require('../../models')
+const {User, RefreshToken} = require('../../models')
 const validation = require('../validators/authValidator')
 
 const authenticateToken = async (req, res, next) => {
