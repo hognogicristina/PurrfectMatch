@@ -1,6 +1,6 @@
-const {Op} = require('sequelize')
 const {Cat, Image, CatUser} = require('../../models')
 const catValidator = require('../validators/catValidator')
+const catUserValidator = require('../validators/catUserValidator')
 const catHelper = require('../helpers/catHelper')
 const fileHelper = require('../helpers/fileHelper')
 const mailHelper = require('../helpers/mailHelper')
@@ -9,15 +9,8 @@ const catDTO = require('../dto/catDTO')
 const getAllCats = async (req, res) => {
     try {
         if (await catValidator.catExistValidator(req, res)) return
-        const breedQuery = req.query.breed ? req.query.breed.toLowerCase() : null
-
-        let cats
-        if (breedQuery) {
-            cats = await Cat.findAll({where: {breed: {[Op.like]: `%${breedQuery}%`}}})
-        } else {
-            cats = await Cat.findAll()
-        }
-
+        const cats = await catHelper.filterCats(req)
+        if (await catValidator.catsFilterValidator(cats, res)) return
         const catsDetails = []
         for (let cat of cats) {
             const catsDetail = await catDTO.transformCatsToDTO(cat)
@@ -43,7 +36,7 @@ const getOneCat = async (req, res) => {
 const addCat = async (req, res) => {
     try {
         if (await catValidator.catValidator(req, res)) return
-        if (await catValidator.userValidator(req, res)) return
+        if (await catUserValidator.userValidator(req, res)) return
 
         let catData = {}
         catData = await catHelper.updateCatData(catData, req.body)
@@ -61,7 +54,7 @@ const addCat = async (req, res) => {
 const editCat = async (req, res) => {
     try {
         if (await catValidator.catValidator(req, res)) return
-        if (await catValidator.userValidator(req, res)) return
+        if (await catUserValidator.userValidator(req, res)) return
 
         let cat = await Cat.findByPk(req.params.id)
         cat = await catHelper.updateCatData(cat, req.body)
@@ -69,6 +62,7 @@ const editCat = async (req, res) => {
         await cat.save()
         return res.json({status: 'Cat updated successfully'})
     } catch (error) {
+        console.log(error)
         return res.status(500).json({error: 'Internal Server Error'})
     }
 }
@@ -76,7 +70,7 @@ const editCat = async (req, res) => {
 const deleteCat = async (req, res) => {
     const transaction = await Cat.sequelize.transaction()
     try {
-        if (await catValidator.userValidator(req, res)) {
+        if (await catUserValidator.userValidator(req, res)) {
             await transaction.rollback()
             return
         }

@@ -1,5 +1,5 @@
 const validator = require('validator')
-const {User, Cat, CatUser, Image} = require('../../models')
+const {User} = require('../../models')
 const bcrypt = require("bcrypt")
 
 const userExistValidator = async (req, res) => {
@@ -13,19 +13,19 @@ const editUserValidation = async (req, res) => {
     const errors = []
 
     if (validator.isEmpty(req.body.firstName || '')) {
-        errors.push({field: 'firstName', error: 'First name is required!'})
+        errors.push({field: 'firstName', error: 'First name is required'})
     } else if (!validator.isLength(req.body.firstName, {min: 3})) {
-        errors.push({field: 'firstName', error: 'First name must be at least 3 characters long!'})
+        errors.push({field: 'firstName', error: 'First name must be at least 3 characters long'})
     }
 
     if (validator.isEmpty(req.body.lastName || '')) {
-        errors.push({field: 'lastName', error: 'Last name is required!'})
+        errors.push({field: 'lastName', error: 'Last name is required'})
     } else if (!validator.isLength(req.body.lastName, {min: 3})) {
-        errors.push({field: 'lastName', error: 'Last name must be at least 3 characters long!'})
+        errors.push({field: 'lastName', error: 'Last name must be at least 3 characters long'})
     }
 
     if (validator.isEmpty(req.body.email || '')) {
-        errors.push({field: 'email', error: 'Email is required!'})
+        errors.push({field: 'email', error: 'Email is required'})
     } else if (!validator.isEmail(req.body.email)) {
         errors.push({field: 'email', error: User.rawAttributes.email.validate.isEmail.msg})
     } else {
@@ -35,13 +35,13 @@ const editUserValidation = async (req, res) => {
         } else {
             const user = await User.findOne({where: {email: req.body.email}})
             if (user && user.id !== req.user.id) {
-                errors.push({field: 'email', error: 'Email is already in use!'})
+                errors.push({field: 'email', error: 'Email is already in use'})
             }
         }
     }
 
     if (validator.isEmpty(req.body.birthday || '')) {
-        errors.push({field: 'birthday', error: 'Birthday is required!'})
+        errors.push({field: 'birthday', error: 'Birthday is required'})
     } else if (!validator.isDate(req.body.birthday)) {
         errors.push({field: 'birthday', error: 'Invalid date format! Please use YYYY-MM-DD'})
     }
@@ -55,7 +55,7 @@ const editUserValidation = async (req, res) => {
         const extension = req.file.originalname.substring(req.file.originalname.lastIndexOf('.') + 1)
         const allowedTypes = /jpeg|jpg|png|gif/i
         if (!allowedTypes.test(extension)) {
-            errors.push({field: 'file', error: 'Only image files are allowed!'})
+            errors.push({field: 'file', error: 'Only image files are allowed'})
         }
     }
 
@@ -66,25 +66,25 @@ const editAddressValidation = async (req, res) => {
     const errors = []
 
     if (validator.isEmpty(req.body.country || '')) {
-        errors.push({field: 'country', error: 'Country is required!'})
+        errors.push({field: 'country', error: 'Country is required'})
     }
 
     if (validator.isEmpty(req.body.city || '')) {
-        errors.push({field: 'city', error: 'City is required!'})
+        errors.push({field: 'city', error: 'City is required'})
     }
 
     if (validator.isEmpty(req.body.street || '')) {
-        errors.push({field: 'street', error: 'Street is required!'})
+        errors.push({field: 'street', error: 'Street is required'})
     }
 
     if (validator.isEmpty(req.body.number || '')) {
-        errors.push({field: 'number', error: 'Number is required!'})
+        errors.push({field: 'number', error: 'Number is required'})
     }
 
     if (validator.isEmpty(req.body.postalCode || '')) {
-        errors.push({field: 'postalCode', error: 'Postal code is required!'})
+        errors.push({field: 'postalCode', error: 'Postal code is required'})
     } else if (!validator.isPostalCode(req.body.postalCode, 'any')) {
-        errors.push({field: 'postalCode', error: 'Invalid postal code!'})
+        errors.push({field: 'postalCode', error: 'Invalid postal code'})
     }
 
     return errors.length > 0 ? res.status(400).json({errors}) : null
@@ -94,13 +94,13 @@ const editUsernameValidation = async (req, res) => {
     const errors = []
 
     if (validator.isEmpty(req.body.username || '')) {
-        errors.push({field: 'username', error: 'Username is required!'})
+        errors.push({field: 'username', error: 'Username is required'})
     } else if (!validator.isLength(req.body.username, {min: 3})) {
-        errors.push({field: 'username', error: 'Username must be at least 3 characters long!'})
+        errors.push({field: 'username', error: 'Username must be at least 3 characters long'})
     } else {
         const user = await User.findOne({where: {username: req.body.username}})
         if (user && user.id !== req.user.id) {
-            errors.push({field: 'username', error: 'Username is already in use!'})
+            errors.push({field: 'username', error: 'Username is already in use'})
         }
     }
 
@@ -111,31 +111,31 @@ const editPasswordValidation = async (req, res) => {
     const errors = []
 
     if (validator.isEmpty(req.body.currentPassword || '')) {
-        errors.push({field: 'currentPassword', error: 'Current password is required!'})
+        errors.push({field: 'currentPassword', error: 'Current password is required'})
     } else {
         const user = await User.findByPk(req.user.id)
         if (!await bcrypt.compare(req.body.currentPassword, user.password)) {
-            errors.push({field: 'currentPassword', error: 'Invalid password!'})
+            errors.push({field: 'currentPassword', error: 'Invalid password'})
         }
     }
 
     if (validator.isEmpty(req.body.newPassword || '')) {
-        errors.push({field: 'newPassword', error: 'New password is required!'})
+        errors.push({field: 'newPassword', error: 'New password is required'})
     } else if (!validator.isStrongPassword(req.body.newPassword)) {
         errors.push({
             field: 'newPassword',
-            error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number and one special character!'
+            error: 'Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character'
         })
     } else if (req.body.newPassword !== req.body.confirmPassword) {
-        errors.push({field: 'confirmPassword', error: 'Passwords do not match!'})
+        errors.push({field: 'confirmPassword', error: 'Passwords do not match'})
     } else if (req.body.newPassword === req.body.currentPassword) {
-        errors.push({field: 'newPassword', error: 'New password must be different from the current password!'})
+        errors.push({field: 'newPassword', error: 'New password must be different from the current password'})
     }
 
     if (validator.isEmpty(req.body.confirmPassword || '')) {
-        errors.push({field: 'confirmPassword', error: 'Confirm password is required!'})
+        errors.push({field: 'confirmPassword', error: 'Confirm password is required'})
     } else if (req.body.newPassword !== req.body.confirmPassword) {
-        errors.push({field: 'confirmPassword', error: 'Passwords do not match!'})
+        errors.push({field: 'confirmPassword', error: 'Passwords do not match'})
     }
 
     return errors.length > 0 ? res.status(400).json({errors}) : null
@@ -150,11 +150,11 @@ const deleteUserValidation = async (req, res) => {
     }
 
     if (validator.isEmpty(req.body.password || '')) {
-        errors.push({field: 'password', error: 'Password is required!'})
+        errors.push({field: 'password', error: 'Password is required'})
     } else {
         const user = await User.findByPk(req.user.id)
         if (!await bcrypt.compare(req.body.password, user.password)) {
-            errors.push({field: 'password', error: 'Invalid password!'})
+            errors.push({field: 'password', error: 'Invalid password'})
         }
     }
 

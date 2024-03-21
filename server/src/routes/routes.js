@@ -23,6 +23,7 @@ router.put('/users/address', authMiddleware.authenticateToken, userController.ed
 router.put('/users/username', authMiddleware.authenticateToken, userController.editUsername)
 router.put('/users/password', authMiddleware.authenticateToken, userController.editPassword)
 router.delete('/users', authMiddleware.authenticateToken, userController.deleteUser)
+router.get('/users/cats', authMiddleware.authenticateToken, userController.getMyCats)
 
 router.get('/cats', catController.getAllCats)
 router.get('/cats/:id', catController.getOneCat)

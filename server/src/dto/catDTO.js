@@ -14,7 +14,7 @@ async function transformCatToDTO(cat) {
         age: cat.age,
         healthProblem: cat.healthProblem ? cat.healthProblem : null,
         description: cat.description,
-        user: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
+        guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
         owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
         address: address ? address.country : null,
         city: address ? address.city : null,

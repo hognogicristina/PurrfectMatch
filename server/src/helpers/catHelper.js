@@ -1,13 +1,17 @@
 const fs = require("fs")
 const path = require("path")
-const {CatUser, Cat, Image} = require("../../models");
-const fileHelper = require("./fileHelper")
+const {Cat} = require("../../models")
+const {Op} = require("sequelize")
 
 const processAgeRange = (age) => {
     if (!age) return null
     const ageRanges = JSON.parse(fs.readFileSync((path.join('./data', 'ageRanges.json')), 'utf-8'))
     const ageRange = ageRanges[age]
-    return age + ` (${ageRange.min}-${ageRange.max} years)`
+    if (ageRange.max === null) {
+        return age + ` (${ageRange.min}+ years)`
+    } else {
+        return age + ` (${ageRange.min}-${ageRange.max} years)`
+    }
 }
 
 const updateCatData = async (cat, body) => {
@@ -21,59 +25,47 @@ const updateCatData = async (cat, body) => {
     return cat
 }
 
-const updateOwner = async (user) => {
-    if (!user) return
-    const cats = await Cat.findAll({where: {userId: user.id}})
+const filterCats = async (req) => {
+    const searchQuery = req.query.search ? req.query.search.toLowerCase() : null
+    const selectedBreed = req.query.selectedBreed ? req.query.selectedBreed : null
+    const selectedAge = req.query.selectedAge ? req.query.selectedAge : null
+    const selectedGender = req.query.selectedGender ? req.query.selectedGender : null
+    const selectedNoHealthProblem = req.query.selectedNoHealthProblem !== undefined
+    const sortBy = req.query.sortBy ? req.query.sortBy : 'breed'
+    const sortOrder = req.query.sortOrder ? req.query.sortOrder : 'asc'
+    let cats
+    let queryOptions = {}
 
-    if (cats.length > 0) {
-        for (let cat of cats) {
-            const catUsers = await CatUser.findAll({where: {catId: cat.id}})
-            for (let catUser of catUsers) {
-                if (catUser.ownerId !== null) {
-                    catUser.userId = null
-                    await catUser.save()
-                }
-            }
-
-            if (cat.ownerId !== null) {
-                cat.userId = null
-                await cat.save()
-            }
-        }
+    if (searchQuery) {
+        queryOptions.where = {[Op.or]: [{breed: {[Op.like]: `%${searchQuery}%`}}, {healthProblem: {[Op.like]: `%${searchQuery}%`}}]}
     }
+    if (selectedBreed) {
+        queryOptions.where = {...queryOptions.where, breed: selectedBreed}
+    }
+    if (selectedAge) {
+        queryOptions.where = {...queryOptions.where, age: {[Op.like]: `%${selectedAge}%`}}
+    }
+    if (selectedGender) {
+        queryOptions.where = {...queryOptions.where, gender: selectedGender}
+    }
+    if (selectedNoHealthProblem) {
+        queryOptions.where = {...queryOptions.where, healthProblem: null}
+    }
+
+    cats = await Cat.findAll(queryOptions)
+    cats.sort((cat1, cat2) => {
+        let comparison = 0
+        if (sortBy === 'breed') {
+            comparison = cat1.breed.localeCompare(cat2.breed)
+        } else if (sortBy === 'age') {
+            const age1 = parseInt(cat1.age.match(/\d+/)[0])
+            const age2 = parseInt(cat2.age.match(/\d+/)[0])
+            comparison = age1 - age2
+        }
+        return sortOrder === 'asc' ? comparison : -comparison
+    })
+
+    return cats
 }
 
-const deleteCat = async (user) => {
-    if (!user) return
-    const cats = await Cat.findAll({where: {userId: user.id}})
-
-    if (cats.length > 0) {
-        for (let cat of cats) {
-            const catUsers = await CatUser.findAll({where: {catId: cat.id}})
-            for (let catUser of catUsers) {
-                await catUser.destroy()
-            }
-
-            const image = await Image.findOne({where: {id: cat.imageId}})
-            await cat.destroy()
-            await fileHelper.deleteImage(image)
-        }
-    } else {
-        const catOwners = await Cat.findAll({where: {ownerId: user.id}})
-
-        if (catOwners.length > 0) {
-            for (let catOwner of catOwners) {
-                const catUserOwners = await CatUser.findAll({where: {catId: catOwner.id}})
-                for (let catUserOwner of catUserOwners) {
-                    await catUserOwner.destroy()
-                }
-
-                const image = await Image.findOne({where: {id: catOwner.imageId}})
-                await catOwner.destroy()
-                await fileHelper.deleteImage(image)
-            }
-        }
-    }
-}
-
-module.exports = {processAgeRange, updateCatData, updateOwner, deleteCat}
+module.exports = {processAgeRange, updateCatData, filterCats}

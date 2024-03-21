@@ -2,10 +2,13 @@ const bcrypt = require("bcrypt")
 const {Address, Image, User, RefreshToken, PasswordHistory} = require('../../models')
 const emailService = require('../services/emailService')
 const validator = require('../validators/userValidator')
-const catHelper = require('../helpers/catHelper')
+const catUserValidator = require('../validators/catUserValidator')
 const mailHelper = require('../helpers/mailHelper')
 const fileHelper = require("../helpers/fileHelper")
+const catUserHelper = require("../helpers/catUserHelper")
 const userDTO = require('../dto/userDTO')
+const catUserDTO = require('../dto/catUserDTO')
+const catDTO = require("../dto/catDTO");
 
 const getOneUser = async (req, res) => {
     try {
@@ -84,8 +87,8 @@ const deleteUser = async (req, res) => {
 
         await emailService.sendDeleteAccount(req.user)
         await mailHelper.deleteMailUser(req.user)
-        await catHelper.updateOwner(req.user)
-        await catHelper.deleteCat(req.user)
+        await catUserHelper.updateOwner(req.user)
+        await catUserHelper.deleteCat(req.user)
         await RefreshToken.destroy({where: {userId: req.user.id}})
         const image = await Image.findOne({where: {id: req.user.imageId}})
         await req.user.destroy()
@@ -103,4 +106,21 @@ const deleteUser = async (req, res) => {
     }
 }
 
-module.exports = {getOneUser, editUser, editAddressUser, editUsername, editPassword, deleteUser}
+const getMyCats = async (req, res) => {
+    try {
+        if (await catUserValidator.getCatsValidator(req, res)) return
+        const cats = await catUserHelper.getCats(req)
+        const catsDetails = []
+        for (let cat of cats) {
+            const catsDetail = await catUserDTO.transformCatUserToDTO(cat)
+            catsDetails.push(catsDetail)
+        }
+        return res.status(200).json({data: catsDetails})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
+
+module.exports = {getOneUser, editUser, editAddressUser, editUsername, editPassword, deleteUser, getMyCats}

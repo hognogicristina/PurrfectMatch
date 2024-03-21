@@ -28,7 +28,7 @@ const setupPasswordCronJob = () => {
 
             console.log('Old password records deleted successfully')
         } catch (error) {
-            console.error('Error occurred while deleting old password records:', error)
+            console.error('Error occurred while deleting old password records: ', error)
         }
     })
 }
