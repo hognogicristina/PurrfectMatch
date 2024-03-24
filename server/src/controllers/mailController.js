@@ -1,4 +1,4 @@
-const {Mail, Cat, User, Address, UserMail} = require('../../models')
+const {Address, User, Cat, Mail, UserMail} = require('../../models')
 const emailServ = require("../services/emailService")
 const validator = require('../validators/mailValidator')
 const mailHelper = require('../helpers/mailHelper')
@@ -9,11 +9,9 @@ const adoptCat = async (req, res) => {
         if (await validator.adoptValidator(req, res)) return
         const cat = await Cat.findByPk(req.params.id)
         const {message} = req.body
-
         const mail = await Mail.create({catId: cat.id, message})
         await UserMail.create({userId: req.user.id, mailId: mail.id, role: 'sender'})
         await UserMail.create({userId: cat.userId, mailId: mail.id, role: 'receiver'})
-
         return res.status(200).json({status: 'Adoption request sent successfully'})
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})
@@ -35,11 +33,11 @@ const handleAdoptionRequest = async (req, res) => {
 
         if (status === 'accepted') {
             await mailHelper.sendMail(status, mail, sender, receiver, cat, userAddress)
-            return res.status(200).json({status: 'Adoption request accepted successfully'})
+            return res.status(200).json({status: 'Adoption request was accepted'})
         } else {
             await emailServ.sendDeclineAdoption(sender, receiver, cat)
             await mail.update({status})
-            return res.status(200).json({status: 'Adoption request rejected successfully'})
+            return res.status(200).json({status: 'Adoption request was declined'})
         }
     } catch (error) {
         return res.status(500).json({error: 'Internal Server Error'})

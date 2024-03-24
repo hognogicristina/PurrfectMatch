@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Address', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         country: DataTypes.STRING,
         county: DataTypes.STRING,
@@ -13,6 +13,6 @@ module.exports = (sequelize, DataTypes) => {
         number: DataTypes.STRING,
         floor: DataTypes.STRING,
         apartment: DataTypes.STRING,
-        postalCode: DataTypes.STRING
+        postalCode: DataTypes.STRING,
     })
 }

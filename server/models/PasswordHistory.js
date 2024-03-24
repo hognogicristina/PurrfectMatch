@@ -2,21 +2,21 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('PasswordHistory', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         userId: {
-            allowNull: false,
             type: DataTypes.INTEGER,
             references: {
                 model: 'Users',
                 key: 'id'
             },
+            allowNull: false,
         },
         password: {
+            type: DataTypes.STRING,
             allowNull: false,
-            type: DataTypes.STRING
         },
     })
 }

@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('UserMail', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         userId: {
             type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Users',
                 key: 'id'
             },
-            allowNull: false
+            allowNull: false,
         },
         mailId: {
             type: DataTypes.INTEGER,
@@ -20,19 +20,19 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Mails',
                 key: 'id'
             },
-            allowNull: false
+            allowNull: false,
         },
         role: {
             type: DataTypes.STRING,
-            allowNull: false,
             validate: {
                 isIn: [['sender', 'receiver']]
-            }
+            },
+            allowNull: false,
         },
         isVisible: {
             type: DataTypes.BOOLEAN,
             defaultValue: true,
-            allowNull: false
+            allowNull: false,
         }
     })
 }

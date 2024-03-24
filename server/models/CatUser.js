@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('CatUser', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         catId: {
             type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Cats',
                 key: 'id'
             },
-            allowNull: false
+            allowNull: false,
         },
         userId: {
             type: DataTypes.INTEGER,

@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Cat', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         name: DataTypes.STRING,
         imageId: {
@@ -13,14 +13,14 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Images',
                 key: 'id'
             },
-            allowNull: false
+            allowNull: false,
         },
         breed: DataTypes.STRING,
         gender: DataTypes.STRING,
         age: DataTypes.STRING,
         healthProblem: {
             type: DataTypes.STRING,
-            allowNull: true
+            allowNull: true,
         },
         description: DataTypes.TEXT,
         userId: {

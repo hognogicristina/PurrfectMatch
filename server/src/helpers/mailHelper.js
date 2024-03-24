@@ -3,6 +3,56 @@ const {Mail, UserMail, User, Cat, CatUser} = require("../../models")
 const emailService = require("../services/emailService")
 const emailServ = require("../services/emailService")
 
+const sendMail = async (status, mail, sender, receiver, cat, userAddress) => {
+    await User.sequelize.transaction(async (t) => {
+        const otherMails = await Mail.findAll({
+            where: {
+                catId: mail.catId,
+                id: {[Op.ne]: mail.id}
+            },
+        }, {transaction: t})
+
+        for (const otherMail of otherMails) {
+            await Mail.update({status: 'declined'}, {where: {id: otherMail.id}, transaction: t})
+            const otherUserMail = await UserMail.findOne({
+                where: {
+                    mailId: otherMail.id,
+                    role: 'sender'
+                }
+            }, {transaction: t})
+            const sender = await User.findOne({where: {id: otherUserMail.userId}})
+            await emailServ.sendDeclineAdoption(sender, receiver, cat)
+        }
+
+        await Cat.update({ownerId: sender.id}, {where: {id: mail.catId}, transaction: t})
+        const catUser = await CatUser.findOne({where: {catId: mail.catId}}, {transaction: t})
+        if (catUser) {
+            await CatUser.update({ownerId: sender.id}, {where: {id: catUser.id}, transaction: t})
+        }
+        await Mail.update({status, addressId: userAddress.id}, {where: {id: mail.id}, transaction: t})
+        await emailServ.sendAdoptionEmail(sender, receiver, cat, userAddress)
+    })
+}
+
+const updateEmail = async (user, fieldsToUpdate, body) => {
+    let emailChanged = false
+    fieldsToUpdate.forEach(field => {
+        if (body[field] !== undefined && field === 'email' && body[field] !== user.email) {
+            user[field] = body[field]
+            emailChanged = true
+        } else if (body[field] !== undefined) {
+            user[field] = body[field]
+        }
+    })
+
+    if (emailChanged) {
+        user.status = 'active_pending'
+        await emailServ.sendResetEmail(user)
+    }
+
+    await user.save()
+}
+
 const deleteMailCat = async (cat, receiver) => {
     const mails = await Mail.findAll({where: {catId: cat.id}})
 
@@ -42,37 +92,6 @@ const deleteMail = async (userMail, userMails, mailId, res) => {
     }
 }
 
-const sendMail = async (status, mail, sender, receiver, cat, userAddress) => {
-    await User.sequelize.transaction(async (t) => {
-        const otherMails = await Mail.findAll({
-            where: {
-                catId: mail.catId,
-                id: {[Op.ne]: mail.id}
-            },
-        }, {transaction: t})
-
-        for (const otherMail of otherMails) {
-            await Mail.update({status: 'declined'}, {where: {id: otherMail.id}, transaction: t})
-            const otherUserMail = await UserMail.findOne({
-                where: {
-                    mailId: otherMail.id,
-                    role: 'sender'
-                }
-            }, {transaction: t})
-            const sender = await User.findOne({where: {id: otherUserMail.userId}})
-            await emailServ.sendDeclineAdoption(sender, receiver, cat)
-        }
-
-        await Cat.update({ownerId: sender.id}, {where: {id: mail.catId}, transaction: t})
-        const catUser = await CatUser.findOne({where: {catId: mail.catId}}, {transaction: t})
-        if (catUser) {
-            await CatUser.update({ownerId: sender.id}, {where: {id: catUser.id}, transaction: t})
-        }
-        await Mail.update({status, addressId: userAddress.id}, {where: {id: mail.id}, transaction: t})
-        await emailServ.sendAdoptionEmail(sender, receiver, cat, userAddress)
-    })
-}
-
 const deleteMailUser = async (user) => {
     const userMails = await UserMail.findAll({where: {userId: user.id}})
     for (let userMail of userMails) {
@@ -97,23 +116,5 @@ const deleteMailUser = async (user) => {
     }
 }
 
-const updateEmail = async (user, fieldsToUpdate, body) => {
-    let emailChanged = false
-    fieldsToUpdate.forEach(field => {
-        if (body[field] !== undefined && field === 'email' && body[field] !== user.email) {
-            user[field] = body[field]
-            emailChanged = true
-        } else if (body[field] !== undefined) {
-            user[field] = body[field]
-        }
-    })
 
-    if (emailChanged) {
-        user.status = 'active_pending'
-        await emailServ.sendResetEmail(user)
-    }
-
-    await user.save()
-}
-
-module.exports = {deleteMailCat, deleteMail, sendMail, deleteMailUser, updateEmail}
+module.exports = {sendMail, updateEmail, deleteMailCat, deleteMail, deleteMailUser}

@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('RefreshToken', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         userId: {
             type: DataTypes.INTEGER,
@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Users',
                 key: 'id'
             },
-            allowNull: false
+            allowNull: false,
         },
         token: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
         }
     })
 }

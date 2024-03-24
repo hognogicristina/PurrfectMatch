@@ -1,7 +1,7 @@
 const crypto = require('crypto')
 const pug = require("pug")
 const path = require("path")
-const {User, Image} = require("../../models")
+const {Image, User} = require("../../models")
 
 const generateTokenAndSignature = async (user, linkType) => {
     const token = crypto.randomBytes(16).toString('hex')

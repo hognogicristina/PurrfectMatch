@@ -1,8 +1,8 @@
-const { Address, Image } = require('../../models')
+const {Address, Image} = require('../../models')
 
 async function transformUserToDTO(user) {
-    const address = await Address.findOne({ where: { id: user.addressId } })
-    const image = await Image.findOne({ where: { id: user.imageId } })
+    const address = await Address.findOne({where: {id: user.addressId}})
+    const image = await Image.findOne({where: {id: user.imageId}})
 
     return {
         firstName: user.firstName,
@@ -24,4 +24,14 @@ async function transformUserToDTO(user) {
     }
 }
 
-module.exports = { transformUserToDTO }
+async function transformUsersToDTO(user) {
+    const address = await Address.findOne({where: {id: user.addressId}})
+    return {
+        username: user.username,
+        displayName: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        address: address ? `${address.city} ${address.country}` : null,
+    }
+}
+
+module.exports = {transformUserToDTO, transformUsersToDTO}

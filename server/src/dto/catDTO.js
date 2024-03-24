@@ -1,4 +1,4 @@
-const {User, Address, Image} = require('../../models')
+const {Address, Image, User} = require('../../models')
 
 async function transformCatToDTO(cat) {
     const image = await Image.findOne({ where: { id: cat.imageId } })
@@ -16,8 +16,7 @@ async function transformCatToDTO(cat) {
         description: cat.description,
         guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
         owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
-        address: address ? address.country : null,
-        city: address ? address.city : null,
+        address: address ? `${address.city}, ${address.country}` : null,
     }
 }
 

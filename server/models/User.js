@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('User', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         firstName: DataTypes.STRING,
         lastName: DataTypes.STRING,
@@ -15,16 +15,19 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id',
             }
         },
-        username: {type: DataTypes.STRING, unique: true},
+        username: {
+            type: DataTypes.STRING,
+            unique: true
+        },
         email: {
             type: DataTypes.STRING,
-            unique: true,
-            allowNull: false,
             validate: {
                 isEmail: {
                     msg: "Must be a valid email address",
                 }
-            }
+            },
+            unique: true,
+            allowNull: false,
         },
         password: DataTypes.STRING,
         birthday: DataTypes.DATEONLY,
@@ -40,13 +43,13 @@ module.exports = (sequelize, DataTypes) => {
         },
         role: {
             type: DataTypes.STRING,
-            allowNull: false,
             defaultValue: 'user',
+            allowNull: false,
         },
         status: {
             type: DataTypes.STRING,
-            allowNull: false,
             defaultValue: 'active_pending',
+            allowNull: false,
         },
         signature: DataTypes.STRING,
         expires: DataTypes.DATE,

@@ -1,5 +1,23 @@
-const {CatUser, Cat, Image} = require('../../models')
-const fileHelper = require("./fileHelper");
+const {Image, Cat, CatUser} = require('../../models')
+const fileHelper = require("./fileHelper")
+
+const getCats = async (req) => {
+    const addedByMe = req.query.addedByMe !== undefined
+    const ownedByMe = req.query.ownedByMe !== undefined
+    let cats = []
+
+    if (addedByMe) {
+        const addedCats = await Cat.findAll({where: {userId: req.user.id}})
+        cats = cats.concat(addedCats)
+    } else if (ownedByMe) {
+        const ownedCats = await Cat.findAll({where: {ownerId: req.user.id}})
+        cats = cats.concat(ownedCats)
+    }
+
+    return cats.map(cat => {
+        return cat
+    })
+}
 
 const updateOwner = async (user) => {
     if (!user) return
@@ -56,26 +74,4 @@ const deleteCat = async (user) => {
     }
 }
 
-const getCats = async (req) => {
-    const addedByMe = req.query.addedByMe !== undefined
-    const ownedByMe = req.query.ownedByMe !== undefined
-    let cats = []
-
-    if (addedByMe) {
-        const addedCats = await Cat.findAll({where: {userId: req.user.id}})
-        cats = cats.concat(addedCats)
-    } else if (ownedByMe) {
-        const ownedCats = await Cat.findAll({where: {ownerId: req.user.id}})
-        cats = cats.concat(ownedCats)
-    }
-
-    return cats.map(cat => {
-        return cat
-    })
-}
-
-module.exports = {
-    updateOwner,
-    deleteCat,
-    getCats
-}
+module.exports = {getCats, updateOwner, deleteCat}

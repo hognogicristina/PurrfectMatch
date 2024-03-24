@@ -1,4 +1,5 @@
 const {Cat, CatUser} = require("../../models");
+
 const userValidator = async (req, res) => {
     if (req.method !== 'POST') {
         const cat = await Cat.findByPk(req.params.id)

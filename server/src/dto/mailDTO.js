@@ -1,6 +1,6 @@
 const {Op} = require('sequelize')
 const moment = require("moment")
-const {Cat, User, Mail, Image, UserMail, Address} = require('../../models')
+const {Image, Address, Cat, Mail, UserMail, } = require('../../models')
 
 async function transformMailToDTO(mail, user) {
     const senderUserMail = await UserMail.findOne({where: {mailId: mail.id, role: 'sender'}})

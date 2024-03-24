@@ -1,6 +1,7 @@
 const express = require('express')
 const multer = require('multer')
 const router = express.Router()
+const adminController = require('../controllers/adminController')
 const authController = require('../controllers/authController')
 const userController = require('../controllers/userController')
 const catController = require('../controllers/catController')
@@ -8,6 +9,10 @@ const mailController = require('../controllers/mailController')
 const authMiddleware = require('../middlewares/authMiddleware')
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
+
+router.get('/users', authMiddleware.authenticateToken, adminController.getAllUsers)
+router.delete('/users/:id', authMiddleware.authenticateToken, adminController.deleteUser)
+router.delete('/cats/:id', authMiddleware.authenticateToken, adminController.deleteCat)
 
 router.post('/register', authController.register)
 router.get('/activate/:id', authController.activate)

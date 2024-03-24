@@ -8,7 +8,6 @@ const fileHelper = require("../helpers/fileHelper")
 const catUserHelper = require("../helpers/catUserHelper")
 const userDTO = require('../dto/userDTO')
 const catUserDTO = require('../dto/catUserDTO')
-const catDTO = require("../dto/catDTO");
 
 const getOneUser = async (req, res) => {
     try {
@@ -20,12 +19,27 @@ const getOneUser = async (req, res) => {
     }
 }
 
+const getMyCats = async (req, res) => {
+    try {
+        if (await catUserValidator.getCatsValidator(req, res)) return
+        const cats = await catUserHelper.getCats(req)
+        const catsDetails = []
+        for (let cat of cats) {
+            const catsDetail = await catUserDTO.transformCatUserToDTO(cat)
+            catsDetails.push(catsDetail)
+        }
+        return res.status(200).json({data: catsDetails})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
 const editUser = async (req, res) => {
     try {
         if (await validator.editUserValidation(req, res)) return
         const fieldsToUpdate = ['firstName', 'lastName', 'email', 'birthday', 'description', 'hobbies', 'experienceLevel']
         await mailHelper.updateEmail(req.user, fieldsToUpdate, req.body)
-
         req.user.imageId = await fileHelper.updateImage(req.user, req.file)
         await req.user.save()
         return res.json({status: 'User updated successfully'})
@@ -37,7 +51,6 @@ const editUser = async (req, res) => {
 const editAddressUser = async (req, res) => {
     try {
         if (await validator.editAddressValidation(req, res)) return
-
         const addressFields = ['country', 'county', 'city', 'street', 'number', 'floor', 'apartment', 'postalCode']
         const address = await Address.findByPk(req.user.addressId) || new Address()
 
@@ -106,21 +119,5 @@ const deleteUser = async (req, res) => {
     }
 }
 
-const getMyCats = async (req, res) => {
-    try {
-        if (await catUserValidator.getCatsValidator(req, res)) return
-        const cats = await catUserHelper.getCats(req)
-        const catsDetails = []
-        for (let cat of cats) {
-            const catsDetail = await catUserDTO.transformCatUserToDTO(cat)
-            catsDetails.push(catsDetail)
-        }
-        return res.status(200).json({data: catsDetails})
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ error: 'Internal Server Error' })
-    }
-}
 
-
-module.exports = {getOneUser, editUser, editAddressUser, editUsername, editPassword, deleteUser, getMyCats}
+module.exports = {getOneUser, getMyCats, editUser, editAddressUser, editUsername, editPassword, deleteUser}

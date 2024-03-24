@@ -58,7 +58,6 @@ const resetPasswordRequest = async (req, res) => {
         await emailServ.sendResetPassword(user)
         res.status(200).json({status: 'If the email exists, a reset link will be sent'})
     } catch (error) {
-        console.log(error)
         res.status(500).json({error: 'Internal Server Error'})
     }
 }

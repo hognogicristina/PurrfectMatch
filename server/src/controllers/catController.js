@@ -1,4 +1,4 @@
-const {Cat, Image, CatUser} = require('../../models')
+const {Image, Cat, CatUser} = require('../../models')
 const catValidator = require('../validators/catValidator')
 const catUserValidator = require('../validators/catUserValidator')
 const catHelper = require('../helpers/catHelper')

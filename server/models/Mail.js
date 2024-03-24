@@ -2,9 +2,9 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Mail', {
         id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
-            autoIncrement: true
+            autoIncrement: true,
+            allowNull: false,
         },
         catId: {
             type: DataTypes.INTEGER,
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Cats',
                 key: 'id'
             },
-            allowNull: true
+            allowNull: true,
         },
         message: DataTypes.TEXT,
         addressId: {
@@ -21,11 +21,11 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'Addresses',
                 key: 'id'
             },
-            allowNull: true
+            allowNull: true,
         },
         status: {
             type: DataTypes.STRING,
-            defaultValue: 'pending'
+            defaultValue: 'pending',
         }
     })
 }
