@@ -2,12 +2,12 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
 const {User, RefreshToken, PasswordHistory} = require('../../models')
 const emailServ = require('../services/emailService')
-const validation = require('../validators/authValidator')
+const authValidator = require('../validators/authValidator')
 const authHelper = require('../helpers/authHelper')
 
 const register = async (req, res) => {
     try {
-        if (await validation.registerValidation(req, res)) return
+        if (await authValidator.registerValidation(req, res)) return
         const {firstName, lastName, username, email, password, birthday} = req.body
         const hashedPassword = await bcrypt.hash(password, 10)
         const user = await User.create({
@@ -24,7 +24,7 @@ const register = async (req, res) => {
 
 const activate = async (req, res) => {
     try {
-        if (await validation.validateUser(req, res)) return
+        if (await authValidator.validateUser(req, res)) return
         const user = await User.findByPk(req.params.id)
         user.update({status: 'active', token: null, signature: null, expires: null})
         await emailServ.sendConfirmationEmail(user)
@@ -37,7 +37,7 @@ const activate = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        if (await validation.loginValidation(req, res)) return
+        if (await authValidator.loginValidation(req, res)) return
         const token = jwt.sign({id: req.user.id, username: req.user.username}, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_TTL + 's'
         })
@@ -52,7 +52,7 @@ const login = async (req, res) => {
 
 const resetPasswordRequest = async (req, res) => {
     try {
-        if (await validation.resetValidationEmail(req, res)) return
+        if (await authValidator.resetValidationEmail(req, res)) return
         const {email} = req.body
         const user = await User.findOne({where: {email}})
         await emailServ.sendResetPassword(user)
@@ -64,8 +64,8 @@ const resetPasswordRequest = async (req, res) => {
 
 const resetPassword = async (req, res) => {
     try {
-        if (await validation.validateUser(req, res)) return
-        if (await validation.resetValidationPassword(req, res)) return
+        if (await authValidator.validateUser(req, res)) return
+        if (await authValidator.resetValidationPassword(req, res)) return
         const user = await User.findByPk(req.params.id)
         user.password = await bcrypt.hash(req.body.password, 10)
         user.update({token: null, signature: null, expires: null})

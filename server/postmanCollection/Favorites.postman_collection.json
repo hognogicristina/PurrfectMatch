@@ -1,0 +1,79 @@
+{
+	"info": {
+		"_postman_id": "7266df50-a072-4133-a689-79d673bd0129",
+		"name": "Favorites",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Favorites List",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Add To Favorites",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"url": "{{base_url}}/cats/1/favorites"
+			},
+			"response": []
+		},
+		{
+			"name": "Adopt Cat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"I would like to adopt this cat. It looks adorable!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/favorites/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete From Favorites",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{base_url}}/favorites/1"
+			},
+			"response": []
+		}
+	]
+}

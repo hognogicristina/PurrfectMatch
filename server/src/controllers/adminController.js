@@ -1,9 +1,9 @@
 const {Op} = require('sequelize')
 const {User, Cat} = require('../../models')
 const userValidator = require('../validators/userValidator')
-const userDTO = require('../dto/userDTO')
 const adminHelper = require("../helpers/adminHelper")
-const catValidator = require("../validators/catValidator");
+const catValidator = require("../validators/catValidator")
+const userDTO = require('../dto/userDTO')
 
 const getAllUsers = async (req, res) => {
     try {
@@ -42,3 +42,4 @@ const deleteCat = async (req, res) => {
     }
 }
 
+module.exports = {getAllUsers, deleteUser, deleteCat}

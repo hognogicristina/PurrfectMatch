@@ -1,11 +1,12 @@
 const express = require('express')
-const multer = require('multer')
 const router = express.Router()
+const multer = require('multer')
 const adminController = require('../controllers/adminController')
 const authController = require('../controllers/authController')
 const userController = require('../controllers/userController')
 const catController = require('../controllers/catController')
 const mailController = require('../controllers/mailController')
+const favoriteController = require('../controllers/favoriteController')
 const authMiddleware = require('../middlewares/authMiddleware')
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
@@ -41,5 +42,10 @@ router.put('/adopt/:id', authMiddleware.authenticateToken, mailController.handle
 router.get('/mails', authMiddleware.authenticateToken, mailController.getMails)
 router.get('/mails/:id', authMiddleware.authenticateToken, mailController.getMail)
 router.delete('/mails/:id', authMiddleware.authenticateToken, mailController.deleteMail)
+
+router.get('/favorites', authMiddleware.authenticateToken, favoriteController.getFavorites)
+router.post('/cats/:id/favorites', authMiddleware.authenticateToken, favoriteController.addCatToFavorites)
+router.post('/favorites/:id', authMiddleware.authenticateToken, favoriteController.adoptFavorite)
+router.delete('/favorites/:id', authMiddleware.authenticateToken, favoriteController.deleteFavorite)
 
 module.exports = router

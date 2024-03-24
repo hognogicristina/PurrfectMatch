@@ -30,7 +30,7 @@
 				"auth": {
 					"type": "bearer",
 					"bearer": {
-						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTcwOTU1NzA5MywiZXhwIjoxNzA5NTYwNjkzfQ.9o6mDd5dVZF3rZEhB-PkDwlC5-e7wKuYGLtloPlQp38"
+						"token": "{{admin}}"
 					}
 				},
 				"method": "DELETE",
@@ -42,6 +42,12 @@
 		{
 			"name": "Delete A Cat",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
 				"method": "DELETE",
 				"header": [],
 				"url": "{{base_url}}/cats/1"

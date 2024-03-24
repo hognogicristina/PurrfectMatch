@@ -1,19 +1,31 @@
-const {Mail, Cat, Address, UserMail} = require('../../models')
+const {Mail, Cat, Address, UserMail, Favorite} = require('../../models')
 const validator = require("validator")
+const e = require("express");
 
 const adoptValidator = async (req, res) => {
     const errors = []
     const userId = req.user.id
 
     if (req.params.id) {
-        const cat = await Cat.findByPk(req.params.id)
+        let cat = null
+        if (req.path.includes('favorites')) {
+            const favorite = await Favorite.findByPk(req.params.id)
+            if (!favorite) {
+                return res.status(404).json({error: 'Favorite not found'})
+            }
+
+            cat = await Cat.findByPk(favorite.catId)
+        } else {
+            cat = await Cat.findByPk(req.params.id)
+        }
+
         if (!cat) {
             errors.push({field: 'cat', error: 'Cat not found'})
             return res.status(400).json({errors})
         }
 
         if (cat.userId === userId) {
-            errors.push({field: 'cat', error: 'You are not allowed to send adoption request for your own cat'})
+            errors.push({field: 'cat', error: 'You cannot send adoption request for a cat you are guardian of'})
         }
 
         if (cat.ownerId !== null) {
@@ -24,15 +36,15 @@ const adoptValidator = async (req, res) => {
     const pendingMails = await Mail.findAll({
         where: {catId: req.params.id, status: 'pending'},
         attributes: ['id'],
-    });
+    })
 
     for (const mail of pendingMails) {
         const existingRequest = await UserMail.findOne({
             where: {mailId: mail.id, userId: userId, role: 'sender'}
-        });
+        })
 
         if (existingRequest) {
-            errors.push({field: 'cat', error: 'Adoption request already sent'});
+            errors.push({field: 'cat', error: 'Adoption request already sent'})
         }
     }
 
