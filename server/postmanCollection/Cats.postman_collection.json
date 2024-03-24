@@ -1,0 +1,216 @@
+{
+	"info": {
+		"_postman_id": "bf477170-d94d-4f18-bba9-b95e298dfaff",
+		"name": "Cats",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Get All Cats",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}/cats",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cats"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "selectedBreed",
+							"value": "Maine Coon",
+							"disabled": true
+						},
+						{
+							"key": "selectedAge",
+							"value": "Kitten",
+							"disabled": true
+						},
+						{
+							"key": "selectedGender",
+							"value": "Male",
+							"disabled": true
+						},
+						{
+							"key": "selectedNoHealthProblem",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "sortBy",
+							"value": "age",
+							"disabled": true
+						},
+						{
+							"key": "sortOrder",
+							"value": "DESC",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get A Cat",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/cats/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Cat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Whiskers",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"contentType": "multipart/form-data",
+							"type": "file",
+							"src": "postman-cloud:///1eedc732-028a-4b30-a9b8-7065bcba04d6"
+						},
+						{
+							"key": "breed",
+							"value": "Maine Coon",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "Male",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "Kitten",
+							"type": "text"
+						},
+						{
+							"key": "healthProblem",
+							"value": "Epilepsy",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Whiskers is a friendly and playful Maine Coon.",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{base_url}}/cats"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit A Cat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "Moxie",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"contentType": "multipart/form-data",
+							"type": "file",
+							"src": "postman-cloud:///1eee6fdb-2299-4cd0-b92c-57f52343a555"
+						},
+						{
+							"key": "breed",
+							"value": "Bombay",
+							"type": "text"
+						},
+						{
+							"key": "gender",
+							"value": "Female",
+							"type": "text"
+						},
+						{
+							"key": "age",
+							"value": "Senior",
+							"type": "text"
+						},
+						{
+							"key": "healthProblem",
+							"value": "Epilepsy",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Moxie is a friendly cat.",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{base_url}}/cats/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete A Cat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{base_url}}/cats/2"
+			},
+			"response": []
+		},
+		{
+			"name": "Search By A Breed",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/cats/search/Maine Coon"
+			},
+			"response": []
+		}
+	]
+}

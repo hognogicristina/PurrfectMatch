@@ -1,0 +1,52 @@
+{
+	"info": {
+		"_postman_id": "8cd00d6c-8dac-4438-abee-5c1e650d662b",
+		"name": "Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Get All Users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete A User",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsImlhdCI6MTcwOTU1NzA5MywiZXhwIjoxNzA5NTYwNjkzfQ.9o6mDd5dVZF3rZEhB-PkDwlC5-e7wKuYGLtloPlQp38"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "http://localhost:3000/users/4"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete A Cat",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": "{{base_url}}/cats/1"
+			},
+			"response": []
+		}
+	]
+}

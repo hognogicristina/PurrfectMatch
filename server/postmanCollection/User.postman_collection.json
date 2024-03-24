@@ -1,0 +1,225 @@
+{
+	"info": {
+		"_postman_id": "5f52c3c0-e9ca-496a-a3a3-b022cccfef90",
+		"name": "User",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Get A User",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": "{{base_url}}/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Edit User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "firstName",
+							"value": "Cristina",
+							"type": "text"
+						},
+						{
+							"key": "lastName",
+							"value": "Hognogi",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"contentType": "multipart/form-data",
+							"type": "file",
+							"src": "postman-cloud:///1eedc732-028a-4b30-a9b8-7065bcba04d6"
+						},
+						{
+							"key": "email",
+							"value": "admin@meow.com",
+							"type": "text"
+						},
+						{
+							"key": "birthday",
+							"value": "2002-02-04",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "A free spirit",
+							"type": "text"
+						},
+						{
+							"key": "hobbies",
+							"value": "reading",
+							"type": "text"
+						},
+						{
+							"key": "experienceLevel",
+							"value": "5",
+							"type": "text"
+						}
+					]
+				},
+				"url": "{{base_url}}/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Change Username",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{iulia}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentUsername\": \"admin\",\n    \"newUsername\": \"iuliadarlin\"\n}\n\n// {\n//     \"currentUsername\": \"johndoe\",\n//     \"newUsername\": \"donapop\"\n// }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/users/username"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Address",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"country\": \"Romania\",\n    \"county\": \"Cluj\",\n    \"city\": \"Cluj-Napoca\",\n    \"street\": \"Fierului\",\n    \"number\": \"33\",\n    \"floor\": \"3\",\n    \"apartment\": \"8\",\n    \"postalCode\": \"400179\"\n}\n\n// {\n//     \"country\": \"Romania\",\n//     \"county\": \"Bistrita-Nasaud\",\n//     \"city\": \"Bistrita\",\n//     \"street\": \"Artarilor\",\n//     \"number\": \"32\",\n//     \"floor\": \"2\",\n//     \"apartment\": \"9\",\n//     \"postalCode\": \"420136\"\n// }\n\n// {\n//     \"country\": \"United Kingdom\",\n//     \"county\": \"Norfolk\",\n//     \"city\": \"Norwich\",\n//     \"street\": \"Elm Hill\",\n//     \"number\": \"10\",\n//     \"postalCode\": \"NR3 1HN\"\n// }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/users/address"
+			},
+			"response": []
+		},
+		{
+			"name": "Change Password",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{base_url}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"currentPassword\": \"Password1!\",\n    \"newPassword\": \"Cristina1!\",\n    \"confirmNewPassword\": \"Cristina1!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/users/password"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"password\": \"Password1!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/users"
+			},
+			"response": []
+		},
+		{
+			"name": "Cats and User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/users/cats",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"cats"
+					],
+					"query": [
+						{
+							"key": "addedByMe",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "ownedByMe",
+							"value": "",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

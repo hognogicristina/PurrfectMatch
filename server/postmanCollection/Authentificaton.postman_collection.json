@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "920438ec-d6a3-44fd-a1bb-2e05f869648b",
+		"name": "Authentificaton",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"username\": \"johndoe\",\n    \"email\": \"m\",\n    \"password\": \"Password1!\",\n    \"confirmPassword\": \"Password1\",\n    \"birthday\": \"1990-01-01\"\n}\n\n// {   \"firstName\": \"Iulia\",\n//     \"lastName\": \"Darlin\",\n//     \"username\": \"iuliadarlin\",\n//     \"email\": \"iuliadarlin@yahoo.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n\n// {\n//     \"firstName\": \"Dona\",\n//     \"lastName\": \"Pop\",\n//     \"username\": \"donapop\",\n//     \"email\": \"donapop@gmail.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/register"
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\": \"admin\",\"password\": \"admin\"}\n\n// {\"username\": \"johndoe\",\"password\": \"Parola12!2\"}\n\n// {\"username\": \"iuliadarlin\",\"password\": \"Password1!\"}\n\n// {\"username\": \"donapop\",\"password\": \"Password1!\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/login"
+			},
+			"response": []
+		},
+		{
+			"name": "Reset Password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"johndoe@gmail.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/reset"
+			},
+			"response": []
+		},
+		{
+			"name": "Set New Password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"password\": \"Parola12!2\",\n    \"confirmPassword\": \"Parola12!2\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/reset/2?token=38feff5055f12b685bc4bcde54ecdb02&signature=d1659cc32ab7016f43606385898c31fba0fbc613e7e14c176540833efbf3a63d&expires=1711131953767",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"reset",
+						"2"
+					],
+					"query": [
+						{
+							"key": "token",
+							"value": "38feff5055f12b685bc4bcde54ecdb02"
+						},
+						{
+							"key": "signature",
+							"value": "d1659cc32ab7016f43606385898c31fba0fbc613e7e14c176540833efbf3a63d"
+						},
+						{
+							"key": "expires",
+							"value": "1711131953767"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{iulia}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/refresh/token"
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{admin}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"refreshToken\": \"nfwwbvfkqx98ql6hlrluxu\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/logout"
+			},
+			"response": []
+		}
+	]
+}

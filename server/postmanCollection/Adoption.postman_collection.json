@@ -1,0 +1,117 @@
+{
+	"info": {
+		"_postman_id": "6da46d18-ac5f-4d96-a260-d57a498150d5",
+		"name": "Adoption",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "26090355"
+	},
+	"item": [
+		{
+			"name": "Adopt A Cat",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{iulia}}"
+					}
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"message\": \"I would like to adopt this cat. It looks adorable!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/adopt/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Requests",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"status\": \"accepted\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{base_url}}/adopt/1"
+			},
+			"response": []
+		},
+		{
+			"name": "List Of Mail",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{iulia}}"
+					}
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "sort-order",
+						"value": "ASC",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": "{{base_url}}/mails"
+			},
+			"response": []
+		},
+		{
+			"name": "Get A Mail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "GET",
+				"header": [],
+				"url": "{{base_url}}/mails/1"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete A Mail",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": {
+						"token": "{{john}}"
+					}
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": "{{base_url}}/mails/1"
+			},
+			"response": []
+		}
+	]
+}
