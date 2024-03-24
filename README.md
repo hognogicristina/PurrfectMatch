@@ -84,7 +84,7 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 
 ## Postman Collection
 
-- Import the `Adopt-A-Cat.postman_collection.json` file located at `Project/server/postmanCollection
+- Import the `Adopt-A-Cat.postman_collection.json` file located at `Project/server/postmanCollection`
 
 ## Contributing
 
