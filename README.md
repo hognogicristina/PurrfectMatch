@@ -13,6 +13,14 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 ## Preview
 
 ## Features
+- **RESTful API**: Ensures seamless data management and communication between the frontend and backend.
+- **Detailed Models**: Includes comprehensive models for cats, user profiles.
+- **Responsive Client Interface**:
+- **User Authentication**: Secure user authentication and authorization.
+- **Community Section**: Enables users to interact and engage in discussions.
+- **Search and Filter**: Allows users to search and filter cats based on various criteria.
+- **Save Favorites**: Users can save their favorite cats for future reference.
+- **Admin Panel**: Provides an admin panel for managing users and cats.
 
 ## Technologies
 
@@ -73,7 +81,6 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 - Generate a secret key for JWT:
     ```bash
     openssl rand -base64 32
-   
 
 ## Postman Collection
 
