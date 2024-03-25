@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+<script>
+    const ws = new WebSocket("ws://localhost:3000")
+
+    ws.onopen = function () {
+        console.log("Connected to the server")
+        const token = localStorage.getItem("token")
+        ws.send(JSON.stringify({type: 'authenticate', token: token}))
+    }
+
+    ws.onmessage = function (event) {
+        console.log("Received message from server:", event.data)
+    }
+
+    ws.onclose = function () {
+        console.log("Disconnected from the server")
+    }
+
+    ws.onerror = function (error) {
+        console.log("Error occurred:", error)
+    }
+</script>
+</body>
+</html>

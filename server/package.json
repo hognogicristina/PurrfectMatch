@@ -29,6 +29,7 @@
     "sequelize": "^6.37.1",
     "smtp-connection": "^4.0.2",
     "sqlite3": "^5.1.7",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "ws": "^8.16.0"
   }
 }

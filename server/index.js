@@ -1,11 +1,10 @@
 const express = require('express')
-const app = express()
+const http = require('http')
 const bodyParser = require('body-parser')
 const path = require('path')
 const cookieParser = require("cookie-parser")
 const fs = require('fs')
-const setupMailCronJob = require('./src/cronjob/mailcron')
-const setupPasswordCronJob = require('./src/cronjob/passwordcron')
+const {WebSocketServer} = require("ws")
 
 require('dotenv').config({path: './.env'})
 // Comment the line below if you want to use the .env file and not the .env.local file
@@ -13,6 +12,12 @@ require('dotenv').config({path: './.env.local', override: true})
 
 const {sequelize} = require('./models')
 const routes = require('./src/routes/routes')
+const setupMailCronJob = require('./src/cronjob/mailcron')
+const setupPasswordCronJob = require('./src/cronjob/passwordcron')
+
+const app = express()
+const server = http.createServer(app)
+const wss = new WebSocketServer({server})
 
 const dir = path.join(__dirname, 'public/files')
 if (!fs.existsSync(dir)) {
@@ -24,17 +29,31 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/', routes)
 app.use('/files', express.static('public/files'))
+
 setupMailCronJob()
 setupPasswordCronJob()
 
 const PORT = process.env.PORT || 3000
 
-const startApp = async () => {
+const startApp = () => {
     try {
-        await sequelize.sync()
+        sequelize.sync()
         console.log('Database connected and models synced!')
 
-        app.listen(PORT, () => {
+        wss.on('connection', (ws) => {
+            console.log('Client connected')
+
+            ws.on('message', (message) => {
+                const messageStr = message.toString()
+                console.log('Received message:', messageStr)
+            })
+
+            ws.on('close', () => {
+                console.log('Client disconnected')
+            })
+        })
+
+        server.listen(PORT, () => {
             console.log(`Server is running at http://localhost:${PORT}`)
         })
     } catch (error) {

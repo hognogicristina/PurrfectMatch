@@ -70,7 +70,7 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 
 2. Create migrations:
     ```bash
-    npx sequelize-cli migration:generate --name create-table-name
+    npx sequelize-cli migration:generate --name create-name-table
 
 3. Run the migration:
     ```bash

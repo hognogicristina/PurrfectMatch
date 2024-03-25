@@ -15,7 +15,7 @@ Use the following command to create a new migration. This is useful for creating
 
 **Note:** Execute this command for each table you wish to create or modify.
 
-    npx sequelize-cli migration:generate --name create-table-name
+    npx sequelize-cli migration:generate --name create-name-table
 
 ## Step 4: Run the migration
 To execute the migration, use the following command:
