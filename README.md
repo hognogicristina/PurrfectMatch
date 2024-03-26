@@ -13,6 +13,7 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 ## Preview
 
 ## Features
+
 - **RESTful API**: Ensures seamless data management and communication between the frontend and backend.
 - **Detailed Models**: Includes comprehensive models for cats, user profiles.
 - **Responsive Client Interface**:
@@ -65,10 +66,13 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 ### Sequelize ORM
 
 1. Initialize Sequelize in your project:
+   **Note:** This step will generate `config`, `models`, `migrations`, and `seeders` folders in your project. If these
+   folders are already present, you may skip this step.
     ```bash
     npx sequelize-cli init
 
 2. Create migrations:
+   **Note:** Execute this command for creating or modifying tables.
     ```bash
     npx sequelize-cli migration:generate --name create-name-table
 
