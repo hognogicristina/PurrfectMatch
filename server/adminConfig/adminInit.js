@@ -33,4 +33,4 @@ const initializeAdmin = async () => {
     }
 }
 
-await initializeAdmin()
+initializeAdmin()
