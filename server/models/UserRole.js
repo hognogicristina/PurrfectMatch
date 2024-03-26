@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('UserMail', {
+    return sequelize.define('UserRole', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         mailId: {
             type: DataTypes.INTEGER,
             references: {
-                model: 'Mails',
+                model: 'AdoptionRequests',
                 key: 'id'
             },
             allowNull: false,

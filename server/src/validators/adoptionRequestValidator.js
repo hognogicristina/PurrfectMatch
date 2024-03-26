@@ -1,4 +1,4 @@
-const {Mail, Cat, Address, UserMail, Favorite} = require('../../models')
+const {AdoptionRequest, Cat, Address, UserRole, Favorite} = require('../../models')
 const validator = require("validator")
 const e = require("express");
 
@@ -33,14 +33,14 @@ const adoptValidator = async (req, res) => {
         }
     }
 
-    const pendingMails = await Mail.findAll({
+    const pendingAdoptionRequests = await AdoptionRequest.findAll({
         where: {catId: req.params.id, status: 'pending'},
         attributes: ['id'],
     })
 
-    for (const mail of pendingMails) {
-        const existingRequest = await UserMail.findOne({
-            where: {mailId: mail.id, userId: userId, role: 'sender'}
+    for (const adoptionRequest of pendingAdoptionRequests) {
+        const existingRequest = await UserRole.findOne({
+            where: {adoptionRequestId: adoptionRequest.id, userId: userId, role: 'sender'}
         })
 
         if (existingRequest) {
@@ -64,9 +64,9 @@ const handleAdoptionRequestValidator = async (req, res) => {
     const userId = req.user.id
 
     if (req.params.id) {
-        const mail = await Mail.findByPk(id)
+        const mail = await AdoptionRequest.findByPk(id)
         if (!mail) {
-            return res.status(404).json({error: 'Mail not found'})
+            return res.status(404).json({error: 'AdoptionRequest not found'})
         }
 
         const cat = await Cat.findByPk(mail.catId)
@@ -91,52 +91,52 @@ const handleAdoptionRequestValidator = async (req, res) => {
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
-const deleteMailValidator = async (req, res) => {
+const deleteAdoptionRequestValidator = async (req, res) => {
     const errors = []
     const userId = req.user.id
     const mailId = req.params.id
 
-    const mail = await Mail.findByPk(mailId)
+    const mail = await AdoptionRequest.findByPk(mailId)
     if (!mail) {
-        return res.status(404).json({error: 'Mail not found'})
+        return res.status(404).json({error: 'AdoptionRequest not found'})
     }
 
     if (mail.status === 'pending') {
         errors.push({field: 'status', error: 'Cannot delete pending mails'})
     }
 
-    const userMail = await UserMail.findOne({where: {userId, mailId}})
-    if (!userMail) {
+    const userAdoptionRequest = await UserRole.findOne({where: {userId, mailId}})
+    if (!userAdoptionRequest) {
         return res.status(403).json({error: 'You are not allowed to delete this mail'})
     }
 
-    if (!userMail.isVisible) {
-        return res.status(400).json({error: 'Mail already deleted'})
+    if (!userAdoptionRequest.isVisible) {
+        return res.status(400).json({error: 'AdoptionRequest already deleted'})
     }
 
     return errors.length > 0 ? res.status(400).json({errors}) : null
 }
 
-const getMailsValidator = async (req, res) => {
+const getAdoptionRequestsValidator = async (req, res) => {
     const sortOrder = req.headers['sort-order'] || 'DESC'
 
     if (req.params.id) {
-        const mail = await Mail.findByPk(req.params.id)
+        const mail = await AdoptionRequest.findByPk(req.params.id)
         if (!mail) {
-            return res.status(404).json({error: 'Mail not found'})
+            return res.status(404).json({error: 'AdoptionRequest not found'})
         }
 
-        const userMail = await UserMail.findOne({where: {mailId: req.params.id, userId: req.user.id}})
-        if (!userMail) {
+        const userAdoptionRequest = await UserRole.findOne({where: {mailId: req.params.id, userId: req.user.id}})
+        if (!userAdoptionRequest) {
             return res.status(403).json({error: 'You are not allowed to view this mail'})
         }
 
-        if (!userMail.isVisible) {
-            return res.status(400).json({error: 'Mail not found'})
+        if (!userAdoptionRequest.isVisible) {
+            return res.status(400).json({error: 'AdoptionRequest not found'})
         }
     } else {
-        const userMails = await UserMail.findAll({where: {userId: req.user.id}})
-        if (userMails.length === 0) {
+        const userAdoptionRequests = await UserRole.findAll({where: {userId: req.user.id}})
+        if (userAdoptionRequests.length === 0) {
             return res.status(404).json({error: 'No mails found'})
         }
 
@@ -152,6 +152,6 @@ const getMailsValidator = async (req, res) => {
 module.exports = {
     adoptValidator,
     handleAdoptionRequestValidator,
-    deleteMailValidator,
-    getMailsValidator
+    deleteAdoptionRequestValidator,
+    getAdoptionRequestsValidator
 }

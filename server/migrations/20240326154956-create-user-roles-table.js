@@ -3,37 +3,40 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
     async up(queryInterface, Sequelize) {
-        await queryInterface.createTable('Mails', {
+        await queryInterface.createTable('UserRoles', {
             id: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
-                autoIncrement: true,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true
             },
-            catId: {
+            userId: {
                 type: Sequelize.INTEGER,
-                allowNull: false,
                 references: {
-                    model: 'Cats',
-                    key: 'id',
+                    model: 'Users',
+                    key: 'id'
                 },
+                allowNull: false
             },
-            message: {
-                type: Sequelize.TEXT,
-                allowNull: false,
-            },
-            addressId: {
+            mailId: {
                 type: Sequelize.INTEGER,
-                allowNull: true,
                 references: {
-                    model: 'Addresses',
-                    key: 'id',
+                    model: 'AdoptionRequests',
+                    key: 'id'
                 },
+                allowNull: false
             },
-            status: {
+            role: {
                 type: Sequelize.STRING,
-                defaultValue: 'pending',
                 allowNull: false,
+                validate: {
+                    isIn: [['sender', 'receiver']]
+                }
+            },
+            isVisible: {
+                type: Sequelize.BOOLEAN,
+                defaultValue: true,
+                allowNull: false
             },
             createdAt: {
                 allowNull: false,
@@ -47,6 +50,6 @@ module.exports = {
     },
 
     async down(queryInterface, Sequelize) {
-        await queryInterface.dropTable('Mails')
+        await queryInterface.dropTable('UserRoles')
     }
 }

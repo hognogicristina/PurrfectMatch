@@ -6,7 +6,10 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
-        name: DataTypes.STRING,
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         imageId: {
             type: DataTypes.INTEGER,
             references: {
@@ -15,9 +18,23 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: false,
         },
-        breed: DataTypes.STRING,
+        breed: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Breeds',
+                key: 'id'
+            },
+            allowNull: false,
+        },
         gender: DataTypes.STRING,
-        age: DataTypes.STRING,
+        age: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        ageType: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         healthProblem: {
             type: DataTypes.STRING,
             allowNull: true,

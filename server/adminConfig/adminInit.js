@@ -19,6 +19,9 @@ const initializeAdmin = async () => {
                 password: hashedPassword,
                 email: adminDetails.email,
                 birthday: adminDetails.birthday,
+                description: adminDetails.description,
+                hobbies: adminDetails.hobbies,
+                experienceLevel: adminDetails.experienceLevel,
                 role: adminDetails.role,
                 status: adminDetails.status
             })

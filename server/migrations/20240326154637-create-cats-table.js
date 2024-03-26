@@ -11,7 +11,8 @@ module.exports = {
                 type: Sequelize.INTEGER
             },
             name: {
-                type: Sequelize.STRING
+                type: Sequelize.STRING,
+                allowNull: false
             },
             imageId: {
                 type: Sequelize.INTEGER,
@@ -22,13 +23,23 @@ module.exports = {
                 allowNull: false
             },
             breed: {
-                type: Sequelize.STRING
+                type: Sequelize.INTEGER,
+                references: {
+                    model: 'Breeds',
+                    key: 'id',
+                },
+                allowNull: false
             },
             gender: {
                 type: Sequelize.STRING
             },
             age: {
-                type: Sequelize.INTEGER
+                type: Sequelize.INTEGER,
+                allowNull: false
+            },
+            ageType: {
+                type: Sequelize.STRING,
+                allowNull: false
             },
             healthProblem: {
                 type: Sequelize.STRING,

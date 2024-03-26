@@ -1,14 +1,14 @@
-const {Image, Address, Cat, CatUser, Mail, UserMail, RefreshToken, PasswordHistory} = require("../../models")
+const {Image, Address, Cat, CatUser, AdoptionRequest, UserRole, RefreshToken, PasswordHistory} = require("../../models")
 const fileHelper = require("./fileHelper")
 
 const deleteUser = async (user) => {
     await RefreshToken.destroy({where: {userId: user.id}})
     await PasswordHistory.destroy({where: {userId: user.id}})
-    const userMails = await UserMail.findAll({where: {userId: user.id}})
-    for (let userMail of userMails) {
-        const mail = await Mail.findByPk(userMail.mailId)
-        await userMail.destroy()
-        await mail.destroy()
+    const userAdoptionRequests = await UserRole.findAll({where: {userId: user.id}})
+    for (let userAdoptionRequest of userAdoptionRequests) {
+        const adoptionRequest = await AdoptionRequest.findByPk(userAdoptionRequest.adoptionRequestId)
+        await userAdoptionRequest.destroy()
+        await adoptionRequest.destroy()
     }
     await CatUser.destroy({where: {userId: user.id}})
     await CatUser.destroy({where: {ownerId: user.id}})
@@ -26,13 +26,13 @@ const deleteCat = async (cat) => {
     for (let catUser of catUsers) {
         await catUser.destroy()
     }
-    const mails = await Mail.findAll({where: {catId: cat.id}})
-    for (let mail of mails) {
-        const userMails = await UserMail.findAll({where: {mailId: mail.id}})
-        for (let userMail of userMails) {
-            await userMail.destroy()
+    const adoptionRequests = await AdoptionRequest.findAll({where: {catId: cat.id}})
+    for (let adoptionRequest of adoptionRequests) {
+        const userAdoptionRequests = await UserRole.findAll({where: {adoptionRequestId: adoptionRequest.id}})
+        for (let userAdoptionRequest of userAdoptionRequests) {
+            await userAdoptionRequest.destroy()
         }
-        await mail.destroy()
+        await adoptionRequest.destroy()
     }
     const image = await Image.findByPk(cat.imageId)
     await cat.destroy()

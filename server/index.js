@@ -10,7 +10,7 @@ require('dotenv').config({path: './.env.local', override: true})
 
 const {sequelize} = require('./models')
 const routes = require('./src/routes/routes')
-const setupMailCronJob = require('./src/cronjob/mailcron')
+const setupAdoptionRequestCronJob = require('./src/cronjob/adoptionRequestCron')
 const setupPasswordCronJob = require('./src/cronjob/passwordcron')
 
 const app = express()
@@ -26,7 +26,7 @@ app.use(cookieParser())
 app.use('/', routes)
 app.use('/files', express.static('public/files'))
 
-setupMailCronJob()
+setupAdoptionRequestCronJob()
 setupPasswordCronJob()
 
 const PORT = process.env.PORT || 3000

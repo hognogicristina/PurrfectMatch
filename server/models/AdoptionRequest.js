@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('Mail', {
+    return sequelize.define('AdoptionRequest', {
         id: {
             type: DataTypes.INTEGER,
             primaryKey: true,

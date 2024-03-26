@@ -1,12 +1,12 @@
 const {Image, Address, RefreshToken} = require("../../models")
 const emailService = require("../services/emailService")
-const mailHelper = require("./mailHelper")
+const adoptionRequestHelper = require("./adoptionRequestHelper")
 const catUserHelper = require("./catUserHelper")
 const fileHelper = require("./fileHelper")
 
 const deleteUser = async (user) => {
     await emailService.sendDeleteAccount(user)
-    await mailHelper.deleteMailUser(user)
+    await adoptionRequestHelper.deleteAdoptionRequestUser(user)
     await catUserHelper.updateOwner(user)
     await catUserHelper.deleteCat(user)
     await RefreshToken.destroy({where: {userId: user.id}})

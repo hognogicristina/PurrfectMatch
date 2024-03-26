@@ -1,15 +1,15 @@
 const cron = require('node-cron')
 const {Op} = require('sequelize')
-const {Mail} = require('../../models')
+const {AdoptionRequest} = require('../../models')
 
-const setupMailCronJob = () => {
+const setupAdoptionRequestCronJob = () => {
     cron.schedule('0 0 * * 0', async () => {
         try {
-            console.log('Running a weekly check to delete old mails')
+            console.log('Running a weekly check to delete old adoption requests')
             const oneMonthAgo = new Date()
             oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
 
-            await Mail.destroy({
+            await AdoptionRequest.destroy({
                 where: {
                     updatedAt: {
                         [Op.lt]: oneMonthAgo
@@ -17,11 +17,11 @@ const setupMailCronJob = () => {
                 }
             })
 
-            console.log('Old mails deleted successfully')
+            console.log('Old adoption requests deleted successfully')
         } catch (error) {
-            console.error('Error occurred while deleting old mails: ', error)
+            console.error('Error occurred while deleting old adoption requests: ', error)
         }
     })
 }
 
-module.exports = setupMailCronJob
+module.exports = setupAdoptionRequestCronJob

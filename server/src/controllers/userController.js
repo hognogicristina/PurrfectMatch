@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const {Address, User, PasswordHistory} = require('../../models')
 const userValidator = require('../validators/userValidator')
 const catUserValidator = require('../validators/catUserValidator')
-const mailHelper = require('../helpers/mailHelper')
+const adoptionRequestHelper = require('../helpers/adoptionRequestHelper')
 const fileHelper = require("../helpers/fileHelper")
 const catUserHelper = require("../helpers/catUserHelper")
 const userHelper = require('../helpers/userHelper')
@@ -39,7 +39,7 @@ const editUser = async (req, res) => {
     try {
         if (await userValidator.editUserValidation(req, res)) return
         const fieldsToUpdate = ['firstName', 'lastName', 'email', 'birthday', 'description', 'hobbies', 'experienceLevel']
-        await mailHelper.updateEmail(req.user, fieldsToUpdate, req.body)
+        await adoptionRequestHelper.updateEmail(req.user, fieldsToUpdate, req.body)
         req.user.imageId = await fileHelper.updateImage(req.user, req.file)
         await req.user.save()
         return res.json({status: 'User updated successfully'})

@@ -55,7 +55,7 @@
 			"response": []
 		},
 		{
-			"name": "List Of Mail",
+			"name": "List Of AdoptionRequest",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
@@ -84,7 +84,7 @@
 			"response": []
 		},
 		{
-			"name": "Get A Mail",
+			"name": "Get A AdoptionRequest",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -99,7 +99,7 @@
 			"response": []
 		},
 		{
-			"name": "Delete A Mail",
+			"name": "Delete A AdoptionRequest",
 			"request": {
 				"auth": {
 					"type": "bearer",

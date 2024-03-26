@@ -3,7 +3,7 @@ const catValidator = require('../validators/catValidator')
 const catUserValidator = require('../validators/catUserValidator')
 const catHelper = require('../helpers/catHelper')
 const fileHelper = require('../helpers/fileHelper')
-const mailHelper = require('../helpers/mailHelper')
+const mailHelper = require('../helpers/adoptionRequestHelper')
 const catDTO = require('../dto/catDTO')
 
 const getAllCats = async (req, res) => {
@@ -78,7 +78,7 @@ const deleteCat = async (req, res) => {
         const cat = await Cat.findByPk(req.params.id)
         const image = await Image.findByPk(cat.imageId)
 
-        await mailHelper.deleteMailCat(cat, req.user)
+        await mailHelper.deleteAdoptionRequestCat(cat, req.user)
         await CatUser.destroy({where: {catId: cat.id}})
         await cat.destroy()
         await fileHelper.deleteImage(image)

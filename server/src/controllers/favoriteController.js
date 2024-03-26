@@ -1,6 +1,6 @@
-const {Favorite, Cat, Mail, UserMail} = require('../../models')
+const {Favorite, Cat, AdoptionRequest, UserRole} = require('../../models')
 const favoriteValidator = require('../validators/favoriteValidator')
-const mailValidator = require("../validators/mailValidator")
+const mailValidator = require("../validators/adoptionRequestValidator")
 const catDTO = require('../dto/catDTO')
 
 const getFavorites = async (req, res) => {
@@ -36,9 +36,9 @@ const adoptFavorite = async (req, res) => {
         const favorite = await Favorite.findByPk(req.params.id)
         const cat = await Cat.findByPk(favorite.catId)
         const {message} = req.body
-        const mail = await Mail.create({catId: cat.id, message})
-        await UserMail.create({userId: req.user.id, mailId: mail.id, role: 'sender'})
-        await UserMail.create({userId: cat.userId, mailId: mail.id, role: 'receiver'})
+        const mail = await AdoptionRequest.create({catId: cat.id, message})
+        await UserRole.create({userId: req.user.id, mailId: mail.id, role: 'sender'})
+        await UserRole.create({userId: cat.userId, mailId: mail.id, role: 'receiver'})
         await favorite.destroy()
         return res.status(200).json({status: 'Adoption request sent successfully'})
     } catch (error) {
