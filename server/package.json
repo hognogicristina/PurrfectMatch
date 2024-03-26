@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node adminConfig/adminInit.js && nodemon index.js"
+    "start": "find ./configurations -type f -name '*.js' | xargs -I {} node {}"
   },
   "keywords": [],
   "author": "",

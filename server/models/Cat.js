@@ -19,19 +19,15 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         breed: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'Breeds',
-                key: 'id'
-            },
-            allowNull: false,
+            type: DataTypes.STRING,
+            allowNull: false
         },
         gender: DataTypes.STRING,
         age: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        ageType: {
+        adoptionRequest: {
             type: DataTypes.STRING,
             allowNull: false
         },

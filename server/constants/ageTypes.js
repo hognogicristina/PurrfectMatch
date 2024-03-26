@@ -27,6 +27,6 @@ let AgeTypes = {
         },
         TYPE: 'Senior',
     },
-};
+}
 
-global.CONSTANTS = AgeTypes;
+global.CONSTANTS = AgeTypes

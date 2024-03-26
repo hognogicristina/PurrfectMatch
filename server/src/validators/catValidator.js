@@ -2,7 +2,7 @@ const validator = require('validator')
 const fs = require('fs')
 const path = require("path")
 const {Op} = require("sequelize")
-const {Cat} = require('../../models')
+const {Cat, Breed} = require('../../models')
 
 const catExistValidator = async (req, res) => {
     const cats = await Cat.findAll()
@@ -44,12 +44,12 @@ const catExistValidator = async (req, res) => {
             }
         }
 
-        if (req.query.selectedAge) {
+        if (req.query.selectedAgeType) {
             const ageRanges = JSON.parse(fs.readFileSync((path.join('./data', 'ageRanges.json')), 'utf-8'))
-            if (Object.keys(ageRanges).includes(req.query.selectedAge)) {
+            if (Object.keys(ageRanges).includes(req.query.selectedAgeType)) {
                 const ageExists = cats.some(cat => {
                     const catAge = cat.age.split(' ')[0]
-                    return catAge === req.query.selectedAge
+                    return catAge === req.query.selectedAgeType
                 })
                 if (!ageExists) {
                     return res.status(404).json({error: 'No Result Found'})
@@ -93,11 +93,15 @@ const catValidator = async (req, res) => {
     if (validator.isEmpty(req.body.name || '')) {
         errors.push({field: 'name', error: 'Name is required'})
     }
-    const breeds = JSON.parse(fs.readFileSync((path.join('./data', 'breeds.json')), 'utf-8'))
+
     if (validator.isEmpty(req.body.breed || '')) {
         errors.push({field: 'breed', error: 'Breed is required'})
-    } else if (!breeds.includes(req.body.breed)) {
-        errors.push({field: 'breed', error: 'Please select a valid breed'})
+    } else {
+        const breeds = await Breed.findAll()
+        const breedNames = breeds.map(breed => breed.name)
+        if (!breedNames.includes(req.body.breed)) {
+            errors.push({field: 'breed', error: 'Please select a valid breed'})
+        }
     }
 
     if (validator.isEmpty(req.body.gender || '')) {
@@ -106,11 +110,10 @@ const catValidator = async (req, res) => {
         errors.push({field: 'gender', error: 'Gender must be either Male or Female'})
     }
 
-    const categories = Object.keys(JSON.parse(fs.readFileSync((path.join('./data', 'ageRanges.json')), 'utf-8')))
     if (validator.isEmpty(req.body.age || '')) {
         errors.push({field: 'age', error: 'Age is required'})
-    } else if (!categories.includes(req.body.age)) {
-        errors.push({field: 'age', error: 'Please select a valid life stage'})
+    } else if (!validator.isInt(req.body.age)) {
+        errors.push({field: 'age', error: 'Age must be an integer'})
     }
 
     if (validator.isEmpty(req.body.description || '')) {

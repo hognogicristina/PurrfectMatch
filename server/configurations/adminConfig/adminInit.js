@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const bcrypt = require('bcrypt')
-const {User, PasswordHistory} = require('../models')
+const {User, PasswordHistory} = require('../../models')
 
 const initializeAdmin = async () => {
     try {
@@ -30,6 +30,8 @@ const initializeAdmin = async () => {
                 password: hashedPassword
             })
             console.log('Admin user created')
+        } else {
+            console.log('Admin user already exists')
         }
     } catch (error) {
         console.error('Error initializing admin user:', error)

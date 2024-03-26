@@ -1,13 +1,13 @@
 const {Op} = require('sequelize')
 const {User, Cat} = require('../../models')
-const userValidator = require('../validators/userValidator')
+const adminValidator = require('../validators/adminValidator')
 const adminHelper = require("../helpers/adminHelper")
 const catValidator = require("../validators/catValidator")
 const userDTO = require('../dto/userDTO')
 
 const getAllUsers = async (req, res) => {
     try {
-        if (await userValidator.userExistValidator(req, res)) return
+        if (await adminValidator.userExistValidator(req, res)) return
         const users = await User.findAll({where: {role: {[Op.ne]: 'admin'}}})
         const usersDetails = []
         for (let user of users) {
@@ -22,7 +22,7 @@ const getAllUsers = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        if (await userValidator.userExistValidator(req, res)) return
+        if (await adminValidator.userExistValidator(req, res)) return
         const user = await User.findByPk(req.params.id)
         await adminHelper.deleteUser(user)
         return res.status(200).json({status: 'User deleted successfully'})

@@ -23,11 +23,7 @@ module.exports = {
                 allowNull: false
             },
             breed: {
-                type: Sequelize.INTEGER,
-                references: {
-                    model: 'Breeds',
-                    key: 'id',
-                },
+                type: Sequelize.STRING,
                 allowNull: false
             },
             gender: {
@@ -37,7 +33,7 @@ module.exports = {
                 type: Sequelize.INTEGER,
                 allowNull: false
             },
-            ageType: {
+            adoptionRequest: {
                 type: Sequelize.STRING,
                 allowNull: false
             },
