@@ -1,32 +1,32 @@
-const {Address, ImadoptionRequest, User} = require('../../models')
+const { Address, ImadoptionRequest, User } = require("../../models");
 
 async function transformCatToDTO(cat) {
-    const image = await Image.findOne({ where: { id: cat.imageId } })
-    const guardian = await User.findByPk(cat.userId)
-    const owner = await User.findByPk(cat.ownerId)
-    const address = await Address.findOne({ where: { id: guardian.addressId } })
+  const image = await Image.findOne({ where: { id: cat.imageId } });
+  const guardian = await User.findByPk(cat.userId);
+  const owner = await User.findByPk(cat.ownerId);
+  const address = await Address.findOne({ where: { id: guardian.addressId } });
 
-    return {
-        name: cat.name,
-        image: image ? image.url : null,
-        breed: cat.breed,
-        gender: cat.gender,
-        adoptionRequest: cat.ageType,
-        healthProblem: cat.healthProblem ? cat.healthProblem : null,
-        description: cat.description,
-        guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
-        owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
-        address: address ? `${address.city}, ${address.country}` : null,
-    }
+  return {
+    name: cat.name,
+    image: image ? image.url : null,
+    breed: cat.breed,
+    gender: cat.gender,
+    adoptionRequest: cat.ageType,
+    healthProblem: cat.healthProblem ? cat.healthProblem : null,
+    description: cat.description,
+    guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
+    owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
+    address: address ? `${address.city}, ${address.country}` : null,
+  };
 }
 
 async function transformCatsToDTO(cat) {
-    return {
-        name: cat.name,
-        breed: cat.breed,
-        gender: cat.gender,
-        ageType: cat.ageType,
-    }
+  return {
+    name: cat.name,
+    breed: cat.breed,
+    gender: cat.gender,
+    ageType: cat.ageType,
+  };
 }
 
-module.exports = {transformCatToDTO, transformCatsToDTO}
+module.exports = { transformCatToDTO, transformCatsToDTO };

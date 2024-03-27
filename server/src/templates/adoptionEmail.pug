@@ -1,86 +1,86 @@
 doctype html
 html
-    head
-        style.
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }
+  head
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
 
-            .container {
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
-                background-color: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
+      .header {
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-            .header {
-                font-size: 24px;
-                color: #333;
-                text-align: center;
-                margin-bottom: 20px;
-            }
+      .content {
+        margin-bottom: 20px;
+      }
 
-            .content {
-                margin-bottom: 20px;
-            }
+      .content p {
+        margin-bottom: 10px;
+        line-height: 1.6;
+      }
 
-            .content p {
-                margin-bottom: 10px;
-                line-height: 1.6;
-            }
+      .content ul {
+        list-style-type: none;
+        padding: 0;
+      }
 
-            .content ul {
-                list-style-type: none;
-                padding: 0;
-            }
+      .content ul li {
+        margin-bottom: 10px;
+      }
 
-            .content ul li {
-                margin-bottom: 10px;
-            }
+      .content img {
+        display: block;
+        margin: 0 auto;
+        max-width: 100%;
+        height: auto;
+        border-radius: 5px;
+      }
 
-            .content img {
-                display: block;
-                margin: 0 auto;
-                max-width: 100%;
-                height: auto;
-                border-radius: 5px;
-            }
+      .footer p {
+        margin-bottom: 5px;
+      }
 
-            .footer p {
-                margin-bottom: 5px;
-            }
-
-        .container
-            p.header Confirmation of Your Successful Cat Adoption
-            .content
-                p Dear #{sender.firstName} #{sender.lastName},
-                p I am thrilled to inform you that your cat adoption process has been successfully completed. Congratulations on welcoming a new feline friend into your home! Below are the details of the cat you have adopted:
-                ul
-                    li
-                        img(src=imageUrl alt="Cat Image" width="200")
-                    li Name: #{cat.name}
-                    li Age: #{cat.age}
-                    li Breed: #{cat.breed}
-                    li Gender: #{cat.gender}
-                    if cat.healthProblem
-                        li Health Problem: #{cat.healthProblem}
-                    li Description: #{cat.description}
-                p Also, here is the address of where you can pick up your new friend:
-                ul
-                    li County: #{address.county}
-                    li City: #{address.city}
-                    li Street: #{address.street}
-                    li Number: #{address.number}
-                    if address.floor
-                        li Floor: #{address.floor}
-                    if address.apartment
-                        li Apartment: #{address.apartment}
-                    li Postal Code: #{address.postalCode}
-            .footer
-                p Best regards,
-                p #{receiver.firstName} #{receiver.lastName}
+    .container
+      p.header Confirmation of Your Successful Cat Adoption
+      .content
+        p Dear #{sender.firstName} #{sender.lastName},
+        p I am thrilled to inform you that your cat adoption process has been successfully completed. Congratulations on welcoming a new feline friend into your home! Below are the details of the cat you have adopted:
+        ul
+          li
+            img(src=imageUrl alt="Cat Image" width="200")
+          li Name: #{cat.name}
+          li Age: #{cat.age}
+          li Breed: #{cat.breed}
+          li Gender: #{cat.gender}
+          if cat.healthProblem
+            li Health Problem: #{cat.healthProblem}
+          li Description: #{cat.description}
+        p Also, here is the address of where you can pick up your new friend:
+        ul
+          li County: #{address.county}
+          li City: #{address.city}
+          li Street: #{address.street}
+          li Number: #{address.number}
+          if address.floor
+            li Floor: #{address.floor}
+          if address.apartment
+            li Apartment: #{address.apartment}
+          li Postal Code: #{address.postalCode}
+      .footer
+        p Best regards,
+        p #{receiver.firstName} #{receiver.lastName}

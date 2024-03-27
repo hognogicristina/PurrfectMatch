@@ -1,157 +1,188 @@
-const {AdoptionRequest, Cat, Address, UserRole, Favorite} = require('../../models')
-const validator = require("validator")
+const {
+  AdoptionRequest,
+  Cat,
+  Address,
+  UserRole,
+  Favorite,
+} = require("../../models");
+const validator = require("validator");
 const e = require("express");
 
 const adoptValidator = async (req, res) => {
-    const errors = []
-    const userId = req.user.id
+  const errors = [];
+  const userId = req.user.id;
 
-    if (req.params.id) {
-        let cat = null
-        if (req.path.includes('favorites')) {
-            const favorite = await Favorite.findByPk(req.params.id)
-            if (!favorite) {
-                return res.status(404).json({error: 'Favorite not found'})
-            }
+  if (req.params.id) {
+    let cat = null;
+    if (req.path.includes("favorites")) {
+      const favorite = await Favorite.findByPk(req.params.id);
+      if (!favorite) {
+        return res.status(404).json({ error: "Favorite not found" });
+      }
 
-            cat = await Cat.findByPk(favorite.catId)
-        } else {
-            cat = await Cat.findByPk(req.params.id)
-        }
-
-        if (!cat) {
-            errors.push({field: 'cat', error: 'Cat not found'})
-            return res.status(400).json({errors})
-        }
-
-        if (cat.userId === userId) {
-            errors.push({field: 'cat', error: 'You cannot send adoption request for a cat you are guardian of'})
-        }
-
-        if (cat.ownerId !== null) {
-            errors.push({field: 'cat', error: 'Cat already adopted'})
-        }
+      cat = await Cat.findByPk(favorite.catId);
+    } else {
+      cat = await Cat.findByPk(req.params.id);
     }
 
-    const pendingAdoptionRequests = await AdoptionRequest.findAll({
-        where: {catId: req.params.id, status: 'pending'},
-        attributes: ['id'],
-    })
-
-    for (const adoptionRequest of pendingAdoptionRequests) {
-        const existingRequest = await UserRole.findOne({
-            where: {adoptionRequestId: adoptionRequest.id, userId: userId, role: 'sender'}
-        })
-
-        if (existingRequest) {
-            errors.push({field: 'cat', error: 'Adoption request already sent'})
-        }
+    if (!cat) {
+      errors.push({ field: "cat", error: "Cat not found" });
+      return res.status(400).json({ errors });
     }
 
-    if (validator.isEmpty(req.body.message)) {
-        errors.push({field: 'message', error: 'Message is required'})
-    } else if (!validator.isLength(req.body.message, {min: 10, max: 100})) {
-        errors.push({field: 'message', error: 'Message must be between 10 and 100 characters'})
+    if (cat.userId === userId) {
+      errors.push({
+        field: "cat",
+        error: "You cannot send adoption request for a cat you are guardian of",
+      });
     }
 
-    return errors.length > 0 ? res.status(400).json({errors}) : null
-}
+    if (cat.ownerId !== null) {
+      errors.push({ field: "cat", error: "Cat already adopted" });
+    }
+  }
+
+  const pendingAdoptionRequests = await AdoptionRequest.findAll({
+    where: { catId: req.params.id, status: "pending" },
+    attributes: ["id"],
+  });
+
+  for (const adoptionRequest of pendingAdoptionRequests) {
+    const existingRequest = await UserRole.findOne({
+      where: {
+        adoptionRequestId: adoptionRequest.id,
+        userId: userId,
+        role: "sender",
+      },
+    });
+
+    if (existingRequest) {
+      errors.push({ field: "cat", error: "Adoption request already sent" });
+    }
+  }
+
+  if (validator.isEmpty(req.body.message)) {
+    errors.push({ field: "message", error: "Message is required" });
+  } else if (!validator.isLength(req.body.message, { min: 10, max: 100 })) {
+    errors.push({
+      field: "message",
+      error: "Message must be between 10 and 100 characters",
+    });
+  }
+
+  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+};
 
 const handleAdoptionRequestValidator = async (req, res) => {
-    const errors = []
-    const {id} = req.params
-    const {status} = req.body
-    const userId = req.user.id
+  const errors = [];
+  const { id } = req.params;
+  const { status } = req.body;
+  const userId = req.user.id;
 
-    if (req.params.id) {
-        const mail = await AdoptionRequest.findByPk(id)
-        if (!mail) {
-            return res.status(404).json({error: 'AdoptionRequest not found'})
-        }
-
-        const cat = await Cat.findByPk(mail.catId)
-        if (cat.userId !== userId) {
-            return res.status(403).json({error: 'You are not allowed to handle this request'})
-        }
-
-        if (mail.status !== 'pending') {
-            errors.push({field: 'status', error: 'Status already updated'})
-        }
+  if (req.params.id) {
+    const mail = await AdoptionRequest.findByPk(id);
+    if (!mail) {
+      return res.status(404).json({ error: "AdoptionRequest not found" });
     }
 
-    const userAddress = await Address.findOne({where: {id: req.user.addressId}})
-    if (!userAddress) {
-        return res.status(404).json({error: 'Address not found for the sender user'})
+    const cat = await Cat.findByPk(mail.catId);
+    if (cat.userId !== userId) {
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to handle this request" });
     }
 
-    if (status !== 'accepted' && status !== 'declined') {
-        errors.push({field: 'status', error: 'Invalid status'})
+    if (mail.status !== "pending") {
+      errors.push({ field: "status", error: "Status already updated" });
     }
+  }
 
-    return errors.length > 0 ? res.status(400).json({errors}) : null
-}
+  const userAddress = await Address.findOne({
+    where: { id: req.user.addressId },
+  });
+  if (!userAddress) {
+    return res
+      .status(404)
+      .json({ error: "Address not found for the sender user" });
+  }
+
+  if (status !== "accepted" && status !== "declined") {
+    errors.push({ field: "status", error: "Invalid status" });
+  }
+
+  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+};
 
 const deleteAdoptionRequestValidator = async (req, res) => {
-    const errors = []
-    const userId = req.user.id
-    const mailId = req.params.id
+  const errors = [];
+  const userId = req.user.id;
+  const mailId = req.params.id;
 
-    const mail = await AdoptionRequest.findByPk(mailId)
+  const mail = await AdoptionRequest.findByPk(mailId);
+  if (!mail) {
+    return res.status(404).json({ error: "AdoptionRequest not found" });
+  }
+
+  if (mail.status === "pending") {
+    errors.push({ field: "status", error: "Cannot delete pending mails" });
+  }
+
+  const userAdoptionRequest = await UserRole.findOne({
+    where: { userId, mailId },
+  });
+  if (!userAdoptionRequest) {
+    return res
+      .status(403)
+      .json({ error: "You are not allowed to delete this mail" });
+  }
+
+  if (!userAdoptionRequest.isVisible) {
+    return res.status(400).json({ error: "AdoptionRequest already deleted" });
+  }
+
+  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+};
+
+const getAdoptionRequestsValidator = async (req, res) => {
+  const sortOrder = req.headers["sort-order"] || "DESC";
+
+  if (req.params.id) {
+    const mail = await AdoptionRequest.findByPk(req.params.id);
     if (!mail) {
-        return res.status(404).json({error: 'AdoptionRequest not found'})
+      return res.status(404).json({ error: "AdoptionRequest not found" });
     }
 
-    if (mail.status === 'pending') {
-        errors.push({field: 'status', error: 'Cannot delete pending mails'})
-    }
-
-    const userAdoptionRequest = await UserRole.findOne({where: {userId, mailId}})
+    const userAdoptionRequest = await UserRole.findOne({
+      where: { mailId: req.params.id, userId: req.user.id },
+    });
     if (!userAdoptionRequest) {
-        return res.status(403).json({error: 'You are not allowed to delete this mail'})
+      return res
+        .status(403)
+        .json({ error: "You are not allowed to view this mail" });
     }
 
     if (!userAdoptionRequest.isVisible) {
-        return res.status(400).json({error: 'AdoptionRequest already deleted'})
+      return res.status(400).json({ error: "AdoptionRequest not found" });
+    }
+  } else {
+    const userAdoptionRequests = await UserRole.findAll({
+      where: { userId: req.user.id },
+    });
+    if (userAdoptionRequests.length === 0) {
+      return res.status(404).json({ error: "No mails found" });
     }
 
-    return errors.length > 0 ? res.status(400).json({errors}) : null
-}
-
-const getAdoptionRequestsValidator = async (req, res) => {
-    const sortOrder = req.headers['sort-order'] || 'DESC'
-
-    if (req.params.id) {
-        const mail = await AdoptionRequest.findByPk(req.params.id)
-        if (!mail) {
-            return res.status(404).json({error: 'AdoptionRequest not found'})
-        }
-
-        const userAdoptionRequest = await UserRole.findOne({where: {mailId: req.params.id, userId: req.user.id}})
-        if (!userAdoptionRequest) {
-            return res.status(403).json({error: 'You are not allowed to view this mail'})
-        }
-
-        if (!userAdoptionRequest.isVisible) {
-            return res.status(400).json({error: 'AdoptionRequest not found'})
-        }
-    } else {
-        const userAdoptionRequests = await UserRole.findAll({where: {userId: req.user.id}})
-        if (userAdoptionRequests.length === 0) {
-            return res.status(404).json({error: 'No mails found'})
-        }
-
-        if (sortOrder !== 'ASC' && sortOrder !== 'DESC') {
-            return res.status(400).json({error: 'Invalid sort order'})
-        }
+    if (sortOrder !== "ASC" && sortOrder !== "DESC") {
+      return res.status(400).json({ error: "Invalid sort order" });
     }
+  }
 
-    return null
-
-}
+  return null;
+};
 
 module.exports = {
-    adoptValidator,
-    handleAdoptionRequestValidator,
-    deleteAdoptionRequestValidator,
-    getAdoptionRequestsValidator
-}
+  adoptValidator,
+  handleAdoptionRequestValidator,
+  deleteAdoptionRequestValidator,
+  getAdoptionRequestsValidator,
+};

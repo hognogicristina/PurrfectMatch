@@ -1,36 +1,43 @@
-const cron = require('node-cron')
-const {Op} = require("sequelize")
-const {User, PasswordHistory} = require('../../models')
+const cron = require("node-cron");
+const { Op } = require("sequelize");
+const { User, PasswordHistory } = require("../../models");
 
 const setupPasswordCronJob = () => {
-    cron.schedule('0 0 * * 0', async () => {
-        try {
-            console.log('Running a weekly check to delete old password records')
-            const daysToKeep = 30
-            const dateThreshold = new Date()
-            dateThreshold.setDate(dateThreshold.getDate() - daysToKeep)
+  cron.schedule("0 0 * * 0", async () => {
+    try {
+      console.log("Running a weekly check to delete old password records");
+      const daysToKeep = 30;
+      const dateThreshold = new Date();
+      dateThreshold.setDate(dateThreshold.getDate() - daysToKeep);
 
-            await PasswordHistory.destroy({
-                where: {
-                    createdAt: {
-                        [Op.lt]: dateThreshold
-                    },
-                    '$User.password$': null,
-                    password: {
-                        [Op.not]: User.sequelize.literal('`User`.`password`')
-                    }
-                },
-                include: [{
-                    model: User,
-                    required: false
-                }]
-            })
+      const oldPasswordRecords = await PasswordHistory.findAll({
+        where: {
+          createdAt: {
+            [Op.lt]: dateThreshold,
+          },
+        },
+      });
 
-            console.log('Old password records deleted successfully')
-        } catch (error) {
-            console.error('Error occurred while deleting old password records: ', error)
+      if (oldPasswordRecords.length === 0) {
+        console.log("No old password records found");
+        return;
+      }
+
+      for (const record of oldPasswordRecords) {
+        const user = await User.findByPk(record.userId);
+        if (record.password !== user.password) {
+          await record.destroy();
         }
-    })
-}
+      }
 
-module.exports = setupPasswordCronJob
+      console.log("Old password records deleted successfully");
+    } catch (error) {
+      console.error(
+        "Error occurred while deleting old password records: ",
+        error,
+      );
+    }
+  });
+};
+
+module.exports = setupPasswordCronJob;

@@ -1,32 +1,34 @@
-let AgeTypes = {
-    KITTEN: {
-        RANGE: {
-            MIN: 0,
-            MAX: 1,
-        },
-        TYPE: 'Kitten',
+const AgeTypes = {
+  KITTEN: {
+    RANGE: {
+      MIN: 0,
+      MAX: 1,
     },
-    JUNIOR: {
-        RANGE: {
-            MIN: 2,
-            MAX: 6,
-        },
-        TYPE: 'Junior',
+    TYPE: "Kitten",
+  },
+  JUNIOR: {
+    RANGE: {
+      MIN: 2,
+      MAX: 6,
     },
-    MATURE: {
-        RANGE: {
-            MIN: 7,
-            MAX: 10,
-        },
-        TYPE: 'Mature',
+    TYPE: "Junior",
+  },
+  MATURE: {
+    RANGE: {
+      MIN: 7,
+      MAX: 10,
     },
-    SENIOR: {
-        RANGE: {
-            MIN: 11,
-            MAX: null,
-        },
-        TYPE: 'Senior',
+    TYPE: "Mature",
+  },
+  SENIOR: {
+    RANGE: {
+      MIN: 11,
+      MAX: null,
     },
-}
+    TYPE: "Senior",
+  },
+};
 
-global.CONSTANTS = AgeTypes
+module.exports = {
+  AgeTypes,
+};
