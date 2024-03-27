@@ -191,7 +191,7 @@ const deleteAdoptionRequestUser = async (user) => {
     for (let otherUserRole of otherUserRoles) {
       await otherUserRole.destroy();
     }
-    await mail.destroy();
+    await adoptionRequest.destroy();
   }
 };
 

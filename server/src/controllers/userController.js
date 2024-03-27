@@ -9,6 +9,7 @@ const catUserHelper = require("../helpers/catUserHelper");
 const userHelper = require("../helpers/userHelper");
 const userDTO = require("../dto/userDTO");
 const catUserDTO = require("../dto/catUserDTO");
+const logger = require("../../log/logger");
 
 const getOneUser = async (req, res) => {
   try {
@@ -16,6 +17,7 @@ const getOneUser = async (req, res) => {
     const userDetails = await userDTO.transformUserToDTO(req.user);
     return res.json({ data: userDetails });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -31,7 +33,7 @@ const getMyCats = async (req, res) => {
     }
     return res.status(200).json({ data: catsDetails });
   } catch (error) {
-    console.log(error);
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -53,6 +55,7 @@ const editUser = async (req, res) => {
     await req.user.save();
     return res.json({ status: "User updated successfully" });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -85,6 +88,7 @@ const editAddressUser = async (req, res) => {
     await req.user.save();
     return res.json({ status: "Address updated successfully" });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -96,6 +100,7 @@ const editUsername = async (req, res) => {
     await req.user.save();
     return res.json({ status: "Username updated successfully" });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -111,7 +116,7 @@ const editPassword = async (req, res) => {
     });
     return res.json({ status: "Password updated successfully" });
   } catch (error) {
-    console.log(error);
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -128,6 +133,7 @@ const deleteUser = async (req, res) => {
     return res.status(200).json({ status: "User deleted successfully" });
   } catch (err) {
     await transaction.rollback();
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

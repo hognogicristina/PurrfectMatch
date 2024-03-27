@@ -4,6 +4,7 @@ const adminValidator = require("../validators/adminValidator");
 const adminHelper = require("../helpers/adminHelper");
 const catValidator = require("../validators/catValidator");
 const userDTO = require("../dto/userDTO");
+const logger = require("../../log/logger");
 
 const getAllUsers = async (req, res) => {
   try {
@@ -16,6 +17,7 @@ const getAllUsers = async (req, res) => {
     }
     return res.status(200).json({ data: usersDetails });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -27,6 +29,7 @@ const deleteUser = async (req, res) => {
     await adminHelper.deleteUser(user);
     return res.status(200).json({ status: "User deleted successfully" });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -38,6 +41,7 @@ const deleteCat = async (req, res) => {
     await adminHelper.deleteCat(cat);
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {
+    logger(`ERROR: ${error}`);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

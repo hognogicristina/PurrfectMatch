@@ -1,11 +1,12 @@
 const cron = require("node-cron");
 const { Op } = require("sequelize");
 const { User, PasswordHistory } = require("../../models");
+const logger = require("../../log/logger");
 
 const setupPasswordCronJob = () => {
   cron.schedule("0 0 * * 0", async () => {
     try {
-      console.log("Running a weekly check to delete old password records");
+      logger("Running a weekly check to delete old password records");
       const daysToKeep = 30;
       const dateThreshold = new Date();
       dateThreshold.setDate(dateThreshold.getDate() - daysToKeep);
@@ -18,21 +19,19 @@ const setupPasswordCronJob = () => {
         },
       });
 
-      if (oldPasswordRecords.length === 0) {
-        console.log("No old password records found");
-        return;
-      }
-
-      for (const record of oldPasswordRecords) {
-        const user = await User.findByPk(record.userId);
-        if (record.password !== user.password) {
-          await record.destroy();
+      if (oldPasswordRecords.length > 0) {
+        for (const record of oldPasswordRecords) {
+          const user = await User.findByPk(record.userId);
+          if (record.password !== user.password) {
+            await record.destroy();
+          }
         }
+        logger("Old password records deleted successfully");
+      } else {
+        logger("No old password records found");
       }
-
-      console.log("Old password records deleted successfully");
     } catch (error) {
-      console.error(
+      logger.error(
         "Error occurred while deleting old password records: ",
         error,
       );

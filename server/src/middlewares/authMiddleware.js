@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User, RefreshToken } = require("../../models");
 const validation = require("../validators/authValidator");
+const logger = require("../../log/logger");
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -27,6 +28,7 @@ const authenticateToken = async (req, res, next) => {
     } else if (err instanceof jwt.JsonWebTokenError) {
       return res.status(403).json({ error: "Failed to authenticate token" });
     } else {
+      logger(`ERROR: ${error}`);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -51,6 +53,7 @@ const authenticateLogin = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
+    logger(`ERROR: ${error}`);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -78,6 +81,7 @@ const validateRefreshToken = async (req, res, next) => {
     req.refreshToken = refreshToken;
     next();
   } catch (error) {
+    logger(`ERROR: ${error}`);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

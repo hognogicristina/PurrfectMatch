@@ -5,6 +5,7 @@ const emailServ = require("../services/emailService");
 const authValidator = require("../validators/authValidator");
 const passwordValidator = require("../validators/passwordValidator");
 const authHelper = require("../helpers/authHelper");
+const logger = require("../../log/logger");
 
 const register = async (req, res) => {
   try {

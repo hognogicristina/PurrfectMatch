@@ -3,6 +3,7 @@ const pug = require("pug");
 const path = require("path");
 const { User } = require("../../models");
 const emailHelper = require("../helpers/emailHelper");
+const logger = require("../../log/logger");
 
 const transporter = nodemailer.createTransport({
   host: "127.0.0.1",
@@ -30,9 +31,9 @@ async function sendActivationEmail(user) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Activation email sent: %s", info.messageId);
+    logger("Activation email sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending activation email: ", error);
+    logger.error("Error sending activation email: ", error);
   }
 }
 
@@ -55,9 +56,9 @@ async function sendResetEmail(user) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Reset email sent: %s", info.messageId);
+    logger("Reset email sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending reset email: ", error);
+    logger.error("Error sending reset email: ", error);
   }
 }
 
@@ -82,9 +83,9 @@ async function sendConfirmationEmail(user) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Confirmation email sent: %s", info.messageId);
+    logger("Confirmation email sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending confirmation email: ", error);
+    logger.error("Error sending confirmation email: ", error);
   }
 }
 
@@ -104,9 +105,9 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Message sent: %s", info.messageId);
+    logger("Message sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending email: ", error);
+    logger.error("Error sending email: ", error);
   }
 }
 
@@ -128,9 +129,9 @@ async function sendDeclineAdoption(sender, receiver, cat) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Message sent: %s", info.messageId);
+    logger("Message sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending email: ", error);
+    logger.error("Error sending email: ", error);
   }
 }
 
@@ -149,9 +150,9 @@ async function sendDeleteAccount(user) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Message sent: %s", info.messageId);
+    logger("Message sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending email: ", error);
+    logger.error("Error sending email: ", error);
   }
 }
 
@@ -177,9 +178,9 @@ async function sendResetPassword(user) {
 
   try {
     const info = await transporter.sendAdoptionRequest(mailOptions);
-    console.log("Reset email sent: %s", info.messageId);
+    logger("Reset email sent: %s", info.messageId);
   } catch (error) {
-    console.error("Error sending reset email: ", error);
+    logger.error("Error sending reset email: ", error);
   }
 }
 

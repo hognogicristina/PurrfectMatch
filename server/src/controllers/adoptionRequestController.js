@@ -9,6 +9,7 @@ const emailServ = require("../services/emailService");
 const adoptionRequestValidator = require("../validators/adoptionRequestValidator");
 const adoptionRequestHelper = require("../helpers/adoptionRequestHelper");
 const adoptionRequestDTO = require("../dto/adoptionRequestDTO");
+const logger = require("../../log/logger");
 
 const adoptCat = async (req, res) => {
   try {

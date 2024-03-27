@@ -13,7 +13,12 @@ const routes = require("./src/routes/routes");
 const setupAdoptionRequestCronJob = require("./src/cronjob/adoptionRequestCron");
 const setupPasswordCronJob = require("./src/cronjob/passwordcron");
 
+const logger = require("./log/logger");
 const app = express();
+
+sequelize.options.logging = (message) => {
+  logger.sql(message);
+};
 
 const dir = path.join(__dirname, "public/files");
 if (!fs.existsSync(dir)) {
@@ -26,21 +31,21 @@ app.use(cookieParser());
 app.use("/", routes);
 app.use("/files", express.static("public/files"));
 
-setupPasswordCronJob();
 setupAdoptionRequestCronJob();
+setupPasswordCronJob();
 
 const PORT = process.env.PORT || 3000;
 
 const startApp = () => {
   try {
     sequelize.sync();
-    console.log("Database connected and models synced!");
+    logger("Database connected and models synced!");
 
     app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}`);
+      logger(`Server is running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    logger.error("Unable to connect to the database:", error);
   }
 };
 

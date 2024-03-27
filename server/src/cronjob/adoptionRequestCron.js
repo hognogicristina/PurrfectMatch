@@ -1,11 +1,12 @@
 const cron = require("node-cron");
 const { Op } = require("sequelize");
 const { AdoptionRequest, UserRole } = require("../../models");
+const logger = require("../../log/logger");
 
 const setupAdoptionRequestCronJob = () => {
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("0 0 * * 0", async () => {
     try {
-      console.log("Running a weekly check to delete old adoption requests");
+      logger("Running a weekly check to delete old adoption requests");
       const daysToKeep = 30;
       const dateThreshold = new Date();
       dateThreshold.setDate(dateThreshold.getDate() - daysToKeep);
@@ -18,26 +19,24 @@ const setupAdoptionRequestCronJob = () => {
         },
       });
 
-      if (adoptionRequests.length === 0) {
-        console.log("No old adoption requests found");
-        return;
-      }
+      if (adoptionRequests.length > 0) {
+        for (const record of adoptionRequests) {
+          const userRoles = await UserRole.findAll({
+            where: { mailId: record.id },
+          });
 
-      for (const record of adoptionRequests) {
-        const userRoles = await UserRole.findAll({
-          where: { mailId: record.id },
-        });
+          if (userRoles.length > 0) {
+            await userRoles.destroy();
+          }
 
-        if (userRoles.length > 0) {
-          await userRoles.destroy();
+          await record.destroy();
         }
-
-        await record.destroy();
+        logger("Old adoption requests deleted successfully");
+      } else {
+        logger("No old adoption requests found");
       }
-
-      console.log("Old adoption requests deleted successfully");
     } catch (error) {
-      console.error(
+      logger.error(
         "Error occurred while deleting old adoption requests: ",
         error,
       );

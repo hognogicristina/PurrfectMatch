@@ -1,4 +1,4 @@
-const { Address, ImadoptionRequest, User } = require("../../models");
+const { Address, User } = require("../../models");
 
 async function transformCatToDTO(cat) {
   const image = await Image.findOne({ where: { id: cat.imageId } });
