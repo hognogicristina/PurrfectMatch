@@ -13,7 +13,7 @@ const routes = require("./src/routes/routes");
 const setupAdoptionRequestCronJob = require("./src/cronjob/adoptionRequestCron");
 const setupPasswordCronJob = require("./src/cronjob/passwordcron");
 
-const logger = require("./log/logger");
+const logger = require("./logger/logger");
 const app = express();
 
 sequelize.options.logging = (message) => {

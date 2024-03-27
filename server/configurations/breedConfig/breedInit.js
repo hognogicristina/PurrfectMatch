@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const { Breed } = require("../../models");
 const { sequelize } = require("../../models");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 sequelize.options.logging = (message) => {
   logger.sql(message);

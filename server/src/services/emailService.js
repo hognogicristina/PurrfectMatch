@@ -3,7 +3,7 @@ const pug = require("pug");
 const path = require("path");
 const { User } = require("../../models");
 const emailHelper = require("../helpers/emailHelper");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const transporter = nodemailer.createTransport({
   host: "127.0.0.1",

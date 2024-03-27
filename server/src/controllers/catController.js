@@ -5,7 +5,7 @@ const catHelper = require("../helpers/catHelper");
 const fileHelper = require("../helpers/fileHelper");
 const mailHelper = require("../helpers/adoptionRequestHelper");
 const catDTO = require("../dto/catDTO");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const getAllCats = async (req, res) => {
   try {

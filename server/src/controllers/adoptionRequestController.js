@@ -9,7 +9,7 @@ const emailServ = require("../services/emailService");
 const adoptionRequestValidator = require("../validators/adoptionRequestValidator");
 const adoptionRequestHelper = require("../helpers/adoptionRequestHelper");
 const adoptionRequestDTO = require("../dto/adoptionRequestDTO");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const adoptCat = async (req, res) => {
   try {
@@ -34,6 +34,7 @@ const adoptCat = async (req, res) => {
       .status(200)
       .json({ status: "Adoption request sent successfully" });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -77,6 +78,7 @@ const handleAdoptionRequest = async (req, res) => {
       return res.status(200).json({ status: "Adoption request was declined" });
     }
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -95,6 +97,7 @@ const getAdoptionRequests = async (req, res) => {
       );
     return res.status(200).json({ data: adoptionRequestDTOs });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -111,6 +114,7 @@ const getAdoptionRequest = async (req, res) => {
       );
     return res.status(200).json({ data: adoptionRequestDetails });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -145,6 +149,7 @@ const deleteAdoptionRequest = async (req, res) => {
       .json({ status: "AdoptionRequest deleted successfully" });
   } catch (error) {
     await transaction.rollback();
+    logger.error(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };

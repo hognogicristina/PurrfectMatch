@@ -4,7 +4,7 @@ const adminValidator = require("../validators/adminValidator");
 const adminHelper = require("../helpers/adminHelper");
 const catValidator = require("../validators/catValidator");
 const userDTO = require("../dto/userDTO");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const getAllUsers = async (req, res) => {
   try {

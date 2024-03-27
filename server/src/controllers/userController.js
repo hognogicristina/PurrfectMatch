@@ -9,7 +9,7 @@ const catUserHelper = require("../helpers/catUserHelper");
 const userHelper = require("../helpers/userHelper");
 const userDTO = require("../dto/userDTO");
 const catUserDTO = require("../dto/catUserDTO");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const getOneUser = async (req, res) => {
   try {

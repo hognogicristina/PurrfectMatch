@@ -3,7 +3,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const { User, PasswordHistory } = require("../../models");
 const { sequelize } = require("../../models");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 sequelize.options.logging = (message) => {
   logger.sql(message);

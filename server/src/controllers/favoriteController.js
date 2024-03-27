@@ -2,7 +2,7 @@ const { Favorite, Cat, AdoptionRequest, UserRole } = require("../../models");
 const favoriteValidator = require("../validators/favoriteValidator");
 const mailValidator = require("../validators/adoptionRequestValidator");
 const catDTO = require("../dto/catDTO");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const getFavorites = async (req, res) => {
   try {

@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const { Op } = require("sequelize");
 const { User, PasswordHistory } = require("../../models");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const setupPasswordCronJob = () => {
   cron.schedule("0 0 * * 0", async () => {

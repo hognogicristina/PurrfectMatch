@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { User, RefreshToken } = require("../../models");
 const validation = require("../validators/authValidator");
-const logger = require("../../log/logger");
+const logger = require("../../logger/logger");
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
