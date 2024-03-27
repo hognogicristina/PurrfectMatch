@@ -19,7 +19,7 @@ const getAllCats = async (req, res) => {
     }
     return res.status(200).json({ data: catsDetails });
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -31,7 +31,7 @@ const getOneCat = async (req, res) => {
     const catDetails = await catDTO.transformCatToDTO(cat);
     return res.status(200).json({ data: catDetails });
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -50,7 +50,7 @@ const addCat = async (req, res) => {
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -66,7 +66,7 @@ const editCat = async (req, res) => {
     await cat.save();
     return res.json({ status: "Cat updated successfully" });
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -90,7 +90,7 @@ const deleteCat = async (req, res) => {
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {
     await transaction.rollback();
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

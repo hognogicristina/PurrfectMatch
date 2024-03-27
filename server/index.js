@@ -45,7 +45,7 @@ const startApp = () => {
       logger(`Server is running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    logger.error("Unable to connect to the database:", error);
+    logger.error(error);
   }
 };
 

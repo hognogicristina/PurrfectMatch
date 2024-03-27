@@ -2,6 +2,12 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { User, PasswordHistory } = require("../../models");
+const { sequelize } = require("../../models");
+const logger = require("../../log/logger");
+
+sequelize.options.logging = (message) => {
+  logger.sql(message);
+};
 
 const initializeAdmin = async () => {
   try {
@@ -32,12 +38,12 @@ const initializeAdmin = async () => {
         userId: user.id,
         password: hashedPassword,
       });
-      console.log("Admin user created");
+      logger("Admin user created");
     } else {
-      console.log("Admin user already exists");
+      logger("Admin user already exists");
     }
   } catch (error) {
-    console.error("Error initializing admin user:", error);
+    logger.error(error);
   }
 };
 

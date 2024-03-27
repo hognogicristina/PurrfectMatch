@@ -1,6 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const { Breed } = require("../../models");
+const { sequelize } = require("../../models");
+const logger = require("../../log/logger");
+
+sequelize.options.logging = (message) => {
+  logger.sql(message);
+};
 
 async function addBreedsToDatabase() {
   try {
@@ -17,7 +23,7 @@ async function addBreedsToDatabase() {
           name: breed,
         });
       }
-      console.log("All breeds added successfully!");
+      logger("All breeds added successfully!");
     } else {
       const existingBreeds = await Breed.findAll({ attributes: ["name"] });
       const existingBreedNames = existingBreeds.map((b) => b.name);
@@ -29,15 +35,15 @@ async function addBreedsToDatabase() {
       if (newBreeds.length > 0) {
         for (const breed of newBreeds) {
           await Breed.create({ name: breed });
-          console.log(`Added ${breed} to the database.`);
+          logger(`Added ${breed} to the database.`);
         }
-        console.log("New breeds added successfully!");
+        logger("New breeds added successfully!");
       } else {
-        console.log("No new breeds to add.");
+        logger("No new breeds to add.");
       }
     }
   } catch (error) {
-    console.error("Error adding breeds to database:", error);
+    logger.error(error);
   }
 }
 

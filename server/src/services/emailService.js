@@ -30,10 +30,10 @@ async function sendActivationEmail(user) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Activation email sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Activation email sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending activation email: ", error);
+    logger.error(error);
   }
 }
 
@@ -55,10 +55,10 @@ async function sendResetEmail(user) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Reset email sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Reset email sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending reset email: ", error);
+    logger.error(error);
   }
 }
 
@@ -82,10 +82,10 @@ async function sendConfirmationEmail(user) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Confirmation email sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Confirmation email sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending confirmation email: ", error);
+    logger.error(error);
   }
 }
 
@@ -104,10 +104,10 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Message sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Message sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending email: ", error);
+    logger.error(error);
   }
 }
 
@@ -128,10 +128,10 @@ async function sendDeclineAdoption(sender, receiver, cat) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Message sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Message sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending email: ", error);
+    logger.error(error);
   }
 }
 
@@ -149,10 +149,10 @@ async function sendDeleteAccount(user) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Message sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Message sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending email: ", error);
+    logger.error(error);
   }
 }
 
@@ -177,10 +177,10 @@ async function sendResetPassword(user) {
   };
 
   try {
-    const info = await transporter.sendAdoptionRequest(mailOptions);
-    logger("Reset email sent: %s", info.messageId);
+    const info = await transporter.sendMail(mailOptions);
+    logger("Reset email sent: " + info.messageId);
   } catch (error) {
-    logger.error("Error sending reset email: ", error);
+    logger.error(error);
   }
 }
 

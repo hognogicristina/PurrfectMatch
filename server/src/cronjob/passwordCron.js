@@ -31,10 +31,7 @@ const setupPasswordCronJob = () => {
         logger("No old password records found");
       }
     } catch (error) {
-      logger.error(
-        "Error occurred while deleting old password records: ",
-        error,
-      );
+      logger.error(error);
     }
   });
 };

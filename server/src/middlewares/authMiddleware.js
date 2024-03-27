@@ -28,7 +28,7 @@ const authenticateToken = async (req, res, next) => {
     } else if (err instanceof jwt.JsonWebTokenError) {
       return res.status(403).json({ error: "Failed to authenticate token" });
     } else {
-      logger(`ERROR: ${error}`);
+      logger.error(error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -53,7 +53,7 @@ const authenticateLogin = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -81,7 +81,7 @@ const validateRefreshToken = async (req, res, next) => {
     req.refreshToken = refreshToken;
     next();
   } catch (error) {
-    logger(`ERROR: ${error}`);
+    logger.error(error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

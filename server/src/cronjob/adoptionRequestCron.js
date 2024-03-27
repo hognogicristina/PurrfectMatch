@@ -36,10 +36,7 @@ const setupAdoptionRequestCronJob = () => {
         logger("No old adoption requests found");
       }
     } catch (error) {
-      logger.error(
-        "Error occurred while deleting old adoption requests: ",
-        error,
-      );
+      logger.error(error);
     }
   });
 };

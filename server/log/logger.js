@@ -3,7 +3,7 @@ const path = require("path");
 const logFilePath = path.join(__dirname, "app.local.log");
 
 const logger = (message) => {
-  const logMessage = `${message}\n`;
+  const logMessage = `SUCCESS: ${message}\n`;
 
   fs.appendFile(logFilePath, logMessage, (err) => {
     if (err) {
@@ -12,8 +12,8 @@ const logger = (message) => {
   });
 };
 
-logger.error = (message, error) => {
-  const errorMessage = `${message}: ${error}\n`;
+logger.error = (error) => {
+  const errorMessage = `ERROR: ${error}\n`;
 
   fs.appendFile(logFilePath, errorMessage, (err) => {
     if (err) {
