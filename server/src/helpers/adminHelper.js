@@ -31,7 +31,7 @@ const deleteUser = async (user) => {
   const image = await Image.findByPk(user.imageId);
   await user.destroy();
   if (address) await address.destroy();
-  await fileHelper.deleteImage(image);
+  await fileHelper.deleteImage(image, "files");
 };
 
 const deleteCat = async (cat) => {
@@ -53,7 +53,7 @@ const deleteCat = async (cat) => {
   }
   const image = await Image.findByPk(cat.imageId);
   await cat.destroy();
-  await fileHelper.deleteImage(image);
+  await fileHelper.deleteImage(image, "files");
 };
 
 module.exports = { deleteUser, deleteCat };

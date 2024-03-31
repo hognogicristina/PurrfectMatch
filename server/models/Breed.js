@@ -11,5 +11,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
+    filename: {
+      type: DataTypes.STRING,
+    },
+    filetype: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    filesize: DataTypes.INTEGER,
+    url: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   });
 };

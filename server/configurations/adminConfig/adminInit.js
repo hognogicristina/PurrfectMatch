@@ -47,4 +47,4 @@ const initializeAdmin = async () => {
   }
 };
 
-initializeAdmin();
+module.exports = { initializeAdmin };

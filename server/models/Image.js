@@ -6,9 +6,15 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    filename: DataTypes.STRING,
+    filename: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
     filetype: DataTypes.STRING,
     filesize: DataTypes.INTEGER,
-    url: DataTypes.STRING,
+    url: {
+      type: DataTypes.STRING,
+      unique: true,
+    },
   });
 };

@@ -1,6 +1,7 @@
 const { Cat } = require("../../models");
 const { Op } = require("sequelize");
 const { AgeTypes } = require("../../constants/ageTypes");
+const logger = require("../../logger/logger");
 
 const processAgeRange = (age) => {
   if (!age) return null;

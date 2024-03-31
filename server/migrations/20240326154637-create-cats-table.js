@@ -33,7 +33,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      adoptionRequest: {
+      ageType: {
         type: Sequelize.STRING,
         allowNull: false,
       },

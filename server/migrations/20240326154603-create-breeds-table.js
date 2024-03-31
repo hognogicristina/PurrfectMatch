@@ -15,6 +15,20 @@ module.exports = {
         allowNull: false,
         unique: true,
       },
+      filename: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
+      filetype: {
+        type: Sequelize.STRING,
+      },
+      filesize: {
+        type: Sequelize.INTEGER,
+      },
+      url: {
+        type: Sequelize.STRING,
+        unique: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

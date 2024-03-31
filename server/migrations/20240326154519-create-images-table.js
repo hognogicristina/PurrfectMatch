@@ -12,6 +12,7 @@ module.exports = {
       },
       filename: {
         type: Sequelize.STRING,
+        unique: true,
       },
       filetype: {
         type: Sequelize.STRING,
@@ -21,6 +22,7 @@ module.exports = {
       },
       url: {
         type: Sequelize.STRING,
+        unique: true,
       },
       createdAt: {
         allowNull: false,

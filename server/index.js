@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const path = require("path");
 const cookieParser = require("cookie-parser");
-const fs = require("fs");
 
 require("dotenv").config({ path: "./.env" });
 // Comment the line below if you want to use the .env file and not the .env.local file
@@ -19,11 +17,6 @@ const app = express();
 sequelize.options.logging = (message) => {
   logger.sql(message);
 };
-
-const dir = path.join(__dirname, "public/files");
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir, { recursive: true });
-}
 
 app.use(express.json());
 app.use(bodyParser.json());
