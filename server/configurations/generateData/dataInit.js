@@ -18,7 +18,6 @@ const {
 } = require("../../models");
 const breedInit = require("../breedConfig/breedInit");
 const adminInit = require("../adminConfig/adminInit");
-const breeds = require("../breedConfig/breeds");
 const fileHelper = require("../../src/helpers/fileHelper");
 const catHelper = require("../../src/helpers/catHelper");
 const logger = require("../../logger/logger");
@@ -31,13 +30,49 @@ sequelize.options.logging = (message) => {
   logger.sql(message);
 };
 
+const generateUsers = async (numUsers) => {
+  const users = [];
+
+  for (let i = 0; i < numUsers; i++) {
+    const username = faker.internet.userName();
+    const email = faker.internet.email();
+    const password = await bcrypt.hash("password", 10);
+    const birthday = faker.date.anytime();
+
+    const user = await User.create({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      username: username,
+      email: email,
+      password: password,
+      birthday: birthday,
+      role: "user",
+    });
+
+    users.push(user);
+  }
+
+  return users;
+};
+
 const randomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 const generateRandomBreed = () => {
-  const randomIndex = randomInt(0, breeds.length - 1);
-  return breeds[randomIndex];
+  try {
+    const breedData = fs.readFileSync(
+      path.join(__dirname, "../breedConfig/breeds.json"),
+      "utf8",
+    );
+
+    const breeds = JSON.parse(breedData);
+    const randomIndex = randomInt(0, breeds.length - 1);
+    return breeds[randomIndex];
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
 };
 
 const generateImages = async (i) => {
@@ -88,31 +123,6 @@ const generateCats = async (numCats, users) => {
   }
 };
 
-const generateUsers = async (numUsers) => {
-  const users = [];
-
-  for (let i = 0; i < numUsers; i++) {
-    const username = faker.internet.userName();
-    const email = faker.internet.email();
-    const password = await bcrypt.hash("password", 10);
-    const birthday = faker.date.anytime();
-
-    const user = await User.create({
-      firstName: faker.person.firstName(),
-      lastName: faker.person.lastName(),
-      username: username,
-      email: email,
-      password: password,
-      birthday: birthday,
-      role: "user",
-    });
-
-    users.push(user);
-  }
-
-  return users;
-};
-
 const emptyDatabase = () => {
   UserRole.destroy({ truncate: true });
   AdoptionRequest.destroy({ truncate: true });
@@ -138,6 +148,7 @@ const emptyDatabase = () => {
 
 const generateData = async () => {
   try {
+    await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();
     const users = await generateUsers(25);
@@ -159,5 +170,5 @@ if (!fs.existsSync(dir_temporary)) {
 }
 
 emptyDatabase();
-breedInit.addBreedsToDatabase();
-// generateData();
+// breedInit.addBreedsToDatabase();
+generateData();

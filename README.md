@@ -29,7 +29,6 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 - **Database**: SQLite, integrated with Sequelize for ORM
 - **Frontend**: React.js
 - **API**: RESTful API endpoints
--
 
 ## Getting Started
 
@@ -49,15 +48,27 @@ interact, and engage in discussions, fostering a sense of community among cat lo
     ```bash
     cd Project/server
 
-2. Install the dependencies:
+2. Download images for configuration data:
+    - Navigate to the configurations' directory.
+    ```bash
+    cd configurations/downloads
+   ```
+    - Run the following command to download the images.
+    ```bash
+    python3 main.py
+
+3. Install the dependencies:
+
+   **Note:** This step will install all the required dependencies for the server and will initialize configuration
+   data for the database.
     ```bash
     npm install
 
-3. Start the server:
+4. Start the server:
     ```bash
     npm start
 
-4. Open your browser and navigate to `http://localhost:3000` to access the API.
+5. Open your browser and navigate to `http://localhost:3000` to access the API.
 
 #### Client Setup
 
