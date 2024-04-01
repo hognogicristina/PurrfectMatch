@@ -31,7 +31,7 @@ const generateTokenAndSignature = async (user, linkType) => {
 
 const sendAdoptionContent = async (sender, receiver, cat, address) => {
   const image = await Image.findOne({ where: { id: cat.imageId } });
-  const imageUrl = `${process.env.SERVER_BASE_URL}/files/${image.filename}`;
+  const imageUrl = `${process.env.SERVER_BASE_URL}/uploads/${image.filename}`;
   const compiledFunction = pug.compileFile(
     path.join(__dirname, "..", "templates", "adoptionEmail.pug"),
     { filename: "adoptionEmail.pug" },

@@ -85,7 +85,7 @@ const deleteCat = async (req, res) => {
     await mailHelper.deleteAdoptionRequestCat(cat, req.user);
     await CatUser.destroy({ where: { catId: cat.id } });
     await cat.destroy();
-    await fileHelper.deleteImage(image, "files");
+    await fileHelper.deleteImage(image, "uploads");
     await transaction.commit();
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {

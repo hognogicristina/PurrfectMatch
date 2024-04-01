@@ -19,13 +19,13 @@ const updateImage = async (model, file) => {
 
   let image = await Image.findByPk(model.imageId);
   if (image) {
-    const oldImagePath = path.join("public", "files", image.filename);
+    const oldImagePath = path.join("public", "uploads", image.filename);
     fs.unlinkSync(oldImagePath);
   } else {
     image = new Image();
   }
 
-  const newImageData = await saveImageFile(file, "files");
+  const newImageData = await saveImageFile(file, "uploads");
   image.filename = newImageData.filename;
   image.filetype = newImageData.extension.replace(".", "");
   image.filesize = newImageData.filesize;

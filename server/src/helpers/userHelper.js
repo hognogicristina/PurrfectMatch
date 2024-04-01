@@ -12,7 +12,7 @@ const deleteUser = async (user) => {
   await RefreshToken.destroy({ where: { userId: user.id } });
   const image = await Image.findOne({ where: { id: user.imageId } });
   await user.destroy();
-  await fileHelper.deleteImage(image, "files");
+  await fileHelper.deleteImage(image, "uploads");
   const address = await Address.findByPk(user.addressId);
   if (address) {
     await address.destroy();

@@ -22,7 +22,8 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use("/", routes);
-app.use("/files", express.static("public/files"));
+app.use("/uploads", express.static("public/uploads"));
+app.use("/breeds", express.static("public/breeds"));
 
 setupAdoptionRequestCronJob();
 setupPasswordCronJob();

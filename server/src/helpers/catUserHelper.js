@@ -54,7 +54,7 @@ const deleteCat = async (user) => {
 
       const image = await Image.findOne({ where: { id: cat.imageId } });
       await cat.destroy();
-      await fileHelper.deleteImage(image, "files");
+      await fileHelper.deleteImage(image, "uploads");
     }
   } else {
     const catOwners = await Cat.findAll({ where: { ownerId: user.id } });
@@ -70,7 +70,7 @@ const deleteCat = async (user) => {
 
         const image = await Image.findOne({ where: { id: catOwner.imageId } });
         await catOwner.destroy();
-        await fileHelper.deleteImage(image, "files");
+        await fileHelper.deleteImage(image, "uploads");
       }
     }
   }

@@ -188,7 +188,7 @@ const emptyDatabase = () => {
 
   Image.findAll().then((images) => {
     for (const image of images) {
-      fileHelper.deleteImage(image, "files");
+      fileHelper.deleteImage(image, "uploads");
     }
   });
 
@@ -210,7 +210,7 @@ const generateData = async () => {
   }
 };
 
-const dir = path.join(__dirname, "../../public/files");
+const dir = path.join(__dirname, "../../public/uploads");
 if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir, { recursive: true });
 }

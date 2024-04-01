@@ -26,11 +26,6 @@ const getBreedImageFile = async (breed) => {
   const catBreedFilename = breed.replace(/ /g, "_") + ".jpg";
   const relativePath = `../downloads/cat_breeds/${catBreedFilename}`;
   const absolutePath = path.resolve(__dirname, relativePath);
-
-  if (!fs.existsSync(absolutePath)) {
-    logger.error(`Image file not found for breed: ${breed}`);
-    return null;
-  }
   const fileBuffer = fs.readFileSync(absolutePath);
 
   return {
