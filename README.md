@@ -48,19 +48,19 @@ interact, and engage in discussions, fostering a sense of community among cat lo
     ```bash
     cd Project/server
 
-2. Download images for configuration data:
-    - Navigate to the configurations' directory.
+2. Download images for configured data:
+    - Navigate to the configurations' directory:
     ```bash
     cd configurations/downloads
    ```
-    - Run the following command to download the images.
+    - Run the following command to download the images:
     ```bash
     python3 main.py
 
 3. Install the dependencies:
 
-   **Note:** This step will install all the required dependencies for the server and will initialize configuration
-   data for the database.
+   **Note:** This step will install all the necessary dependencies for the server, set up the database tables, and
+   initialize the configured data.
     ```bash
     npm install
 

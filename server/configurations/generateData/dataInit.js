@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
+const axios = require("axios");
 const { faker } = require("@faker-js/faker");
 const {
   Address,
@@ -36,8 +37,9 @@ const generateUsers = async (numUsers) => {
   for (let i = 0; i < numUsers; i++) {
     const username = faker.internet.userName();
     const email = faker.internet.email();
-    const password = await bcrypt.hash("password", 10);
+    const password = await bcrypt.hash("Password1!", 10);
     const birthday = faker.date.anytime();
+    const address = await adminInit.generateAddress();
 
     const user = await User.create({
       firstName: faker.person.firstName(),
@@ -46,7 +48,13 @@ const generateUsers = async (numUsers) => {
       email: email,
       password: password,
       birthday: birthday,
+      addressId: address.id,
       role: "user",
+      status: "active",
+    });
+    await PasswordHistory.create({
+      userId: user.id,
+      password: password,
     });
 
     users.push(user);
@@ -91,17 +99,38 @@ const generateImages = async (i) => {
   };
 };
 
+const generateRandomHealthProblem = async () => {
+  try {
+    const response = await axios.get(
+      "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=gastroenteri&df=term_icd9_code,maxList,primary_name",
+    );
+    const conditions = response.data[3].map((condition) => {
+      return {
+        term_icd9_code: condition[0],
+        maxList: condition[1],
+        primary_name: condition[2],
+      };
+    });
+
+    const randomIndex = randomInt(0, conditions.length - 1);
+    return conditions[randomIndex].primary_name;
+  } catch (error) {
+    logger.error(error);
+    return null;
+  }
+};
+
 const generateCatData = async (cat) => {
   const currentTimestamp = Math.floor(Date.now() / 1000);
-  const ageInYears = randomInt(0, 20);
+  const ageInYears = randomInt(0, 20).toString();
   const ageInSeconds = ageInYears * (60 * 60 * 24 * 365);
 
   cat.name = faker.person.firstName();
   cat.breed = generateRandomBreed();
   cat.gender = randomInt(0, 1) ? "Male" : "Female";
   cat.age = currentTimestamp - ageInSeconds;
-  cat.ageType = catHelper.processAgeRange(1);
-  cat.healthProblem = null;
+  cat.ageType = catHelper.processAgeRange(ageInYears);
+  cat.healthProblem = await generateRandomHealthProblem();
   cat.description = `A lovely ${cat.gender.toLowerCase()} ${cat.breed.toLowerCase()} cat.`;
 
   return cat;
@@ -120,6 +149,24 @@ const generateCats = async (numCats, users) => {
 
     const newCat = await Cat.create(catData);
     await CatUser.create({ catId: newCat.id, userId: randomUser.id });
+  }
+};
+
+const generateFavorite = async (numFavorites, users) => {
+  for (let i = 0; i < numFavorites; i++) {
+    const randomIndex = randomInt(0, users.length - 1);
+    const randomUser = users[randomIndex];
+
+    let randomCat, catUser;
+    do {
+      randomCat = await Cat.findOne({ order: sequelize.random() });
+      catUser = randomCat.userId;
+    } while (catUser === randomUser.id);
+
+    await Favorite.create({
+      userId: randomUser.id,
+      catId: randomCat.id,
+    });
   }
 };
 
@@ -144,16 +191,20 @@ const emptyDatabase = () => {
       fileHelper.deleteImage(image, "files");
     }
   });
+
+  logger("Database emptied");
 };
 
 const generateData = async () => {
   try {
+    emptyDatabase();
     await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();
     const users = await generateUsers(25);
     await generateCats(50, users);
-    logger("Cat data generated and saved successfully.");
+    await generateFavorite(15, users);
+    await logger("Data was configured");
   } catch (error) {
     logger.error(error);
   }
@@ -169,6 +220,4 @@ if (!fs.existsSync(dir_temporary)) {
   fs.mkdirSync(dir_temporary, { recursive: true });
 }
 
-emptyDatabase();
-// breedInit.addBreedsToDatabase();
 generateData();

@@ -1,43 +1,61 @@
 const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const { User, PasswordHistory } = require("../../models");
-const { sequelize } = require("../../models");
+const { faker } = require("@faker-js/faker");
+const { User, PasswordHistory, Address } = require("../../models");
 const logger = require("../../logger/logger");
 
-sequelize.options.logging = (message) => {
-  logger.sql(message);
+const generateAddress = async () => {
+  const country = faker.location.country();
+  const county = faker.location.county();
+  const city = faker.location.city();
+  const street = faker.location.street();
+  const number = faker.location.buildingNumber();
+  const floor = faker.number.int({ max: 20 });
+  const apartment = faker.number.int({ max: 50 });
+  const postalCode = faker.location.zipCode();
+
+  return await Address.create({
+    country: country,
+    county: county,
+    city: city,
+    street: street,
+    number: number,
+    floor: floor,
+    apartment: apartment,
+    postalCode: postalCode,
+  });
 };
 
 const initializeAdmin = async () => {
   try {
     const count = await User.count();
-    if (count === 0) {
-      const adminData = fs.readFileSync(
-        path.join(__dirname, "admin.json"),
-        "utf8",
-      );
-      const adminUser = JSON.parse(adminData);
-      const adminDetails = adminUser.admin;
+    const adminData = fs.readFileSync(
+      path.join(__dirname, "admin.json"),
+      "utf8",
+    );
+    const adminUser = JSON.parse(adminData);
+    const adminDetails = adminUser.admin;
+    const address = await generateAddress();
 
-      const hashedPassword = await bcrypt.hash(adminDetails.password, 10);
-      const user = await User.create({
-        firstName: adminDetails.firstName,
-        lastName: adminDetails.lastName,
-        username: adminDetails.username,
-        password: hashedPassword,
-        email: adminDetails.email,
-        birthday: adminDetails.birthday,
-        description: adminDetails.description,
-        hobbies: adminDetails.hobbies,
-        experienceLevel: adminDetails.experienceLevel,
-        role: adminDetails.role,
-        status: adminDetails.status,
-      });
-      await PasswordHistory.create({
-        userId: user.id,
-        password: hashedPassword,
-      });
+    const hashedPassword = await bcrypt.hash(adminDetails.password, 10);
+    const user = await User.create({
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      username: adminDetails.username,
+      password: hashedPassword,
+      email: adminDetails.email,
+      birthday: faker.date.anytime(),
+      addressId: address.id,
+      role: adminDetails.role,
+      status: adminDetails.status,
+    });
+    await PasswordHistory.create({
+      userId: user.id,
+      password: hashedPassword,
+    });
+
+    if (count === 0) {
       logger("Admin user created");
     } else {
       logger("Admin user already exists");
@@ -47,4 +65,4 @@ const initializeAdmin = async () => {
   }
 };
 
-module.exports = { initializeAdmin };
+module.exports = { generateAddress, initializeAdmin };

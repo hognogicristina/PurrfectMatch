@@ -28,7 +28,7 @@ const authenticateToken = async (req, res, next) => {
     } else if (err instanceof jwt.JsonWebTokenError) {
       return res.status(403).json({ error: "Failed to authenticate token" });
     } else {
-      logger.error(error);
+      logger.error(err);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }
@@ -38,8 +38,12 @@ const authenticateLogin = async (req, res, next) => {
   try {
     if (await validation.loginValidation(req, res)) return;
 
-    const { username, password } = req.body;
-    const user = await User.findOne({ where: { username } });
+    const { usernameOrEmail, password } = req.body;
+    let user;
+    user = await User.findOne({ where: { username: usernameOrEmail } });
+    if (!user) {
+      user = await User.findOne({ where: { email: usernameOrEmail } });
+    }
 
     let isPasswordValid = false;
     if (user) {

@@ -102,24 +102,31 @@ const registerValidation = async (req, res) => {
 const loginValidation = async (req, res) => {
   const errors = [];
 
-  if (validator.isEmpty(req.body.username || "")) {
-    errors.push({ field: "username", error: "Username is required" });
+  if (validator.isEmpty(req.body.usernameOrEmail || "")) {
+    errors.push({
+      field: "usernameOrEmail",
+      error: "Username or email is required",
+    });
   }
 
   if (validator.isEmpty(req.body.password || "")) {
     errors.push({ field: "password", error: "Password is required" });
   }
 
-  const user = await User.findOne({ where: { username: req.body.username } });
-  if (user.status === "active_pending") {
-    return res.status(401).json({
-      error:
-        "Please activate your account by clicking the link sent to your email",
-    });
-  } else if (user.status === "blocked") {
-    return res
-      .status(401)
-      .json({ error: "Admin has blocked your account until activation" });
+  const user = await User.findOne({
+    where: { username: req.body.usernameOrEmail },
+  });
+  if (user) {
+    if (user.status === "active_pending") {
+      return res.status(401).json({
+        error:
+          "Please activate your account by clicking the link sent to your email",
+      });
+    } else if (user.status === "blocked") {
+      return res
+        .status(401)
+        .json({ error: "Admin has blocked your account until activation" });
+    }
   }
 
   return errors.length > 0 ? res.status(400).json({ errors }) : null;

@@ -1,14 +1,8 @@
 {
   "admin": {
-    "firstName": "Cristina",
-    "lastName": "Hognogi",
     "username": "admin",
     "password": "admin",
     "email": "admin@meow.com",
-    "birthday": "2002-02-04",
-    "description": "My role is to manage the website.",
-    "hobbies": "reading,coding,playing games",
-    "experienceLevel": "5",
     "role": "admin",
     "status": "active"
   }

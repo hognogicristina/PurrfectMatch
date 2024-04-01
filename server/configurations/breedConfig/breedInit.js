@@ -1,27 +1,21 @@
 const path = require("path");
 const fs = require("fs");
 const axios = require("axios");
-const { Breed, sequelize } = require("../../models");
+const { Breed } = require("../../models");
 const fileHelper = require("../../src/helpers/fileHelper");
 const logger = require("../../logger/logger");
 
-sequelize.options.logging = (message) => {
-  logger.sql(message);
-};
-
 const fetchCatBreeds = async () => {
   try {
-    const response = await axios.get("https://api.thecatapi.com/v1/breeds");
-
-    if (response.status === 200) {
+    const filePath = path.join(__dirname, "breeds.json");
+    if (fs.existsSync(filePath)) {
+      logger("Breeds.json already exists");
+    } else {
+      const response = await axios.get("https://api.thecatapi.com/v1/breeds");
       const breeds = response.data.map((breed) => breed.name);
       const jsonContent = JSON.stringify(breeds, null, 2);
-
-      const filePath = path.join(__dirname, "breeds.json");
       fs.writeFileSync(filePath, jsonContent);
-      logger("Cat breeds written to breeds.json file successfully.");
-    } else {
-      logger.error("Failed to fetch cat breeds:", response.statusText);
+      logger("Breeds written to breeds.json");
     }
   } catch (error) {
     logger.error(error);
@@ -61,34 +55,18 @@ const addBreedsToDatabase = async () => {
       const file = await getBreedImageFile(breed);
       const newBreeds = await fileHelper.saveImageFile(file, "breeds");
 
-      if (count === 0) {
-        await Breed.create({
-          name: breed,
-          filename: newBreeds.filename,
-          filetype: newBreeds.extension.replace(".", ""),
-          filesize: newBreeds.filesize,
-          url: newBreeds.url,
-        });
-
-        logger("All breeds added successfully!");
-      } else {
-        const existingBreeds = await Breed.findAll({ attributes: ["name"] });
-        const existingBreedNames = existingBreeds.map((b) => b.name);
-
-        const newBreeds = breeds.filter(
-          (breed) => !existingBreedNames.includes(breed),
-        );
-
-        if (newBreeds.length > 0) {
-          for (const breed of newBreeds) {
-            await Breed.create({ name: breed });
-            logger(`Added ${breed} to the database.`);
-          }
-          logger("New breeds added successfully!");
-        } else {
-          logger("No new breeds to add.");
-        }
-      }
+      await Breed.create({
+        name: breed,
+        filename: newBreeds.filename,
+        filetype: newBreeds.extension.replace(".", ""),
+        filesize: newBreeds.filesize,
+        url: newBreeds.url,
+      });
+    }
+    if (count === 0) {
+      logger("All breeds added to the database");
+    } else {
+      logger("Breeds already exist in the database");
     }
   } catch (error) {
     logger.error(error);

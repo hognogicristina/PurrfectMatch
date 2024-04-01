@@ -54,7 +54,7 @@ const login = async (req, res) => {
   try {
     if (await authValidator.loginValidation(req, res)) return;
     const token = jwt.sign(
-      { id: req.user.id, username: req.user.username },
+      { id: req.user.id, username: req.user.username, email: req.user.email },
       process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_TTL + "s",
