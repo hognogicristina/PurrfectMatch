@@ -1,7 +1,6 @@
 const path = require("path");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
-const axios = require("axios");
 const { faker } = require("@faker-js/faker");
 const {
   Address,
@@ -20,7 +19,7 @@ const {
 const breedInit = require("../breedConfig/breedInit");
 const adminInit = require("../adminConfig/adminInit");
 const fileHelper = require("../../src/helpers/fileHelper");
-const catHelper = require("../../src/helpers/catHelper");
+const helperData = require("./helperData");
 const logger = require("../../logger/logger");
 
 require("dotenv").config({ path: "./.env" });
@@ -63,87 +62,14 @@ const generateUsers = async (numUsers) => {
   return users;
 };
 
-const randomInt = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-};
-
-const generateRandomBreed = () => {
-  try {
-    const breedData = fs.readFileSync(
-      path.join(__dirname, "../breedConfig/breeds.json"),
-      "utf8",
-    );
-
-    const breeds = JSON.parse(breedData);
-    const randomIndex = randomInt(0, breeds.length - 1);
-    return breeds[randomIndex];
-  } catch (error) {
-    logger.error(error);
-    return null;
-  }
-};
-
-const generateImages = async (i) => {
-  const catImageFilename = `cat_image_${i + 1}.jpg`;
-  const relativePath = `../downloads/cat_images/${catImageFilename}`;
-  const absolutePath = path.resolve(__dirname, relativePath);
-  const fileBuffer = fs.readFileSync(absolutePath);
-
-  return {
-    fieldname: "file",
-    originalname: catImageFilename,
-    encoding: "7bit",
-    mimetype: "multipart/form-data",
-    buffer: fileBuffer,
-    size: fileBuffer.length,
-  };
-};
-
-const generateRandomHealthProblem = async () => {
-  try {
-    const response = await axios.get(
-      "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=gastroenteri&df=term_icd9_code,maxList,primary_name",
-    );
-    const conditions = response.data[3].map((condition) => {
-      return {
-        term_icd9_code: condition[0],
-        maxList: condition[1],
-        primary_name: condition[2],
-      };
-    });
-
-    const randomIndex = randomInt(0, conditions.length - 1);
-    return conditions[randomIndex].primary_name;
-  } catch (error) {
-    logger.error(error);
-    return null;
-  }
-};
-
-const generateCatData = async (cat) => {
-  const currentTimestamp = Math.floor(Date.now() / 1000);
-  const ageInYears = randomInt(0, 20).toString();
-  const ageInSeconds = ageInYears * (60 * 60 * 24 * 365);
-
-  cat.name = faker.person.firstName();
-  cat.breed = generateRandomBreed();
-  cat.gender = randomInt(0, 1) ? "Male" : "Female";
-  cat.age = currentTimestamp - ageInSeconds;
-  cat.ageType = catHelper.processAgeRange(ageInYears);
-  cat.healthProblem = await generateRandomHealthProblem();
-  cat.description = `A lovely ${cat.gender.toLowerCase()} ${cat.breed.toLowerCase()} cat.`;
-
-  return cat;
-};
-
 const generateCats = async (numCats, users) => {
   for (let i = 0; i < numCats; i++) {
     let catData = {};
-    catData = await generateCatData(catData);
-    const catImageFilePath = await generateImages(i);
+    catData = await helperData.generateCatData(catData);
+    const catImageFilePath = await helperData.generateImages(i);
     catData.imageId = await fileHelper.updateImage(catData, catImageFilePath);
 
-    const randomIndex = randomInt(0, users.length - 1);
+    const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
     catData.userId = randomUser.id;
 
@@ -154,7 +80,7 @@ const generateCats = async (numCats, users) => {
 
 const generateFavorite = async (numFavorites, users) => {
   for (let i = 0; i < numFavorites; i++) {
-    const randomIndex = randomInt(0, users.length - 1);
+    const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
 
     let randomCat, catUser;
@@ -215,9 +141,14 @@ if (!fs.existsSync(dir)) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
-const dir_temporary = path.join(__dirname, "../../public/breeds");
+const dir_breeds = path.join(__dirname, "../../public/breeds");
+if (!fs.existsSync(dir_breeds)) {
+  fs.mkdirSync(dir_breeds, { recursive: true });
+}
+
+const dir_temporary = path.join(__dirname, "../../public/temporary-uploads");
 if (!fs.existsSync(dir_temporary)) {
   fs.mkdirSync(dir_temporary, { recursive: true });
 }
 
-generateData();
+// generateData();
