@@ -24,18 +24,14 @@ const fetchCatBreeds = async () => {
 
 const getBreedImageFile = async (breed) => {
   const catBreedFilename = breed.replace(/ /g, "_") + ".jpg";
-  const relativePath = `../downloads/cat_breeds/${catBreedFilename}`;
-  const absolutePath = path.resolve(__dirname, relativePath);
-  const fileBuffer = fs.readFileSync(absolutePath);
-
-  return {
-    fieldname: "file",
-    originalname: catBreedFilename,
-    encoding: "7bit",
-    mimetype: "multipart/form-data",
-    buffer: fileBuffer,
-    size: fileBuffer.length,
-  };
+  const relativePath = path.join(
+    __dirname,
+    "..",
+    "downloads",
+    "cat_breeds",
+    catBreedFilename,
+  );
+  return await fileHelper.getFile(relativePath, catBreedFilename);
 };
 
 const addBreedsToDatabase = async () => {
@@ -56,6 +52,7 @@ const addBreedsToDatabase = async () => {
         filetype: newBreeds.extension.replace(".", ""),
         filesize: newBreeds.filesize,
         url: newBreeds.url,
+        uri: newBreeds.uri,
       });
     }
     if (count === 0) {

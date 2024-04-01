@@ -33,6 +33,15 @@ const editUserValidation = async (req, res) => {
     });
   }
 
+  if (validator.isEmpty(req.body.uri || "")) {
+    errors.push({ field: "uri", error: "Image is required" });
+  } else {
+    const image = await Image.findOne({ where: { uri: req.body.uri } });
+    if (!image) {
+      errors.push({ field: "uri", error: "Please select a valid image" });
+    }
+  }
+
   if (validator.isEmpty(req.body.email || "")) {
     errors.push({ field: "email", error: "Email is required" });
   } else if (!validator.isEmail(req.body.email)) {
@@ -62,21 +71,6 @@ const editUserValidation = async (req, res) => {
       field: "birthday",
       error: "Invalid date format! Please use YYYY-MM-DD",
     });
-  }
-
-  if (req.file) {
-    const maxSize = 5 * 1024 * 1024;
-    if (req.file.size > maxSize) {
-      errors.push({ field: "file", error: "File size should not exceed 5MB" });
-    }
-
-    const extension = req.file.originalname.substring(
-      req.file.originalname.lastIndexOf(".") + 1,
-    );
-    const allowedTypes = /jpeg|jpg|png|gif/i;
-    if (!allowedTypes.test(extension)) {
-      errors.push({ field: "file", error: "Only image files are allowed" });
-    }
   }
 
   return errors.length > 0 ? res.status(400).json({ errors }) : null;

@@ -3,11 +3,13 @@ const router = express.Router();
 const multer = require("multer");
 const adminController = require("../controllers/adminController");
 const authController = require("../controllers/authController");
+const imageController = require("../controllers/imageController");
 const userController = require("../controllers/userController");
 const catController = require("../controllers/catController");
 const adoptionRequestController = require("../controllers/adoptionRequestController");
 const favoriteController = require("../controllers/favoriteController");
 const authMiddleware = require("../middlewares/authMiddleware");
+const { ro } = require("@faker-js/faker");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -39,17 +41,14 @@ router.post(
   authController.refresh,
 );
 
+router.post("/image", upload.single("file"), imageController.uploadImage);
+
 router.get(
   "/user",
   authMiddleware.authenticateToken,
   userController.getOneUser,
 );
-router.put(
-  "/user",
-  authMiddleware.authenticateToken,
-  upload.single("file"),
-  userController.editUser,
-);
+router.put("/user", authMiddleware.authenticateToken, userController.editUser);
 router.put(
   "/user/address",
   authMiddleware.authenticateToken,

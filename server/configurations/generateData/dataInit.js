@@ -66,8 +66,9 @@ const generateCats = async (numCats, users) => {
   for (let i = 0; i < numCats; i++) {
     let catData = {};
     catData = await helperData.generateCatData(catData);
-    const catImageFilePath = await helperData.generateImages(i);
-    catData.imageId = await fileHelper.updateImage(catData, catImageFilePath);
+    const file = await helperData.generateImages(i);
+    const newImage = await fileHelper.uploadImage(file, "uploads");
+    catData.imageId = newImage.id;
 
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
@@ -151,4 +152,4 @@ if (!fs.existsSync(dir_temporary)) {
   fs.mkdirSync(dir_temporary, { recursive: true });
 }
 
-// generateData();
+generateData();

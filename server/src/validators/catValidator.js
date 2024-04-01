@@ -2,7 +2,7 @@ const validator = require("validator");
 const fs = require("fs");
 const path = require("path");
 const { Op } = require("sequelize");
-const { Cat, Breed } = require("../../models");
+const { Cat, Breed, Image } = require("../../models");
 
 const catExistValidator = async (req, res) => {
   const cats = await Cat.findAll();
@@ -113,6 +113,15 @@ const catValidator = async (req, res) => {
     errors.push({ field: "name", error: "Name is required" });
   }
 
+  if (validator.isEmpty(req.body.uri || "")) {
+    errors.push({ field: "uri", error: "Image is required" });
+  } else {
+    const image = await Image.findOne({ where: { uri: req.body.uri } });
+    if (!image) {
+      errors.push({ field: "uri", error: "Please select a valid image" });
+    }
+  }
+
   if (validator.isEmpty(req.body.breed || "")) {
     errors.push({ field: "breed", error: "Breed is required" });
   } else {
@@ -145,23 +154,6 @@ const catValidator = async (req, res) => {
       field: "description",
       error: "Description must be at least 5 characters long",
     });
-  }
-
-  if (!req.file) {
-    errors.push({ field: "file", error: "Image is required" });
-  } else {
-    const maxSize = 5 * 1024 * 1024;
-    if (req.file.size > maxSize) {
-      errors.push({ field: "file", error: "File size should not exceed 5MB" });
-    }
-
-    const extension = req.file.originalname.substring(
-      req.file.originalname.lastIndexOf(".") + 1,
-    );
-    const allowedTypes = /jpeg|jpg|png|gif/i;
-    if (!allowedTypes.test(extension)) {
-      errors.push({ field: "file", error: "Only image files are allowed" });
-    }
   }
 
   return errors.length > 0 ? res.status(400).json({ errors }) : null;

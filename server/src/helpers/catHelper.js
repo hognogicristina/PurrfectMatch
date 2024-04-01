@@ -1,7 +1,6 @@
 const { Cat } = require("../../models");
 const { Op } = require("sequelize");
 const { AgeTypes } = require("../../constants/ageTypes");
-const logger = require("../../logger/logger");
 
 const processAgeRange = (age) => {
   if (!age) return null;
@@ -17,6 +16,7 @@ const updateCatData = async (cat, body) => {
   if (!body) return;
   const fields = [
     "name",
+    "uri",
     "breed",
     "gender",
     "age",

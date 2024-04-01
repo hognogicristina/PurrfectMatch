@@ -10,6 +10,7 @@ const { sequelize } = require("./models");
 const routes = require("./src/routes/routes");
 const setupAdoptionRequestCronJob = require("./src/cronjob/adoptionRequestCron");
 const setupPasswordCronJob = require("./src/cronjob/passwordcron");
+const setupImageCronJob = require("./src/cronjob/imageCron");
 
 const logger = require("./logger/logger");
 const app = express();
@@ -27,6 +28,7 @@ app.use("/breeds", express.static("public/breeds"));
 
 setupAdoptionRequestCronJob();
 setupPasswordCronJob();
+setupImageCronJob();
 
 const PORT = process.env.PORT || 3000;
 

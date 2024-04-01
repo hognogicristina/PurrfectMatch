@@ -3,6 +3,7 @@ const fs = require("fs");
 const { faker } = require("@faker-js/faker");
 const axios = require("axios");
 const catHelper = require("../../src/helpers/catHelper");
+const fileHelper = require("../../src/helpers/fileHelper");
 const logger = require("../../logger/logger");
 
 const randomInt = (min, max) => {
@@ -27,18 +28,14 @@ const generateRandomBreed = () => {
 
 const generateImages = async (i) => {
   const catImageFilename = `cat_image_${i + 1}.jpg`;
-  const relativePath = `../downloads/cat_images/${catImageFilename}`;
-  const absolutePath = path.resolve(__dirname, relativePath);
-  const fileBuffer = fs.readFileSync(absolutePath);
-
-  return {
-    fieldname: "file",
-    originalname: catImageFilename,
-    encoding: "7bit",
-    mimetype: "multipart/form-data",
-    buffer: fileBuffer,
-    size: fileBuffer.length,
-  };
+  const relativePath = path.join(
+    __dirname,
+    "..",
+    "downloads",
+    "cat_images",
+    catImageFilename,
+  );
+  return await fileHelper.getFile(relativePath, catImageFilename);
 };
 
 const generateRandomHealthProblem = async () => {

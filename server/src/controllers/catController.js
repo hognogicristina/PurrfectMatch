@@ -43,7 +43,7 @@ const addCat = async (req, res) => {
 
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
-    catData.imageId = await fileHelper.updateImage(catData, req.file);
+    catData.imageId = await fileHelper.moveImage(null, catData.uri);
 
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
@@ -62,7 +62,7 @@ const editCat = async (req, res) => {
 
     let cat = await Cat.findByPk(req.params.id);
     cat = await catHelper.updateCatData(cat, req.body);
-    cat.imageId = await fileHelper.updateImage(cat, req.file);
+    cat.imageId = await fileHelper.moveImage(cat, cat.uri);
     await cat.save();
     return res.json({ status: "Cat updated successfully" });
   } catch (error) {
