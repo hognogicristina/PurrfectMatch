@@ -54,7 +54,8 @@ interact, and engage in discussions, fostering a sense of community among cat lo
     cd configurations/downloads
    ```
     - Run the following command to download the images:
-      **Note:** This step will download the images for cats and breeds (this will be used on the client side).
+
+   **Note:** This step will download the images for cats and breeds (this will be used on the client side).
     ```bash
     python3 main.py
 
