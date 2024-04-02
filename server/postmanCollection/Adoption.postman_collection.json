@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "6da46d18-ac5f-4d96-a260-d57a498150d5",
 		"name": "Adoption",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26090355"
 	},
 	"item": [
@@ -11,9 +11,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{iulia}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{iulia}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -26,18 +30,31 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/adopt/1"
+				"url": {
+					"raw": "{{base_url}}/adopt/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"adopt",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Requests",
+			"name": "Answer To Adoption Request",
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -50,21 +67,34 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/adopt/1"
+				"url": {
+					"raw": "{{base_url}}/adopt/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"adopt",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "List Of AdoptionRequest",
+			"name": "List Of Adoption Requests",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{iulia}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{iulia}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [
@@ -79,37 +109,71 @@
 					"mode": "formdata",
 					"formdata": []
 				},
-				"url": "{{base_url}}/mails"
+				"url": {
+					"raw": "{{base_url}}/adopts",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"adopts"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get A AdoptionRequest",
+			"name": "Get An Adoption Request",
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{base_url}}/mails/1"
+				"url": {
+					"raw": "{{base_url}}/adopt/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"adopt",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete A AdoptionRequest",
+			"name": "Delete An Adoption Request",
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{base_url}}/mails/1"
+				"url": {
+					"raw": "{{base_url}}/adopt/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"adopt",
+						"1"
+					]
+				}
 			},
 			"response": []
 		}

@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "bf477170-d94d-4f18-bba9-b95e298dfaff",
 		"name": "Cats",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26090355"
 	},
 	"item": [
@@ -38,7 +38,7 @@
 							"disabled": true
 						},
 						{
-							"key": "selectedAge",
+							"key": "selectedAgeType",
 							"value": "Kitten",
 							"disabled": true
 						},
@@ -72,7 +72,16 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": "{{base_url}}/cats/1"
+				"url": {
+					"raw": "{{base_url}}/cat/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cat",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -81,9 +90,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -96,10 +109,10 @@
 							"type": "text"
 						},
 						{
-							"key": "file",
-							"contentType": "multipart/form-data",
-							"type": "file",
-							"src": "postman-cloud:///1eedc732-028a-4b30-a9b8-7065bcba04d6"
+							"key": "uri",
+							"value": "public://temporary-uploads/1711993846802-351256051.jpeg",
+							"contentType": "",
+							"type": "text"
 						},
 						{
 							"key": "breed",
@@ -113,7 +126,7 @@
 						},
 						{
 							"key": "age",
-							"value": "Kitten",
+							"value": "8",
 							"type": "text"
 						},
 						{
@@ -128,7 +141,15 @@
 						}
 					]
 				},
-				"url": "{{base_url}}/cats"
+				"url": {
+					"raw": "{{base_url}}/cat",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cat"
+					]
+				}
 			},
 			"response": []
 		},
@@ -137,9 +158,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -152,10 +177,10 @@
 							"type": "text"
 						},
 						{
-							"key": "file",
-							"contentType": "multipart/form-data",
-							"type": "file",
-							"src": "postman-cloud:///1eee6fdb-2299-4cd0-b92c-57f52343a555"
+							"key": "uri",
+							"value": "public://temporary-uploads/1711980943674-181363522.jpeg",
+							"contentType": "",
+							"type": "text"
 						},
 						{
 							"key": "breed",
@@ -169,7 +194,7 @@
 						},
 						{
 							"key": "age",
-							"value": "Senior",
+							"value": "6",
 							"type": "text"
 						},
 						{
@@ -184,7 +209,16 @@
 						}
 					]
 				},
-				"url": "{{base_url}}/cats/1"
+				"url": {
+					"raw": "{{base_url}}/cat/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cat",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -193,22 +227,26 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{base_url}}/cats/2"
-			},
-			"response": []
-		},
-		{
-			"name": "Search By A Breed",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": "{{base_url}}/cats/search/Maine Coon"
+				"url": {
+					"raw": "{{base_url}}/cat/2",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cat",
+						"2"
+					]
+				}
 			},
 			"response": []
 		}

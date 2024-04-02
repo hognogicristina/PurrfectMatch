@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "920438ec-d6a3-44fd-a1bb-2e05f869648b",
 		"name": "Authentificaton",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26090355"
 	},
 	"item": [
@@ -13,14 +13,22 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"username\": \"johndoe\",\n    \"email\": \"m\",\n    \"password\": \"Password1!\",\n    \"confirmPassword\": \"Password1\",\n    \"birthday\": \"1990-01-01\"\n}\n\n// {   \"firstName\": \"Iulia\",\n//     \"lastName\": \"Darlin\",\n//     \"username\": \"iuliadarlin\",\n//     \"email\": \"iuliadarlin@yahoo.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n\n// {\n//     \"firstName\": \"Dona\",\n//     \"lastName\": \"Pop\",\n//     \"username\": \"donapop\",\n//     \"email\": \"donapop@gmail.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n",
+					"raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"username\": \"johndoe\",\n    \"email\": \"johndoe@gmail.com\",\n    \"password\": \"Password1!\",\n    \"confirmPassword\": \"Password1\",\n    \"birthday\": \"1990-01-01\"\n}\n\n// {   \"firstName\": \"Iulia\",\n//     \"lastName\": \"Darlin\",\n//     \"username\": \"iuliadarlin\",\n//     \"email\": \"iuliadarlin@yahoo.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n\n// {\n//     \"firstName\": \"Dona\",\n//     \"lastName\": \"Pop\",\n//     \"username\": \"donapop\",\n//     \"email\": \"donapop@gmail.com\",\n//     \"password\": \"Password1!\",\n//     \"confirmPassword\": \"Password1!\",\n//     \"birthday\": \"1990-01-01\"\n// }\n",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/register"
+				"url": {
+					"raw": "{{base_url}}/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"register"
+					]
+				}
 			},
 			"response": []
 		},
@@ -31,14 +39,22 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"username\": \"admin\",\"password\": \"admin\"}\n\n// {\"username\": \"johndoe\",\"password\": \"Parola12!2\"}\n\n// {\"username\": \"iuliadarlin\",\"password\": \"Password1!\"}\n\n// {\"username\": \"donapop\",\"password\": \"Password1!\"}",
+					"raw": "{\"usernameOrEmail\": \"admin\",\"password\": \"admin\"}\n\n// {\"usernameOrEmail\": \"Payton_Kohler\",\"password\": \"Password1!\"}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/login"
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"login"
+					]
+				}
 			},
 			"response": []
 		},
@@ -56,7 +72,15 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/reset"
+				"url": {
+					"raw": "{{base_url}}/reset",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"reset"
+					]
+				}
 			},
 			"response": []
 		},
@@ -106,9 +130,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{iulia}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{iulia}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -121,7 +149,16 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/refresh/token"
+				"url": {
+					"raw": "{{base_url}}/refresh/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"refresh",
+						"token"
+					]
+				}
 			},
 			"response": []
 		},
@@ -130,9 +167,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{admin}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -145,7 +186,15 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/logout"
+				"url": {
+					"raw": "{{base_url}}/logout",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"logout"
+					]
+				}
 			},
 			"response": []
 		}

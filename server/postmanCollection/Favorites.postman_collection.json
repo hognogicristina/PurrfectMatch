@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "7266df50-a072-4133-a689-79d673bd0129",
 		"name": "Favorites",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26090355"
 	},
 	"item": [
@@ -11,13 +11,25 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
-				"url": "{{base_url}}/favorites"
+				"url": {
+					"raw": "{{base_url}}/favorites",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"favorites"
+					]
+				}
 			},
 			"response": []
 		},
@@ -26,13 +38,27 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{iulia}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
-				"url": "{{base_url}}/cats/1/favorites"
+				"url": {
+					"raw": "{{base_url}}/cat/1/favorite",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"cat",
+						"1",
+						"favorite"
+					]
+				}
 			},
 			"response": []
 		},
@@ -41,9 +67,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "POST",
 				"header": [],
@@ -56,7 +86,16 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/favorites/1"
+				"url": {
+					"raw": "{{base_url}}/favorites/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"favorites",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
@@ -65,13 +104,26 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
-				"url": "{{base_url}}/favorites/1"
+				"url": {
+					"raw": "{{base_url}}/favorite/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"favorite",
+						"1"
+					]
+				}
 			},
 			"response": []
 		}

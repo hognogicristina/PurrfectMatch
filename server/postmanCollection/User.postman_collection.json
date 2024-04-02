@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "5f52c3c0-e9ca-496a-a3a3-b022cccfef90",
 		"name": "User",
-		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "26090355"
 	},
 	"item": [
@@ -14,9 +14,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{admin}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
@@ -24,7 +28,15 @@
 					"mode": "formdata",
 					"formdata": []
 				},
-				"url": "{{base_url}}/users"
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -33,9 +45,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{admin}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -53,10 +69,10 @@
 							"type": "text"
 						},
 						{
-							"key": "file",
-							"contentType": "multipart/form-data",
-							"type": "file",
-							"src": "postman-cloud:///1eedc732-028a-4b30-a9b8-7065bcba04d6"
+							"key": "uri",
+							"value": "public://temporary-uploads/1711980943674-181363522.jpeg",
+							"contentType": "",
+							"type": "text"
 						},
 						{
 							"key": "email",
@@ -85,7 +101,15 @@
 						}
 					]
 				},
-				"url": "{{base_url}}/users"
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -94,9 +118,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{iulia}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{iulia}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -109,7 +137,16 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/users/username"
+				"url": {
+					"raw": "{{base_url}}/user/username",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"username"
+					]
+				}
 			},
 			"response": []
 		},
@@ -118,9 +155,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{admin}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{admin}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
@@ -133,7 +174,16 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/users/address"
+				"url": {
+					"raw": "{{base_url}}/user/address",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"address"
+					]
+				}
 			},
 			"response": []
 		},
@@ -142,22 +192,35 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{base_url}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"currentPassword\": \"Password1!\",\n    \"newPassword\": \"Cristina1!\",\n    \"confirmNewPassword\": \"Cristina1!\"\n}",
+					"raw": "{\n    \"currentPassword\": \"Cristina1!\",\n    \"newPassword\": \"Password0!\",\n    \"confirmPassword\": \"Password0!\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
 						}
 					}
 				},
-				"url": "{{base_url}}/users/password"
+				"url": {
+					"raw": "{{base_url}}/user/password",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user",
+						"password"
+					]
+				}
 			},
 			"response": []
 		},
@@ -166,9 +229,13 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "DELETE",
 				"header": [],
@@ -181,7 +248,15 @@
 						}
 					}
 				},
-				"url": "{{base_url}}/users"
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -190,19 +265,23 @@
 			"request": {
 				"auth": {
 					"type": "bearer",
-					"bearer": {
-						"token": "{{john}}"
-					}
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{john}}",
+							"type": "string"
+						}
+					]
 				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/users/cats",
+					"raw": "{{base_url}}/user/cats",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
-						"users",
+						"user",
 						"cats"
 					],
 					"query": [

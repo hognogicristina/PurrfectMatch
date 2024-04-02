@@ -19,7 +19,7 @@ router.get(
   adminController.getAllUsers,
 );
 router.delete(
-  "/users/:id",
+  "/user/:id",
   authMiddleware.authenticateToken,
   adminController.deleteUser,
 );
@@ -41,7 +41,7 @@ router.post(
   authController.refresh,
 );
 
-router.post("/image", upload.single("file"), imageController.uploadImage);
+router.post("/upload", upload.single("file"), imageController.uploadImage);
 
 router.get(
   "/user",
@@ -127,7 +127,7 @@ router.get(
   favoriteController.getFavorites,
 );
 router.post(
-  "/cats/:id/favorite",
+  "/cat/:id/favorite",
   authMiddleware.authenticateToken,
   favoriteController.addCatToFavorites,
 );
