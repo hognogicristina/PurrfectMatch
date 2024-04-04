@@ -6,6 +6,7 @@ const fileHelper = require("../helpers/fileHelper");
 const mailHelper = require("../helpers/adoptionRequestHelper");
 const catDTO = require("../dto/catDTO");
 const logger = require("../../logger/logger");
+const io = require("../../socket");
 
 const getAllCats = async (req, res) => {
   try {
@@ -14,7 +15,7 @@ const getAllCats = async (req, res) => {
     if (await catValidator.catsFilterValidator(cats, res)) return;
     const catsDetails = [];
     for (let cat of cats) {
-      const catsDetail = await catDTO.transformCatsToDTO(cat);
+      const catsDetail = await catDTO.transformCatFromListToDTO(cat);
       catsDetails.push(catsDetail);
     }
     return res.status(200).json({ data: catsDetails });
@@ -44,10 +45,12 @@ const addCat = async (req, res) => {
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
     catData.imageId = await fileHelper.moveImage(null, catData.uri);
-
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
+
+    const catDto = await catDTO.transformCatFromListToDTO(newCat);
+    io.getIO().emit("addedCats", { action: "create", cat: catDto });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
     logger.error(error);

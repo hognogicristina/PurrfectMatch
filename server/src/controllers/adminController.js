@@ -12,7 +12,7 @@ const getAllUsers = async (req, res) => {
     const users = await User.findAll({ where: { role: { [Op.ne]: "admin" } } });
     const usersDetails = [];
     for (let user of users) {
-      const userDetails = await userDTO.transformUsersToDTO(user);
+      const userDetails = await userDTO.transformUserFromListToDTO(user);
       usersDetails.push(userDetails);
     }
     return res.status(200).json({ data: usersDetails });

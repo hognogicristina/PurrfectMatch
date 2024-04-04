@@ -9,7 +9,6 @@ const catController = require("../controllers/catController");
 const adoptionRequestController = require("../controllers/adoptionRequestController");
 const favoriteController = require("../controllers/favoriteController");
 const authMiddleware = require("../middlewares/authMiddleware");
-const { ro } = require("@faker-js/faker");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 

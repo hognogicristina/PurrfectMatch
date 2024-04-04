@@ -24,7 +24,7 @@ async function transformUserToDTO(user) {
   };
 }
 
-async function transformUsersToDTO(user) {
+async function transformUserFromListToDTO(user) {
   const address = await Address.findOne({ where: { id: user.addressId } });
   return {
     username: user.username,
@@ -34,4 +34,4 @@ async function transformUsersToDTO(user) {
   };
 }
 
-module.exports = { transformUserToDTO, transformUsersToDTO };
+module.exports = { transformUserToDTO, transformUserFromListToDTO };

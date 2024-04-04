@@ -20,13 +20,13 @@ async function transformCatToDTO(cat) {
   };
 }
 
-async function transformCatsToDTO(cat) {
+async function transformCatFromListToDTO(cat) {
   return {
     name: cat.name,
     breed: cat.breed,
     gender: cat.gender,
-    ageType: cat.ageType,
+    lifeStage: cat.ageType,
   };
 }
 
-module.exports = { transformCatToDTO, transformCatsToDTO };
+module.exports = { transformCatToDTO, transformCatFromListToDTO };

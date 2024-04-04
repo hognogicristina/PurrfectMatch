@@ -13,7 +13,7 @@ const getFavorites = async (req, res) => {
     const favoriteDetails = [];
     for (let favorite of favorites) {
       const cat = await Cat.findByPk(favorite.catId);
-      const favoriteDetail = await catDTO.transformCatsToDTO(cat);
+      const favoriteDetail = await catDTO.transformCatFromListToDTO(cat);
       favoriteDetails.push(favoriteDetail);
     }
     return res.json({ data: favoriteDetails });
