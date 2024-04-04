@@ -11,9 +11,21 @@ const ensureLogsDirectoryExists = () => {
   }
 };
 
+const getCurrentTimestamp = () => {
+  const now = new Date();
+  const day = now.getDate().toString().padStart(2, "0");
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const year = now.getFullYear();
+  const hours = now.getHours().toString().padStart(2, "0");
+  const minutes = now.getMinutes().toString().padStart(2, "0");
+  const seconds = now.getSeconds().toString().padStart(2, "0");
+
+  return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+};
+
 const logger = (message) => {
   ensureLogsDirectoryExists();
-  const logMessage = `${message}\n`;
+  const logMessage = `${getCurrentTimestamp()} - ${message}\n`;
 
   fs.appendFile(logFilePathSuccess, logMessage, (err) => {
     if (err) {
@@ -24,7 +36,7 @@ const logger = (message) => {
 
 logger.error = (error) => {
   ensureLogsDirectoryExists();
-  const errorMessage = `${error}\n`;
+  const errorMessage = `${getCurrentTimestamp()} - ${error}\n`;
 
   fs.appendFile(logFilePathError, errorMessage, (err) => {
     if (err) {
@@ -35,13 +47,17 @@ logger.error = (error) => {
 
 logger.sql = (message) => {
   ensureLogsDirectoryExists();
-  const logMessage = `${message}\n`;
+  const cleanedMessage = message.replace("Executing (default): ", "");
 
-  fs.appendFile(logFilePathSql, logMessage, (err) => {
-    if (err) {
-      console.error("Error writing to logger file:", err);
-    }
-  });
+  if (/^\s*(SELECT|INSERT|UPDATE|DELETE)/i.test(cleanedMessage)) {
+    const logMessage = `${getCurrentTimestamp()} - ${cleanedMessage}\n`;
+
+    fs.appendFile(logFilePathSql, logMessage, (err) => {
+      if (err) {
+        console.error("Error writing to logger file:", err);
+      }
+    });
+  }
 };
 
-module.exports = logger;
+module.exports = { logger };
