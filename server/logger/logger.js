@@ -60,4 +60,4 @@ logger.sql = (message) => {
   }
 };
 
-module.exports = { logger };
+module.exports = logger;

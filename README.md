@@ -74,6 +74,18 @@ interact, and engage in discussions, fostering a sense of community among cat lo
 
 #### Client Setup
 
+1. Navigate to the client directory:
+    ```bash
+    cd Project/client
+
+2. Install the dependencies:
+    ```bash
+    npm install
+
+3. Start the client:
+    ```bash
+    npm run dev
+
 ## Database
 
 ### Sequelize ORM
