@@ -22,15 +22,15 @@ const authenticateToken = async (req, res, next) => {
 
     req.user = user;
     next();
-  } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
-      logger.error(err);
+  } catch (error) {
+    if (error instanceof jwt.TokenExpiredError) {
+      logger.error(error);
       return res.status(401).json({ error: "Token expired" });
-    } else if (err instanceof jwt.JsonWebTokenError) {
-      logger.error(err);
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      logger.error(error);
       return res.status(403).json({ error: "Failed to authenticate token" });
     } else {
-      logger.error(err);
+      logger.error(error);
       return res.status(500).json({ error: "Internal Server Error" });
     }
   }

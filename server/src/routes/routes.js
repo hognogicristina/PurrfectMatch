@@ -12,6 +12,7 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// Admin routes
 router.get(
   "/users",
   authMiddleware.authenticateToken,
@@ -28,27 +29,39 @@ router.delete(
   adminController.deleteCat,
 );
 
+// Auth routes
 router.post("/register", authController.register);
 router.get("/activate/:id", authController.activate);
 router.post("/login", authMiddleware.authenticateLogin, authController.login);
 router.post("/reset", authController.resetPasswordRequest);
 router.post("/reset/:id", authController.resetPassword);
-router.post("/logout", authController.logout);
+router.post("/logout", authMiddleware.authenticateToken, authController.logout);
 router.post(
   "/refresh/token",
   authMiddleware.validateRefreshToken,
   authController.refresh,
 );
 
-router.post("/upload", upload.single("file"), imageController.uploadImage);
+// Image routes
+router.post(
+  "/upload",
+  authMiddleware.authenticateToken,
+  upload.single("file"),
+  imageController.uploadImage,
+);
 
+// User routes
 router.get(
   "/user",
   authMiddleware.authenticateToken,
   userController.getOneUser,
 );
-router.put("/user", authMiddleware.authenticateToken, userController.editUser);
-router.put(
+router.patch(
+  "/user",
+  authMiddleware.authenticateToken,
+  userController.editUser,
+);
+router.patch(
   "/user/address",
   authMiddleware.authenticateToken,
   userController.editAddressUser,
@@ -74,18 +87,13 @@ router.get(
   userController.getMyCats,
 );
 
+// Cat routes
 router.get("/cats", catController.getAllCats);
 router.get("/cat/:id", catController.getOneCat);
-router.post(
-  "/cat",
-  authMiddleware.authenticateToken,
-  upload.single("file"),
-  catController.addCat,
-);
-router.put(
+router.post("/cat", authMiddleware.authenticateToken, catController.addCat);
+router.patch(
   "/cat/:id",
   authMiddleware.authenticateToken,
-  upload.single("file"),
   catController.editCat,
 );
 router.delete(
@@ -94,6 +102,7 @@ router.delete(
   catController.deleteCat,
 );
 
+// Adoption request routes
 router.post(
   "/adopt/:id",
   authMiddleware.authenticateToken,
@@ -120,6 +129,7 @@ router.delete(
   adoptionRequestController.deleteAdoptionRequest,
 );
 
+// Favorite routes
 router.get(
   "/favorites",
   authMiddleware.authenticateToken,

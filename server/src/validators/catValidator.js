@@ -109,22 +109,22 @@ const catsFilterValidator = async (catsFilter, res) => {
 const catValidator = async (req, res) => {
   const errors = [];
 
-  if (validator.isEmpty(req.body.name || "")) {
+  if (req.body.name && validator.isEmpty(req.body.name)) {
     errors.push({ field: "name", error: "Name is required" });
   }
 
-  if (validator.isEmpty(req.body.uri || "")) {
+  if (req.body.uri && validator.isEmpty(req.body.uri)) {
     errors.push({ field: "uri", error: "Image is required" });
-  } else {
+  } else if (req.body.uri) {
     const image = await Image.findOne({ where: { uri: req.body.uri } });
     if (!image) {
       errors.push({ field: "uri", error: "Please select a valid image" });
     }
   }
 
-  if (validator.isEmpty(req.body.breed || "")) {
+  if (req.body.breed && validator.isEmpty(req.body.breed)) {
     errors.push({ field: "breed", error: "Breed is required" });
-  } else {
+  } else if (req.body.breed) {
     const breeds = await Breed.findAll();
     const breedNames = breeds.map((breed) => breed.name);
     if (!breedNames.includes(req.body.breed)) {
@@ -132,24 +132,27 @@ const catValidator = async (req, res) => {
     }
   }
 
-  if (validator.isEmpty(req.body.gender || "")) {
+  if (req.body.gender && validator.isEmpty(req.body.gender)) {
     errors.push({ field: "gender", error: "Gender is required" });
-  } else if (!["Male", "Female"].includes(req.body.gender)) {
+  } else if (req.body.gender && !["Male", "Female"].includes(req.body.gender)) {
     errors.push({
       field: "gender",
       error: "Gender must be either Male or Female",
     });
   }
 
-  if (validator.isEmpty(req.body.age || "")) {
+  if (req.body.age && validator.isEmpty(req.body.age)) {
     errors.push({ field: "age", error: "Age is required" });
-  } else if (!validator.isInt(req.body.age)) {
+  } else if (req.body.age && !validator.isInt(req.body.age)) {
     errors.push({ field: "age", error: "Age must be an integer" });
   }
 
-  if (validator.isEmpty(req.body.description || "")) {
+  if (req.body.description && validator.isEmpty(req.body.description)) {
     errors.push({ field: "description", error: "Description is required" });
-  } else if (!validator.isLength(req.body.description, { min: 5 })) {
+  } else if (
+    req.body.description &&
+    !validator.isLength(req.body.description, { min: 5 })
+  ) {
     errors.push({
       field: "description",
       error: "Description must be at least 5 characters long",

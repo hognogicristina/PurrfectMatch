@@ -131,7 +131,7 @@ const deleteUser = async (req, res) => {
     await userHelper.deleteUser(req.user);
     await transaction.commit();
     return res.status(200).json({ status: "User deleted successfully" });
-  } catch (err) {
+  } catch (error) {
     await transaction.rollback();
     logger.error(error);
     return res.status(500).json({ error: "Internal server error" });

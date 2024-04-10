@@ -34,8 +34,10 @@ const updateCatData = async (cat, body) => {
     }
   }
 
-  cat.age = ageTimestamp;
-  cat.ageType = processAgeRange(ageInYears);
+  if (body.age) {
+    cat.age = ageTimestamp;
+    cat.ageType = processAgeRange(ageInYears);
+  }
 
   return cat;
 };

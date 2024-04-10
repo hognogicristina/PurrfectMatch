@@ -10,6 +10,15 @@ function CatList() {
     setCats((prevCats) => [...prevCats, newCat]);
   };
 
+  const editCat = (editedCat) => {
+    setCats((prevCats) => {
+      const index = prevCats.findIndex((cat) => cat.id === editedCat.id);
+      const newCats = [...prevCats];
+      newCats[index] = editedCat;
+      return newCats;
+    });
+  };
+
   useEffect(() => {
     const fetchCats = async () => {
       try {
@@ -23,9 +32,13 @@ function CatList() {
 
     fetchCats();
     const socket = openSocket("http://localhost:3000");
-    socket.on("addedCats", (data) => {
+    socket.on("cats", (data) => {
       if (data.action === "create") {
         addCat(data.cat);
+      }
+
+      if (data.action === "update") {
+        editCat(data.cat);
       }
     });
 

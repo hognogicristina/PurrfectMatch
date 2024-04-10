@@ -48,12 +48,14 @@ const moveImage = async (model, uri) => {
     const imageExist = await Image.findByPk(model.imageId);
     if (imageExist) {
       const oldImagePath = path.join("public", "uploads", imageExist.filename);
-      fs.unlinkSync(oldImagePath);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
       model.imageId = null;
-      imageExist.destroy();
     }
   }
 
+  if (!uri) return null;
   let image = await Image.findOne({ where: { uri } });
   if (!image) return null;
 

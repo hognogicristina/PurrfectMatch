@@ -27,9 +27,9 @@ const logger = (message) => {
   ensureLogsDirectoryExists();
   const logMessage = `${getCurrentTimestamp()} - ${message}\n`;
 
-  fs.appendFile(logFilePathSuccess, logMessage, (err) => {
-    if (err) {
-      console.error("Error writing to logger file:", err);
+  fs.appendFile(logFilePathSuccess, logMessage, (error) => {
+    if (error) {
+      console.error("Error writing to logger file:", error);
     }
   });
 };
