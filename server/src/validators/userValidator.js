@@ -85,30 +85,16 @@ const editUserValidation = async (req, res) => {
 const editUsernameValidation = async (req, res) => {
   const errors = [];
 
-  if (validator.isEmpty(req.body.currentUsername || "")) {
-    errors.push({ field: "username", error: "Current username is required" });
-  } else if (req.user.username !== req.body.currentUsername) {
-    errors.push({
-      field: "username",
-      error: "Current username is incorrect",
-    });
-  }
-
-  if (validator.isEmpty(req.body.newUsername || "")) {
+  if (validator.isEmpty(req.body.username || "")) {
     errors.push({ field: "username", error: "Username is required" });
-  } else if (!validator.isLength(req.body.newUsername, { min: 3 })) {
+  } else if (!validator.isLength(req.body.username, { min: 3 })) {
     errors.push({
       field: "username",
       error: "Username must be at least 3 characters long",
     });
-  } else if (req.body.currentUsername === req.body.newUsername) {
-    errors.push({
-      field: "username",
-      error: "New username must be different from the current one",
-    });
   } else {
     const user = await User.findOne({
-      where: { username: req.body.newUsername },
+      where: { username: req.body.username },
     });
     if (user && user.id !== req.user.id) {
       errors.push({ field: "username", error: "Username is already in use" });

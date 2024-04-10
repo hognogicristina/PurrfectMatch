@@ -66,12 +66,12 @@ router.patch(
   authMiddleware.authenticateToken,
   userController.editAddressUser,
 );
-router.put(
+router.patch(
   "/user/username",
   authMiddleware.authenticateToken,
   userController.editUsername,
 );
-router.put(
+router.patch(
   "/user/password",
   authMiddleware.authenticateToken,
   userController.editPassword,
@@ -108,7 +108,7 @@ router.post(
   authMiddleware.authenticateToken,
   adoptionRequestController.adoptCat,
 );
-router.put(
+router.patch(
   "/adopt/:id",
   authMiddleware.authenticateToken,
   adoptionRequestController.handleAdoptionRequest,

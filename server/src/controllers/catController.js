@@ -48,9 +48,10 @@ const addCat = async (req, res) => {
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
+    const catDetails = await catDTO.transformCatFromListToDTO(newCat);
     io.getIO().emit("cats", {
       action: "create",
-      cat: catDTO.transformCatFromListToDTO(newCat),
+      cat: catDetails,
     });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
@@ -70,9 +71,10 @@ const editCat = async (req, res) => {
       cat.imageId = await fileHelper.moveImage(cat, cat.uri);
     }
     await cat.save();
+    const catDetails = await catDTO.transformCatFromListToDTO(cat);
     io.getIO().emit("cats", {
       action: "update",
-      cat: catDTO.transformCatFromListToDTO(cat),
+      cat: catDetails,
     });
     return res.json({ status: "Cat updated successfully" });
   } catch (error) {

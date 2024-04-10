@@ -96,7 +96,7 @@ const editAddressUser = async (req, res) => {
 const editUsername = async (req, res) => {
   try {
     if (await userValidator.editUsernameValidation(req, res)) return;
-    req.user.username = req.body.newUsername;
+    req.user.username = req.body.username;
     await req.user.save();
     return res.json({ status: "Username updated successfully" });
   } catch (error) {

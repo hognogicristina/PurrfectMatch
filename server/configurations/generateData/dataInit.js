@@ -21,10 +21,18 @@ const adminInit = require("../adminConfig/adminInit");
 const fileHelper = require("../../src/helpers/fileHelper");
 const helperData = require("./helperData");
 const logger = require("../../logger/logger");
+const dotenv = require("dotenv");
 
-require("dotenv").config({ path: "./.env" });
-// Comment the line below if you want to use the .env file and not the .env.local file
-require("dotenv").config({ path: "./.env.local", override: true });
+dotenv.config({
+  path: path.resolve(__dirname, "./.env"),
+  override: true,
+});
+
+// Comment the lines below if you want to use the .env file and not the .env.local file
+dotenv.config({
+  path: path.resolve(__dirname, "./.env.local"),
+  override: true,
+});
 
 sequelize.options.logging = (message) => {
   logger.sql(message);
