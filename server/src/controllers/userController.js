@@ -22,16 +22,35 @@ const getOneUser = async (req, res) => {
   }
 };
 
-const getMyCats = async (req, res) => {
+const getOwnedCats = async (req, res) => {
   try {
-    if (await catUserValidator.getCatsValidator(req, res)) return;
-    const cats = await catUserHelper.getCats(req);
+    if (await catUserValidator.getCatsValidator(req, res, "owned")) return;
+    const cats = await catUserHelper.getCats(req, "owned");
     const catsDetails = [];
     for (let cat of cats) {
       const catsDetail = await catUserDTO.transformCatUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
-    return res.status(200).json({ data: catsDetails });
+    const catsCount = cats.length;
+    return res.status(200).json({ data: { catsCount, catsDetails } });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getSentToAdoptionCats = async (req, res) => {
+  try {
+    if (await catUserValidator.getCatsValidator(req, res, "sentToAdoption"))
+      return;
+    const cats = await catUserHelper.getCats(req, "sentToAdoption");
+    const catsDetails = [];
+    for (let cat of cats) {
+      const catsDetail = await catUserDTO.transformCatUserToDTO(cat);
+      catsDetails.push(catsDetail);
+    }
+    const catsCount = cats.length;
+    return res.status(200).json({ data: { catsCount, catsDetails } });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -140,7 +159,8 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getOneUser,
-  getMyCats,
+  getOwnedCats,
+  getSentToAdoptionCats,
   editUser,
   editAddressUser,
   editUsername,

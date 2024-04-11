@@ -56,6 +56,16 @@ router.get(
   authMiddleware.authenticateToken,
   userController.getOneUser,
 );
+router.get(
+  "/user/cats-owned",
+  authMiddleware.authenticateToken,
+  userController.getOwnedCats,
+);
+router.get(
+  "/user/cats-sent-to-adoption",
+  authMiddleware.authenticateToken,
+  userController.getSentToAdoptionCats,
+);
 router.patch(
   "/user",
   authMiddleware.authenticateToken,
@@ -80,11 +90,6 @@ router.delete(
   "/user",
   authMiddleware.authenticateToken,
   userController.deleteUser,
-);
-router.get(
-  "/user/cats",
-  authMiddleware.authenticateToken,
-  userController.getMyCats,
 );
 
 // Cat routes

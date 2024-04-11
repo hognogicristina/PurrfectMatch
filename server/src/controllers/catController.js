@@ -10,15 +10,31 @@ const io = require("../../socket");
 
 const getAllCats = async (req, res) => {
   try {
+    const page = req.query.page || 1;
+    const pageSize = 5;
     if (await catValidator.catExistValidator(req, res)) return;
     const cats = await catHelper.filterCats(req);
     if (await catValidator.catsFilterValidator(cats, res)) return;
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const totalItems = cats.length;
+
+    const catsForPage = cats.slice(startIndex, endIndex);
+
     const catsDetails = [];
-    for (let cat of cats) {
+    for (let cat of catsForPage) {
       const catsDetail = await catDTO.transformCatFromListToDTO(cat);
       catsDetails.push(catsDetail);
     }
-    return res.status(200).json({ data: catsDetails });
+
+    return res.status(200).json({
+      page: page,
+      pageSize: pageSize,
+      totalPages: Math.ceil(totalItems / pageSize),
+      totalItems: totalItems,
+      data: catsDetails,
+    });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });

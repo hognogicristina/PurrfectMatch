@@ -1,16 +1,10 @@
 import React from "react";
-import CatList from "./CatList";
+import Home from "./pages/Home";
 
 function App() {
   return (
     <div>
-      <header>
-        <h1>React Essentials</h1>
-      </header>
-      <main>
-        <h2>Time to get started!</h2>
-        <CatList />
-      </main>
+      <Home />
     </div>
   );
 }

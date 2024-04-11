@@ -35,23 +35,14 @@ const userValidator = async (req, res) => {
   return null;
 };
 
-const getCatsValidator = async (req, res) => {
+const getCatsValidator = async (req, res, listType) => {
   const user = req.user;
-
-  if (req.query.addedByMe === undefined && req.query.ownedByMe === undefined) {
-    return res.status(400).json({ error: "You must select a filter" });
-  }
-
-  if (req.query.addedByMe !== undefined && req.query.ownedByMe !== undefined) {
-    return res
-      .status(400)
-      .json({ error: "You can only use one filter at a time" });
-  } else if (req.query.addedByMe !== undefined) {
+  if (listType === "sentToAdoption") {
     const cats = await CatUser.findAll({ where: { userId: user.id } });
     if (cats.length === 0) {
       return res.status(404).json({ error: "No cats found" });
     }
-  } else if (req.query.ownedByMe !== undefined) {
+  } else if (listType === "owned") {
     const cats = await CatUser.findAll({ where: { ownerId: user.id } });
     if (cats.length === 0) {
       return res.status(404).json({ error: "No cats found" });

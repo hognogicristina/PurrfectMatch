@@ -1,15 +1,13 @@
 const { Image, Cat, CatUser } = require("../../models");
 const fileHelper = require("./fileHelper");
 
-const getCats = async (req) => {
-  const addedByMe = req.query.addedByMe !== undefined;
-  const ownedByMe = req.query.ownedByMe !== undefined;
+const getCats = async (req, listType) => {
   let cats = [];
 
-  if (addedByMe) {
+  if (listType === "sentToAdoption") {
     const addedCats = await Cat.findAll({ where: { userId: req.user.id } });
     cats = cats.concat(addedCats);
-  } else if (ownedByMe) {
+  } else if (listType === "owned") {
     const ownedCats = await Cat.findAll({ where: { ownerId: req.user.id } });
     cats = cats.concat(ownedCats);
   }
