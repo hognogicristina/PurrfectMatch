@@ -9,17 +9,24 @@ export default function RegisterForm() {
   const data = useActionData();
   const [step, setStep] = useState(1);
   const [prevStep, setPrevStep] = useState(0);
+  const [isValid, setIsValid] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
+    let errorsPresent = false;
     if (data && data.error) {
       data.error.forEach((error) => {
         toast.error(error.message);
+        errorsPresent = true;
       });
     }
+    setIsValid(!errorsPresent);
   }, [data]);
 
   const nextStep = () => {
+    if (!isValid) {
+      return;
+    }
     setPrevStep(step);
     setStep((prevStep) => prevStep + 1);
   };
