@@ -4,7 +4,9 @@ const userValidator = async (req, res) => {
   if (req.method !== "POST") {
     const cat = await Cat.findByPk(req.params.id);
     if (!cat) {
-      return res.status(404).json({ error: "Cat not found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "cat", message: "Cat not found" }] });
     }
 
     const user = req.user;
@@ -12,13 +14,27 @@ const userValidator = async (req, res) => {
       if (cat.userId !== user.id) {
         return res
           .status(403)
-          .json({ error: "You are not authorized to perform this action" });
+          .json({
+            error: [
+              {
+                field: "cat",
+                message: "You are not authorized to perform this action",
+              },
+            ],
+          });
       }
     } else {
       if (cat.ownerId !== user.id) {
         return res
           .status(403)
-          .json({ error: "You are not authorized to perform this action" });
+          .json({
+            error: [
+              {
+                field: "cat",
+                message: "You are not authorized to perform this action",
+              },
+            ],
+          });
       }
     }
   }
@@ -28,7 +44,14 @@ const userValidator = async (req, res) => {
     if (!user.addressId) {
       return res
         .status(403)
-        .json({ error: "Address is required in order for you to add a cat" });
+        .json({
+          error: [
+            {
+              field: "address",
+              message: "Address is required in order for you to add a cat",
+            },
+          ],
+        });
     }
   }
 
@@ -40,12 +63,16 @@ const getCatsValidator = async (req, res, listType) => {
   if (listType === "sentToAdoption") {
     const cats = await CatUser.findAll({ where: { userId: user.id } });
     if (cats.length === 0) {
-      return res.status(404).json({ error: "No cats found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "cats", message: "No cats found" }] });
     }
   } else if (listType === "owned") {
     const cats = await CatUser.findAll({ where: { ownerId: user.id } });
     if (cats.length === 0) {
-      return res.status(404).json({ error: "No cats found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "cats", message: "No cats found" }] });
     }
   }
 

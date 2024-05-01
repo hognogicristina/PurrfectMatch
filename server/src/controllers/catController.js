@@ -11,7 +11,7 @@ const io = require("../../socket");
 const getAllCats = async (req, res) => {
   try {
     const page = req.query.page || 1;
-    const pageSize = 5;
+    const pageSize = 6;
     if (await catValidator.catExistValidator(req, res)) return;
     const cats = await catHelper.filterCats(req);
     if (await catValidator.catsFilterValidator(cats, res)) return;

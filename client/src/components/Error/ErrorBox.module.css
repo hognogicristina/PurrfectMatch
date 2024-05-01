@@ -1,0 +1,19 @@
+.errorBox {
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.errorBox a {
+  color: #721c24;
+  text-decoration: underline;
+}
+
+.errorBox a:hover {
+  color: #561819;
+}

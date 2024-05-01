@@ -6,20 +6,28 @@ const userExistValidator = async (req, res) => {
 
   if (user.role === "admin") {
     if (users.length === 0) {
-      return res.status(404).json({ error: "No Users Available" });
+      return res.status(404).json({
+        error: [{ field: "user", message: "No Users Available" }],
+      });
     }
   } else {
-    return res.status(403).json({ error: "Unauthorized" });
+    return res
+      .status(403)
+      .json({ error: [{ field: "user", message: "Unauthorized" }] });
   }
 
   if (req.params.id) {
     if (user.role === "admin") {
       const user = await User.findByPk(req.params.id);
       if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res
+          .status(404)
+          .json({ error: [{ field: "user", message: "User not found" }] });
       }
     } else {
-      return res.status(403).json({ error: "Unauthorized" });
+      return res
+        .status(403)
+        .json({ error: [{ field: "user", message: "Unauthorized" }] });
     }
   }
 

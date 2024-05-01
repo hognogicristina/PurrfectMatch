@@ -16,64 +16,100 @@ const doNotUsePreviousPassword = async (password, user) => {
 
 const resetValidationPassword = async (req, res) => {
   if (validator.isEmpty(req.body.password || "")) {
-    return res.status(400).json({ error: "Password is required" });
+    return res.status(400).json({
+      error: [{ field: "password", message: "Password is required" }],
+    });
   } else if (!validator.isStrongPassword(req.body.password)) {
     return res.status(400).json({
-      error:
-        "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character",
+      error: [
+        {
+          field: "password",
+          message:
+            "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character",
+        },
+      ],
     });
   } else if (req.body.password !== req.body.confirmPassword) {
-    return res.status(400).json({ error: "Passwords do not match" });
+    return res
+      .status(400)
+      .json({
+        error: [
+          { field: "confirmPassword", message: "Passwords do not match" },
+        ],
+      });
   }
   if (await doNotUsePreviousPassword(req.body.password, req.user)) {
     return res
       .status(400)
-      .json({ error: "You cannot reuse one of your last three passwords" });
+      .json({
+        error: [
+          {
+            field: "password",
+            message: "You cannot reuse one of your last three passwords",
+          },
+        ],
+      });
   }
   return null;
 };
 
 const editPasswordValidation = async (req, res) => {
-  const errors = [];
+  const error = [];
 
   if (validator.isEmpty(req.body.currentPassword || "")) {
-    errors.push({
+    error.push({
       field: "currentPassword",
-      error: "Current password is required",
+      message: "Current password is required",
     });
   } else {
     const user = await User.findByPk(req.user.id);
     if (!(await bcrypt.compare(req.body.currentPassword, user.password))) {
-      return res.status(400).json({ error: "Current password is incorrect" });
+      return res
+        .status(400)
+        .json({
+          error: [
+            {
+              field: "currentPassword",
+              message: "Current password is incorrect",
+            },
+          ],
+        });
     }
   }
 
   if (validator.isEmpty(req.body.newPassword || "")) {
-    errors.push({ field: "newPassword", error: "New password is required" });
+    error.push({ field: "newPassword", message: "New password is required" });
   } else if (!validator.isStrongPassword(req.body.newPassword)) {
-    errors.push({
+    error.push({
       field: "newPassword",
-      error:
+      message:
         "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character",
     });
   }
 
   if (validator.isEmpty(req.body.confirmPassword || "")) {
-    errors.push({
+    error.push({
       field: "confirmPassword",
-      error: "Confirm password is required",
+      message: "Confirm password is required",
     });
   } else if (req.body.newPassword !== req.body.confirmPassword) {
-    errors.push({ field: "confirmPassword", error: "Passwords do not match" });
+    error.push({ field: "confirmPassword", message: "Passwords do not match" });
   }
 
   if (await doNotUsePreviousPassword(req.body.newPassword, req.user)) {
     return res
       .status(400)
-      .json({ error: "You cannot reuse one of your last three passwords" });
+      .json({
+        error: [
+          {
+            field: "newPassword",
+            message: "You cannot reuse one of your last three passwords",
+          },
+        ],
+      });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 module.exports = {

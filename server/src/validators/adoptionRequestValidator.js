@@ -9,7 +9,7 @@ const validator = require("validator");
 const e = require("express");
 
 const adoptValidator = async (req, res) => {
-  const errors = [];
+  const error = [];
   const userId = req.user.id;
 
   if (req.params.id) {
@@ -17,7 +17,9 @@ const adoptValidator = async (req, res) => {
     if (req.path.includes("favorites")) {
       const favorite = await Favorite.findByPk(req.params.id);
       if (!favorite) {
-        return res.status(404).json({ error: "Favorite not found" });
+        return res.status(404).json({
+          error: [{ field: "favorite", message: "Favorite not found" }],
+        });
       }
 
       cat = await Cat.findByPk(favorite.catId);
@@ -26,19 +28,19 @@ const adoptValidator = async (req, res) => {
     }
 
     if (!cat) {
-      errors.push({ field: "cat", error: "Cat not found" });
-      return res.status(400).json({ errors });
+      error.push({ field: "cat", message: "Cat not found" });
+      return res.status(400).json({ error });
     }
 
     if (cat.userId === userId) {
-      errors.push({
+      error.push({
         field: "cat",
         error: "You cannot send adoption request for a cat you are guardian of",
       });
     }
 
     if (cat.ownerId !== null) {
-      errors.push({ field: "cat", error: "Cat already adopted" });
+      error.push({ field: "cat", message: "Cat already adopted" });
     }
   }
 
@@ -57,24 +59,24 @@ const adoptValidator = async (req, res) => {
     });
 
     if (existingRequest) {
-      errors.push({ field: "cat", error: "Adoption request already sent" });
+      error.push({ field: "cat", message: "Adoption request already sent" });
     }
   }
 
   if (validator.isEmpty(req.body.message)) {
-    errors.push({ field: "message", error: "Message is required" });
+    error.push({ field: "message", message: "Message is required" });
   } else if (!validator.isLength(req.body.message, { min: 10, max: 100 })) {
-    errors.push({
+    error.push({
       field: "message",
-      error: "Message must be between 10 and 100 characters",
+      message: "Message must be between 10 and 100 characters",
     });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const handleAdoptionRequestValidator = async (req, res) => {
-  const errors = [];
+  const error = [];
   const { id } = req.params;
   const { status } = req.body;
   const userId = req.user.id;
@@ -82,18 +84,29 @@ const handleAdoptionRequestValidator = async (req, res) => {
   if (req.params.id) {
     const mail = await AdoptionRequest.findByPk(id);
     if (!mail) {
-      return res.status(404).json({ error: "AdoptionRequest not found" });
+      return res
+        .status(404)
+        .json({
+          error: [{ field: "adoption", message: "AdoptionRequest not found" }],
+        });
     }
 
     const cat = await Cat.findByPk(mail.catId);
     if (cat.userId !== userId) {
       return res
         .status(403)
-        .json({ error: "You are not allowed to handle this request" });
+        .json({
+          error: [
+            {
+              field: "adoption",
+              message: "You are not allowed to handle this request",
+            },
+          ],
+        });
     }
 
     if (mail.status !== "pending") {
-      errors.push({ field: "status", error: "Status already updated" });
+      error.push({ field: "status", message: "Status already updated" });
     }
   }
 
@@ -103,28 +116,39 @@ const handleAdoptionRequestValidator = async (req, res) => {
   if (!userAddress) {
     return res
       .status(404)
-      .json({ error: "Address not found for the sender user" });
+      .json({
+        error: [
+          {
+            field: "address",
+            message: "Address not found for the sender user",
+          },
+        ],
+      });
   }
 
   if (status !== "accepted" && status !== "declined") {
-    errors.push({ field: "status", error: "Invalid status" });
+    error.push({ field: "status", message: "Invalid status" });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const deleteAdoptionRequestValidator = async (req, res) => {
-  const errors = [];
+  const error = [];
   const userId = req.user.id;
   const mailId = req.params.id;
 
   const mail = await AdoptionRequest.findByPk(mailId);
   if (!mail) {
-    return res.status(404).json({ error: "AdoptionRequest not found" });
+    return res
+      .status(404)
+      .json({
+        error: [{ field: "adoption", message: "AdoptionRequest not found" }],
+      });
   }
 
   if (mail.status === "pending") {
-    errors.push({ field: "status", error: "Cannot delete pending mails" });
+    error.push({ field: "status", message: "Cannot delete pending mails" });
   }
 
   const userAdoptionRequest = await UserRole.findOne({
@@ -133,14 +157,27 @@ const deleteAdoptionRequestValidator = async (req, res) => {
   if (!userAdoptionRequest) {
     return res
       .status(403)
-      .json({ error: "You are not allowed to delete this mail" });
+      .json({
+        error: [
+          {
+            field: "adoption",
+            message: "You are not allowed to delete this mail",
+          },
+        ],
+      });
   }
 
   if (!userAdoptionRequest.isVisible) {
-    return res.status(400).json({ error: "AdoptionRequest already deleted" });
+    return res
+      .status(400)
+      .json({
+        error: [
+          { field: "adoption", message: "AdoptionRequest already deleted" },
+        ],
+      });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const getAdoptionRequestsValidator = async (req, res) => {
@@ -149,7 +186,11 @@ const getAdoptionRequestsValidator = async (req, res) => {
   if (req.params.id) {
     const mail = await AdoptionRequest.findByPk(req.params.id);
     if (!mail) {
-      return res.status(404).json({ error: "AdoptionRequest not found" });
+      return res
+        .status(404)
+        .json({
+          error: [{ field: "adoption", message: "AdoptionRequest not found" }],
+        });
     }
 
     const userAdoptionRequest = await UserRole.findOne({
@@ -158,22 +199,41 @@ const getAdoptionRequestsValidator = async (req, res) => {
     if (!userAdoptionRequest) {
       return res
         .status(403)
-        .json({ error: "You are not allowed to view this mail" });
+        .json({
+          error: [
+            {
+              field: "adoption",
+              message: "You are not allowed to view this mail",
+            },
+          ],
+        });
     }
 
     if (!userAdoptionRequest.isVisible) {
-      return res.status(400).json({ error: "AdoptionRequest not found" });
+      return res
+        .status(400)
+        .json({
+          error: [
+            { field: "adoption", message: "AdoptionRequest already deleted" },
+          ],
+        });
     }
   } else {
     const userAdoptionRequests = await UserRole.findAll({
       where: { userId: req.user.id },
     });
     if (userAdoptionRequests.length === 0) {
-      return res.status(404).json({ error: "No mails found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "adoption", message: "No mails found" }] });
     }
 
     if (sortOrder !== "ASC" && sortOrder !== "DESC") {
-      return res.status(400).json({ error: "Invalid sort order" });
+      return res
+        .status(400)
+        .json({
+          error: [{ field: "sort-order", message: "Invalid sort order" }],
+        });
     }
   }
 

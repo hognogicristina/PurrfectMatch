@@ -1,4 +1,4 @@
-const nodemailer = require("nodemailer");
+xconst nodemailer = require("nodemailer");
 const pug = require("pug");
 const path = require("path");
 const { User } = require("../../models");

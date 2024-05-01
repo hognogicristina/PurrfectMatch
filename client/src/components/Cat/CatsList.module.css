@@ -1,0 +1,21 @@
+.catsList {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.catItem {
+  margin: 10px;
+  padding: 10px;
+  background-color: pink;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.cat-item img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.cat-item p {
+  text-align: center;
+}

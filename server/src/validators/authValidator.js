@@ -3,74 +3,74 @@ const { User, PasswordHistory } = require("../../models");
 const bcrypt = require("bcrypt");
 
 const validateUser = async (req, res) => {
-  const errors = [];
+  const error = [];
   const user = await User.findOne({ where: { id: req.params.id } });
   if (!user) {
-    errors.push({ field: "id", error: "User not found" });
+    error.push({ field: "id", message: "User not found" });
   }
 
   const { token, signature } = req.query;
   if (new Date() > new Date(user.expires)) {
-    errors.push({ field: "token", error: "Token has expired" });
+    error.push({ field: "token", message: "Token has expired" });
   }
 
   if (user.token !== token) {
-    errors.push({ field: "token", error: "Invalid token" });
+    error.push({ field: "token", message: "Invalid token" });
   }
 
   if (user.signature !== signature) {
-    errors.push({ field: "signature", error: "Invalid signature" });
+    error.push({ field: "signature", message: "Invalid signature" });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const registerValidation = async (req, res) => {
-  const errors = [];
+  const error = [];
 
   if (validator.isEmpty(req.body.firstName || "")) {
-    errors.push({ field: "firstName", error: "First name is required" });
+    error.push({ field: "firstName", message: "First name is required" });
   } else if (!validator.isLength(req.body.firstName, { min: 3 })) {
-    errors.push({
+    error.push({
       field: "firstName",
-      error: "First name must be at least 3 characters long",
+      message: "First name must be at least 3 characters long",
     });
   }
 
   if (validator.isEmpty(req.body.lastName || "")) {
-    errors.push({ field: "lastName", error: "Last name is required" });
+    error.push({ field: "lastName", message: "Last name is required" });
   } else if (!validator.isLength(req.body.lastName, { min: 3 })) {
-    errors.push({
+    error.push({
       field: "lastName",
-      error: "Last name must be at least 3 characters long",
+      message: "Last name must be at least 3 characters long",
     });
   }
 
   if (validator.isEmpty(req.body.username || "")) {
-    errors.push({ field: "username", error: "Username is required" });
+    error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
-    errors.push({
+    error.push({
       field: "username",
-      error: "Username must be at least 3 characters long",
+      message: "Username must be at least 3 characters long",
     });
   } else {
     const user = await User.findOne({ where: { username: req.body.username } });
     if (user) {
-      errors.push({ field: "username", error: "Username is already in use" });
+      error.push({ field: "username", message: "Username is already in use" });
     }
   }
 
   if (validator.isEmpty(req.body.email || "")) {
-    errors.push({ field: "email", error: "Email is required" });
+    error.push({ field: "email", message: "Email is required" });
   } else if (!validator.isEmail(req.body.email)) {
-    errors.push({
+    error.push({
       field: "email",
-      error: User.rawAttributes.email.validate.isEmail.msg,
+      message: User.rawAttributes.email.validate.isEmail.msg,
     });
   } else {
     const user = await User.findOne({ where: { email: req.body.email } });
     if (user) {
-      errors.push({
+      error.push({
         field: "email",
         error: "Email is already in use by another user",
       });
@@ -78,39 +78,39 @@ const registerValidation = async (req, res) => {
   }
 
   if (validator.isEmpty(req.body.password || "")) {
-    errors.push({ field: "password", error: "Password is required" });
+    error.push({ field: "password", message: "Password is required" });
   } else if (!validator.isStrongPassword(req.body.password)) {
-    errors.push({
+    error.push({
       field: "password",
-      error:
+      message:
         "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character",
     });
   }
 
   if (validator.isEmpty(req.body.birthday || "")) {
-    errors.push({ field: "birthday", error: "Birthday is required" });
+    error.push({ field: "birthday", message: "Birthday is required" });
   } else if (!validator.isDate(req.body.birthday)) {
-    errors.push({
+    error.push({
       field: "birthday",
-      error: "Invalid date format Please use YYYY-MM-DD",
+      message: "Invalid date format Please use YYYY-MM-DD",
     });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const loginValidation = async (req, res) => {
-  const errors = [];
+  const error = [];
 
   if (validator.isEmpty(req.body.usernameOrEmail || "")) {
-    errors.push({
+    error.push({
       field: "usernameOrEmail",
-      error: "Username or email is required",
+      message: "Username or email is required",
     });
   }
 
   if (validator.isEmpty(req.body.password || "")) {
-    errors.push({ field: "password", error: "Password is required" });
+    error.push({ field: "password", message: "Password is required" });
   }
 
   const user = await User.findOne({
@@ -119,31 +119,51 @@ const loginValidation = async (req, res) => {
   if (user) {
     if (user.status === "active_pending") {
       return res.status(401).json({
-        error:
-          "Please activate your account by clicking the link sent to your email",
+        error: [
+          {
+            field: "user",
+            message:
+              "Please activate your account by clicking the link sent to your email",
+          },
+        ],
       });
     } else if (user.status === "blocked") {
-      return res
-        .status(401)
-        .json({ error: "Admin has blocked your account until activation" });
+      return res.status(401).json({
+        error: [
+          {
+            field: "user",
+            message: "Admin has blocked your account until activation",
+          },
+        ],
+      });
     }
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const resetValidationEmail = async (req, res) => {
-  const errors = [];
+  const error = [];
   const user = await User.findOne({ where: { email: req.body.email } });
 
   if (validator.isEmpty(req.body.email || "")) {
-    return res
-      .status(400)
-      .json({ error: "Email is required in order to reset your password" });
+    return res.status(400).json({
+      error: [
+        {
+          field: "email",
+          message: "Email is required in order to reset your password",
+        },
+      ],
+    });
   } else if (!validator.isEmail(req.body.email)) {
-    return res
-      .status(400)
-      .json({ error: User.rawAttributes.email.validate.isEmail.msg });
+    return res.status(400).json({
+      error: [
+        {
+          field: "email",
+          message: User.rawAttributes.email.validate.isEmail.msg,
+        },
+      ],
+    });
   }
 
   if (!user) {
@@ -152,7 +172,7 @@ const resetValidationEmail = async (req, res) => {
       .json({ status: "If the email exists, a reset link will be sent" });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 module.exports = {

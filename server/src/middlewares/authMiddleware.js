@@ -9,7 +9,9 @@ const authenticateToken = async (req, res, next) => {
   const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
-    return res.status(404).json({ error: "No token provided" });
+    return res
+      .status(404)
+      .json({ error: [{ field: "token", message: "No token provided" }] });
   }
 
   try {
@@ -17,7 +19,9 @@ const authenticateToken = async (req, res, next) => {
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "user", message: "User not found" }] });
     }
 
     req.user = user;
@@ -25,13 +29,19 @@ const authenticateToken = async (req, res, next) => {
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       logger.error(error);
-      return res.status(401).json({ error: "Token expired" });
+      return res
+        .status(401)
+        .json({ error: [{ field: "token", message: "Token expired" }] });
     } else if (error instanceof jwt.JsonWebTokenError) {
       logger.error(error);
-      return res.status(403).json({ error: "Failed to authenticate token" });
+      return res.status(403).json({
+        error: [{ field: "token", message: "Failed to authenticate token" }],
+      });
     } else {
       logger.error(error);
-      return res.status(500).json({ error: "Internal Server Error" });
+      return res.status(500).json({
+        error: [{ field: "server", message: "Internal Server Error" }],
+      });
     }
   }
 };
@@ -53,14 +63,18 @@ const authenticateLogin = async (req, res, next) => {
     }
 
     if (!user || !isPasswordValid) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({
+        error: [{ field: "user", message: "Invalid user or password" }],
+      });
     }
 
     req.user = user;
     next();
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -68,19 +82,31 @@ const validateRefreshToken = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!refreshToken) {
-      return res.status(401).json({ error: "Refresh token is required" });
+      return res
+        .status(401)
+        .json({
+          error: [
+            { field: "refreshToken", message: "Refresh token is required" },
+          ],
+        });
     }
 
     const token = await RefreshToken.findOne({
       where: { token: refreshToken },
     });
     if (!token) {
-      return res.status(401).json({ error: "Invalid refresh token" });
+      return res
+        .status(401)
+        .json({
+          error: [{ field: "refreshToken", message: "Invalid refresh token" }],
+        });
     }
 
     const user = await User.findByPk(token.userId);
     if (!user) {
-      return res.status(401).json({ error: "User not found" });
+      return res
+        .status(401)
+        .json({ error: [{ field: "user", message: "User not found" }] });
     }
 
     req.user = user;
@@ -88,7 +114,9 @@ const validateRefreshToken = async (req, res, next) => {
     next();
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 

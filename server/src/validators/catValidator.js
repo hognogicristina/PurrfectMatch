@@ -15,7 +15,7 @@ const catExistValidator = async (req, res) => {
     }
   } else {
     if (cats.length === 0) {
-      return res.status(404).json({ error: "No Cats Available" });
+      return res.status(404).json({ error: "No Cat Available" });
     }
 
     if (req.query.search) {
