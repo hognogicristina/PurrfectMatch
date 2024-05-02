@@ -9,6 +9,7 @@ const saveImageFile = async (file, folder) => {
   const imagePath = path.join("public", folder, filename);
   const filesize = file.size;
   const url = `${process.env.SERVER_BASE_URL}/${folder}/${filename}`;
+
   const uri = `public://${folder}/${filename}`;
   fs.writeFileSync(imagePath, file.buffer);
 

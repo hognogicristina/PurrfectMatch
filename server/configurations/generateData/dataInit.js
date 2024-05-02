@@ -1,4 +1,3 @@
-const path = require("path");
 const fs = require("fs");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
@@ -24,15 +23,16 @@ const fileHelper = require("../../src/helpers/fileHelper");
 const helperData = require("./helperData");
 const logger = require("../../logger/logger");
 const dotenv = require("dotenv");
+const path = require("path");
 
 dotenv.config({
-  path: path.resolve(__dirname, "./.env"),
+  path: path.resolve(__dirname, "../../.env"),
   override: true,
 });
 
 // Comment the lines below if you want to use the .env file and not the .env.local file
 dotenv.config({
-  path: path.resolve(__dirname, "./.env.local"),
+  path: path.resolve(__dirname, "../../.env.local"),
   override: true,
 });
 
@@ -46,7 +46,7 @@ const generateUsers = async (numUsers) => {
   for (let i = 0; i < numUsers; i++) {
     const username = faker.internet.userName();
     const email = faker.internet.email();
-    const password = await bcrypt.hash("Password1!", 10);
+    const password = await bcrypt.hash("password", 10);
     const birthday = faker.date.anytime();
     const address = await adminInit.generateAddress();
 
@@ -130,7 +130,6 @@ const emptyDatabase = () => {
       fileHelper.deleteImage(breed, "breeds");
     }
   });
-
   Image.findAll().then((images) => {
     for (const image of images) {
       fileHelper.deleteImage(image, "uploads");
@@ -142,7 +141,7 @@ const emptyDatabase = () => {
 
 const generateData = async () => {
   try {
-    // emptyDatabase();
+    emptyDatabase();
     await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();

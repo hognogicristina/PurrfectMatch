@@ -1,8 +1,9 @@
 const validator = require("validator");
-const { User } = require("../../models");
+const { User, Token } = require("../../models");
 
 const validateUser = async (req, res) => {
   const user = await User.findOne({ where: { id: req.params.id } });
+  const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
   if (!user) {
     return res
@@ -12,10 +13,10 @@ const validateUser = async (req, res) => {
 
   const { token, signature, expires } = req.query;
   if (
-    user.token !== token ||
-    user.signature !== signature ||
-    user.expires !== expires ||
-    (user.expires === expires && new Date() > new Date(user.expires))
+    tokenUser.token !== token ||
+    tokenUser.signature !== signature ||
+    tokenUser.expires !== expires ||
+    (tokenUser.expires === expires && new Date() > new Date(tokenUser.expires))
   ) {
     return res.status(400).json({
       error: [
@@ -178,11 +179,9 @@ const resetValidationEmail = async (req, res) => {
   }
 
   if (!user) {
-    return res
-      .status(400)
-      .json({
-        status: "If the email exists, a reset link will be sent to you",
-      });
+    return res.status(400).json({
+      status: "If the email exists, a reset link will be sent to you",
+    });
   } else if (user.expires !== null && new Date() < new Date(user.expires)) {
     return res.status(400).json({
       error: [

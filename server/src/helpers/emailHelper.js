@@ -1,7 +1,7 @@
 const crypto = require("crypto");
 const pug = require("pug");
 const path = require("path");
-const { Image, User } = require("../../models");
+const { Image, User, Token } = require("../../models");
 
 const generateTokenAndSignature = async (user, linkType) => {
   const token = crypto.randomBytes(16).toString("hex");
@@ -14,10 +14,12 @@ const generateTokenAndSignature = async (user, linkType) => {
   const expires = new Date();
   expires.setHours(expires.getHours() + 24);
 
-  user.token = token;
-  user.signature = signature;
-  user.expires = expires;
-  await user.save();
+  const tokenUser = await Token.findOne({ where: { userId: user.id } });
+
+  tokenUser.token = token;
+  tokenUser.signature = signature;
+  tokenUser.expires = expires;
+  await tokenUser.save();
 
   let link;
   if (linkType === "activation") {

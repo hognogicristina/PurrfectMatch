@@ -5,12 +5,14 @@ const {
   RefreshToken,
   PasswordHistory,
   UserInfo,
+  Token,
 } = require("../../models");
 const emailServ = require("../services/emailService");
 const authValidator = require("../validators/authValidator");
 const passwordValidator = require("../validators/passwordValidator");
 const authHelper = require("../helpers/authHelper");
 const logger = require("../../logger/logger");
+const { c } = require("@faker-js/faker/dist/esm/chunk-GTEBSQTL.mjs");
 
 const register = async (req, res) => {
   try {
@@ -28,6 +30,7 @@ const register = async (req, res) => {
     });
     await UserInfo.create({ userId: user.id, birthday });
     await PasswordHistory.create({ userId: user.id, password: hashedPassword });
+    await Token.create({ userId: user.id });
     await emailServ.sendActivationEmail(user);
     res.status(201).json({ status: "User registered successfully" });
   } catch (error) {
@@ -42,14 +45,12 @@ const activate = async (req, res) => {
   try {
     if (await authValidator.validateUser(req, res)) return;
     const user = await User.findByPk(req.params.id);
-    user.update({
-      status: "active",
-      token: null,
-      signature: null,
-      expires: null,
-    });
+    const tokenUser = await Token.findOne({ where: { userId: user.id } });
+    user.update({ status: "active" });
+    tokenUser.update({ token: null, signature: null, expires: null });
     await emailServ.sendConfirmationEmail(user);
     await user.save();
+    await tokenUser.save();
     res.status(201).json({ status: "Account activated successfully" });
   } catch (error) {
     logger.error(error);
@@ -108,9 +109,11 @@ const resetPassword = async (req, res) => {
     if (await authValidator.validateUser(req, res)) return;
     if (await passwordValidator.resetValidationPassword(req, res)) return;
     const user = await User.findByPk(req.params.id);
+    const tokenUser = await Token.findOne({ where: { userId: user.id } });
     user.password = await bcrypt.hash(req.body.password, 10);
-    user.update({ token: null, signature: null, expires: null });
+    tokenUser.update({ token: null, signature: null, expires: null });
     await user.save();
+    await tokenUser.save();
     await PasswordHistory.create({ userId: user.id, password: user.password });
     res.status(200).json({ status: "Password reset successfully" });
   } catch (error) {

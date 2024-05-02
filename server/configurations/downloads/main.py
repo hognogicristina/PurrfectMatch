@@ -36,6 +36,7 @@ def download_cat_images(url, download_path, num_images=50):
     write_to_file("Download completed.", 'output.log')
 
 def download_cat_breed_images(download_path):
+    print("Downloadind images...")
     if not os.path.exists(download_path):
         os.makedirs(download_path)
 
