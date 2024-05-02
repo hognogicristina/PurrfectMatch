@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     catId: {
       type: DataTypes.INTEGER,
       references: {
-        model: "Cat",
+        model: "Cats",
         key: "id",
       },
       allowNull: true,

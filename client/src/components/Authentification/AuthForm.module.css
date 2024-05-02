@@ -29,6 +29,10 @@
   align-items: center;
 }
 
+.auth-form-register {
+  width: 60%;
+}
+
 .auth-form h2 {
   text-align: center;
   font-size: 2rem;
@@ -50,22 +54,23 @@
   box-sizing: border-box;
 }
 
-
-.auth-form label {
-  width: 100%;
-  margin-bottom: 10px;
-}
-
 .auth-form input,
 .auth-form button {
   width: 100%;
-  margin-bottom: 20px;
-  margin-top: 10px;
+  margin-bottom: 15px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 1rem;
   align-items: center;
+}
+
+.auth-form-input-register {
+  margin-top: 20px;
+}
+
+.auth-form-button-login {
+  margin-top: 20px;
 }
 
 .auth-form button {
@@ -128,19 +133,28 @@
 
 .toggle-password {
   position: absolute;
-  top: 60%;
+  top: 65%;
   transform: translateY(-50%);
   right: 10px;
   cursor: pointer;
   user-select: none;
 }
 
-.button-container {
-  width: 40%;
+.form-row {
   display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
-.button-container .next-button {
-  margin-left: 300px;
+.form-row label {
+  flex: 1;
+  margin-right: 10px;
 }
 
+.form-row label:last-child {
+  margin-right: 0;
+}
+
+.form-row input {
+  width: 100%;
+}

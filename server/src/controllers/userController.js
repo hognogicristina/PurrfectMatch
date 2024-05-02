@@ -1,9 +1,8 @@
 const bcrypt = require("bcrypt");
-const { Address, User, PasswordHistory } = require("../../models");
+const { Address, User, PasswordHistory, UserInfo } = require("../../models");
 const userValidator = require("../validators/userValidator");
 const passwordValidator = require("../validators/passwordValidator");
 const catUserValidator = require("../validators/catUserValidator");
-const adoptionRequestHelper = require("../helpers/adoptionRequestHelper");
 const fileHelper = require("../helpers/fileHelper");
 const catUserHelper = require("../helpers/catUserHelper");
 const userHelper = require("../helpers/userHelper");
@@ -69,8 +68,17 @@ const editUser = async (req, res) => {
       "hobbies",
       "experienceLevel",
     ];
-    await adoptionRequestHelper.updateEmail(req.user, fieldsToUpdate, req.body);
+    await userHelper.updateEmail(req.user, fieldsToUpdate, req.body);
     req.user.imageId = await fileHelper.updateImage(req.user, req.file);
+    await UserInfo.update(
+      {
+        birthday: req.body.birthday,
+        description: req.body.description,
+        hobbies: req.body.hobbies,
+        experienceLevel: req.body.experienceLevel,
+      },
+      { where: { userId: req.user.id } },
+    );
     await req.user.save();
     return res.json({ status: "User updated successfully" });
   } catch (error) {

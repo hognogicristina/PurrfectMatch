@@ -14,6 +14,8 @@ const {
   RefreshToken,
   User,
   UserRole,
+  UserInfo,
+  Token,
   sequelize,
 } = require("../../models");
 const breedInit = require("../breedConfig/breedInit");
@@ -54,14 +56,20 @@ const generateUsers = async (numUsers) => {
       username: username,
       email: email,
       password: password,
-      birthday: birthday,
       addressId: address.id,
       role: "user",
       status: "active",
     });
+    await UserInfo.create({
+      userId: user.id,
+      birthday: birthday,
+    });
     await PasswordHistory.create({
       userId: user.id,
       password: password,
+    });
+    await Token.create({
+      userId: user.id,
     });
 
     users.push(user);
@@ -106,6 +114,8 @@ const generateFavorite = async (numFavorites, users) => {
 };
 
 const emptyDatabase = () => {
+  Token.destroy({ truncate: true });
+  UserInfo.destroy({ truncate: true });
   UserRole.destroy({ truncate: true });
   AdoptionRequest.destroy({ truncate: true });
   Favorite.destroy({ truncate: true });
@@ -132,7 +142,7 @@ const emptyDatabase = () => {
 
 const generateData = async () => {
   try {
-    emptyDatabase();
+    // emptyDatabase();
     await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();

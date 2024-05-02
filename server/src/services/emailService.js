@@ -68,7 +68,7 @@ async function sendConfirmationEmail(user) {
     { filename: "confirmationEmail.pug" },
   );
   const sender = await User.findOne({ where: { role: "admin" } });
-  const loginLink = `${process.env.SERVER_BASE_URL}/login`;
+  const loginLink = `${process.env.FRONTEND_BASE_URL}/login`;
 
   const mailOptions = {
     from: sender.email,
@@ -165,6 +165,7 @@ async function sendResetPassword(user) {
     path.join(__dirname, "..", "templates", "resetPassword.pug"),
     { filename: "resetPassword.pug" },
   );
+
   const mailOptions = {
     from: sender.email,
     to: user.email,

@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./CatsList.module.css";
 
 function CatsList({ cats }) {

@@ -1,6 +1,11 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User, RefreshToken, PasswordHistory } = require("../../models");
+const {
+  User,
+  RefreshToken,
+  PasswordHistory,
+  UserInfo,
+} = require("../../models");
 const emailServ = require("../services/emailService");
 const authValidator = require("../validators/authValidator");
 const passwordValidator = require("../validators/passwordValidator");
@@ -19,15 +24,17 @@ const register = async (req, res) => {
       username,
       email,
       password: hashedPassword,
-      birthday,
       status: "active_pending",
     });
+    await UserInfo.create({ userId: user.id, birthday });
     await PasswordHistory.create({ userId: user.id, password: hashedPassword });
     await emailServ.sendActivationEmail(user);
     res.status(201).json({ status: "User registered successfully" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -46,7 +53,9 @@ const activate = async (req, res) => {
     res.status(201).json({ status: "Account activated successfully" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -71,7 +80,9 @@ const login = async (req, res) => {
     res.status(200).json({ token });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -86,7 +97,9 @@ const resetPasswordRequest = async (req, res) => {
       .json({ status: "If the email exists, a reset link will be sent" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -102,7 +115,9 @@ const resetPassword = async (req, res) => {
     res.status(200).json({ status: "Password reset successfully" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -117,7 +132,9 @@ const logout = async (req, res) => {
     res.status(200).json({ status: "Logged out successfully" });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -133,7 +150,9 @@ const refresh = async (req, res) => {
     res.status(200).json({ newToken });
   } catch (error) {
     logger.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 

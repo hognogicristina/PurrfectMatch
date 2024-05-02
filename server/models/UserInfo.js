@@ -1,17 +1,9 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("CatUser", {
+  return sequelize.define("UserInfo", {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
-      allowNull: false,
-    },
-    catId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Cats",
-        key: "id",
-      },
       allowNull: false,
     },
     userId: {
@@ -21,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
         key: "id",
       },
     },
-    ownerId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+    birthday: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
     },
+    description: DataTypes.TEXT,
+    hobbies: DataTypes.TEXT,
+    experienceLevel: DataTypes.INTEGER,
   });
 };

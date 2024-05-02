@@ -73,29 +73,6 @@ const sendAdoptionRequest = async (
   });
 };
 
-const updateEmail = async (user, fieldsToUpdate, body) => {
-  let emailChanged = false;
-  fieldsToUpdate.forEach((field) => {
-    if (
-      body[field] !== undefined &&
-      field === "email" &&
-      body[field] !== user.email
-    ) {
-      user[field] = body[field];
-      emailChanged = true;
-    } else if (body[field] !== undefined) {
-      user[field] = body[field];
-    }
-  });
-
-  if (emailChanged) {
-    user.status = "active_pending";
-    await emailServ.sendResetEmail(user);
-  }
-
-  await user.save();
-};
-
 const deleteAdoptionRequestCat = async (cat, receiver) => {
   const adoptionRequests = await AdoptionRequest.findAll({
     where: { catId: cat.id },
@@ -197,7 +174,6 @@ const deleteAdoptionRequestUser = async (user) => {
 
 module.exports = {
   sendAdoptionRequest,
-  updateEmail,
   deleteAdoptionRequestCat,
   deleteAdoptionRequest,
   deleteAdoptionRequestUser,

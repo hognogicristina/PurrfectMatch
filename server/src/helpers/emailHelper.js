@@ -21,9 +21,9 @@ const generateTokenAndSignature = async (user, linkType) => {
 
   let link;
   if (linkType === "activation") {
-    link = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
+    link = `${process.env.FRONTEND_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
   } else if (linkType === "reset") {
-    link = `${process.env.SERVER_BASE_URL}/reset/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
+    link = `${process.env.FRONTEND_BASE_URL}/reset/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
   }
 
   return { link, sender };

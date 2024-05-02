@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     password: DataTypes.STRING,
-    birthday: DataTypes.DATEONLY,
-    description: DataTypes.TEXT,
-    hobbies: DataTypes.TEXT,
-    experienceLevel: DataTypes.INTEGER,
     addressId: {
       type: DataTypes.INTEGER,
       references: {
@@ -51,8 +47,5 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "active_pending",
       allowNull: false,
     },
-    signature: DataTypes.STRING,
-    expires: DataTypes.DATE,
-    token: DataTypes.STRING,
   });
 };

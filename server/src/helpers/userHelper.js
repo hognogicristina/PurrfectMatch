@@ -3,6 +3,7 @@ const emailService = require("../services/emailService");
 const adoptionRequestHelper = require("./adoptionRequestHelper");
 const catUserHelper = require("./catUserHelper");
 const fileHelper = require("./fileHelper");
+const emailServ = require("../services/emailService");
 
 const deleteUser = async (user) => {
   await emailService.sendDeleteAccount(user);
@@ -19,4 +20,27 @@ const deleteUser = async (user) => {
   }
 };
 
-module.exports = { deleteUser };
+const updateEmail = async (user, fieldsToUpdate, body) => {
+  let emailChanged = false;
+  fieldsToUpdate.forEach((field) => {
+    if (
+      body[field] !== undefined &&
+      field === "email" &&
+      body[field] !== user.email
+    ) {
+      user[field] = body[field];
+      emailChanged = true;
+    } else if (body[field] !== undefined) {
+      user[field] = body[field];
+    }
+  });
+
+  if (emailChanged) {
+    user.status = "active_pending";
+    await emailServ.sendResetEmail(user);
+  }
+
+  await user.save();
+};
+
+module.exports = { deleteUser, updateEmail };

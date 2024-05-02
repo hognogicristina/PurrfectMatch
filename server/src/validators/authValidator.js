@@ -1,28 +1,30 @@
 const validator = require("validator");
-const { User, PasswordHistory } = require("../../models");
-const bcrypt = require("bcrypt");
+const { User } = require("../../models");
 
 const validateUser = async (req, res) => {
-  const error = [];
   const user = await User.findOne({ where: { id: req.params.id } });
+
   if (!user) {
-    error.push({ field: "id", message: "User not found" });
+    return res
+      .status(400)
+      .json({ error: [{ field: "user", message: "User not found" }] });
   }
 
-  const { token, signature } = req.query;
-  if (new Date() > new Date(user.expires)) {
-    error.push({ field: "token", message: "Token has expired" });
+  const { token, signature, expires } = req.query;
+  if (
+    user.token !== token ||
+    user.signature !== signature ||
+    user.expires !== expires ||
+    (user.expires === expires && new Date() > new Date(user.expires))
+  ) {
+    return res.status(400).json({
+      error: [
+        { field: "token", message: "The link is invalid or has expired" },
+      ],
+    });
   }
 
-  if (user.token !== token) {
-    error.push({ field: "token", message: "Invalid token" });
-  }
-
-  if (user.signature !== signature) {
-    error.push({ field: "signature", message: "Invalid signature" });
-  }
-
-  return error.length > 0 ? res.status(400).json({ error }) : null;
+  return null;
 };
 
 const registerValidation = async (req, res) => {
@@ -72,7 +74,7 @@ const registerValidation = async (req, res) => {
     if (user) {
       error.push({
         field: "email",
-        error: "Email is already in use by another user",
+        message: "Email is already in use by another user",
       });
     }
   }
@@ -85,6 +87,15 @@ const registerValidation = async (req, res) => {
       message:
         "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number and one special character",
     });
+  }
+
+  if (validator.isEmpty(req.body.confirmPassword || "")) {
+    error.push({
+      field: "confirmPassword",
+      message: "Confirm password is required",
+    });
+  } else if (req.body.password !== req.body.confirmPassword) {
+    error.push({ field: "confirmPassword", message: "Passwords do not match" });
   }
 
   if (validator.isEmpty(req.body.birthday || "")) {
@@ -169,7 +180,18 @@ const resetValidationEmail = async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .json({ status: "If the email exists, a reset link will be sent" });
+      .json({
+        status: "If the email exists, a reset link will be sent to you",
+      });
+  } else if (user.expires !== null && new Date() < new Date(user.expires)) {
+    return res.status(400).json({
+      error: [
+        {
+          field: "email",
+          message: "A reset link has already been sent to this email",
+        },
+      ],
+    });
   }
 
   return error.length > 0 ? res.status(400).json({ error }) : null;

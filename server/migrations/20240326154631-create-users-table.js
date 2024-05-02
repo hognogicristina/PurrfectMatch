@@ -42,19 +42,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      birthday: {
-        type: Sequelize.DATEONLY,
-        allowNull: false,
-      },
-      description: {
-        type: Sequelize.TEXT,
-      },
-      hobbies: {
-        type: Sequelize.TEXT,
-      },
-      experienceLevel: {
-        type: Sequelize.INTEGER,
-      },
       addressId: {
         type: Sequelize.INTEGER,
         references: {
@@ -71,15 +58,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "active_pending",
-      },
-      signature: {
-        type: Sequelize.STRING,
-      },
-      expires: {
-        type: Sequelize.DATE,
-      },
-      token: {
-        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

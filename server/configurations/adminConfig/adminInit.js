@@ -2,7 +2,13 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
-const { User, PasswordHistory, Address } = require("../../models");
+const {
+  User,
+  PasswordHistory,
+  Address,
+  Token,
+  UserInfo,
+} = require("../../models");
 const logger = require("../../logger/logger");
 
 const generateAddress = async () => {
@@ -45,14 +51,20 @@ const initializeAdmin = async () => {
       username: adminDetails.username,
       password: hashedPassword,
       email: adminDetails.email,
-      birthday: faker.date.anytime(),
       addressId: address.id,
       role: adminDetails.role,
       status: adminDetails.status,
     });
+    await UserInfo.create({
+      userId: user.id,
+      birthday: faker.date.anytime(),
+    });
     await PasswordHistory.create({
       userId: user.id,
       password: hashedPassword,
+    });
+    await Token.create({
+      userId: user.id,
     });
 
     if (count === 0) {

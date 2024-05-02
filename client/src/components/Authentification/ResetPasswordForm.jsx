@@ -1,17 +1,17 @@
+import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Form, Link, useActionData, useNavigation } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import styles from "./AuthForm.module.css";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-export default function LoginForm() {
+export default function ResetPasswordForm() {
   const data = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (data && data.error) {
@@ -31,16 +31,7 @@ export default function LoginForm() {
           transition={{ type: "spring", stiffness: 120, damping: 15 }}
         >
           <Form method="post">
-            <h2>Login to Purrfect Match</h2>
-            <label>
-              Username or Email
-              <input
-                name="usernameOrEmail"
-                type="text"
-                placeholder="Enter your username or email"
-                required
-              />
-            </label>
+            <h1>Enter your new password</h1>
             <label className={styles["password-input"]}>
               Password
               <input
@@ -56,31 +47,24 @@ export default function LoginForm() {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </label>
-            <label className={styles["checkbox-label"]}>
+            <label className={styles["password-input"]}>
+              Confirm Password
               <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm your password"
+                required
               />
-              Remember me
+              <span
+                className={styles["toggle-password"]}
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </label>
-            <motion.button
-              className={styles["auth-form-button-login"]}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              disabled={isSubmitting}
-              type="submit"
-            >
-              Login
-            </motion.button>
-            <div className={styles["links-container"]}>
-              <Link to="/register" className={styles["create-account-link"]}>
-                Don't have an account?
-              </Link>
-              <Link to="/reset" className={styles["forgot-password-link"]}>
-                Forgot password?
-              </Link>
-            </div>
+            <button type="submit" disabled={isSubmitting}>
+              Save
+            </button>
           </Form>
           <ToastContainer
             position="top-center"
