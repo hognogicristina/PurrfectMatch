@@ -68,9 +68,6 @@ const generateUsers = async (numUsers) => {
       userId: user.id,
       password: password,
     });
-    await Token.create({
-      userId: user.id,
-    });
 
     users.push(user);
   }

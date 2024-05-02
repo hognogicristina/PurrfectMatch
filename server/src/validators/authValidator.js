@@ -157,6 +157,7 @@ const loginValidation = async (req, res) => {
 const resetValidationEmail = async (req, res) => {
   const error = [];
   const user = await User.findOne({ where: { email: req.body.email } });
+  const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
   if (validator.isEmpty(req.body.email || "")) {
     return res.status(400).json({
@@ -182,7 +183,10 @@ const resetValidationEmail = async (req, res) => {
     return res.status(400).json({
       status: "If the email exists, a reset link will be sent to you",
     });
-  } else if (user.expires !== null && new Date() < new Date(user.expires)) {
+  } else if (
+    tokenUser.expires !== null &&
+    new Date() < new Date(tokenUser.expires)
+  ) {
     return res.status(400).json({
       error: [
         {

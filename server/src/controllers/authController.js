@@ -12,7 +12,6 @@ const authValidator = require("../validators/authValidator");
 const passwordValidator = require("../validators/passwordValidator");
 const authHelper = require("../helpers/authHelper");
 const logger = require("../../logger/logger");
-const { c } = require("@faker-js/faker/dist/esm/chunk-GTEBSQTL.mjs");
 
 const register = async (req, res) => {
   try {
@@ -92,6 +91,7 @@ const resetPasswordRequest = async (req, res) => {
     if (await authValidator.resetValidationEmail(req, res)) return;
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
+    await Token.create({ userId: user.id });
     await emailServ.sendResetPassword(user);
     res
       .status(200)

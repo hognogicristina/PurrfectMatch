@@ -63,9 +63,6 @@ const initializeAdmin = async () => {
       userId: user.id,
       password: hashedPassword,
     });
-    await Token.create({
-      userId: user.id,
-    });
 
     if (count === 0) {
       logger("Admin user created");
