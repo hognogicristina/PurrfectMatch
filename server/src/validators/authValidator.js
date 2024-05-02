@@ -15,14 +15,24 @@ const validateUser = async (req, res) => {
   if (
     tokenUser.token !== token ||
     tokenUser.signature !== signature ||
-    tokenUser.expires !== expires ||
-    (tokenUser.expires === expires && new Date() > new Date(tokenUser.expires))
+    new Date() > new Date(tokenUser.expires)
   ) {
-    return res.status(400).json({
-      error: [
-        { field: "token", message: "The link is invalid or has expired" },
-      ],
-    });
+    if (user.status === "active") {
+      return res.status(400).json({
+        error: [
+          { field: "token", message: "This link is invalid or has expired" },
+        ],
+      });
+    } else if (user.status === "active_pending") {
+      return res.status(400).json({
+        error: [
+          {
+            field: "token",
+            message: "We are sorry to inform you that this link has expired",
+          },
+        ],
+      });
+    }
   }
 
   return null;
@@ -144,7 +154,7 @@ const loginValidation = async (req, res) => {
         error: [
           {
             field: "user",
-            message: "Admin has blocked your account until activation",
+            message: "We are sorry to inform you that your account is blocked",
           },
         ],
       });
@@ -164,7 +174,7 @@ const resetValidationEmail = async (req, res) => {
       error: [
         {
           field: "email",
-          message: "Email is required in order to reset your password",
+          message: "Email is required",
         },
       ],
     });
@@ -179,22 +189,35 @@ const resetValidationEmail = async (req, res) => {
     });
   }
 
-  if (!user) {
-    return res.status(400).json({
-      status: "If the email exists, a reset link will be sent to you",
-    });
-  } else if (
-    tokenUser.expires !== null &&
-    new Date() < new Date(tokenUser.expires)
-  ) {
+  if (user && user.status === "active") {
     return res.status(400).json({
       error: [
         {
           field: "email",
-          message: "A reset link has already been sent to this email",
+          message: "Your account is already active",
         },
       ],
     });
+  }
+
+  if (!user) {
+    return res.status(400).json({
+      status: "If the email exists, an email link will be sent to you",
+    });
+  } else if (tokenUser.type === "reset" || tokenUser.type === "reactivate") {
+    if (
+      tokenUser.expires !== null &&
+      new Date() < new Date(tokenUser.expires)
+    ) {
+      return res.status(400).json({
+        error: [
+          {
+            field: "email",
+            message: "A reset link has already been sent to this email",
+          },
+        ],
+      });
+    }
   }
 
   return error.length > 0 ? res.status(400).json({ error }) : null;

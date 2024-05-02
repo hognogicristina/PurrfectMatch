@@ -29,9 +29,9 @@ const register = async (req, res) => {
     });
     await UserInfo.create({ userId: user.id, birthday });
     await PasswordHistory.create({ userId: user.id, password: hashedPassword });
-    await Token.create({ userId: user.id });
+    await Token.create({ userId: user.id, type: "activation" });
     await emailServ.sendActivationEmail(user);
-    res.status(201).json({ status: "User registered successfully" });
+    res.status(201).json({ status: "Registration completed successfully" });
   } catch (error) {
     logger.error(error);
     res
@@ -52,6 +52,25 @@ const activate = async (req, res) => {
     await tokenUser.save();
     res.status(201).json({ status: "Account activated successfully" });
   } catch (error) {
+    logger.error(error);
+    res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+  }
+};
+
+const reactivate = async (req, res) => {
+  try {
+    if (await authValidator.resetValidationEmail(req, res)) return;
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
+    await Token.update({ type: "reactivate" }, { where: { userId: user.id } });
+    await emailServ.sendActivationEmail(user);
+    res
+      .status(200)
+      .json({ status: "If the email exists, a reset link will be sent" });
+  } catch (error) {
+    console.log(error);
     logger.error(error);
     res
       .status(500)
@@ -91,7 +110,7 @@ const resetPasswordRequest = async (req, res) => {
     if (await authValidator.resetValidationEmail(req, res)) return;
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
-    await Token.create({ userId: user.id });
+    await Token.create({ userId: user.id, type: "reset" });
     await emailServ.sendResetPassword(user);
     res
       .status(200)
@@ -162,6 +181,7 @@ const refresh = async (req, res) => {
 module.exports = {
   register,
   activate,
+  reactivate,
   login,
   resetPasswordRequest,
   resetPassword,

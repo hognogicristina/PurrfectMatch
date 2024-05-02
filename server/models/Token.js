@@ -6,9 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    token: DataTypes.STRING,
-    signature: DataTypes.STRING,
-    expires: DataTypes.DATE,
     userId: {
       type: DataTypes.INTEGER,
       references: {
@@ -16,5 +13,9 @@ module.exports = (sequelize, DataTypes) => {
         key: "id",
       },
     },
+    type: DataTypes.STRING,
+    token: DataTypes.STRING,
+    signature: DataTypes.STRING,
+    expires: DataTypes.DATE,
   });
 };

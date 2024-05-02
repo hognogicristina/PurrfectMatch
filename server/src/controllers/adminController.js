@@ -46,4 +46,16 @@ const deleteCat = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, deleteUser, deleteCat };
+const blockUser = async (req, res) => {
+  try {
+    if (await adminValidator.userExistValidator(req, res)) return;
+    const user = await User.findByPk(req.params.id);
+    await adminHelper.blockUser(user);
+    return res.status(200).json({ status: "User blocked successfully" });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { getAllUsers, deleteUser, deleteCat, blockUser };

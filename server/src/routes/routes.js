@@ -28,10 +28,16 @@ router.delete(
   authMiddleware.authenticateToken,
   adminController.deleteCat,
 );
+router.patch(
+  "/user/:id/block",
+  authMiddleware.authenticateToken,
+  adminController.blockUser,
+);
 
 // Auth routes
 router.post("/register", authController.register);
 router.get("/activate/:id", authController.activate);
+router.post("/reactivate", authController.reactivate);
 router.post("/login", authMiddleware.authenticateLogin, authController.login);
 router.post("/reset", authController.resetPasswordRequest);
 router.post("/reset/:id", authController.resetPassword);

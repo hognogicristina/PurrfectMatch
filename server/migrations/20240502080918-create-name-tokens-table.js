@@ -10,6 +10,16 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
+      userId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+      type: {
+        type: Sequelize.STRING,
+      },
       token: {
         type: Sequelize.STRING,
       },
@@ -18,13 +28,6 @@ module.exports = {
       },
       expires: {
         type: Sequelize.DATE,
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
       },
       createdAt: {
         allowNull: false,

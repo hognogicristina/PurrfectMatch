@@ -56,4 +56,9 @@ const deleteCat = async (cat) => {
   await fileHelper.deleteImage(image, "uploads");
 };
 
-module.exports = { deleteUser, deleteCat };
+const blockUser = async (user) => {
+  user.update({ status: "blocked" });
+  await user.save();
+};
+
+module.exports = { deleteUser, deleteCat, blockUser };

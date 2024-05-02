@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useActionData, useNavigate } from "react-router-dom";
+import { Form, useActionData, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import styles from "./ActivationForm.module.css";
@@ -29,8 +29,28 @@ export default function ActivationForm() {
       >
         {errorMessage ? (
           <>
-            <h1>We are sorry to inform you...</h1>
-            <p>{errorMessage}</p>
+            <Form method="post">
+              <h1>We are sorry to inform you...</h1>
+              <p>{errorMessage}</p>
+              <p>
+                In order to proceed with the activation, please open the button
+                below an re-enter your email.
+              </p>
+              <label>
+                <input
+                  name="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                />
+              </label>
+              <button
+                className={styles.loginButton}
+                onClick={() => navigate("/reactivate")}
+              >
+                Reactivate Account
+              </button>
+            </Form>
           </>
         ) : (
           <>
