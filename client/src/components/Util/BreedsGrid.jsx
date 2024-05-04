@@ -1,45 +1,48 @@
 import React, { useState } from "react";
 
 export default function BreedsGrid({ breeds }) {
-  const [startIndex, setStartIndex] = useState(0);
-  const displayCount = 5;
+  const itemsPerPage = 4;
+  const [currentPage, setCurrentPage] = useState(0);
+  const totalPages = Math.ceil(breeds.length / itemsPerPage);
 
-  const prevCat = () => {
-    const newIndex = startIndex > 0 ? startIndex - 1 : breeds.data.length - 1;
-    setStartIndex(newIndex);
-  };
-
-  const nextCat = () => {
-    const newIndex = (startIndex + 1) % breeds.data.length;
-    setStartIndex(newIndex);
-  };
-
-  const getDisplayBreeds = () => {
-    const result = [];
-    for (let i = 0; i < displayCount; i++) {
-      const breedIndex = (startIndex + i) % breeds.data.length;
-      result.push(breeds.data[breedIndex]);
+  const getStartIndex = (page) => {
+    if (page === totalPages - 1) {
+      const totalItems = breeds.length;
+      const itemsOnLastPage = totalItems % itemsPerPage;
+      if (itemsOnLastPage > 0 && itemsOnLastPage < itemsPerPage) {
+        return Math.max(0, totalItems - itemsPerPage);
+      }
     }
-    return result;
+    return page * itemsPerPage;
+  };
+
+  const startIndex = getStartIndex(currentPage);
+  const endIndex = startIndex + itemsPerPage;
+  const itemsToShow = breeds.slice(startIndex, endIndex);
+
+  const handlePrev = () => {
+    setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => (prev + 1) % totalPages);
   };
 
   return (
-    <>
-      <button className="prevButton" onClick={prevCat}>
-        &#9664;
+    <div className="gridContainer">
+      <button onClick={handlePrev} className="paginationButton left">
+        &lt;
       </button>
-      <div className="breedsGrid">
-        {getDisplayBreeds().map((breed, index) => (
-          <div key={index}>
-            className="breedCard" >
-            <img src={breed.url} alt={breed.name} className="breedImage" />
-            <p className="breedName">{breed.name}</p>
+      <div className="breeds">
+        {itemsToShow.map((breed) => (
+          <div key={breed.id} className="breed">
+            <img src={breed.url} alt={breed.name} className="breedImg" />
           </div>
         ))}
       </div>
-      <button className="nextButton" onClick={nextCat}>
-        &#9654;
+      <button onClick={handleNext} className="paginationButton right">
+        &gt;
       </button>
-    </>
+    </div>
   );
 }

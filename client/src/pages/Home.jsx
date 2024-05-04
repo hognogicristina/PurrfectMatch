@@ -41,7 +41,7 @@ async function loadAllBreeds() {
     return data;
   }
 
-  return data;
+  return data.data;
 }
 
 export async function loader({ request }) {

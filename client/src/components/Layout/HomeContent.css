@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: pink;
+  background: #fff0f0;
   font-family: 'Roboto-Light', sans-serif;
   color: #333;
 }
@@ -15,17 +15,21 @@ body {
   color: #fff;
 }
 
-.title {
-  margin: 0 0 200px 20px;
-  color: #ae3d72;
-}
-
 .intro {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 100%;
   margin: 20px 0;
+}
+
+.introText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin: 0 20px;
 }
 
 .introImg {
@@ -41,79 +45,185 @@ body {
   height: auto;
 }
 
+.title {
+  color: #ae3d72;
+}
+
 .smallImg {
   flex: 1;
-  width: 25%;
-  height: auto;
+  width: 100%;
   object-fit: cover;
 }
 
-.breeds {
+.gridContainer {
+  width: 100%;
+  padding: 20px 0;
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.breedsGrid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(200px, 1fr));
-  gap: 10px;
+.breeds {
   width: 100%;
-  flex-direction: row;
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
 }
 
-.breedCard {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  flex-direction: row;
-  cursor: pointer;
-  transition: transform 0.5s ease;
-}
-
-.breedCard:hover {
-  transform: scale(1.5);
-}
-
-.breedImage {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.breedName {
-  padding: 10px;
+.breed {
   text-align: center;
-  color: #333;
-}
-
-.prevButton, .nextButton {
-  position: relative;
-  z-index: 10;
-  background-color: #f0f0f0;
-  color: black;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  margin: 10px;
+  transition: transform 0.3s ease;
   border-radius: 5px;
 }
 
-.prevButton:hover, .nextButton:hover {
-  background-color: rgba(227, 127, 182, 0.49);
+.breedImg {
+  width: 350px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.3s;
+}
+
+.breed:hover {
+  transform: scale(1.5);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.breed:hover .breedImg {
+  box-shadow: none;
+}
+
+.paginationButton {
+  margin: 40px 0 0 0;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(182, 157, 176, 0.27);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationButton:hover {
+  background-color: #ae3d72;
+}
+
+.paginationButton.left {
+  margin-left: 20px;
+}
+
+.paginationButton.right {
+  margin-right: 20px;
+  opacity: 1;
+}
+
+.cats {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.catImg {
+  width: 350px;
+  height: 200px;
+  margin: 0 10px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+  object-fit: cover;
+}
+
+.catInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cat h3,
+.cat p {
+  color: #ae3d72;
 }
 
 .about {
   display: flex;
   flex-direction: row;
   align-items: center;
-  overflow: hidden;
-  color: #fff;
+  margin: 20px 0;
+}
+
+.aboutText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  margin: 0 20px;
+}
+
+.about h2 {
+  color: #ae3d72;
+  font-size: 50px;
+}
+
+.about p {
+  text-align: center;
+  color: rgba(83, 83, 83, 0.98);
+  font-size: 25px;
+}
+
+.about a {
+  color: #ae3d72;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.about a:hover {
+  text-decoration: underline;
 }
 
 .aboutImg {
-  width: 70%;
-  height: auto
+  margin: 0 10px;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+.aboutCats {
+  flex: 1;
+  width: 100%;
+  height: auto;
+}
+
+.aboutCats h2,
+.aboutCats p,
+.aboutCats ul {
+  color: #35133a;
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  color: rgba(83, 83, 83, 0.98);
+  padding: 10px 0;
+  font-size: 15px;
 }

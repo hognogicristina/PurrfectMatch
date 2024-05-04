@@ -1,52 +1,20 @@
 import React, { useState } from "react";
 import "./HomeContent.css";
+import BreedsGrid from "../Util/BreedsGrid.jsx";
 import { Link } from "react-router-dom";
 
 export default function HomeContent({ cats, breeds }) {
-  const [startIndex, setStartIndex] = useState(0);
-  const displayCount = 5;
-
-  const prevCat = () => {
-    const newIndex = startIndex > 0 ? startIndex - 1 : breeds.data.length - 1;
-    setStartIndex(newIndex);
-  };
-
-  const nextCat = () => {
-    const newIndex = (startIndex + 1) % breeds.data.length;
-    setStartIndex(newIndex);
-  };
-
-  const getDisplayBreeds = () => {
-    const result = [];
-    for (let i = 0; i < displayCount; i++) {
-      const breedIndex = (startIndex + i) % breeds.data.length;
-      result.push(breeds.data[breedIndex]);
-    }
-    return result;
-  };
-
   return (
     <div className="homeContent">
       <div className="intro">
         <img src="cat1.jpg" alt="cat1" className="introImg bigImg" />
-        <img src="cat2.png" alt="cat2" className="introImg smallImg" />
+        <div className="hello">
+          <h2 className="title">It's time to find your purrfect match</h2>
+          <img src="cat2.png" alt="cat2" className="introImg smallImg" />
+        </div>
       </div>
       <div className="breeds">
-        <h2 className="title">It's time to find your purrfect match</h2>
-        <button className="prevButton" onClick={prevCat}>
-          &#9664;
-        </button>
-        <div className="breedsGrid">
-          {getDisplayBreeds().map((breed, index) => (
-            <div className="breedCard" key={index}>
-              <img src={breed.url} alt={breed.name} className="breedImage" />
-              <p className="breedName">{breed.name}</p>
-            </div>
-          ))}
-        </div>
-        <button className="nextButton" onClick={nextCat}>
-          &#9654;
-        </button>
+        <BreedsGrid breeds={breeds} />
       </div>
       <div className="about">
         <h2>About Us</h2>
@@ -56,15 +24,7 @@ export default function HomeContent({ cats, breeds }) {
           provide support and resources to help ensure a successful adoption.
           <Link to={"/cats"}>Find A Cat</Link>
         </p>
-        <img src="cat4.jpg" alt="cat4" />
-      </div>
-      <div className="recentCats">
-        {cats.map((cat, index) => (
-          <div key={index} className="catRecentItem">
-            <img src={cat.image} alt={cat.name} />
-            <p>{cat.name}</p>
-          </div>
-        ))}
+        <img src="cat4.jpg" alt="cat4" className="introImg aboutImg" />
       </div>
       <div className="aboutCats">
         <h2>Understanding Your Feline Friend</h2>

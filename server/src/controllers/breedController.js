@@ -1,4 +1,4 @@
-const { Breed } = require("../../models");
+const { Breed, Cat } = require("../../models");
 const logger = require("../../logger/logger");
 const breedValidator = require("../validators/breedValidator");
 
@@ -8,10 +8,7 @@ const getAllBreeds = async (req, res) => {
     const breeds = await Breed.findAll();
     const totalItems = breeds.length;
 
-    return res.status(200).json({
-      totalPages: totalItems,
-      data: breeds,
-    });
+    return res.status(200).json({ data: breeds, totalItems: totalItems });
   } catch (error) {
     logger.error(error);
     return res
