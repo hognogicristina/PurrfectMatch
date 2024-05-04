@@ -59,9 +59,14 @@ export default function ResetPasswordForm() {
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <button type="submit" disabled={isSubmitting}>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            type="submit"
+            disabled={isSubmitting}
+            className="submit"
+          >
             Save
-          </button>
+          </motion.button>
         </Form>
         <ToastContainer
           position="top-center"

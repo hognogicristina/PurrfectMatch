@@ -1,4 +1,4 @@
-import ReactivateForm from "../components/Authentification/ReactivateForm.jsx";
+import ReactivateForm from "../../components/Authentification/ReactivateForm.jsx";
 
 function ReactivatePage() {
   return <ReactivateForm />;

@@ -1,15 +1,21 @@
-import LoginForm from "../components/Authentification/LoginForm.jsx";
-import { redirect } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { authActions } from "../store/index.js";
+import LoginForm from "../../components/Authentification/LoginForm.jsx";
+import { redirect, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../store/index.js";
 import { useEffect } from "react";
 
 function LoginPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const isAuth = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
-    dispatch(authActions.login());
-  }, [dispatch]);
+    if (isAuth) {
+      navigate("/");
+    } else {
+      dispatch(authActions.login());
+    }
+  }, [dispatch, navigate, isAuth]);
 
   return <LoginForm />;
 }

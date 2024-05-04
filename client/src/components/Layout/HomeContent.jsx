@@ -29,8 +29,8 @@ export default function HomeContent({ cats, breeds }) {
       </div>
       <div className="cats">
         <h2>Meet Our Recent Cats</h2>
-        {cats.map((cat) => (
-          <div key={cat.id} className="cat">
+        {cats.map((cat, index) => (
+          <div key={index} className="cat">
             <img src={cat.image} alt={cat.name} className="catImg" />
             <div className="catInfo">
               <h3>{cat.name}</h3>

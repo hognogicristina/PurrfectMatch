@@ -1,6 +1,6 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
-import ActivationForm from "../components/Authentification/ActivationForm.jsx";
+import ActivationForm from "../../components/Authentification/ActivationForm.jsx";
 
 function ActivationPage() {
   const { data } = useLoaderData();

@@ -84,6 +84,17 @@ const authenticateLogin = async (req, res, next) => {
       }
     }
 
+    if (user) {
+      const refreshToken = await RefreshToken.findAll({
+        where: { userId: user.id },
+      });
+      if (refreshToken) {
+        return res.status(401).json({
+          error: [{ field: "user", message: "You are already logged in" }],
+        });
+      }
+    }
+
     req.user = user;
     next();
   } catch (error) {

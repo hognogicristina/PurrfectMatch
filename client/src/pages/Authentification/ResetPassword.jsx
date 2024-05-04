@@ -1,5 +1,5 @@
 import { redirect } from "react-router-dom";
-import ResetPasswordForm from "../components/Authentification/ResetPasswordForm.jsx";
+import ResetPasswordForm from "../../components/Authentification/ResetPasswordForm.jsx";
 
 function ResetPasswordPage() {
   return <ResetPasswordForm />;

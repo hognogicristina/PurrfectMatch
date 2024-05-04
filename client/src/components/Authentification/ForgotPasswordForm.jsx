@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Form, useActionData, useNavigation } from "react-router-dom";
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
 import "./Authentification.css";
@@ -10,6 +15,7 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 export default function ForgotPasswordForm() {
   const data = useActionData();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   const [submitted, setSubmitted] = useState(false);
 
@@ -45,14 +51,24 @@ export default function ForgotPasswordForm() {
                 required
               />
             </label>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              type="submit"
-              disabled={isSubmitting}
-            >
-              Submit
-            </motion.button>
+            <div className="buttonContainer">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={() => navigate("/login")}
+                className="cancel"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="submit"
+                disabled={isSubmitting}
+                className="submit"
+              >
+                Submit
+              </motion.button>
+            </div>
           </Form>
         ) : (
           <div>

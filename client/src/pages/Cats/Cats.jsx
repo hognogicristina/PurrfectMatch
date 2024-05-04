@@ -1,6 +1,6 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
-import CatsList from "../components/Cat/CatsList.jsx";
+import CatsList from "../../components/Cat/CatsList.jsx";
 
 function CatsPage() {
   const { cats } = useLoaderData();

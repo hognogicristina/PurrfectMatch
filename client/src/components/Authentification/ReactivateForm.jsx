@@ -48,10 +48,10 @@ export default function ReactivateForm() {
               />
             </label>
             <motion.button
-              whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               type="submit"
               disabled={isSubmitting}
+              className="submit"
             >
               Reactivate Account
             </motion.button>

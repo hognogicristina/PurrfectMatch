@@ -24,7 +24,7 @@ const validateUser = async (req, res) => {
             error: [
               {
                 field: "token",
-                message: "This link is invalid or has expired",
+                message: "Sorry, this link is invalid",
               },
             ],
           });
@@ -33,7 +33,7 @@ const validateUser = async (req, res) => {
             error: [
               {
                 field: "email",
-                message: "This link has expired",
+                message: "Sorry, this link has expired",
               },
             ],
           });
@@ -45,7 +45,7 @@ const validateUser = async (req, res) => {
           error: [
             {
               field: "token",
-              message: "This link is invalid or has expired",
+              message: "Sorry, this link is invalid",
             },
           ],
         });

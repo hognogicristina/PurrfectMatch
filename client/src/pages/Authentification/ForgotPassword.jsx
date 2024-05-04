@@ -1,4 +1,4 @@
-import ForgotPasswordForm from "../components/Authentification/ForgotPasswordForm.jsx";
+import ForgotPasswordForm from "../../components/Authentification/ForgotPasswordForm.jsx";
 
 function ForgotPasswordPage() {
   return <ForgotPasswordForm />;

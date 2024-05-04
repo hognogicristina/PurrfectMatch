@@ -80,10 +80,10 @@ export default function LoginForm() {
             Remember me
           </label>
           <motion.button
-            whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
+            className="submit"
           >
             Login
           </motion.button>

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "./Activation.css";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -22,53 +22,61 @@ export default function ActivationForm({ data }) {
 
   return (
     <div className="container">
-      <motion.div
-        initial={{ y: "100vh", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 15 }}
-        className="form"
-      >
-        {isError ? (
-          <>
-            <h1>{statusMessage}</h1>
-            {data.error[0].field === "email" && (
+      {data.error[0].field === "email" ? (
+        <motion.div
+          initial={{ y: "100vh", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          className="form"
+        >
+          {isError ? (
+            <>
+              <h1>{statusMessage}</h1>
               <div>
                 <p>
                   In order to proceed with the activation, please open the
                   button below:
                 </p>
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={() => navigate("/reactivate")}
                 >
                   Reactivate Account
                 </motion.button>
               </div>
-            )}
-          </>
-        ) : (
-          <>
-            <h1>{statusMessage}</h1>
-            <p>
-              You can now use our platform and enjoy your journey in finding a
-              new friend. For login, you can press the button below.
-            </p>
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => navigate("/login")}
-            >
-              Go to Login
-            </motion.button>
-          </>
-        )}
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
-      </motion.div>
+            </>
+          ) : (
+            <>
+              <h1>{statusMessage}</h1>
+              <p>
+                You can now use our platform and enjoy your journey in finding a
+                new friend. For login, you can press the button below.
+              </p>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate("/login")}
+              >
+                Go to Login
+              </motion.button>
+            </>
+          )}
+          <ToastContainer
+            position="top-center"
+            autoClose={6000}
+            closeButton={false}
+          />
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ y: "100vh", opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          className="errorContainer"
+        >
+          <img src="/errorCat.png" alt="errorCat" />
+          <h1>{statusMessage}</h1>
+        </motion.div>
+      )}
     </div>
   );
 }

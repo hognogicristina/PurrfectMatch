@@ -152,10 +152,10 @@ export default function RegisterForm() {
               </div>
               <div>
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   disabled={isSubmitting}
                   type="submit"
+                  className="submit"
                 >
                   Register
                 </motion.button>

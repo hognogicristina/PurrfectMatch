@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import HomeContent from "../components/Layout/HomeContent.jsx";
+import HomeContent from "../../components/Layout/HomeContent.jsx";
 import { useLoaderData } from "react-router-dom";
 
 function HomePage() {

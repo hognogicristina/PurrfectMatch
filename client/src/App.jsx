@@ -2,21 +2,30 @@ import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
-import RootLayout from "./pages/Root.jsx";
-import HomePage, { loader as loadHome } from "./pages/Home.jsx";
-import LoginPage, { action as actionLogin } from "./pages/Login.jsx";
-import RegisterPage, { action as actionRegister } from "./pages/Register.jsx";
+import RootLayout from "./pages/Main/Root.jsx";
+import HomePage, { loader as loadHome } from "./pages/Main/Home.jsx";
+import LoginPage, {
+  action as actionLogin,
+} from "./pages/Authentification/Login.jsx";
+import RegisterPage, {
+  action as actionRegister,
+} from "./pages/Authentification/Register.jsx";
 import ForgotPasswordPage, {
   action as actionForgot,
-} from "./pages/ForgotPassword.jsx";
+} from "./pages/Authentification/ForgotPassword.jsx";
 import ResetPasswordPage, {
   action as actionReset,
-} from "./pages/ResetPassword.jsx";
-import ActivationPage, { loader as loadActivate } from "./pages/Activation.jsx";
+} from "./pages/Authentification/ResetPassword.jsx";
+import ActivationPage, {
+  loader as loadActivate,
+} from "./pages/Authentification/Activation.jsx";
 import ReactivatePage, {
   action as actionReactivate,
-} from "./pages/Reactivate.jsx";
-import CatsPage, { loader as loadCats } from "./pages/Cats.jsx";
+} from "./pages/Authentification/Reactivate.jsx";
+import CatsPage, { loader as loadCats } from "./pages/Cats/Cats.jsx";
+import CatRootLayout from "./pages/Cats/CatRoot.jsx";
+import CatDetail from "./pages/Cats/CatDetail.jsx";
+import CatAdd from "./pages/Cats/CatAdd.jsx";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +42,20 @@ const router = createBrowserRouter([
         path: "cats",
         element: <CatsPage />,
         loader: loadCats,
+      },
+      {
+        path: "cat",
+        element: <CatRootLayout />,
+        children: [
+          {
+            index: true,
+            element: <CatAdd />,
+          },
+          {
+            path: ":id",
+            element: <CatDetail />,
+          },
+        ],
       },
       {
         path: "login",
