@@ -1,5 +1,4 @@
 import RegisterForm from "../components/Authentification/RegisterForm.jsx";
-import { redirect } from "react-router-dom";
 
 function RegisterPage() {
   return <RegisterForm />;
@@ -34,5 +33,5 @@ export async function action({ request }) {
     return response;
   }
 
-  return redirect("/login");
+  return response;
 }

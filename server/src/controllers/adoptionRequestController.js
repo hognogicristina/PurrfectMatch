@@ -108,10 +108,7 @@ const getAdoptionRequest = async (req, res) => {
       return;
     const adoptionRequest = await AdoptionRequest.findByPk(req.params.id);
     const adoptionRequestDetails =
-      await adoptionRequestDTO.transformAdoptionRequestToDTO(
-        adoptionRequest,
-        req.user,
-      );
+      await adoptionRequestDTO.adoptionRequestToDTO(adoptionRequest, req.user);
     return res.status(200).json({ data: adoptionRequestDetails });
   } catch (error) {
     logger.error(error);

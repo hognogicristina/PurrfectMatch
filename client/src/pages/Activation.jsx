@@ -1,34 +1,46 @@
+import { Await, defer, useLoaderData } from "react-router-dom";
+import { Suspense } from "react";
 import ActivationForm from "../components/Authentification/ActivationForm.jsx";
 
 function ActivationPage() {
-  return <ActivationForm />;
+  const { data } = useLoaderData();
+
+  return (
+    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+      <Await resolve={data}>
+        {(loadedData) => <ActivationForm data={loadedData} />}
+      </Await>
+    </Suspense>
+  );
 }
 
 export default ActivationPage;
 
-export async function action({ request, params }) {
-  const data = await request.formData();
-  const userId = params.id;
-
-  const response = await fetch(`http://localhost:3000/reset/${userId}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      token: data.get("token"),
-      signature: data.get("signature"),
-      expires: data.get("expires"),
-    }),
-  });
+async function loadActivate(id, token, signature) {
+  const response = await fetch(
+    `http://localhost:3000/activate/${id}?token=${token}&signature=${signature}`,
+  );
+  const data = await response.json();
 
   if (
     response.status === 400 ||
     response.status === 401 ||
     response.status === 500
   ) {
-    return response;
+    return data;
   }
 
-  return response;
+  return data.status;
+}
+
+export function loader({ params, request }) {
+  const { id } = params;
+
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token");
+  const signature = url.searchParams.get("signature");
+
+  return defer({
+    data: loadActivate(id, token, signature),
+  });
 }

@@ -1,36 +1,50 @@
 import { Suspense } from "react";
-import { Await, defer, useLoaderData } from "react-router-dom";
-import CatsList from "../components/Cat/CatsList.jsx";
+import HomeContent from "../components/Layout/HomeContent.jsx";
+import { useLoaderData } from "react-router-dom";
 
 function HomePage() {
-  const { cats } = useLoaderData();
+  const { cats, breeds } = useLoaderData();
 
   return (
     <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
-      <Await resolve={cats}>
-        {(loadedCats) => <CatsList cats={loadedCats} />}
-      </Await>
+      <HomeContent cats={cats} breeds={breeds} />
     </Suspense>
   );
 }
 
 export default HomePage;
 
-async function loadCats() {
-  const response = await fetch("http://localhost:3000/cats");
+async function loadRecentCats() {
+  const response = await fetch("http://localhost:3000");
+  const data = await response.json();
 
-  if (!response.ok) {
-    throw new Response(JSON.stringify({ message: "Could not fetch cats." }), {
-      status: 500,
-    });
-  } else {
-    const resData = await response.json();
-    return resData.data;
+  if (
+    response.status === 400 ||
+    response.status === 401 ||
+    response.status === 500
+  ) {
+    return data;
   }
+
+  return data.data;
 }
 
-export function loader() {
-  return defer({
-    cats: loadCats(),
-  });
+async function loadAllBreeds() {
+  const response = await fetch("http://localhost:3000/breeds");
+  const data = await response.json();
+
+  if (
+    response.status === 400 ||
+    response.status === 401 ||
+    response.status === 500
+  ) {
+    return data;
+  }
+
+  return data;
+}
+
+export async function loader({ request }) {
+  const [cats, breeds] = await Promise.all([loadRecentCats(), loadAllBreeds()]);
+  return { cats, breeds };
 }

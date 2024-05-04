@@ -14,17 +14,24 @@ const generateTokenAndSignature = async (user, linkType) => {
   const expires = new Date();
   expires.setHours(expires.getHours() + 24);
 
-  const tokenUser = await Token.findOne({ where: { userId: user.id } });
-
-  tokenUser.token = token;
-  tokenUser.signature = signature;
-  tokenUser.expires = expires;
-  await tokenUser.save();
-
   let link;
   if (linkType === "activation") {
-    link = `${process.env.SERVER_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
+    await Token.create({
+      userId: user.id,
+      type: "activation",
+      token: token,
+      signature: signature,
+      expires: expires,
+    });
+    link = `${process.env.FRONTEND_BASE_URL}/activate/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
   } else if (linkType === "reset") {
+    await Token.create({
+      userId: user.id,
+      type: "reset",
+      token: token,
+      signature: signature,
+      expires: expires,
+    });
     link = `${process.env.FRONTEND_BASE_URL}/reset/${user.id}?token=${token}&signature=${signature}&expires=${expires.getTime()}`;
   }
 

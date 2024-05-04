@@ -13,7 +13,7 @@ const logger = require("../../logger/logger");
 const getOneUser = async (req, res) => {
   try {
     if (await userValidator.userExistValidator(req, res)) return;
-    const userDetails = await userDTO.transformUserToDTO(req.user);
+    const userDetails = await userDTO.userToDTO(req.user);
     return res.json({ data: userDetails });
   } catch (error) {
     logger.error(error);
@@ -27,7 +27,7 @@ const getOwnedCats = async (req, res) => {
     const cats = await catUserHelper.getCats(req, "owned");
     const catsDetails = [];
     for (let cat of cats) {
-      const catsDetail = await catUserDTO.transformCatUserToDTO(cat);
+      const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
     const catsCount = cats.length;
@@ -45,7 +45,7 @@ const getSentToAdoptionCats = async (req, res) => {
     const cats = await catUserHelper.getCats(req, "sentToAdoption");
     const catsDetails = [];
     for (let cat of cats) {
-      const catsDetail = await catUserDTO.transformCatUserToDTO(cat);
+      const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
     const catsCount = cats.length;

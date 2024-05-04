@@ -8,7 +8,7 @@ const {
   UserRole,
 } = require("../../models");
 
-async function transformAdoptionRequestToDTO(adoptionRequest, user) {
+async function adoptionRequestToDTO(adoptionRequest, user) {
   const senderUserRole = await UserRole.findOne({
     where: { adoptionRequestId: adoptionRequest.id, role: "sender" },
   });
@@ -115,6 +115,6 @@ async function transformAdoptionRequestsToDTO(user, sortOrder) {
 }
 
 module.exports = {
-  transformAdoptionRequestToDTO,
+  adoptionRequestToDTO,
   transformAdoptionRequestsToDTO,
 };

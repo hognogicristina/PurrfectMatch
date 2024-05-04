@@ -11,11 +11,15 @@ const catExistValidator = async (req, res) => {
   if (req.params.id) {
     const cat = await Cat.findByPk(req.params.id);
     if (!cat) {
-      return res.status(404).json({ error: "Cat not found" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "cat", message: "Cat not found" }] });
     }
   } else {
     if (cats.length === 0) {
-      return res.status(404).json({ error: "No Cat Available" });
+      return res
+        .status(404)
+        .json({ error: [{ field: "cats", message: "No Cats Available" }] });
     }
 
     if (req.query.search) {
@@ -28,7 +32,9 @@ const catExistValidator = async (req, res) => {
         },
       });
       if (searchResults.length === 0) {
-        return res.status(404).json({ error: "No Result Found" });
+        return res
+          .status(404)
+          .json({ error: [{ field: "search", message: "No Result Found" }] });
       }
     }
 
@@ -41,7 +47,9 @@ const catExistValidator = async (req, res) => {
           (cat) => cat.breed === req.query.selectedBreed,
         );
         if (!breedExists) {
-          return res.status(404).json({ error: "No Result Found" });
+          return res
+            .status(404)
+            .json({ error: [{ field: "breed", message: "No Result Found" }] });
         }
       } else {
         errors.push({ field: "breed", error: "Please select a valid breed" });
@@ -58,7 +66,9 @@ const catExistValidator = async (req, res) => {
           return catAge === req.query.selectedAgeType;
         });
         if (!ageExists) {
-          return res.status(404).json({ error: "No Result Found" });
+          return res
+            .status(404)
+            .json({ error: [{ field: "age", message: "No Result Found" }] });
         }
       } else {
         errors.push({
@@ -77,7 +87,9 @@ const catExistValidator = async (req, res) => {
           (cat) => cat.gender === req.query.selectedGender,
         );
         if (!genderExists) {
-          return res.status(404).json({ error: "No Result Found" });
+          return res
+            .status(404)
+            .json({ error: [{ field: "gender", message: "No Result Found" }] });
         }
       } else {
         errors.push({
@@ -92,7 +104,11 @@ const catExistValidator = async (req, res) => {
         (cat) => cat.healthProblem === null,
       );
       if (!noHealthProblemExists) {
-        return res.status(404).json({ error: "No Result Found" });
+        return res
+          .status(404)
+          .json({
+            error: [{ field: "healthProblem", message: "No Result Found" }],
+          });
       }
     }
   }
@@ -102,7 +118,9 @@ const catExistValidator = async (req, res) => {
 
 const catsFilterValidator = async (catsFilter, res) => {
   if (catsFilter.length === 0) {
-    return res.status(404).json({ error: "No Result Found" });
+    return res
+      .status(404)
+      .json({ error: [{ field: "cats", message: "No Cats Available" }] });
   }
 };
 

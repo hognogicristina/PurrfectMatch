@@ -3,35 +3,53 @@ const { User, Token } = require("../../models");
 
 const validateUser = async (req, res) => {
   const user = await User.findOne({ where: { id: req.params.id } });
-  const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
   if (!user) {
     return res
       .status(400)
       .json({ error: [{ field: "user", message: "User not found" }] });
-  }
+  } else if (user) {
+    const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
-  const { token, signature, expires } = req.query;
-  if (
-    tokenUser.token !== token ||
-    tokenUser.signature !== signature ||
-    new Date() > new Date(tokenUser.expires)
-  ) {
-    if (user.status === "active") {
-      return res.status(400).json({
-        error: [
-          { field: "token", message: "This link is invalid or has expired" },
-        ],
-      });
-    } else if (user.status === "active_pending") {
-      return res.status(400).json({
-        error: [
-          {
-            field: "token",
-            message: "We are sorry to inform you that this link has expired",
-          },
-        ],
-      });
+    if (tokenUser) {
+      const { token, signature } = req.query;
+
+      if (
+        tokenUser.token !== token ||
+        tokenUser.signature !== signature ||
+        new Date() > new Date(tokenUser.expires)
+      ) {
+        if (user.status === "active") {
+          return res.status(400).json({
+            error: [
+              {
+                field: "token",
+                message: "This link is invalid or has expired",
+              },
+            ],
+          });
+        } else if (user.status === "active_pending") {
+          return res.status(400).json({
+            error: [
+              {
+                field: "email",
+                message: "This link has expired",
+              },
+            ],
+          });
+        }
+      }
+    } else {
+      if (user.status === "active") {
+        return res.status(400).json({
+          error: [
+            {
+              field: "token",
+              message: "This link is invalid or has expired",
+            },
+          ],
+        });
+      }
     }
   }
 
@@ -123,6 +141,7 @@ const registerValidation = async (req, res) => {
 
 const loginValidation = async (req, res) => {
   const error = [];
+  const { usernameOrEmail, password } = req.body;
 
   if (validator.isEmpty(req.body.usernameOrEmail || "")) {
     error.push({
@@ -131,30 +150,38 @@ const loginValidation = async (req, res) => {
     });
   }
 
-  if (validator.isEmpty(req.body.password || "")) {
+  if (validator.isEmpty(password || "")) {
     error.push({ field: "password", message: "Password is required" });
   }
 
-  const user = await User.findOne({
-    where: { username: req.body.usernameOrEmail },
-  });
+  let user;
+  user = await User.findOne({ where: { username: req.body.usernameOrEmail } });
+  if (!user) {
+    user = await User.findOne({ where: { email: usernameOrEmail } });
+  }
+
   if (user) {
     if (user.status === "active_pending") {
-      return res.status(401).json({
-        error: [
-          {
-            field: "user",
-            message:
-              "Please activate your account by clicking the link sent to your email",
-          },
-        ],
+      const tokenUser = await Token.findOne({
+        where: { userId: user.id, type: "activation" },
       });
+      if (tokenUser && new Date() < new Date(tokenUser.expires)) {
+        return res.status(401).json({
+          error: [
+            {
+              field: "activate",
+              message:
+                "Please activate your account by clicking the link sent to your email",
+            },
+          ],
+        });
+      }
     } else if (user.status === "blocked") {
       return res.status(401).json({
         error: [
           {
-            field: "user",
-            message: "We are sorry to inform you that your account is blocked",
+            field: "block",
+            message: "Your account has been blocked by the administrator",
           },
         ],
       });
@@ -167,7 +194,6 @@ const loginValidation = async (req, res) => {
 const resetValidationEmail = async (req, res) => {
   const error = [];
   const user = await User.findOne({ where: { email: req.body.email } });
-  const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
   if (validator.isEmpty(req.body.email || "")) {
     return res.status(400).json({
@@ -193,7 +219,7 @@ const resetValidationEmail = async (req, res) => {
     return res.status(400).json({
       error: [
         {
-          field: "email",
+          field: "active",
           message: "Your account is already active",
         },
       ],
@@ -204,7 +230,8 @@ const resetValidationEmail = async (req, res) => {
     return res.status(400).json({
       status: "If the email exists, an email link will be sent to you",
     });
-  } else if (tokenUser.type === "reset" || tokenUser.type === "reactivate") {
+  } else if (user) {
+    const tokenUser = await Token.findOne({ where: { userId: user.id } });
     if (
       tokenUser.expires !== null &&
       new Date() < new Date(tokenUser.expires)
@@ -212,7 +239,7 @@ const resetValidationEmail = async (req, res) => {
       return res.status(400).json({
         error: [
           {
-            field: "email",
+            field: "link",
             message: "A reset link has already been sent to this email",
           },
         ],

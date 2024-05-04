@@ -32,8 +32,6 @@ export async function action({ request, params }) {
     credentials: "include",
   });
 
-  console.log(token, signature, expires);
-
   if (
     response.status === 400 ||
     response.status === 401 ||

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { User, RefreshToken } = require("../../models");
+const { User, RefreshToken, Token } = require("../../models");
 const validation = require("../validators/authValidator");
 const logger = require("../../logger/logger");
 
@@ -68,6 +68,22 @@ const authenticateLogin = async (req, res, next) => {
       });
     }
 
+    if (user && user.status === "active_pending") {
+      const tokenUser = await Token.findOne({
+        where: { userId: user.id, type: "activation" },
+      });
+      if (tokenUser && new Date() > new Date(tokenUser.expires)) {
+        return res.status(401).json({
+          error: [
+            {
+              field: "expired",
+              message: "Unfortunately, your activation link has expired",
+            },
+          ],
+        });
+      }
+    }
+
     req.user = user;
     next();
   } catch (error) {
@@ -82,24 +98,20 @@ const validateRefreshToken = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!refreshToken) {
-      return res
-        .status(401)
-        .json({
-          error: [
-            { field: "refreshToken", message: "Refresh token is required" },
-          ],
-        });
+      return res.status(401).json({
+        error: [
+          { field: "refreshToken", message: "Refresh token is required" },
+        ],
+      });
     }
 
     const token = await RefreshToken.findOne({
       where: { token: refreshToken },
     });
     if (!token) {
-      return res
-        .status(401)
-        .json({
-          error: [{ field: "refreshToken", message: "Invalid refresh token" }],
-        });
+      return res.status(401).json({
+        error: [{ field: "refreshToken", message: "Invalid refresh token" }],
+      });
     }
 
     const user = await User.findByPk(token.userId);

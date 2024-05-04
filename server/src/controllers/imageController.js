@@ -7,7 +7,7 @@ const uploadImage = async (req, res) => {
   try {
     if (await imageValidator.imageValidator(req, res)) return;
     const image = await fileHelper.uploadImage(req.file, "temporary-uploads");
-    const imageDetails = await imageDTO.transformImageToDTO(image);
+    const imageDetails = await imageDTO.imageToDTO(image);
     res.status(201).json({ data: imageDetails });
   } catch (error) {
     logger.error(error);

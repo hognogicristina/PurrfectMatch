@@ -1,6 +1,6 @@
 const { Address, User, Image } = require("../../models");
 
-async function transformCatToDTO(cat) {
+async function catToDTO(cat) {
   const image = await Image.findOne({ where: { id: cat.imageId } });
   const guardian = await User.findByPk(cat.userId);
   const owner = await User.findByPk(cat.ownerId);
@@ -20,7 +20,7 @@ async function transformCatToDTO(cat) {
   };
 }
 
-async function transformCatFromListToDTO(cat) {
+async function catsListToDTO(cat) {
   const image = await Image.findOne({ where: { id: cat.imageId } });
   return {
     image: image ? image.url : null,
@@ -31,4 +31,4 @@ async function transformCatFromListToDTO(cat) {
   };
 }
 
-module.exports = { transformCatToDTO, transformCatFromListToDTO };
+module.exports = { catToDTO, catsListToDTO };

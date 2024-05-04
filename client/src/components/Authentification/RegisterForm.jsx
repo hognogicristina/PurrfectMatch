@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
-import { Form, Link, useActionData, useNavigation } from "react-router-dom";
+import {
+  Form,
+  Link,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
-import styles from "./AuthForm.module.css";
+import "./Authentification.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 export default function RegisterForm() {
   const data = useActionData();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (data) {
@@ -20,26 +28,51 @@ export default function RegisterForm() {
           toast.error(error.message);
         });
       }
-
       if (data.status) {
         toast.success(data.status);
+        setShowSuccessModal(true);
       }
     }
   }, [data]);
 
+  function handleContinue() {
+    navigate("/login");
+  }
+
   return (
-    <div className={styles["auth-container"]}>
-      <div className={styles["pink-container"]}>
-        <AnimatePresence mode="wait">
+    <div className="authContainer">
+      <AnimatePresence mode="wait">
+        {showSuccessModal ? (
           <motion.div
-            className={`${styles["auth-form"]} ${styles["auth-form-register"]}`}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, ease: "backOut" }}
+            className="authForm"
+          >
+            <h2>Congratulations!</h2>
+            <p>
+              Your account has been successfully created. Please activate your
+              account by going to your email and opening the link we sent to
+              you.
+            </p>
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleContinue}
+            >
+              Continue
+            </motion.button>
+          </motion.div>
+        ) : (
+          <motion.div
+            className="authForm"
             initial={{ y: "100vh", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: "spring", stiffness: 120, damping: 15 }}
           >
             <Form method="post">
               <h2>Create Account</h2>
-              <div className={styles["form-row"]}>
+              <div className="formRow">
                 <label>
                   First Name
                   <input
@@ -59,13 +92,13 @@ export default function RegisterForm() {
                   />
                 </label>
               </div>
-              <div className={styles["form-row"]}>
+              <div className="formRow">
                 <label>
                   Birthday
                   <input name="birthday" type="date" />
                 </label>
               </div>
-              <div className={styles["form-row"]}>
+              <div className="formRow">
                 <label>
                   Username
                   <input
@@ -82,12 +115,11 @@ export default function RegisterForm() {
                     type="email"
                     placeholder="Enter your email"
                     required
-                    className={styles["auth-form-input-register"]}
                   />
                 </label>
               </div>
-              <div className={styles["form-row"]}>
-                <label className={styles["password-input"]}>
+              <div className="formRow">
+                <label className="passwordInput">
                   Password
                   <input
                     name="password"
@@ -96,13 +128,13 @@ export default function RegisterForm() {
                     required
                   />
                   <span
-                    className={styles["toggle-password"]}
+                    className="togglePassword"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
                 </label>
-                <label className={styles["password-input"]}>
+                <label className="passwordInput">
                   Confirm Password
                   <input
                     name="confirmPassword"
@@ -111,7 +143,7 @@ export default function RegisterForm() {
                     required
                   />
                   <span
-                    className={styles["toggle-password"]}
+                    className="togglePassword"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
@@ -128,10 +160,8 @@ export default function RegisterForm() {
                   Register
                 </motion.button>
               </div>
-              <div className={styles["links-container"]}>
-                <Link to="/login" className={styles["create-account-link"]}>
-                  Already have an account?
-                </Link>
+              <div className="linksContainer">
+                <Link to="/login">Already have an account?</Link>
               </div>
             </Form>
             <ToastContainer
@@ -140,8 +170,8 @@ export default function RegisterForm() {
               closeButton={false}
             />
           </motion.div>
-        </AnimatePresence>
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

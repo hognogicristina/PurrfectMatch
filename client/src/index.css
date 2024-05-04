@@ -10,22 +10,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
   monospace;
 }
-
-.auth-container {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  height: 100vh;
-  background-image: url('/background.jpeg');
-  background-size: cover;
-  background-position: center;
-}
-
-.pink-container {
-  background: linear-gradient(rgb(255, 105, 180, 0.95), rgb(255, 255, 0));
-  width: 75%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}

@@ -1,8 +1,9 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
 
 import RootLayout from "./pages/Root.jsx";
-import HomePage, { loader as loadCats } from "./pages/Home.jsx";
+import HomePage, { loader as loadHome } from "./pages/Home.jsx";
 import LoginPage, { action as actionLogin } from "./pages/Login.jsx";
 import RegisterPage, { action as actionRegister } from "./pages/Register.jsx";
 import ForgotPasswordPage, {
@@ -11,9 +12,11 @@ import ForgotPasswordPage, {
 import ResetPasswordPage, {
   action as actionReset,
 } from "./pages/ResetPassword.jsx";
-import ActivationPage, {
-  action as actionActivate,
-} from "./pages/Activation.jsx";
+import ActivationPage, { loader as loadActivate } from "./pages/Activation.jsx";
+import ReactivatePage, {
+  action as actionReactivate,
+} from "./pages/Reactivate.jsx";
+import CatsPage, { loader as loadCats } from "./pages/Cats.jsx";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +24,16 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     id: "root",
     children: [
-      { index: true, element: <HomePage />, loader: loadCats },
+      {
+        index: true,
+        element: <HomePage />,
+        loader: loadHome,
+      },
+      {
+        path: "cats",
+        element: <CatsPage />,
+        loader: loadCats,
+      },
       {
         path: "login",
         element: <LoginPage />,
@@ -47,7 +59,12 @@ const router = createBrowserRouter([
   {
     path: "activate/:id",
     element: <ActivationPage />,
-    action: actionActivate,
+    loader: loadActivate,
+  },
+  {
+    path: "reactivate",
+    element: <ReactivatePage />,
+    action: actionReactivate,
   },
 ]);
 

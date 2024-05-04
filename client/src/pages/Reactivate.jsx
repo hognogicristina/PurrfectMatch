@@ -1,15 +1,15 @@
-import ForgotPasswordForm from "../components/Authentification/ForgotPasswordForm.jsx";
+import ReactivateForm from "../components/Authentification/ReactivateForm.jsx";
 
-function ForgotPasswordPage() {
-  return <ForgotPasswordForm />;
+function ReactivatePage() {
+  return <ReactivateForm />;
 }
 
-export default ForgotPasswordPage;
+export default ReactivatePage;
 
 export async function action({ request }) {
   const data = await request.formData();
 
-  const response = await fetch("http://localhost:3000/reset", {
+  const response = await fetch("http://localhost:3000/reactivate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -27,5 +27,5 @@ export async function action({ request }) {
     return response;
   }
 
-  return data;
+  return response;
 }

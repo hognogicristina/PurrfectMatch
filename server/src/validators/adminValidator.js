@@ -27,7 +27,7 @@ const userExistValidator = async (req, res) => {
     } else {
       return res
         .status(403)
-        .json({ error: [{ field: "user", message: "Unauthorized" }] });
+        .json({ error: [{ field: "admin", message: "Unauthorized" }] });
     }
   }
 

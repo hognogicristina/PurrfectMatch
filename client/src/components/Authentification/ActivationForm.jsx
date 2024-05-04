@@ -1,70 +1,66 @@
-import React, { useEffect, useState } from "react";
-import { Form, useActionData, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
-import styles from "./ActivationForm.module.css";
+import { toast, ToastContainer } from "react-toastify";
+import "./Activation.css";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
-export default function ActivationForm() {
-  const data = useActionData();
+export default function ActivationForm({ data }) {
   const navigate = useNavigate();
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
-    if (data && data.error) {
-      setErrorMessage(data.error.map((err) => err.message).join(", "));
-    } else if (data && data.status) {
-      setSuccessMessage(data.status);
+    if (data.error) {
+      setIsError(true);
+      setStatusMessage(data.error[0].message);
+    } else {
+      setIsError(false);
+      setStatusMessage(data);
     }
-  }, [data]);
+  }, []);
 
   return (
-    <div className={styles.container}>
+    <div className="container">
       <motion.div
         initial={{ y: "100vh", opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 120, damping: 15 }}
-        className={styles.motionDiv}
+        className="form"
       >
-        {errorMessage ? (
+        {isError ? (
           <>
-            <Form method="post">
-              <h1>We are sorry to inform you...</h1>
-              <p>{errorMessage}</p>
-              <p>
-                In order to proceed with the activation, please open the button
-                below an re-enter your email.
-              </p>
-              <label>
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  required
-                />
-              </label>
-              <button
-                className={styles.loginButton}
-                onClick={() => navigate("/reactivate")}
-              >
-                Reactivate Account
-              </button>
-            </Form>
+            <h1>{statusMessage}</h1>
+            {data.error[0].field === "email" && (
+              <div>
+                <p>
+                  In order to proceed with the activation, please open the
+                  button below:
+                </p>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => navigate("/reactivate")}
+                >
+                  Reactivate Account
+                </motion.button>
+              </div>
+            )}
           </>
         ) : (
           <>
-            <h1>{successMessage || "Welcome!"}</h1>
+            <h1>{statusMessage}</h1>
             <p>
               You can now use our platform and enjoy your journey in finding a
               new friend. For login, you can press the button below.
             </p>
-            <button
-              className={styles.loginButton}
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => navigate("/login")}
             >
               Go to Login
-            </button>
+            </motion.button>
           </>
         )}
         <ToastContainer

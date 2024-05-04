@@ -1,8 +1,16 @@
-import React from "react";
 import LoginForm from "../components/Authentification/LoginForm.jsx";
 import { redirect } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { authActions } from "../store/index.js";
+import { useEffect } from "react";
 
 function LoginPage() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(authActions.login());
+  }, [dispatch]);
+
   return <LoginForm />;
 }
 

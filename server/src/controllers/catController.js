@@ -24,7 +24,7 @@ const getAllCats = async (req, res) => {
 
     const catsDetails = [];
     for (let cat of catsForPage) {
-      const catsDetail = await catDTO.transformCatFromListToDTO(cat);
+      const catsDetail = await catDTO.catsListToDTO(cat);
       catsDetails.push(catsDetail);
     }
 
@@ -41,11 +41,29 @@ const getAllCats = async (req, res) => {
   }
 };
 
+const getRecentCats = async (req, res) => {
+  try {
+    const cats = await Cat.findAll({
+      limit: 5,
+      order: [["createdAt", "DESC"]],
+    });
+    const catsDetails = [];
+    for (let cat of cats) {
+      const catsDetail = await catDTO.catsListToDTO(cat);
+      catsDetails.push(catsDetail);
+    }
+    return res.status(200).json({ data: catsDetails });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 const getOneCat = async (req, res) => {
   try {
     if (await catValidator.catExistValidator(req, res)) return;
     const cat = await Cat.findByPk(req.params.id);
-    const catDetails = await catDTO.transformCatToDTO(cat);
+    const catDetails = await catDTO.catToDTO(cat);
     return res.status(200).json({ data: catDetails });
   } catch (error) {
     logger.error(error);
@@ -64,7 +82,7 @@ const addCat = async (req, res) => {
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
-    const catDetails = await catDTO.transformCatFromListToDTO(newCat);
+    const catDetails = await catDTO.catsListToDTO(newCat);
     io.getIO().emit("cats", {
       action: "create",
       cat: catDetails,
@@ -88,7 +106,7 @@ const editCat = async (req, res) => {
       cat.imageId = await fileHelper.moveImage(cat, cat.uri);
     }
     await cat.save();
-    const catDetails = await catDTO.transformCatFromListToDTO(cat);
+    const catDetails = await catDTO.catsListToDTO(cat);
     io.getIO().emit("cats", {
       action: "update",
       cat: catDetails,
@@ -126,6 +144,7 @@ const deleteCat = async (req, res) => {
 
 module.exports = {
   getAllCats,
+  getRecentCats,
   getOneCat,
   addCat,
   editCat,

@@ -1,4 +1,4 @@
-async function transformImageToDTO(image) {
+async function imageToDTO(image) {
   return {
     url: image.url,
     uri: image.uri,
@@ -7,4 +7,4 @@ async function transformImageToDTO(image) {
   };
 }
 
-module.exports = { transformImageToDTO };
+module.exports = { imageToDTO };

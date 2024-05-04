@@ -7,10 +7,14 @@ const {
   UserRole,
   RefreshToken,
   PasswordHistory,
+  Token,
+  UserInfo,
 } = require("../../models");
 const fileHelper = require("./fileHelper");
 
 const deleteUser = async (user) => {
+  await Token.destroy({ where: { userId: user.id } });
+  await UserInfo.destroy({ where: { userId: user.id } });
   await RefreshToken.destroy({ where: { userId: user.id } });
   await PasswordHistory.destroy({ where: { userId: user.id } });
   const userAdoptionRequests = await UserRole.findAll({
