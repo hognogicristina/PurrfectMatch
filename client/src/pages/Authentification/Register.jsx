@@ -1,22 +1,6 @@
 import RegisterForm from "../../components/Authentification/RegisterForm.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-import { authActions } from "../../store/index.js";
 
 function RegisterPage() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const isAuth = useSelector((state) => state.auth.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuth) {
-      navigate("/");
-    } else {
-      dispatch(authActions.login());
-    }
-  }, [dispatch, navigate, isAuth]);
-
   return <RegisterForm />;
 }
 

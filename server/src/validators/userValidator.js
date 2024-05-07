@@ -1,14 +1,24 @@
 const validator = require("validator");
-const { User, PasswordHistory } = require("../../models");
+const { User, Image } = require("../../models");
 const bcrypt = require("bcrypt");
 
 const userExistValidator = async (req, res) => {
-  const user = await User.findByPk(req.user.id);
-
-  if (!user) {
-    return res
-      .status(404)
-      .json({ error: [{ field: "id", message: "User not found" }] });
+  if (req.params.id) {
+    const userParam = await User.findByPk(req.params.id);
+    if (!userParam) {
+      return res
+        .status(404)
+        .json({ error: [{ field: "id", message: "User not found" }] });
+    }
+  } else {
+    if (req.user.id) {
+      const user = await User.findByPk(req.user.id);
+      if (!user) {
+        return res
+          .status(404)
+          .json({ error: [{ field: "id", message: "User not found" }] });
+      }
+    }
   }
 
   return null;

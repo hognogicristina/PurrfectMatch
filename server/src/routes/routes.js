@@ -20,12 +20,12 @@ router.get(
   adminController.getAllUsers,
 );
 router.delete(
-  "/user/:id",
+  "/user/:id/delete",
   authMiddleware.authenticateToken,
   adminController.deleteUser,
 );
 router.delete(
-  "/cats/:id",
+  "/cats/:id/delete",
   authMiddleware.authenticateToken,
   adminController.deleteCat,
 );
@@ -58,11 +58,8 @@ router.post(
 );
 
 // User routes
-router.get(
-  "/user",
-  authMiddleware.authenticateToken,
-  userController.getOneUser,
-);
+router.get("/user-profile/:id", userController.getOneUser);
+router.get("/user", authMiddleware.authenticateToken, userController.getUser);
 router.get(
   "/user/cats-owned",
   authMiddleware.authenticateToken,
@@ -74,7 +71,7 @@ router.get(
   userController.getSentToAdoptionCats,
 );
 router.patch(
-  "/user",
+  "/user/edit",
   authMiddleware.authenticateToken,
   userController.editUser,
 );
@@ -94,7 +91,7 @@ router.patch(
   userController.editPassword,
 );
 router.delete(
-  "/user",
+  "/user/delete",
   authMiddleware.authenticateToken,
   userController.deleteUser,
 );
@@ -103,29 +100,29 @@ router.delete(
 router.get("/breeds", breedController.getAllBreeds);
 
 // Cat routes
-router.get("/cats", catController.getAllCats);
 router.get("/", catController.getRecentCats);
+router.get("/cats", catController.getAllCats);
 router.get("/cat/:id", catController.getOneCat);
 router.post("/cat", authMiddleware.authenticateToken, catController.addCat);
 router.patch(
-  "/cat/:id",
+  "/cat/:id/edit",
   authMiddleware.authenticateToken,
   catController.editCat,
 );
 router.delete(
-  "/cat/:id",
+  "/cat/:id/delete",
   authMiddleware.authenticateToken,
   catController.deleteCat,
 );
 
 // Adoption request routes
 router.post(
-  "/adopt/:id",
+  "/adopt/:id/request",
   authMiddleware.authenticateToken,
   adoptionRequestController.adoptCat,
 );
 router.patch(
-  "/adopt/:id",
+  "/adopt/:id/response",
   authMiddleware.authenticateToken,
   adoptionRequestController.handleAdoptionRequest,
 );
@@ -140,7 +137,7 @@ router.get(
   adoptionRequestController.getAdoptionRequest,
 );
 router.delete(
-  "/adopt/:id",
+  "/adopt/:id/delete",
   authMiddleware.authenticateToken,
   adoptionRequestController.deleteAdoptionRequest,
 );
@@ -162,7 +159,7 @@ router.post(
   favoriteController.adoptFavorite,
 );
 router.delete(
-  "/favorite/:id",
+  "/favorite/:id/delete",
   authMiddleware.authenticateToken,
   favoriteController.deleteFavorite,
 );

@@ -11,7 +11,9 @@ const uploadImage = async (req, res) => {
     res.status(201).json({ data: imageDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 

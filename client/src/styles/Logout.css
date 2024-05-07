@@ -1,0 +1,60 @@
+.containerLogout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 70px;
+}
+
+.formLogout {
+  display: flex;
+  border: 1px solid #ccc;
+  padding: 40px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  flex-direction: row;
+  align-items: center;
+  max-height: 40px;
+}
+
+.userIcon {
+  margin-bottom: 66px;
+  font-size: 60px;
+  border-radius: 50%;
+  color: #ccc;
+}
+
+.titleLogout {
+  font-size: 38px;
+  color: #665967;
+  text-align: center;
+}
+
+.subtitleLogout {
+  font-size: 26px;
+  color: rgba(147, 146, 146, 0.84);
+  text-align: center;
+  font-weight: 420;
+}
+
+.username {
+  font-weight: 600;
+}
+
+.formLogout button {
+  width: 30%;
+  color: #2d1e30;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  background-color: rgba(213, 213, 213, 0.44);
+  text-align: center;
+}
+
+.formLogout button:hover {
+  background-color: rgba(213, 213, 213, 0.78);
+}

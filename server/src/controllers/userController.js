@@ -13,11 +13,28 @@ const logger = require("../../logger/logger");
 const getOneUser = async (req, res) => {
   try {
     if (await userValidator.userExistValidator(req, res)) return;
+    const user = await User.findByPk(req.params.id);
+    const userDetails = await userDTO.userToDTO(user);
+    return res.json({ data: userDetails });
+  } catch (error) {
+    console.log(error);
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+  }
+};
+
+const getUser = async (req, res) => {
+  try {
+    if (await userValidator.userExistValidator(req, res)) return;
     const userDetails = await userDTO.userToDTO(req.user);
     return res.json({ data: userDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -34,7 +51,9 @@ const getOwnedCats = async (req, res) => {
     return res.status(200).json({ data: { catsCount, catsDetails } });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -52,7 +71,9 @@ const getSentToAdoptionCats = async (req, res) => {
     return res.status(200).json({ data: { catsCount, catsDetails } });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -68,22 +89,32 @@ const editUser = async (req, res) => {
       "hobbies",
       "experienceLevel",
     ];
-    await userHelper.updateEmail(req.user, fieldsToUpdate, req.body);
-    req.user.imageId = await fileHelper.updateImage(req.user, req.file);
-    await UserInfo.update(
-      {
-        birthday: req.body.birthday,
-        description: req.body.description,
-        hobbies: req.body.hobbies,
-        experienceLevel: req.body.experienceLevel,
-      },
-      { where: { userId: req.user.id } },
-    );
-    await req.user.save();
-    return res.json({ status: "User updated successfully" });
+    const user = await User.findByPk(req.user.id);
+    await userHelper.updateEmail(user, fieldsToUpdate, req.body);
+    if (req.body.uri) {
+      user.imageId = await fileHelper.moveImage(user, req.body.uri);
+    }
+    await user.save();
+    return res.json({ status: "Your profile has been modified" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+  }
+};
+
+const editUsername = async (req, res) => {
+  try {
+    if (await userValidator.editUsernameValidation(req, res)) return;
+    req.user.username = req.body.username;
+    await req.user.save();
+    return res.json({ status: "Your username has been changed" });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -113,22 +144,12 @@ const editAddressUser = async (req, res) => {
     await address.save();
     req.user.addressId = address.id;
     await req.user.save();
-    return res.json({ status: "Address updated successfully" });
+    return res.json({ status: "Your address has been modified" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-const editUsername = async (req, res) => {
-  try {
-    if (await userValidator.editUsernameValidation(req, res)) return;
-    req.user.username = req.body.username;
-    await req.user.save();
-    return res.json({ status: "Username updated successfully" });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -141,10 +162,12 @@ const editPassword = async (req, res) => {
       userId: req.user.id,
       password: req.user.password,
     });
-    return res.json({ status: "Password updated successfully" });
+    return res.json({ status: "Your password has been changed" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -157,21 +180,24 @@ const deleteUser = async (req, res) => {
     }
     await userHelper.deleteUser(req.user);
     await transaction.commit();
-    return res.status(200).json({ status: "User deleted successfully" });
+    return res.status(200).json({ status: "We are sorry to see you go" });
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
 module.exports = {
   getOneUser,
+  getUser,
   getOwnedCats,
   getSentToAdoptionCats,
   editUser,
-  editAddressUser,
   editUsername,
+  editAddressUser,
   editPassword,
   deleteUser,
 };

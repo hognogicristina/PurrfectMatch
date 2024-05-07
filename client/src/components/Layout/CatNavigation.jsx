@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import "./CatNavigation.css";
 
 export default function CatNavigation() {
   return (

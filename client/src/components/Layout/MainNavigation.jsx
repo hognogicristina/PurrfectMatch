@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import "./MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,
   faHeart,
   faChevronUp,
-  faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { NavLink, useRouteLoaderData } from "react-router-dom";
+
 import CatNavigation from "./CatNavigation.jsx";
 
 function MainNavigation() {
-  const isAuth = useSelector((state) => state.auth.isAuthenticated);
-  const [showCatsNav, setShowCatsNav] = useState(false);
-
-  const toggleCatsNav = () => setShowCatsNav((prev) => !prev);
+  const token = useRouteLoaderData("root");
 
   return (
     <header className="mainNavigatiom">
@@ -26,23 +22,26 @@ function MainNavigation() {
             <h1 className="logo">purrfectMatch</h1>
           </motion.div>
         </NavLink>
-        {!isAuth ? (
+        {!token ? (
           <NavLink to="/cats" className="links">
             All Cats
           </NavLink>
         ) : (
-          <motion.div onClick={toggleCatsNav} className="catsNav">
-            Cats
-            <FontAwesomeIcon
-              icon={showCatsNav ? faChevronUp : faChevronDown}
-              className="indicator"
-            />
-          </motion.div>
+          <div className="dropdown">
+            <button className="dropbtn">Cats</button>
+            <motion.div
+              whileInView={{ y: [-50, 0], opacity: [0, 1] }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="dropdownContent"
+            >
+              <CatNavigation />
+            </motion.div>
+          </div>
         )}
       </div>
-      {showCatsNav && <CatNavigation />}
       <div className="controlContainer">
-        {isAuth ? (
+        {token ? (
           <>
             <NavLink to="/adopts" className="links">
               <FontAwesomeIcon icon={faEnvelope} />
@@ -50,14 +49,19 @@ function MainNavigation() {
             <NavLink to="/cats" className="links">
               <FontAwesomeIcon icon={faHeart} />
             </NavLink>
-            <NavLink to="/profile" className="links">
+            <NavLink to="/user" className="links">
               My Profile
             </NavLink>
           </>
         ) : (
-          <motion.div whileTap={{ scale: 0.9 }} className="loginLink">
-            <NavLink to="/login">Log In</NavLink>
-          </motion.div>
+          <>
+            <motion.div whileTap={{ scale: 0.9 }} className="loginLink">
+              <NavLink to="/login">Log In</NavLink>
+            </motion.div>
+            <motion.div whileTap={{ scale: 0.9 }} className="registerLink">
+              <NavLink to="/register">Register</NavLink>
+            </motion.div>
+          </>
         )}
       </div>
     </header>

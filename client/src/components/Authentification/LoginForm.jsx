@@ -15,8 +15,8 @@ import ReactivateDialog from "../Dialog/ReactivateDialog.jsx";
 
 export default function LoginForm() {
   const data = useActionData();
-  const navigation = useNavigation();
   const navigate = useNavigate();
+  const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -71,14 +71,15 @@ export default function LoginForm() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <label>
+          <div className="rememberMe">
             <input
+              name="rememberMe"
               type="checkbox"
               checked={rememberMe}
               onChange={() => setRememberMe(!rememberMe)}
             />
-            Remember me
-          </label>
+            <label>Remember me</label>
+          </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
@@ -88,12 +89,8 @@ export default function LoginForm() {
             Login
           </motion.button>
           <div className="linksContainer">
-            <Link to="/register" className="link">
-              Don't have an account?
-            </Link>
-            <Link to="/reset" className="link">
-              Forgot password?
-            </Link>
+            <Link to="/register">Don't have an account?</Link>
+            <Link to="/reset">Forgot password?</Link>
           </div>
         </Form>
         <ToastContainer

@@ -44,12 +44,12 @@ const getAllCats = async (req, res) => {
 const getRecentCats = async (req, res) => {
   try {
     const cats = await Cat.findAll({
-      limit: 5,
+      limit: 4,
       order: [["createdAt", "DESC"]],
     });
     const catsDetails = [];
     for (let cat of cats) {
-      const catsDetail = await catDTO.catsListToDTO(cat);
+      const catsDetail = await catDTO.catsRecentListToDTO(cat);
       catsDetails.push(catsDetail);
     }
     return res.status(200).json({ data: catsDetails });
@@ -103,7 +103,7 @@ const editCat = async (req, res) => {
     let cat = await Cat.findByPk(req.params.id);
     cat = await catHelper.updateCatData(cat, req.body);
     if (req.body.uri) {
-      cat.imageId = await fileHelper.moveImage(cat, cat.uri);
+      cat.imageId = await fileHelper.moveImage(cat, req.body.uri);
     }
     await cat.save();
     const catDetails = await catDTO.catsListToDTO(cat);

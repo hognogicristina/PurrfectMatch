@@ -31,4 +31,14 @@ async function catsListToDTO(cat) {
   };
 }
 
-module.exports = { catToDTO, catsListToDTO };
+async function catsRecentListToDTO(cat) {
+  const image = await Image.findOne({ where: { id: cat.imageId } });
+  return {
+    image: image ? image.url : null,
+    name: cat.name,
+    lifeStage: cat.ageType,
+    description: cat.description,
+  };
+}
+
+module.exports = { catToDTO, catsListToDTO, catsRecentListToDTO };

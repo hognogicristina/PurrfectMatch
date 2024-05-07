@@ -6,6 +6,7 @@ const {
   PasswordHistory,
   UserInfo,
   Token,
+  Image,
 } = require("../../models");
 const emailServ = require("../services/emailService");
 const authValidator = require("../validators/authValidator");
@@ -81,21 +82,35 @@ const reactivate = async (req, res) => {
 const login = async (req, res) => {
   try {
     if (await authValidator.loginValidation(req, res)) return;
+    const expiresIn = req.body.rememberMe
+      ? 30 * 24 * 60 * 60
+      : process.env.JWT_TTL;
+
+    const image = await Image.findOne({ where: { id: req.user.imageId } });
+    const imgURL = image ? image.url : null;
     const token = jwt.sign(
-      { id: req.user.id, username: req.user.username, email: req.user.email },
+      {
+        id: req.user.id,
+        username: req.user.username,
+        email: req.user.email,
+        image: imgURL,
+      },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_TTL + "s",
+        expiresIn: expiresIn + "s",
       },
     );
+
     const refreshToken = authHelper.generateRefreshToken();
     await RefreshToken.create({ userId: req.user.id, token: refreshToken });
+
     res.cookie("refreshToken", refreshToken, {
-      maxAge: 30 * 24 * 60 * 60 * 1000,
+      maxAge: expiresIn * 1000,
       httpOnly: true,
       secure: true,
       sameSite: "none",
     });
+
     res.status(200).json({ token });
   } catch (error) {
     logger.error(error);
@@ -149,7 +164,12 @@ const logout = async (req, res) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findByPk(decoded.id);
-    await RefreshToken.destroy({ where: { userId: user.id } });
+    const refreshToken = await RefreshToken.findAll({
+      where: { userId: user.id },
+    });
+    for (const token1 of refreshToken) {
+      await token1.destroy();
+    }
     res.clearCookie("refreshToken");
     res.status(200).json({ status: "Logged out successfully" });
   } catch (error) {

@@ -1,0 +1,321 @@
+.userDetailContainer {
+  padding: 20px;
+  margin-top: 70px;
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+}
+
+.userRootContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.linksNavibar,
+.userContent {
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.linksNavibar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 250px;
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.linksNavibar a {
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  background-color: white;
+  transition: background-color 0.3s, border-left 0.3s;
+}
+
+.linksNavibar a:hover {
+  background-color: rgba(255, 192, 203, 0.15);
+}
+
+.linksNavibar a.active {
+  border-left: 6px solid #ae3d72;
+  background-color: rgba(255, 192, 203, 0.15);
+  color: #FF69B4;
+}
+
+.link {
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  background-color: white;
+  transition: background-color 0.3s, border-left 0.3s;
+  font-weight: 270;
+  cursor: pointer;
+  text-align: left;
+  border: none;
+  width: 100%;
+}
+
+.link:hover {
+  background-color: rgba(255, 192, 203, 0.15);
+}
+
+.userContent {
+  padding: 50px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  align-items: flex-start;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  resize: none;
+}
+
+.userContent.myProfile {
+  width: 1180px;
+}
+
+.userSlideBarLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 5px;
+  align-items: flex-start;
+  flex: 1;
+}
+
+.userImage,
+.selectedImage,
+.cameraIcon,
+.faUserCircle {
+  font-size: 280px;
+  border-radius: 50%;
+  color: #ccc;
+}
+
+.cameraIcon,
+.selectedImage {
+  border: 2px solid #ccc;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+.cameraIcon {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px !important;
+}
+
+.userContent .titleFont,
+.userContent .textFont,
+.userContent .subtitleFont {
+  color: #665967;
+  text-align: left;
+}
+
+.userContent .titleFont {
+  margin-top: 20px;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.userContent .textFont {
+  font-size: 30px;
+  font-weight: 370;
+}
+
+.userContent .subtitleFont {
+  font-size: 20px;
+  font-weight: 200;
+}
+
+.userContent .userEmail {
+  font-size: 18px;
+  font-weight: 200;
+}
+
+.userSlideBarRight {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-left: 30px;
+  padding: 20px;
+  flex: 2;
+}
+
+.controlProfileContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.controlProfile {
+  margin-top: 20px;
+  color: #2d1e30;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: 600;
+  border: 1px solid #ccc;
+  background-color: rgba(213, 213, 213, 0.44);
+}
+
+.controlProfile.delete {
+  color: #D8000C;
+}
+
+.controlProfile.edit:hover {
+  background-color: rgba(213, 213, 213, 0.78);
+}
+
+.controlProfile.delete:hover {
+  background-color: #D8000C;
+  color: white;
+}
+
+.circle {
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  padding: 9px;
+}
+
+.green {
+  border: 1px solid rgba(0, 128, 0, 0.44);
+  background-color: green;
+}
+
+.gray {
+  background-color: rgb(213, 213, 213);
+}
+
+.experienceCircles {
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.userContent label {
+  margin-bottom: 10px;
+}
+
+.userContent input,
+.userContent button,
+.userContent textarea {
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: none;
+}
+
+.userContent textarea {
+  resize: none;
+}
+
+.userContent input,
+.userContent textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  background-color: #f5f5f5;
+}
+
+.save {
+  width: 200px;
+  border-radius: 8px;
+  background-color: #FF69B4;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save:hover {
+  background-color: #FF1493;
+}
+
+.userContent input:focus,
+.userContent textarea:focus {
+  border-color: #FF1493;
+}
+
+.userContent input::placeholder {
+  color: #999;
+}
+
+.hobbiesLabel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.hobbies {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.hobbyInputContainer {
+  display: flex;
+  margin-top: 10px;
+}
+
+.hobbyInput {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.addHobbyButton {
+  padding: 8px 16px;
+}
+
+.hobby {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+
+.removeButton {
+  background-color: transparent;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.removeIcon {
+  font-size: 14px;
+  background-color: rgba(213, 213, 213, 0.44);
+  padding: 4px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

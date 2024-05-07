@@ -50,7 +50,8 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
     await emailServ.sendResetEmail(user);
   }
 
-  await user.save();
+  const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
+  await userInfo.save();
 };
 
 module.exports = { deleteUser, updateEmail };

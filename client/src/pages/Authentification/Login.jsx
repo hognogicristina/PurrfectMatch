@@ -1,22 +1,8 @@
 import LoginForm from "../../components/Authentification/LoginForm.jsx";
-import { redirect, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { authActions } from "../../store/index.js";
-import { useEffect } from "react";
+import { redirect } from "react-router-dom";
+import { extractExpiration } from "../../util/auth.js";
 
 function LoginPage() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const isAuth = useSelector((state) => state.auth.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuth) {
-      navigate("/");
-    } else {
-      dispatch(authActions.login());
-    }
-  }, [dispatch, navigate, isAuth]);
-
   return <LoginForm />;
 }
 
@@ -33,8 +19,8 @@ export async function action({ request }) {
     body: JSON.stringify({
       usernameOrEmail: data.get("usernameOrEmail"),
       password: data.get("password"),
+      rememberMe: data.get("rememberMe"),
     }),
-    credentials: "include",
   });
 
   if (
@@ -47,5 +33,7 @@ export async function action({ request }) {
 
   const dataRes = await response.json();
   localStorage.setItem("token", dataRes.token);
+  const tokenDuration = extractExpiration(dataRes.token);
+  localStorage.setItem("expiration", tokenDuration);
   return redirect("/");
 }

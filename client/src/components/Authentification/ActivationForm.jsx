@@ -22,7 +22,7 @@ export default function ActivationForm({ data }) {
 
   return (
     <div className="container">
-      {data.error[0].field === "email" ? (
+      {data.error[0].field && data.error[0].field === "email" ? (
         <motion.div
           initial={{ y: "100vh", opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

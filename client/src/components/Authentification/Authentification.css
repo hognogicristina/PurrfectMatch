@@ -1,21 +1,16 @@
-body {
-  margin: 0;
-  padding: 0;
-  background: #fff0f0;
-  font-family: 'Roboto', sans-serif;
-}
-
 .authContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 25px;
 }
 
 .authForm {
-  margin-top: 50px;
+  border: 1px solid #ccc;
+  margin-top: 100px;
   padding: 5px 70px 50px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.8);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
@@ -41,6 +36,8 @@ body {
 .authForm p {
   font-size: 18px;
   text-align: center;
+  max-width: 400px;
+  word-wrap: break-word;
 }
 
 .authForm label {
@@ -90,19 +87,21 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.submit:hover {
-  background-color: #FF1493;
-}
-
+.submit:hover,
 .authForm input:focus {
-  border-color: #FF1493;
+  background-color: #FF1493;
 }
 
 .authForm input::placeholder {
   color: #999;
 }
 
-.authForm input[type="checkbox"] {
+.rememberMe {
+  display: flex;
+  align-items: center;
+}
+
+.rememberMe input {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -110,17 +109,17 @@ body {
   height: 10px;
   border: 2px solid #FF69B4;
   border-radius: 6px;
-  margin-right: 8px;
+  margin-right: 10px;
   position: relative;
   cursor: pointer;
 }
 
-.authForm input[type="checkbox"]:checked {
+.rememberMe input[type="checkbox"]:checked {
   border: 2px solid #ff008d;
   background-color: #ff008d;
 }
 
-.authForm input[type="checkbox"]:checked::after {
+.rememberMe input[type="checkbox"]:checked::after {
   content: '\2713';
   font-size: 20px;
   position: absolute;
@@ -139,7 +138,6 @@ body {
 
 .linksContainer a {
   color: #ff008d;
-  text-decoration: none;
   transition: color 0.3s ease;
 }
 

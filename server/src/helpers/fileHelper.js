@@ -57,7 +57,8 @@ const moveImage = async (model, uri) => {
   }
 
   if (!uri) return null;
-  let image = await Image.findOne({ where: { uri } });
+  let image = await Image.findOne({ where: { uri: uri } });
+
   if (!image) return null;
 
   const imagePath = path.join("public", "temporary-uploads", image.filename);

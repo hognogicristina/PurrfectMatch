@@ -56,7 +56,7 @@ export default function RegisterForm() {
               you.
             </p>
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              className="submit"
               whileTap={{ scale: 0.9 }}
               onClick={handleContinue}
             >
