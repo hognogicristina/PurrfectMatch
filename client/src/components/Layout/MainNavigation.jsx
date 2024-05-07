@@ -1,11 +1,7 @@
 import React from "react";
 import "./MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEnvelope,
-  faHeart,
-  faChevronUp,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { NavLink, useRouteLoaderData } from "react-router-dom";
 
@@ -30,9 +26,9 @@ function MainNavigation() {
           <div className="dropdown">
             <button className="dropbtn">Cats</button>
             <motion.div
-              whileInView={{ y: [-50, 0], opacity: [0, 1] }}
-              viewport={{ once: true }}
-              transition={{ duration: 1 }}
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, staggerChildren: 0.1 }}
               className="dropdownContent"
             >
               <CatNavigation />

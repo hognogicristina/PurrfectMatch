@@ -149,17 +149,7 @@ export default function HomeContent({ cats, breeds }) {
 
         <h2 className="title">Understanding Cat Behavior</h2>
         <div className="understandingContent">
-          <motion.img
-            whileInView={{
-              scale: [0.8, 1.2, 1],
-              opacity: [0, 1],
-            }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            src="smallCat.jpg"
-            alt="cat scratch"
-            className="imgContent"
-          />
+          <img src="smallCat.jpg" alt="cat scratch" className="imgContent" />
           <div className="textContent">
             <p>
               Scratching is a natural behavior for cats to maintain their claws
