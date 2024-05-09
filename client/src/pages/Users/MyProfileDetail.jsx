@@ -2,13 +2,14 @@ import MyProfile from "../../components/User/MyProfile.jsx";
 import { Await, defer, useRouteLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import { getAuthToken } from "../../util/auth.js";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
 function MyProfileDetail() {
   const data = useRouteLoaderData("user-details");
   const userDetail = data.userDetail;
 
   return (
-    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={userDetail}>
         {(loadedUserDetail) => <MyProfile userDetail={loadedUserDetail} />}
       </Await>

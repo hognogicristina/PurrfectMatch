@@ -32,12 +32,12 @@ async function adoptionRequestToDTO(adoptionRequest, user) {
     subject: "Adoption request",
     from: `${sender.firstName} ${sender.lastName}`,
     to: `${receiver.firstName} ${receiver.lastName}`,
-    message: adoptionRequest.message,
-    cat: cat.name,
+    message: adoptionRequest.message ? adoptionRequest.message : null,
+    cat: cat.name ? cat.name : null,
     image: image ? image.url : null,
-    status: adoptionRequest.status,
+    status: adoptionRequest.status ? adoptionRequest.status : null,
     address: address ? `${address.city}, ${address.country}` : null,
-    date: formattedDate,
+    date: formattedDate ? formattedDate : null,
   };
 }
 
@@ -94,9 +94,9 @@ async function transformAdoptionRequestsToDTO(user, sortOrder) {
       from: from,
       to: to,
       subject: "Adoption request",
-      cat: cat.name,
-      status: adoptionRequest.status,
-      date: formattedDate,
+      cat: cat.name ? cat.name : null,
+      status: adoptionRequest.status ? adoptionRequest.status : null,
+      date: formattedDate ? formattedDate : null,
     });
   }
 

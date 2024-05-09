@@ -33,15 +33,17 @@ const deleteUser = async (user) => {
 const updateEmail = async (user, fieldsToUpdate, body) => {
   let emailChanged = false;
   fieldsToUpdate.forEach((field) => {
-    if (
-      body[field] !== undefined &&
-      field === "email" &&
-      body[field] !== user.email
-    ) {
-      user[field] = body[field];
-      emailChanged = true;
-    } else if (body[field] !== undefined) {
-      user[field] = body[field];
+    if (body[field] !== undefined) {
+      if (field === "email" && body[field] !== user.email) {
+        user[field] = body[field];
+        emailChanged = true;
+      } else {
+        if (field === "hobbies" && Array.isArray(body[field])) {
+          user[field] = body[field].join(", ");
+        } else {
+          user[field] = body[field];
+        }
+      }
     }
   });
 
@@ -51,6 +53,9 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
   }
 
   const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
+  userInfo.description = user.description;
+  userInfo.hobbies = user.hobbies;
+  userInfo.experienceLevel = user.experienceLevel;
   await userInfo.save();
 };
 

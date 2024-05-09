@@ -1,147 +1,193 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Form, useLoaderData } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import React, { useEffect, useState } from "react";
-import UploadImage from "../../pages/Util/UploadImage.jsx";
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 
-export default function MyProfileEdit() {
-  const data = useLoaderData();
-  const [hobbies, setHobbies] = useState([]);
-  const [currentHobby, setCurrentHobby] = useState("");
+import UploadImage from "../../pages/Util/UploadImage.jsx";
+import { useToast } from "../Util/Custom/ToastProvider.jsx";
+
+export default function MyProfileEdit({ userDetail }) {
+  const data = useActionData();
+  const navigate = useNavigate();
+  const { notifyError, notifySuccess } = useToast();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const [user, setUser] = useState();
+  const [experienceLevel, setExperienceLevel] = useState(0);
+
+  useEffect(() => {
+    async function getUser() {
+      const userInfo = await userDetail;
+      setUser(userInfo);
+      setExperienceLevel(userInfo.experienceLevel || 0);
+    }
+
+    getUser();
+  }, [userDetail]);
 
   useEffect(() => {
     if (data) {
       if (data.error) {
-        toast.error(data.error[0].message);
+        notifyError(data.error[0].message);
       } else if (data.status) {
-        toast.success(data.status);
+        notifySuccess(data.status);
+        navigate("/user");
       }
     }
   }, [data]);
 
-  const handleImageChange = (e) => {
-    const selectedImage = e.target.files[0];
-    setImage(selectedImage);
+  function handleCancel() {
+    navigate("/user");
+  }
+
+  const trembleAnimation = {
+    x: [0, 5, -5, 5, -5, 0],
+    y: [0, 2, -2, 2, -2, 0],
+    transition: {
+      duration: 0.5,
+      ease: "easeInOut",
+      loop: Infinity,
+    },
   };
 
-  const handleHobbyChange = (e) => {
-    setCurrentHobby(e.target.value);
+  const handleExperienceClick = (index) => {
+    const newLevel = index + 1;
+    setExperienceLevel(experienceLevel === newLevel ? 0 : newLevel);
   };
 
-  const handleAddHobby = () => {
-    if (currentHobby.trim() !== "") {
-      setHobbies([...hobbies, currentHobby.trim()]);
-      setCurrentHobby("");
+  const renderExperienceLevel = (level) => {
+    let circles = [];
+    for (let i = 0; i < 5; i++) {
+      circles.push(
+        <span
+          key={i}
+          className={`circle ${i < level ? "green" : "gray"}`}
+          onClick={() => handleExperienceClick(i)}
+        />,
+      );
     }
-  };
-
-  const handleRemoveHobby = (index) => {
-    setHobbies(hobbies.filter((_, i) => i !== index));
+    return <div className="experienceCircles">{circles}</div>;
   };
 
   return (
-    <div className="userDetailContainer">
-      <motion.div
-        initial={{ x: "-9vh", opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 90, damping: 20 }}
-      >
-        <Form method="patch" className="userContent">
-          <div className="userSlideBarLeft">
-            <UploadImage />
-            <label>
-              <span>First name</span>
-              <input
-                type="text"
-                name="firstName"
-                placeholder="Enter your first name"
-                required
-              />
-            </label>
-            <label>
-              <span>Last name</span>
-              <input
-                type="text"
-                name="lastName"
-                placeholder="Enter your last name"
-                required
-              />
-            </label>
-            <label>
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-              />
-            </label>
-            <label>
-              <span>Birthday</span>
-              <input type="date" name="birthday" required />
-            </label>
-            <button type="submit">Save</button>
-          </div>
-          <div className="userSlideBarRight">
-            <label>
-              <span>Description</span>
-              <textarea
-                name="description"
-                placeholder="Enter a description"
-                rows="4"
-                cols="55"
-              />
-            </label>
-            <label className="hobbiesLabel">
-              <span>Hobbies</span>
-              <div className="hobbies">
-                {hobbies.map((hobby, index) => (
-                  <div key={index} className="hobby">
-                    <span>{hobby}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveHobby(index)}
-                      className="removeButton"
-                    >
-                      <span className="removeIcon">x</span>
-                    </button>
-                  </div>
-                ))}
-                <div className="hobbyInputContainer">
-                  <input
-                    type="text"
-                    name="hobbies"
-                    placeholder="Add a hobby"
-                    value={currentHobby}
-                    onChange={handleHobbyChange}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") handleAddHobby();
-                    }}
-                    className="hobbyInput"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddHobby}
-                    className="addHobbyButton"
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            </label>
+    <motion.div className="userDetailContainer" animate={trembleAnimation}>
+      <Form method="patch" className="userContent myProfile">
+        <div className="userSlideBarLeft">
+          <UploadImage />
+          <label>
+            <span>First name</span>
+            <input
+              type="text"
+              name="firstName"
+              placeholder="Enter your first name"
+              defaultValue={user ? user.firstName : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              required
+            />
+          </label>
+          <label>
+            <span>Last name</span>
+            <input
+              type="text"
+              name="lastName"
+              placeholder="Enter your last name"
+              defaultValue={user ? user.lastName : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              required
+            />
+          </label>
+          <label className="userPersonalInput">
+            <span>Email</span>
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter your email"
+              defaultValue={user ? user.email : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              required
+            />
+          </label>
+          <label className="userPersonalInput">
+            <span>Birthday</span>
+            <input
+              type="date"
+              name="birthday"
+              defaultValue={user ? user.birthday : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              required
+            />
+          </label>
 
-            <label>
-              <span>Experience Level</span>
-              <input type="number" name="experienceLevel" />
-            </label>
+          <div className="controlProfileContainer">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="simpleButton submit"
+            >
+              Cancel
+            </button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              disabled={isSubmitting}
+              type="submit"
+              className="submitButton save"
+            >
+              Save
+            </motion.button>
           </div>
-        </Form>
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
-      </motion.div>
-    </div>
+        </div>
+        <div className="userSlideBarRight">
+          <span className="titleFont">About me</span>
+          <label>
+            <span>Description</span>
+            <textarea
+              name="description"
+              placeholder="Enter a description"
+              defaultValue={user ? user.description : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              rows="4"
+              cols="55"
+            />
+          </label>
+          <div className="hobbiesLabel">
+            <span>Hobbies</span>
+            <input
+              type="text"
+              name="hobbies"
+              placeholder="Add a hobby"
+              defaultValue={user ? user.hobbies : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                }
+              }}
+            />
+          </div>
+          <div className="experienceLevelEdit">
+            <span>Experience level:</span>
+            {renderExperienceLevel(experienceLevel)}
+            <input
+              type="hidden"
+              name="experienceLevel"
+              defaultValue={experienceLevel}
+            />
+          </div>
+        </div>
+      </Form>
+    </motion.div>
   );
 }

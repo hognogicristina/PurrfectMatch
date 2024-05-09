@@ -1,7 +1,7 @@
 async function catUserToDTO(cat) {
   return {
-    name: cat.name,
-    breed: cat.breed,
+    name: cat.name ? cat.name : null,
+    breed: cat.breed ? cat.breed : null,
   };
 }
 

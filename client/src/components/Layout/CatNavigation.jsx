@@ -1,15 +1,52 @@
 import { NavLink } from "react-router-dom";
-import "./CatNavigation.css";
+import { motion } from "framer-motion";
 
-export default function CatNavigation() {
+function CatNavigation() {
+  const itemVariants = {
+    hidden: {
+      opacity: 0,
+      scale: 0.3,
+      filter: "blur(20px)",
+      transition: {
+        duration: 0.2,
+      },
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.2,
+      },
+    },
+  };
+
+  const tapEffects = {
+    scale: 0.95,
+    transition: {
+      duration: 0.1,
+      ease: "easeInOut",
+    },
+  };
+
   return (
-    <nav className="catsDropdown">
-      <NavLink to={"/cats"}>All Cats</NavLink>
-      <NavLink to={"/cat"}>Add Cat</NavLink>
-      <NavLink to={"/user/cats-owned"}>Cats Adopted</NavLink>
-      <NavLink to={"/user/cats-sent-to-adoption"}>
-        Cats Sent to Adoption
-      </NavLink>
-    </nav>
+    <motion.nav className="catsDropdown">
+      <motion.div variants={itemVariants} whileTap={tapEffects}>
+        <NavLink to={"/cats"}>Feline Friends Catalog</NavLink>
+      </motion.div>
+      <motion.div variants={itemVariants} whileTap={tapEffects}>
+        <NavLink to={"/cat"}>Give a Cat a Home</NavLink>
+      </motion.div>
+      <motion.div variants={itemVariants} whileTap={tapEffects}>
+        <NavLink to={"/user/cats-owned"}>Purrfect Matches Archive</NavLink>
+      </motion.div>
+      <motion.div variants={itemVariants} whileTap={tapEffects}>
+        <NavLink to={"/user/cats-sent-to-adoption"}>
+          Rehomed Felines Records
+        </NavLink>
+      </motion.div>
+    </motion.nav>
   );
 }
+
+export default CatNavigation;

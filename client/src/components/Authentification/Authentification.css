@@ -22,15 +22,15 @@
 .authForm h1,
 .authForm h2 {
   font-size: 48px;
-  color: #665967;
-}
-
-.authForm h2 {
-  text-align: left;
+  color: var(--title-color);
 }
 
 .authForm h1 {
   text-align: center;
+}
+
+.authForm h2 {
+  text-align: left;
 }
 
 .authForm p {
@@ -40,26 +40,6 @@
   word-wrap: break-word;
 }
 
-.authForm label {
-  margin-bottom: 10px;
-}
-
-.authForm input,
-.authForm button {
-  padding: 12px;
-  font-size: 16px;
-  margin-bottom: 20px;
-  border-radius: 8px;
-  border: none;
-}
-
-.authForm input {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 10px;
-  background-color: #f5f5f5;
-}
-
 .buttonContainer {
   flex-direction: row;
   display: flex;
@@ -67,38 +47,13 @@
   gap: 10px;
 }
 
-.cancel {
-  width: 100%;
-  border-radius: 8px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  background-color: rgba(83, 83, 83, 0.54);
-}
-
-.submit {
-  width: 100%;
-  border-radius: 8px;
-  background-color: #FF69B4;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.submit:hover,
-.authForm input:focus {
-  background-color: #FF1493;
-}
-
-.authForm input::placeholder {
-  color: #999;
-}
-
 .rememberMe {
   display: flex;
   align-items: center;
+}
+
+.rememberMe label {
+  margin-bottom: 10px;
 }
 
 .rememberMe input {
@@ -107,7 +62,7 @@
   -moz-appearance: none;
   width: 10px;
   height: 10px;
-  border: 2px solid #FF69B4;
+  border: 2px solid var(--button-submit);
   border-radius: 6px;
   margin-right: 10px;
   position: relative;
@@ -115,8 +70,8 @@
 }
 
 .rememberMe input[type="checkbox"]:checked {
-  border: 2px solid #ff008d;
-  background-color: #ff008d;
+  border: 2px solid var(--button-submit-hover);
+  background-color: var(--button-submit-hover);
 }
 
 .rememberMe input[type="checkbox"]:checked::after {
@@ -134,15 +89,6 @@
   margin-top: 30px;
   display: flex;
   justify-content: space-between;
-}
-
-.linksContainer a {
-  color: #ff008d;
-  transition: color 0.3s ease;
-}
-
-.linksContainer a:hover {
-  text-decoration: underline;
 }
 
 .passwordInput {
@@ -169,4 +115,12 @@
   justify-content: space-between;
   flex: 1;
   margin-right: 10px;
+}
+
+.confirmContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 300px;
 }

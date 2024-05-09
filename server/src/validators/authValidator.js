@@ -215,17 +215,6 @@ const resetValidationEmail = async (req, res) => {
     });
   }
 
-  if (user && user.status === "active") {
-    return res.status(400).json({
-      error: [
-        {
-          field: "active",
-          message: "Your account is already active",
-        },
-      ],
-    });
-  }
-
   if (!user) {
     return res.status(400).json({
       status: "If the email exists, an email link will be sent to you",
@@ -233,6 +222,7 @@ const resetValidationEmail = async (req, res) => {
   } else if (user) {
     const tokenUser = await Token.findOne({ where: { userId: user.id } });
     if (
+      tokenUser &&
       tokenUser.expires !== null &&
       new Date() < new Date(tokenUser.expires)
     ) {

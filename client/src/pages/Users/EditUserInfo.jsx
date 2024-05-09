@@ -1,8 +1,10 @@
 import { getAuthToken } from "../../util/auth.js";
 import MyProfileEdit from "../../components/User/MyProfileEdit.jsx";
+import { useRouteLoaderData } from "react-router-dom";
 
 function EditUserInfoPage() {
-  return <MyProfileEdit />;
+  const data = useRouteLoaderData("user-details");
+  return <MyProfileEdit userDetail={data.userDetail} />;
 }
 
 export default EditUserInfoPage;
@@ -11,7 +13,7 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
-  const response = await fetch("http://localhost:3000/user/edit", {
+  return await fetch("http://localhost:3000/user/edit", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -25,17 +27,7 @@ export async function action({ request }) {
       birthday: data.get("birthday"),
       description: data.get("description"),
       hobbies: data.get("hobbies"),
-      experienceLevel: data.get("experienceLevel"),
+      experienceLevel: parseInt(data.get("experienceLevel"), 10),
     }),
   });
-
-  if (
-    response.status === 400 ||
-    response.status === 401 ||
-    response.status === 500
-  ) {
-    return data;
-  }
-
-  return data.status;
 }

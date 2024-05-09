@@ -1,0 +1,23 @@
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 50vh;
+}
+
+.loadingTextTitle {
+  margin-top: 18px;
+  font-size: 24px;
+  color: #e37fb6;
+  text-align: center;
+  margin-bottom: -10px;
+  font-family: Arial, sans-serif;
+}
+
+.loadingText {
+  font-size: 16px;
+  color: #e37fb6;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}

@@ -1,8 +1,10 @@
 import { getAuthToken } from "../../util/auth.js";
 import ChangeUsernameProfile from "../../components/User/ChangeUsernameProfile.jsx";
+import { useRouteLoaderData } from "react-router-dom";
 
 function ChangeUsernamePage() {
-  return <ChangeUsernameProfile />;
+  const data = useRouteLoaderData("user-details");
+  return <ChangeUsernameProfile userDetail={data.userDetail} />;
 }
 
 export default ChangeUsernamePage;
@@ -11,7 +13,7 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
-  const response = await fetch("http://localhost:3000/user/username", {
+  return await fetch("http://localhost:3000/user/username", {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -22,14 +24,4 @@ export async function action({ request }) {
       password: data.get("password"),
     }),
   });
-
-  if (
-    response.status === 400 ||
-    response.status === 401 ||
-    response.status === 500
-  ) {
-    return data;
-  }
-
-  return data.status;
 }

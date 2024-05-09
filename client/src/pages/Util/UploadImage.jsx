@@ -2,12 +2,13 @@ import { getAuthToken } from "../../util/auth.js";
 import { AiOutlineCamera } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
 
 function UploadImage() {
   const data = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const { notifyError } = useToast();
   const [image, setImage] = useState(null);
 
   const handleImageChange = (e) => {
@@ -17,7 +18,7 @@ function UploadImage() {
 
   useEffect(() => {
     if (data && data.error) {
-      toast.error(data.error[0].message);
+      notifyError(data.error[0].message);
     }
   }, []);
 

@@ -1,18 +1,54 @@
 import "./MyProfile.css";
-import React, { useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Logout from "../../pages/Authentification/Logout.jsx";
 import { motion } from "framer-motion";
+import ReactivateDialog from "../Util/Dialog/ReactivateDialog.jsx";
+import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
 function MyProfile({ userDetail }) {
+  const [tempExperienceLevel, setTempExperienceLevel] = useState(
+    userDetail.experienceLevel || 0,
+  );
+
+  const { notifyError } = useToast();
+  const navigate = useNavigate();
+  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+
   useEffect(() => {
     if (userDetail.error) {
-      toast.error(userDetail.error[0].message);
+      notifyError(userDetail.error[0].message);
     }
   }, [userDetail]);
+
+  const handleExperienceClick = (index) => {
+    const newLevel = index + 1;
+    setTempExperienceLevel(tempExperienceLevel === newLevel ? 0 : newLevel);
+  };
+
+  const renderExperienceLevel = (experienceLevel) => {
+    let circles = [];
+    for (let i = 0; i < 5; i++) {
+      circles.push(
+        <span
+          key={i}
+          className={`circle ${i < experienceLevel ? "green" : "gray"}`}
+          onClick={() => handleExperienceClick(i)}
+        />,
+      );
+    }
+    return <div className="experienceCircles">{circles}</div>;
+  };
+
+  const renderHobbies = (hobbies) => {
+    if (!hobbies) return <span className="hobbyTag">No hobbies provided.</span>;
+    return hobbies.split(",").map((hobby, index) => (
+      <span key={index} className="hobbyTag">
+        {hobby.trim()}
+      </span>
+    ));
+  };
 
   const renderUserImage = () => {
     if (userDetail.image) {
@@ -22,21 +58,9 @@ function MyProfile({ userDetail }) {
     }
   };
 
-  function renderExperienceLevel(experienceLevel) {
-    const totalCircles = 5;
-    let circles = [];
-
-    for (let i = 0; i < totalCircles; i++) {
-      circles.push(
-        <span
-          key={i}
-          className={i < experienceLevel ? "circle green" : "circle gray"}
-        />,
-      );
-    }
-
-    return <div className="experienceCircles">{circles}</div>;
-  }
+  const handleDeleteConfirmation = () => {
+    navigate("/user/delete");
+  };
 
   return (
     <div className="userDetailContainer">
@@ -52,14 +76,25 @@ function MyProfile({ userDetail }) {
             {userDetail.firstName} {userDetail.lastName}
           </span>
           <span className="textFont">{userDetail.username}</span>
-          <span className="userEmail">{userDetail.email}</span>
+          <span className="userPersonal">
+            <strong>Email: </strong>
+            {userDetail.email}
+          </span>
+          <span className="userPersonal">
+            <strong>Birthday: </strong>
+            {userDetail.birthday}
+          </span>
           <div className="controlProfileContainer">
-            <NavLink to="/user/edit" className="controlProfile edit">
-              Edit profile
+            <NavLink to="/user/edit" className="simpleButton submit">
+              Edit Profile
             </NavLink>
-            <NavLink to="/user/delete" className="controlProfile delete">
-              Delete account
-            </NavLink>
+            <button
+              type="button"
+              onClick={() => setShowConfirmationDialog(true)}
+              className="simpleButton delete"
+            >
+              Delete Account
+            </button>
           </div>
         </div>
         <div className="userSlideBarRight">
@@ -68,21 +103,26 @@ function MyProfile({ userDetail }) {
             {userDetail.description || "No description provided."}
           </span>
           <span className="subtitleFont">
-            <strong>Hobbies:</strong>{" "}
-            <span>{userDetail.hobbies || "No hobbies provided."}</span>
+            <strong>Hobbies:</strong>
+            <div className="hobbiesContainer">
+              {renderHobbies(userDetail.hobbies)}
+            </div>
           </span>
           <span className="subtitleFont">
             <strong>Experience level:</strong>
-            {userDetail.experienceLevel
-              ? renderExperienceLevel(userDetail.experienceLevel)
-              : renderExperienceLevel(0)}
+            {renderExperienceLevel(userDetail.experienceLevel)}
           </span>
         </div>
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
+
+        {showConfirmationDialog && (
+          <ReactivateDialog
+            title="Delete Account"
+            message="Are you sure you want to delete your
+            account?"
+            onClose={() => setShowConfirmationDialog(false)}
+            onConfirm={handleDeleteConfirmation}
+          />
+        )}
       </motion.div>
     </div>
   );

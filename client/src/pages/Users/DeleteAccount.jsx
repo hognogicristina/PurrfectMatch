@@ -1,11 +1,10 @@
 import { getAuthToken } from "../../util/auth.js";
+import { redirect, useRouteLoaderData } from "react-router-dom";
+import DeleteProfile from "../../components/User/DeleteProfile.jsx";
 
 function DeleteAccount() {
-  return (
-    <div>
-      <h1>Delete Account</h1>
-    </div>
-  );
+  const data = useRouteLoaderData("user-details");
+  return <DeleteProfile userDetail={data.userDetail} />;
 }
 
 export default DeleteAccount;
@@ -30,8 +29,8 @@ export async function action({ request }) {
     response.status === 401 ||
     response.status === 500
   ) {
-    return data;
+    return response;
   }
 
-  return data.status;
+  return redirect("/");
 }

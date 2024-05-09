@@ -6,17 +6,17 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
 import "./Authentification.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
 export default function RegisterForm() {
   const data = useActionData();
   const navigation = useNavigation();
   const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
+  const { notifyError, notifySuccess } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -25,11 +25,11 @@ export default function RegisterForm() {
     if (data) {
       if (data.error) {
         data.error.forEach((error) => {
-          toast.error(error.message);
+          notifyError(error.message);
         });
       }
       if (data.status) {
-        toast.success(data.status);
+        notifySuccess(data.status);
         setShowSuccessModal(true);
       }
     }
@@ -56,7 +56,7 @@ export default function RegisterForm() {
               you.
             </p>
             <motion.button
-              className="submit"
+              className="simpleButton submit"
               whileTap={{ scale: 0.9 }}
               onClick={handleContinue}
             >
@@ -155,20 +155,17 @@ export default function RegisterForm() {
                   whileTap={{ scale: 0.9 }}
                   disabled={isSubmitting}
                   type="submit"
-                  className="submit"
+                  className="submitButton submit"
                 >
                   Register
                 </motion.button>
               </div>
               <div className="linksContainer">
-                <Link to="/login">Already have an account?</Link>
+                <Link to="/login" className="linkButton">
+                  Already have an account?
+                </Link>
               </div>
             </Form>
-            <ToastContainer
-              position="top-center"
-              autoClose={6000}
-              closeButton={false}
-            />
           </motion.div>
         )}
       </AnimatePresence>

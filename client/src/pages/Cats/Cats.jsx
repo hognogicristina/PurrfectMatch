@@ -1,12 +1,13 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import CatsList from "../../components/Cat/CatsList.jsx";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
 function CatsPage() {
   const { cats } = useLoaderData();
 
   return (
-    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={cats}>
         {(loadedCats) => <CatsList cats={loadedCats} />}
       </Await>

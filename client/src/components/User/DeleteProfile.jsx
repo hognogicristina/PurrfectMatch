@@ -1,17 +1,25 @@
 import { Form, useActionData, useNavigation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "./Authentification.css";
-import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
-export default function ResetPasswordForm() {
+export default function DeleteProfile({ userDetail }) {
   const data = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    async function getUser() {
+      const userInfo = await userDetail;
+      setUser(userInfo);
+    }
+
+    getUser();
+  }, [userDetail]);
 
   useEffect(() => {
     if (data && data.error) {
@@ -22,20 +30,36 @@ export default function ResetPasswordForm() {
   }, [data]);
 
   return (
-    <div className="authContainer">
+    <div className="userDetailContainer">
       <motion.div
-        className="authForm"
-        initial={{ y: "100vh", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+        className="userContent"
+        initial={{ x: "-9vh", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 90, damping: 20 }}
       >
         <Form method="post">
-          <h1>Enter your new password</h1>
+          <h1 className="titleFont">Delete Account</h1>
+          <p>
+            We are sorry to see you go. Please enter your password to confirm.
+          </p>
+          <input
+            name="username"
+            type="text"
+            placeholder="Enter your username"
+            defaultValue={user ? user.username : ""}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") e.preventDefault();
+            }}
+            required
+          />
           <label className="passwordInput">
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
               required
             />
             <span
@@ -45,25 +69,11 @@ export default function ResetPasswordForm() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <label className="passwordInput">
-            <input
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              placeholder="Confirm your password"
-              required
-            />
-            <span
-              className="togglePassword"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-              {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          </label>
           <motion.button
             whileTap={{ scale: 0.9 }}
-            type="submit"
             disabled={isSubmitting}
-            className="simpleButton submit"
+            type="submit"
+            className="save"
           >
             Save
           </motion.button>

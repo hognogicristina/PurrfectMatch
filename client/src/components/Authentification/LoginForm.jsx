@@ -6,18 +6,18 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
-import { toast, ToastContainer } from "react-toastify";
 import "./Authentification.css";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import ReactivateDialog from "../Dialog/ReactivateDialog.jsx";
+import ReactivateDialog from "../Util/Dialog/ReactivateDialog.jsx";
+import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
 export default function LoginForm() {
   const data = useActionData();
   const navigate = useNavigate();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const { notifyError } = useToast();
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function LoginForm() {
         setIsDialogOpen(true);
       } else {
         data.error.forEach((error) => {
-          toast.error(error.message);
+          notifyError(error.message);
         });
       }
     }
@@ -84,20 +84,19 @@ export default function LoginForm() {
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
-            className="submit"
+            className="submitButton submit"
           >
             Login
           </motion.button>
           <div className="linksContainer">
-            <Link to="/register">Don't have an account?</Link>
-            <Link to="/reset">Forgot password?</Link>
+            <Link to="/register" className="linkButton">
+              Don't have an account?
+            </Link>
+            <Link to="/reset" className="linkButton">
+              Forgot password?
+            </Link>
           </div>
         </Form>
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
       </motion.div>
       {isDialogOpen && (
         <ReactivateDialog

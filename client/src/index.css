@@ -1,12 +1,20 @@
 :root {
-  --primary-color: #35133a;
+  --white-color: #fff;
   --secondary-color: #f9f9f9;
-  --text-color: #333;
-  --accent: #e37fb6;
-  --background-color: rgba(255, 231, 245, 0.37);
+  --background-color: #FFE7F55E;
+  --button-submit: #FF69B4;
+  --button-submit-hover: #FF1493;
+  --button-submit-border: #ff4fa7;
+  --simple-button: #D5D5D570;
+  --simple-button-hover: #D5D5D5C6;
+  --button-delete: #D8000C;
+  --cancel-button: #53535389;
+  --title-color: #665967;
+  --subtitle-color: #665967C1;
+  --text-color: #665967;
+  --dark-shade: #00000019;
+  --border-style: 1px solid #ccc;
   --border-radius: 10px;
-  --dark-shade: rgba(0, 0, 0, 0.1);
-  --hover-accent: rgba(174, 61, 114, 0.74);
 }
 
 body {
@@ -34,4 +42,107 @@ button {
 a {
   text-decoration: none;
   font-weight: 270;
+}
+
+button path {
+  fill: var(--white-color);
+}
+
+button {
+  padding: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+}
+
+input {
+  padding: 12px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 10px;
+  background-color: #f5f5f5;
+}
+
+input::placeholder {
+  color: #999;
+}
+
+.submitButton {
+  font-weight: 500;
+  text-align: center;
+  text-shadow: 0 1px 1px var(--dark-shade);
+  padding: 11px;
+  border-radius: 8px;
+  border: 1px solid var(--button-submit-border);
+  background-color: var(--button-submit);
+  color: var(--white-color);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitButton:hover {
+  background-color: var(--button-submit-hover);
+}
+
+.submitButton.submit {
+  width: 100%;
+}
+
+.submitButton.save {
+  width: 100px;
+}
+
+.simpleButton {
+  margin-top: 20px;
+  color: #2d1e30;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-weight: 600;
+  border: var(--border-style);
+  background-color: var(--simple-button);
+}
+
+.simpleButton.submit {
+  font-size: 17px;
+}
+
+.simpleButton.delete {
+  color: var(--button-delete);
+  font-size: 17px;
+}
+
+.simpleButton.submit:hover {
+  background-color: var(--simple-button-hover);
+}
+
+.simpleButton.delete:hover {
+  background-color: var(--button-delete);
+  color: var(--white-color);
+}
+
+.cancelButton {
+  width: 100%;
+  border-radius: var(--border-radius);
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: 1px solid #53535347;
+  background-color: var(--cancel-button);
+  text-shadow: 0 1px 1px var(--dark-shade);
+  font-weight: 600;
+}
+
+.linkButton {
+  color: #ff008d;
+  transition: color 0.3s ease;
+}
+
+.linkButton:hover {
+  text-decoration: underline;
 }

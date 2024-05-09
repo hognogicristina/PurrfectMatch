@@ -30,7 +30,7 @@
   top: 50%;
   right: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  color: var(--white-color);
   text-align: left;
   z-index: 10;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -96,8 +96,8 @@
   width: 250px;
   height: 200px;
   margin: 0 10px;
-  border-radius: 10px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  box-shadow: 0 8px 16px var(--dark-shade);
   border: 1px solid #ddd;
   object-fit: cover;
 }
@@ -110,18 +110,18 @@
 }
 
 .cat h2 {
-  color: #665967;
+  color: var(--title-color);
   margin: 0.5rem 0;
 }
 
 
 .cat h3 {
-  color: rgba(102, 89, 103, 0.76);
+  color: var(--subtitle-color);
   margin: 0.5rem 0;
 }
 
 .cat p {
-  color: #665967;
+  color: var(--text-color);
 }
 
 .title {
@@ -129,7 +129,7 @@
   margin-bottom: 2.5rem;
   font-size: 1.875rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--white-color);
   text-transform: uppercase;
   background-image: linear-gradient(to right, #FFC0CB, #FF69B4, #FFC0CB);
   padding: 0.5rem 1rem;
@@ -144,7 +144,7 @@
 
 .gridCat {
   position: relative;
-  background-color: #fff;
+  background-color: var(--white-color);
   border-radius: var(--border-radius);
   overflow: hidden;
   box-shadow: 0 10px 15px -3px var(--dark-shade), 0 4px 6px -2px var(--dark-shade);
@@ -168,15 +168,13 @@
 }
 
 .btnCat {
-  cursor: pointer;
-  color: rgba(255, 144, 201, 0.6);
-  border-radius: var(--border-radius);
-  text-decoration: none;
+  color: #FF90C999;
+  transition: color 0.3s ease;
 }
 
 .btnCat:hover {
+  color: #FF90C9FF;
   text-decoration: underline;
-  color: rgb(255, 144, 201);
 }
 
 .alternateContent {
@@ -185,6 +183,7 @@
   justify-content: space-between;
   background-color: rgba(227, 127, 182, 0.11);
   color: #ae3d72;
+  font-size: 20px;
   padding: 20px;
   height: 300px;
 }
@@ -204,7 +203,7 @@
   height: auto;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--dark-shade);
   border: 3px solid rgba(151, 151, 151, 0.1);
 }
 
@@ -240,9 +239,9 @@
   position: absolute;
   width: 700px;
   right: 200px;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
   border: 3px solid rgba(151, 151, 151, 0.1);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--dark-shade);
 }
 
 .gridEssentials {
@@ -257,7 +256,7 @@
   padding: 20px;
   background: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--dark-shade);
 }
 
 .imgCardEssential {
@@ -296,19 +295,20 @@ footer {
 
 .buttonExplore {
   display: inline-block;
-  background-color: rgba(255, 20, 147, 0.36);
-  color: white;
-  padding: 10px 15px;
+  background-color: #FF14935B;
+  padding: 8px 15px;
   font-size: 20px;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
+  text-shadow: 0 1px 1px var(--dark-shade);
+  border: 1px solid rgba(255, 79, 167, 0.25);
   transition: background-color 0.3s, border-color 0.3s;
 }
 
 .buttonExplore a {
-  color: white;
+  color: var(--white-color);
   text-decoration: none;
 }
 
 .buttonExplore:hover {
-  background-color: #FF1493;
+  background-color: var(--button-submit-hover);
 }

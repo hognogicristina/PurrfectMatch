@@ -10,7 +10,13 @@ export default function UserNavBar() {
         <div className="linksNavibar">
           <NavLink
             to="/user"
-            className={({ isActive }) => (isActive ? "active" : undefined)}
+            className={({ isActive }) =>
+              isActive ||
+              match.pathname.startsWith("/user/edit") ||
+              match.pathname.startsWith("/user/delete")
+                ? "active"
+                : undefined
+            }
             end
           >
             My profile

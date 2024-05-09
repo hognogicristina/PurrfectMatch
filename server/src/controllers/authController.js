@@ -171,7 +171,7 @@ const logout = async (req, res) => {
       await token1.destroy();
     }
     res.clearCookie("refreshToken");
-    res.status(200).json({ status: "Logged out successfully" });
+    res.status(200).json({ status: "Logged out" });
   } catch (error) {
     logger.error(error);
     res

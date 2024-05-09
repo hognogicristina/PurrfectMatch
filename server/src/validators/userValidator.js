@@ -97,6 +97,13 @@ const editUserValidation = async (req, res) => {
 const editUsernameValidation = async (req, res) => {
   const error = [];
 
+  if (req.user) {
+    const user = await User.findByPk(req.user.id);
+    if (req.body.username && user.username === req.body.username) {
+      error.push({ field: "username", message: "Please enter a new username" });
+    }
+  }
+
   if (validator.isEmpty(req.body.username || "")) {
     error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
@@ -142,6 +149,10 @@ const editAddressValidation = async (req, res) => {
 
   if (req.body.number && validator.isEmpty(req.body.number || "")) {
     error.push({ field: "number", message: "Number is required" });
+  }
+
+  if (req.body.floor && !validator.isNumeric(req.body.floor)) {
+    error.push({ field: "floor", message: "Floor must be a number" });
   }
 
   if (req.body.postalCode && validator.isEmpty(req.body.postalCode || "")) {

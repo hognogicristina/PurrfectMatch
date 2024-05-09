@@ -22,10 +22,10 @@ module.exports = {
         allowNull: false,
       },
       description: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
       },
       hobbies: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
       },
       experienceLevel: {
         type: Sequelize.INTEGER,

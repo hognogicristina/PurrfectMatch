@@ -17,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    description: DataTypes.TEXT,
-    hobbies: DataTypes.TEXT,
+    description: DataTypes.STRING,
+    hobbies: DataTypes.STRING,
     experienceLevel: DataTypes.INTEGER,
   });
 };

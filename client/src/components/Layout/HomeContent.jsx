@@ -14,7 +14,6 @@ export default function HomeContent({ cats, breeds }) {
     >
       <Intro />
       <BreedsGrid breeds={breeds} />
-
       <div className="aboutCats">
         <h2 className="title">Understanding Your Feline Friend</h2>
         <div className="alternateContent">
@@ -188,17 +187,17 @@ export default function HomeContent({ cats, breeds }) {
               <div className="gridCat">
                 <img src={cat.image} alt={cat.name} className="imgCat" />
                 <div className="infoCat">
-                  <motion.h2
-                    whileHover={{ x: 5, color: "#FF69B4" }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                  >
-                    {cat.name}
-                  </motion.h2>
+                  <h2>{cat.name}</h2>
                   <h3>Life stage: {cat.lifeStage}</h3>
                   <p>{cat.description}</p>
-                  <Link to={`/cats/${cat.id}`} className="btnCat">
-                    Learn More &gt;
-                  </Link>
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                  >
+                    <Link to={`/cats/${cat.id}`} className="btnCat">
+                      Learn More &gt;
+                    </Link>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>

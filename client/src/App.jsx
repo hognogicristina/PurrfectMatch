@@ -57,6 +57,8 @@ import DeleteAccount, {
 import UploadImage, {
   action as actionUploadImage,
 } from "./pages/Util/UploadImage.jsx";
+import NotFoundPage from "./components/Util/Custom/NotFound.jsx";
+import { ToastProvider } from "./components/Util/Custom/ToastProvider.jsx";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +71,10 @@ const router = createBrowserRouter([
         index: true,
         element: <HomePage />,
         loader: loadHome,
+      },
+      {
+        path: "*",
+        element: <NotFoundPage />,
       },
       {
         path: "cats",
@@ -120,8 +126,8 @@ const router = createBrowserRouter([
       },
       {
         path: "user",
-        id: "user-details",
         element: <UserRootLayout />,
+        id: "user-details",
         loader: loadUser,
         children: [
           {
@@ -181,7 +187,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ToastProvider>
+      <RouterProvider router={router} />;
+    </ToastProvider>
+  );
 }
 
 export default App;

@@ -2,21 +2,22 @@ import "./Authentification.css";
 import { motion } from "framer-motion";
 import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
 export default function ReactivateForm() {
   const data = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (data) {
       if (data.error) {
         data.error.forEach((error) => {
-          toast.error(error.message);
+          notifyError(error.message);
         });
       } else if (data.status) {
         setSubmitted(true);
@@ -51,7 +52,7 @@ export default function ReactivateForm() {
               whileTap={{ scale: 0.9 }}
               type="submit"
               disabled={isSubmitting}
-              className="submit"
+              className="submitButton submit"
             >
               Reactivate Account
             </motion.button>
@@ -63,13 +64,16 @@ export default function ReactivateForm() {
             </h1>
             <h1>Email Sent</h1>
             <p>{data.status}</p>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              type="button"
+              onClick={() => navigate("/login")}
+              className="simpleButton submit"
+            >
+              Return to Log In
+            </motion.button>
           </div>
         )}
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
       </motion.div>
     </div>
   );

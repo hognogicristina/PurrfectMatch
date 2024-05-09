@@ -1,12 +1,13 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import ActivationForm from "../../components/Authentification/ActivationForm.jsx";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
 function ActivationPage() {
   const { data } = useLoaderData();
 
   return (
-    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
+    <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={data}>
         {(loadedData) => <ActivationForm data={loadedData} />}
       </Await>

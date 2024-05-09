@@ -3,13 +3,14 @@ import { extractJwt, getAuthToken } from "../../util/auth.js";
 import "../../styles/Logout.css";
 import { motion } from "framer-motion";
 import React, { useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
 
 function Logout() {
   const data = useLoaderData();
   const token = getAuthToken();
+  const { notifyError } = useToast();
   const username = token ? extractJwt(token).username : "";
   const image = token ? extractJwt(token).image : "";
 
@@ -18,7 +19,7 @@ function Logout() {
 
   useEffect(() => {
     if (data && data.error) {
-      toast.error(data.error[0].message);
+      notifyError(data.error[0].message);
     }
   }, []);
 
@@ -48,7 +49,7 @@ function Logout() {
             transition={{ type: "spring", stiffness: 120, damping: 15 }}
             className="formLogout"
           >
-            <div className="userImage">{renderUserImage()}</div>
+            <div className="imageContainer">{renderUserImage()}</div>
             <h2 className="subtitleLogout">
               Signed in as <span className="username">{username}</span>
             </h2>
@@ -57,11 +58,6 @@ function Logout() {
             </button>
           </motion.div>
         </div>
-        <ToastContainer
-          position="top-center"
-          autoClose={6000}
-          closeButton={false}
-        />
       </Form>
     </div>
   );

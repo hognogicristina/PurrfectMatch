@@ -1,13 +1,22 @@
 import { Suspense } from "react";
 import HomeContent from "../../components/Layout/HomeContent.jsx";
-import { useLoaderData } from "react-router-dom";
+import { Await, defer, useLoaderData } from "react-router-dom";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
 function HomePage() {
   const { cats, breeds } = useLoaderData();
 
   return (
-    <Suspense fallback={<p style={{ textAlign: "center" }}>Loading...</p>}>
-      <HomeContent cats={cats} breeds={breeds} />
+    <Suspense fallback={<LoadingSpinner />}>
+      <Await resolve={cats}>
+        {(loadedCats) => (
+          <Await resolve={breeds}>
+            {(loadedBreeds) => (
+              <HomeContent cats={loadedCats} breeds={loadedBreeds} />
+            )}
+          </Await>
+        )}
+      </Await>
     </Suspense>
   );
 }
@@ -45,6 +54,8 @@ async function loadAllBreeds() {
 }
 
 export async function loader({ request }) {
-  const [cats, breeds] = await Promise.all([loadRecentCats(), loadAllBreeds()]);
-  return { cats, breeds };
+  return defer({
+    cats: loadRecentCats(),
+    breeds: loadAllBreeds(),
+  });
 }

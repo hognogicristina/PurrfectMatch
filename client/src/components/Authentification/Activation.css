@@ -43,8 +43,9 @@
 
 .errorContainer {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  gap: 30px;
   padding: 20px;
   color: #D8000C;
   border: 1px solid #D8000C;
@@ -55,14 +56,37 @@
   max-width: 500px;
 }
 
+.elementsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
 .errorContainer img {
   width: 150px;
   height: auto;
   margin-bottom: 20px;
 }
 
+.elementsContainer h1,
 .errorContainer h1 {
   font-size: 24px;
   text-align: center;
   margin: 0;
+}
+
+.elementsContainer p {
+  font-size: 16px;
+  text-align: center;
+}
+
+.errorContainer a {
+  color: rgba(83, 83, 83, 0.98);
+  font-size: 15px;
+  text-align: center;
+}
+
+.errorContainer a:hover {
+  text-decoration: underline;
 }
