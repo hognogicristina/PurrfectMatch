@@ -31,7 +31,7 @@ const register = async (req, res) => {
     await UserInfo.create({ userId: user.id, birthday });
     await PasswordHistory.create({ userId: user.id, password: hashedPassword });
     await emailServ.sendActivationEmail(user);
-    res.status(201).json({ status: "Registration completed successfully" });
+    res.status(201).json({ status: "Your account has been created" });
   } catch (error) {
     logger.error(error);
     res
@@ -86,14 +86,16 @@ const login = async (req, res) => {
       ? 30 * 24 * 60 * 60
       : process.env.JWT_TTL;
 
-    const image = await Image.findOne({ where: { id: req.user.imageId } });
-    const imgURL = image ? image.url : null;
+    if (req.body.rememberMe === "on") {
+      req.body.rememberMe = true;
+    }
+    console.log(req.body.rememberMe);
+
     const token = jwt.sign(
       {
         id: req.user.id,
         username: req.user.username,
         email: req.user.email,
-        image: imgURL,
       },
       process.env.JWT_SECRET,
       {
@@ -149,7 +151,7 @@ const resetPassword = async (req, res) => {
     tokenUser.destroy();
     await tokenUser.save();
     await PasswordHistory.create({ userId: user.id, password: user.password });
-    res.status(200).json({ status: "Password reset successfully" });
+    res.status(200).json({ status: "Your password has been reset" });
   } catch (error) {
     logger.error(error);
     res

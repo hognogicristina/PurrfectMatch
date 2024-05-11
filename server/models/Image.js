@@ -20,5 +20,19 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       unique: true,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+    catId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Cats",
+        key: "id",
+      },
+    },
   });
 };

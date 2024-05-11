@@ -16,13 +16,6 @@ module.exports = {
       lastName: {
         type: Sequelize.STRING,
       },
-      imageId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Images",
-          key: "id",
-        },
-      },
       username: {
         type: Sequelize.STRING,
         unique: true,
@@ -34,7 +27,7 @@ module.exports = {
         allowNull: false,
         validate: {
           isEmail: {
-            msg: "Must be a valid email address",
+            msg: "Please use a valid email address",
           },
         },
       },

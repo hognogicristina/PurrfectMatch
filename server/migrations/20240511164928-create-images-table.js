@@ -3,38 +3,30 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Cats", {
+    await queryInterface.createTable("Images", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
+      filename: {
         type: Sequelize.STRING,
-        allowNull: false,
+        unique: true,
       },
-      breed: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      gender: {
+      filetype: {
         type: Sequelize.STRING,
       },
-      age: {
+      filesize: {
         type: Sequelize.INTEGER,
-        allowNull: false,
       },
-      ageType: {
+      url: {
         type: Sequelize.STRING,
-        allowNull: false,
+        unique: true,
       },
-      healthProblem: {
+      uri: {
         type: Sequelize.STRING,
-        allowNull: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
+        unique: true,
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -43,10 +35,10 @@ module.exports = {
           key: "id",
         },
       },
-      ownerId: {
+      catId: {
         type: Sequelize.INTEGER,
         references: {
-          model: "users",
+          model: "Cats",
           key: "id",
         },
       },
@@ -62,6 +54,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Cats");
+    await queryInterface.dropTable("Images");
   },
 };

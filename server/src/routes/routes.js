@@ -5,7 +5,7 @@ const adminController = require("../controllers/adminController");
 const authController = require("../controllers/authController");
 const imageController = require("../controllers/imageController");
 const userController = require("../controllers/userController");
-const breedController = require("../controllers/breedController");
+const filterController = require("../controllers/filterController");
 const catController = require("../controllers/catController");
 const adoptionRequestController = require("../controllers/adoptionRequestController");
 const favoriteController = require("../controllers/favoriteController");
@@ -96,11 +96,13 @@ router.delete(
   userController.deleteUser,
 );
 
-// Breed routes
-router.get("/breeds", breedController.getAllBreeds);
+// Filter routes
+router.get("/breeds", filterController.getAllBreeds);
+router.get("/age-types", filterController.getAgeType);
+router.get("/recent-cats", filterController.getRecentCats);
+router.get("/health-problems", filterController.getHealthProblems);
 
 // Cat routes
-router.get("/", catController.getRecentCats);
 router.get("/cats", catController.getAllCats);
 router.get("/cat/:id", catController.getOneCat);
 router.post("/cat", authMiddleware.authenticateToken, catController.addCat);

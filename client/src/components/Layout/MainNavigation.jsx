@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,11 +16,13 @@ import CatNavigation from "./CatNavigation.jsx";
 function MainNavigation() {
   const token = useRouteLoaderData("root");
   const [isOpen, setIsOpen] = useState(false);
-  const [isButtonExpanded, setIsButtonExpanded] = useState(false);
 
   const toggleDropdown = () => {
-    setIsButtonExpanded((prev) => !prev);
     setIsOpen(!isOpen);
+  };
+
+  const closeDropdown = () => {
+    setIsOpen(false);
   };
 
   const dropdownVariants = {
@@ -50,6 +52,24 @@ function MainNavigation() {
     closed: { rotate: 0 },
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdownContent = document.querySelector(".dropdownContent");
+      if (dropdownContent && !dropdownContent.contains(event.target)) {
+        closeDropdown();
+      }
+    };
+
+    // Attach event listener when the dropdown is open
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen]);
+
   return (
     <header className="mainNavigatiom">
       <div className="mainContainer">
@@ -60,16 +80,17 @@ function MainNavigation() {
         </NavLink>
         {!token ? (
           <NavLink to="/cats" className="linkButton catalog">
-            Catalog
+            <motion.p whileTap={{ scale: 0.9 }}>Catalog</motion.p>
           </NavLink>
         ) : (
           <div className="dropdown">
             <motion.button
+              whileTap={{ scale: 0.9 }}
               className="dropbtn"
               onClick={toggleDropdown}
               style={{
-                width: isButtonExpanded ? "250px" : "100px",
-                scaleX: isButtonExpanded ? 1 : 1,
+                width: isOpen ? "250px" : "100px",
+                scaleX: isOpen ? 1 : 1,
                 transition: "width 0.3s, transform 0.5s",
               }}
             >
@@ -95,7 +116,7 @@ function MainNavigation() {
                   animate="visible"
                   exit="hidden"
                 >
-                  <CatNavigation />
+                  <CatNavigation onClose={closeDropdown} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -111,7 +132,9 @@ function MainNavigation() {
                 isActive ? "links active-link" : "links"
               }
             >
-              <FontAwesomeIcon icon={faEnvelope} />
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <FontAwesomeIcon icon={faEnvelope} />
+              </motion.div>
             </NavLink>
             <NavLink
               to="/favorites"
@@ -119,7 +142,9 @@ function MainNavigation() {
                 isActive ? "links active-link" : "links"
               }
             >
-              <FontAwesomeIcon icon={faHeart} />
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <FontAwesomeIcon icon={faHeart} />
+              </motion.div>
             </NavLink>
             <div className="vertical-line"></div>
             <NavLink
@@ -128,7 +153,9 @@ function MainNavigation() {
                 isActive ? "links active-link" : "links"
               }
             >
-              <FontAwesomeIcon icon={faInbox} />
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <FontAwesomeIcon icon={faInbox} />
+              </motion.div>
             </NavLink>
             <NavLink
               to="/user"
@@ -136,7 +163,9 @@ function MainNavigation() {
                 isActive ? "links active-link" : "links"
               }
             >
-              <FontAwesomeIcon icon={faUser} />
+              <motion.div whileTap={{ scale: 0.9 }}>
+                <FontAwesomeIcon icon={faUser} />
+              </motion.div>
             </NavLink>
           </>
         ) : (

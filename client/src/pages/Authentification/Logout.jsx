@@ -1,21 +1,49 @@
-import { Form, redirect, useLoaderData, useNavigation } from "react-router-dom";
+import {
+  Form,
+  redirect,
+  useActionData,
+  useNavigation,
+  useRouteLoaderData,
+} from "react-router-dom";
 import { extractJwt, getAuthToken } from "../../util/auth.js";
 import "../../styles/Logout.css";
 import { motion } from "framer-motion";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
 
 function Logout() {
-  const data = useLoaderData();
-  const token = getAuthToken();
+  const data = useActionData();
   const { notifyError } = useToast();
-  const username = token ? extractJwt(token).username : "";
-  const image = token ? extractJwt(token).image : "";
-
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
+  const [userDetails, setUserDetails] = useState({ username: "", image: "" });
+
+  useEffect(() => {
+    async function fetchUserDetails() {
+      const token = getAuthToken();
+      try {
+        const response = await fetch("http://localhost:3000/user", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setUserDetails({
+            username: data.data.username,
+            image: data.data.image,
+          });
+        }
+      } catch (error) {
+        notifyError(error.message);
+      }
+    }
+
+    fetchUserDetails();
+  }, [notifyError]);
 
   useEffect(() => {
     if (data && data.error) {
@@ -24,8 +52,10 @@ function Logout() {
   }, []);
 
   const renderUserImage = () => {
-    if (image) {
-      return <img className="userImage" src={image} alt="user" />;
+    if (userDetails.image) {
+      return (
+        <img className="userImageLogout" src={userDetails.image} alt="user" />
+      );
     } else {
       return <FontAwesomeIcon icon={faUserCircle} className="userIcon" />;
     }
@@ -51,11 +81,17 @@ function Logout() {
           >
             <div className="imageContainer">{renderUserImage()}</div>
             <h2 className="subtitleLogout">
-              Signed in as <span className="username">{username}</span>
+              Signed in as{" "}
+              <span className="username">{userDetails.username}</span>
             </h2>
-            <button className="link" disabled={isSubmitting} type="submit">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="link"
+              disabled={isSubmitting}
+              type="submit"
+            >
               Logout
-            </button>
+            </motion.button>
           </motion.div>
         </div>
       </Form>

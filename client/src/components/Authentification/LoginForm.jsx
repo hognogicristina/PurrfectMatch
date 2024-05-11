@@ -9,7 +9,7 @@ import {
 import "./Authentification.css";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import ReactivateDialog from "../Util/Dialog/ReactivateDialog.jsx";
+import ReactivateDialog from "../Util/Custom/ReactivateDialog.jsx";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
 
 export default function LoginForm() {
@@ -55,6 +55,9 @@ export default function LoginForm() {
             name="usernameOrEmail"
             type="text"
             placeholder="Enter your username or email"
+            onKeyPress={(e) => {
+              if (e.key === "Enter") e.preventDefault();
+            }}
             required
           />
           <label className="passwordInput">
@@ -62,6 +65,9 @@ export default function LoginForm() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
               required
             />
             <span
@@ -75,8 +81,8 @@ export default function LoginForm() {
             <input
               name="rememberMe"
               type="checkbox"
-              checked={rememberMe}
-              onChange={() => setRememberMe(!rememberMe)}
+              defaultValue={rememberMe}
+              onClick={() => setRememberMe(!rememberMe)}
             />
             <label>Remember me</label>
           </div>

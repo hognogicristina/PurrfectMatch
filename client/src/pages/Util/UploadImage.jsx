@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
 import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
 
-function UploadImage() {
+function UploadImage({ initialImage }) {
   const data = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -28,19 +28,34 @@ function UploadImage() {
         <input
           type="file"
           accept="image/*"
+          name="image"
           onChange={handleImageChange}
           disabled={isSubmitting}
           style={{ display: "none" }}
         />
-        {image ? (
-          <img
-            src={URL.createObjectURL(image)}
-            alt="Selected"
-            className="selectedImage"
-          />
+        {initialImage && !image ? (
+          <div className="imageContainerUpload">
+            <img src={initialImage} alt="Selected" className="selectedImage" />
+            <div className="cameraIconAbove">
+              <AiOutlineCamera />
+            </div>
+          </div>
         ) : (
-          <div className="cameraIcon">
+          <div className="cameraIconCentered">
             <AiOutlineCamera />
+          </div>
+        )}
+
+        {image && (
+          <div>
+            <img
+              src={URL.createObjectURL(image)}
+              alt="Selected"
+              className="selectedImage"
+            />
+            <div className="cameraIconAbove">
+              <AiOutlineCamera />
+            </div>
           </div>
         )}
       </label>

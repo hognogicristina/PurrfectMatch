@@ -8,6 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1000;
 }
 
 .dialog {
@@ -17,35 +18,17 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 }
 
+.deleteAccountForm {
+  display: flex;
+  flex-direction: column;
+}
+
 .dialog h2 {
   color: #665967;
 }
 
 .dialog p {
-  /*font-size: 18px;*/
   text-align: center;
-}
-
-.dialog button {
-  padding: 12px;
-  font-size: 16px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  width: 100%;
-  border-radius: 10px;
-  background-color: rgba(147, 147, 147, 0.47);
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.dialog button:last-child {
-  background-color: #FF1493;
-  margin-right: 0;
-}
-
-.dialog button:hover:last-child {
-  background-color: rgba(147, 147, 147, 0.47);
 }
 
 .dialogButtons {

@@ -8,13 +8,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
-    imageId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Images",
-        key: "id",
-      },
-    },
     username: {
       type: DataTypes.STRING,
       unique: true,
@@ -23,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         isEmail: {
-          msg: "Must be a valid email address",
+          msg: "Please use a valid email address",
         },
       },
       unique: true,

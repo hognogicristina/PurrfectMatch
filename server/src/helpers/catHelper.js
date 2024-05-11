@@ -90,7 +90,7 @@ const filterCats = async (req) => {
     if (sortBy === "breed") {
       comparison = cat1.breed.localeCompare(cat2.breed);
     } else if (sortBy === "age") {
-      comparison = cat1.age.localeCompare(cat2.age);
+      comparison = String(cat1.age).localeCompare(String(cat2.age));
     }
     return sortOrder === "asc" ? comparison : -comparison;
   });

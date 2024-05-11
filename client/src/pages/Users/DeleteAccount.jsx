@@ -20,7 +20,7 @@ export async function action({ request }) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      password: data.get("password"),
+      username: data.get("username"),
     }),
   });
 
@@ -29,8 +29,10 @@ export async function action({ request }) {
     response.status === 401 ||
     response.status === 500
   ) {
-    return response;
+    return response.json();
   }
 
+  localStorage.removeItem("token");
+  localStorage.removeItem("expiration");
   return redirect("/");
 }

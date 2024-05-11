@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
-function CatNavigation() {
+function CatNavigation({ onClose }) {
   const itemVariants = {
     hidden: {
       opacity: 0,
@@ -32,16 +32,22 @@ function CatNavigation() {
   return (
     <motion.nav className="catsDropdown">
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/cats"}>Feline Friends Catalog</NavLink>
+        <NavLink to={"/cats"} onClick={onClose}>
+          Feline Friends Catalog
+        </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/cat"}>Give a Cat a Home</NavLink>
+        <NavLink to={"/cat"} onClick={onClose}>
+          Give a Cat a Home
+        </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/user/cats-owned"}>Purrfect Matches Archive</NavLink>
+        <NavLink to={"/user/cats-owned"} onClick={onClose}>
+          Purrfect Matches Archive
+        </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/user/cats-sent-to-adoption"}>
+        <NavLink to={"/user/cats-sent-to-adoption"} onClick={onClose}>
           Rehomed Felines Records
         </NavLink>
       </motion.div>

@@ -1,15 +1,16 @@
-import { Form, useActionData, useNavigation } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { Form, NavLink, useActionData, useNavigation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import "./MyProfile.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 export default function DeleteProfile({ userDetail }) {
   const data = useActionData();
+  const { notifyError } = useToast();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const { notifyError } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState();
 
   useEffect(() => {
@@ -30,52 +31,52 @@ export default function DeleteProfile({ userDetail }) {
   }, [data]);
 
   return (
-    <div className="userDetailContainer">
+    <div className="dialogOverlay">
       <motion.div
-        className="userContent"
-        initial={{ x: "-9vh", opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 90, damping: 20 }}
+        className="dialog"
+        initial={{ y: "100vh", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: "100vh", opacity: 0 }}
+        transition={{ type: "spring", stiffness: 120, damping: 15 }}
       >
-        <Form method="post">
-          <h1 className="titleFont">Delete Account</h1>
+        <NavLink to="/user" className="closeButton">
+          <FontAwesomeIcon icon={faXmark} className="faXmark" />
+        </NavLink>
+        <Form
+          method="delete"
+          className="deleteAccountContainer"
+          action="/user/delete"
+        >
+          <h1 className="titleFontRed">Delete Account</h1>
           <p>
-            We are sorry to see you go. Please enter your password to confirm.
+            Deleting your account will remove all your data and you will not be
+            able to recover it.
+          </p>
+          <p>
+            Once you delete your account, there is no going back. Please be
+            certain.
+          </p>
+          <p>
+            Please enter your username to confirm that you understand the
+            consequences of deleting your account.
           </p>
           <input
+            className="deleteAccountInput"
             name="username"
             type="text"
             placeholder="Enter your username"
-            defaultValue={user ? user.username : ""}
             onKeyPress={(e) => {
               if (e.key === "Enter") e.preventDefault();
             }}
             required
           />
-          <label className="passwordInput">
-            <input
-              name="password"
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
-              required
-            />
-            <span
-              className="togglePassword"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </span>
-          </label>
           <motion.button
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
-            className="save"
+            className="simpleButton delete"
           >
-            Save
+            I understand the consequences, delete my account
           </motion.button>
         </Form>
       </motion.div>

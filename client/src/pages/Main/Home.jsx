@@ -24,7 +24,7 @@ function HomePage() {
 export default HomePage;
 
 async function loadRecentCats() {
-  const response = await fetch("http://localhost:3000");
+  const response = await fetch("http://localhost:3000/recent-cats");
   const data = await response.json();
 
   if (

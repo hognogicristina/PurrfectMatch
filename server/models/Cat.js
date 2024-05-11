@@ -10,14 +10,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    imageId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Images",
-        key: "id",
-      },
-      allowNull: false,
-    },
     breed: {
       type: DataTypes.STRING,
       allowNull: false,

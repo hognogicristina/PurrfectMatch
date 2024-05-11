@@ -35,5 +35,6 @@ export async function action({ request }) {
   localStorage.setItem("token", dataRes.token);
   const tokenDuration = extractExpiration(dataRes.token);
   localStorage.setItem("expiration", tokenDuration);
+  console.log(localStorage.getItem("token"));
   return redirect("/");
 }

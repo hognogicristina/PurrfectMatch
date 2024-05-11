@@ -52,6 +52,18 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
     await emailServ.sendResetEmail(user);
   }
 
+  if (user.description === "") {
+    user.description = null;
+  }
+
+  if (user.hobbies === "") {
+    user.hobbies = null;
+  }
+
+  if (user.experienceLevel === 0) {
+    user.experienceLevel = null;
+  }
+
   const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
   userInfo.description = user.description;
   userInfo.hobbies = user.hobbies;

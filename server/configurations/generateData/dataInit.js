@@ -5,6 +5,7 @@ const {
   Address,
   AdoptionRequest,
   Breed,
+  AgeType,
   Cat,
   CatUser,
   Favorite,
@@ -24,6 +25,7 @@ const helperData = require("./helperData");
 const logger = require("../../logger/logger");
 const dotenv = require("dotenv");
 const path = require("path");
+const { AgeTypes } = require("../../constants/ageTypes");
 
 dotenv.config({
   path: path.resolve(__dirname, "../../.env"),
@@ -38,6 +40,19 @@ dotenv.config({
 
 sequelize.options.logging = (message) => {
   logger.sql(message);
+};
+
+const addAgeTypesToDatabase = async () => {
+  const ageTypeEntries = Object.entries(AgeTypes).map(([key, value]) => ({
+    type: value.TYPE,
+    min: value.RANGE.MIN,
+    max: value.RANGE.MAX,
+  }));
+
+  await AgeType.create(ageTypeEntries[0]);
+  await AgeType.create(ageTypeEntries[1]);
+  await AgeType.create(ageTypeEntries[2]);
+  await AgeType.create(ageTypeEntries[3]);
 };
 
 const generateUsers = async (numUsers) => {
@@ -68,6 +83,10 @@ const generateUsers = async (numUsers) => {
       userId: user.id,
       password: password,
     });
+    const file = await helperData.generateImages(i, "user_pictures");
+    const newImage = await fileHelper.uploadImage(file, "uploads");
+    newImage.userID = user.id;
+    await newImage.save();
 
     users.push(user);
   }
@@ -79,9 +98,10 @@ const generateCats = async (numCats, users) => {
   for (let i = 0; i < numCats; i++) {
     let catData = {};
     catData = await helperData.generateCatData(catData);
-    const file = await helperData.generateImages(i);
+    const file = await helperData.generateImages(i, "cat_images");
     const newImage = await fileHelper.uploadImage(file, "uploads");
-    catData.imageId = newImage.id;
+    newImage.catId = catData.id;
+    await newImage.save();
 
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
@@ -117,19 +137,20 @@ const emptyDatabase = () => {
   AdoptionRequest.destroy({ truncate: true });
   Favorite.destroy({ truncate: true });
   CatUser.destroy({ truncate: true });
-  Cat.destroy({ truncate: true });
-  PasswordHistory.destroy({ truncate: true });
-  RefreshToken.destroy({ truncate: true });
-  User.destroy({ truncate: true });
-  Address.destroy({ truncate: true });
-  Breed.findAll().then((breeds) => {
-    for (const breed of breeds) {
-      fileHelper.deleteImage(breed, "breeds");
-    }
-  });
   Image.findAll().then((images) => {
     for (const image of images) {
       fileHelper.deleteImage(image, "uploads");
+    }
+  });
+  Cat.destroy({ truncate: true });
+  PasswordHistory.destroy({ truncate: true });
+  RefreshToken.destroy({ truncate: true });
+  Address.destroy({ truncate: true });
+  User.destroy({ truncate: true });
+  AgeType.destroy({ truncate: true });
+  Breed.findAll().then((breeds) => {
+    for (const breed of breeds) {
+      fileHelper.deleteImage(breed, "breeds");
     }
   });
 
@@ -139,6 +160,7 @@ const emptyDatabase = () => {
 const generateData = async () => {
   try {
     emptyDatabase();
+    await addAgeTypesToDatabase();
     await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();

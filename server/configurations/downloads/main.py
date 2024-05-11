@@ -35,6 +35,32 @@ def download_cat_images(url, download_path, num_images=50):
 
     write_to_file("Download completed.", 'output.log')
 
+def download_user_pictures(download_path, num_users=25):
+    if not os.path.exists(download_path):
+        os.makedirs(download_path)
+
+    user_response = requests.get(f'https://randomuser.me/api/?results={num_users}')
+    if user_response.status_code != 200:
+        write_to_file("Failed to fetch user data", 'output.log')
+        return
+
+    users = user_response.json()['results']
+    count = 0
+    for user in users:
+        user_picture_url = user['picture']['large']
+        try:
+            picture_content = requests.get(user_picture_url).content
+            with open(f"{download_path}/user_{count + 1}.jpg", 'wb') as f:
+                f.write(picture_content)
+
+            write_to_file(f"Downloaded user picture {count + 1}/{num_users}", 'output.log')
+            count += 1
+        except Exception as e:
+            write_to_file(f"Failed to download user picture {count + 1}: {e}", 'output.log')
+
+    write_to_file("Download of user pictures completed.", 'output.log')
+
+
 def download_cat_breed_images(download_path):
     print("Downloadind images...")
     if not os.path.exists(download_path):
@@ -76,6 +102,9 @@ def download_cat_breed_images(download_path):
 url_api = 'https://thecatapi.com/'
 cat_images = 'cat_images'
 download_cat_images(url_api, cat_images, num_images=50)
+
+user_pictures_path = 'user_pictures'
+download_user_pictures(user_pictures_path, num_users=25)
 
 download_path_breeds = 'cat_breeds'
 download_cat_breed_images(download_path_breeds)

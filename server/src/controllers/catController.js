@@ -41,24 +41,6 @@ const getAllCats = async (req, res) => {
   }
 };
 
-const getRecentCats = async (req, res) => {
-  try {
-    const cats = await Cat.findAll({
-      limit: 4,
-      order: [["createdAt", "DESC"]],
-    });
-    const catsDetails = [];
-    for (let cat of cats) {
-      const catsDetail = await catDTO.catsRecentListToDTO(cat);
-      catsDetails.push(catsDetail);
-    }
-    return res.status(200).json({ data: catsDetails });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
 const getOneCat = async (req, res) => {
   try {
     if (await catValidator.catExistValidator(req, res)) return;
@@ -90,7 +72,6 @@ const addCat = async (req, res) => {
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
     logger.error(error);
-    console.log(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
@@ -144,7 +125,6 @@ const deleteCat = async (req, res) => {
 
 module.exports = {
   getAllCats,
-  getRecentCats,
   getOneCat,
   addCat,
   editCat,

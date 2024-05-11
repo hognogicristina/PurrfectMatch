@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Intro from "../Util/HomePage/Intro.jsx";
 
 export default function HomeContent({ cats, breeds }) {
+  console.log(localStorage.getItem("token"));
   return (
     <motion.div
       className="homeContent"
@@ -207,9 +208,9 @@ export default function HomeContent({ cats, breeds }) {
       <footer>
         <div className="footer-content">
           <p>Ready to explore more?</p>
-          <div className="buttonExplore">
+          <motion.button className="buttonExplore" whileTap={{ scale: 0.9 }}>
             <Link to={"/cats"}>Explore More</Link>
-          </div>
+          </motion.button>
         </div>
         <p>&copy; 2024 Your Online Cat Adoption Center</p>
       </footer>

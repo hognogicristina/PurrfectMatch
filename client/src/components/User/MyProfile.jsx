@@ -1,11 +1,11 @@
 import "./MyProfile.css";
 import { useEffect, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
-import ReactivateDialog from "../Util/Dialog/ReactivateDialog.jsx";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import DeleteAccount from "../../pages/Users/DeleteAccount.jsx";
 
 function MyProfile({ userDetail }) {
   const [tempExperienceLevel, setTempExperienceLevel] = useState(
@@ -14,7 +14,10 @@ function MyProfile({ userDetail }) {
 
   const { notifyError } = useToast();
   const navigate = useNavigate();
-  const [showConfirmationDialog, setShowConfirmationDialog] = useState(false);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const showDeleteAccount = queryParams.get("delete") === "true";
 
   useEffect(() => {
     if (userDetail.error) {
@@ -58,8 +61,8 @@ function MyProfile({ userDetail }) {
     }
   };
 
-  const handleDeleteConfirmation = () => {
-    navigate("/user/delete");
+  const handleDeleteAccountOpen = () => {
+    navigate("/user?delete=true");
   };
 
   return (
@@ -85,16 +88,22 @@ function MyProfile({ userDetail }) {
             {userDetail.birthday}
           </span>
           <div className="controlProfileContainer">
-            <NavLink to="/user/edit" className="simpleButton submit">
-              Edit Profile
-            </NavLink>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="simpleButton submit"
+            >
+              <NavLink to="/user/edit" className="simpleButtonText submit">
+                Edit Profile
+              </NavLink>
+            </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               type="button"
-              onClick={() => setShowConfirmationDialog(true)}
+              onClick={handleDeleteAccountOpen}
               className="simpleButton delete"
             >
               Delete Account
-            </button>
+            </motion.button>
           </div>
         </div>
         <div className="userSlideBarRight">
@@ -113,17 +122,8 @@ function MyProfile({ userDetail }) {
             {renderExperienceLevel(userDetail.experienceLevel)}
           </span>
         </div>
-
-        {showConfirmationDialog && (
-          <ReactivateDialog
-            title="Delete Account"
-            message="Are you sure you want to delete your
-            account?"
-            onClose={() => setShowConfirmationDialog(false)}
-            onConfirm={handleDeleteConfirmation}
-          />
-        )}
       </motion.div>
+      {showDeleteAccount && <DeleteAccount />}
     </div>
   );
 }

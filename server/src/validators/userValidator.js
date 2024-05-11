@@ -29,26 +29,10 @@ const editUserValidation = async (req, res) => {
 
   if (req.body.firstName && validator.isEmpty(req.body.firstName || "")) {
     error.push({ field: "firstName", message: "First name is required" });
-  } else if (
-    req.body.firstName &&
-    !validator.isLength(req.body.firstName, { min: 3 })
-  ) {
-    error.push({
-      field: "firstName",
-      message: "First name must be at least 3 characters long",
-    });
   }
 
   if (req.body.lastName && validator.isEmpty(req.body.lastName || "")) {
     error.push({ field: "lastName", message: "Last name is required" });
-  } else if (
-    req.body.lastName &&
-    !validator.isLength(req.body.lastName, { min: 3 })
-  ) {
-    error.push({
-      field: "lastName",
-      message: "Last name must be at least 3 characters long",
-    });
   }
 
   if (req.body.uri && validator.isEmpty(req.body.uri || "")) {
@@ -68,17 +52,9 @@ const editUserValidation = async (req, res) => {
       message: User.rawAttributes.email.validate.isEmail.msg,
     });
   } else if (req.body.email) {
-    const domain = req.body.email.split("@")[1];
-    if (domain.includes("meow") && req.user.role !== "admin") {
-      error.push({
-        field: "email",
-        error: "Only admins can use emails from @meow domain",
-      });
-    } else if (req.body.email) {
-      const user = await User.findOne({ where: { email: req.body.email } });
-      if (user && user.id !== req.user.id) {
-        error.push({ field: "email", message: "Email is already in use" });
-      }
+    const user = await User.findOne({ where: { email: req.body.email } });
+    if (user && user.id !== req.user.id) {
+      error.push({ field: "email", message: "This email is already in use" });
     }
   }
 
@@ -116,7 +92,10 @@ const editUsernameValidation = async (req, res) => {
       where: { username: req.body.username },
     });
     if (user && user.id !== req.user.id) {
-      error.push({ field: "username", message: "Username is already in use" });
+      error.push({
+        field: "username",
+        message: "This username is already in use",
+      });
     }
   }
 
@@ -177,12 +156,12 @@ const deleteUserValidation = async (req, res) => {
       .json({ error: [{ field: "id", message: "User not found" }] });
   }
 
-  if (validator.isEmpty(req.body.password || "")) {
-    error.push({ field: "password", message: "Password is required" });
+  if (validator.isEmpty(req.body.username || "")) {
+    error.push({ field: "username", message: "Please enter your username" });
   } else {
     const user = await User.findByPk(req.user.id);
-    if (!(await bcrypt.compare(req.body.password, user.password))) {
-      error.push({ field: "password", message: "Invalid password" });
+    if (user.username !== req.body.username) {
+      error.push({ field: "username", message: "Invalid username! Try again" });
     }
   }
 

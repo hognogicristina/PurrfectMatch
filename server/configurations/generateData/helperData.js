@@ -26,13 +26,13 @@ const generateRandomBreed = () => {
   }
 };
 
-const generateImages = async (i) => {
-  const catImageFilename = `cat_image_${i + 1}.jpg`;
+const generateImages = async (i, folder) => {
+  const catImageFilename = `${folder}_${i + 1}.jpg`;
   const relativePath = path.join(
     __dirname,
     "..",
     "downloads",
-    "cat_images",
+    `${folder}`,
     catImageFilename,
   );
   return await fileHelper.getFile(relativePath, catImageFilename);

@@ -73,11 +73,13 @@ export default function MyProfileEdit({ userDetail }) {
     return <div className="experienceCircles">{circles}</div>;
   };
 
+  const initialImage = user ? user.image : null;
+
   return (
     <motion.div className="userDetailContainer" animate={trembleAnimation}>
       <Form method="patch" className="userContent myProfile">
         <div className="userSlideBarLeft">
-          <UploadImage />
+          <UploadImage initialImage={initialImage} />
           <label>
             <span>First name</span>
             <input
@@ -131,13 +133,14 @@ export default function MyProfileEdit({ userDetail }) {
           </label>
 
           <div className="controlProfileContainer">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               type="button"
               onClick={handleCancel}
               className="simpleButton submit"
             >
               Cancel
-            </button>
+            </motion.button>
             <motion.button
               whileTap={{ scale: 0.9 }}
               disabled={isSubmitting}

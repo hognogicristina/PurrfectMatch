@@ -1,12 +1,10 @@
 const validator = require("validator");
-const fs = require("fs");
-const path = require("path");
 const { Op } = require("sequelize");
-const { Cat, Breed, Image } = require("../../models");
+const { Cat, Breed, Image, AgeType } = require("../../models");
 
 const catExistValidator = async (req, res) => {
   const cats = await Cat.findAll();
-  const errors = [];
+  const error = [];
 
   if (req.params.id) {
     const cat = await Cat.findByPk(req.params.id);
@@ -38,11 +36,17 @@ const catExistValidator = async (req, res) => {
       }
     }
 
+    if (req.query.sortBy) {
+      const sortBy = ["breed", "age"];
+      if (!sortBy.includes(req.query.sortBy)) {
+        error.push({ field: "sortBy", error: "Invalid Sort By" });
+      }
+    }
+
     if (req.query.selectedBreed) {
-      const breeds = JSON.parse(
-        fs.readFileSync(path.join("./data", "breeds.json"), "utf-8"),
-      );
-      if (breeds.includes(req.query.selectedBreed)) {
+      const breeds = await Breed.findAll();
+      const breedNames = breeds.map((breed) => breed.name);
+      if (breedNames.includes(req.query.selectedBreed)) {
         const breedExists = cats.some(
           (cat) => cat.breed === req.query.selectedBreed,
         );
@@ -52,68 +56,64 @@ const catExistValidator = async (req, res) => {
             .json({ error: [{ field: "breed", message: "No Result Found" }] });
         }
       } else {
-        errors.push({ field: "breed", error: "Please select a valid breed" });
+        error.push({ field: "breed", error: "Please select a valid breed" });
       }
     }
 
     if (req.query.selectedAgeType) {
-      const ageRanges = JSON.parse(
-        fs.readFileSync(path.join("./data", "ageRanges.json"), "utf-8"),
-      );
-      if (Object.keys(ageRanges).includes(req.query.selectedAgeType)) {
-        const ageExists = cats.some((cat) => {
-          const catAge = cat.age.split(" ")[0];
-          return catAge === req.query.selectedAgeType;
-        });
-        if (!ageExists) {
-          return res
-            .status(404)
-            .json({ error: [{ field: "age", message: "No Result Found" }] });
-        }
-      } else {
-        errors.push({
-          field: "age",
-          error: "Please select a valid life stage",
-        });
-      }
-    }
-
-    if (req.query.selectedGender) {
-      if (
-        req.query.selectedGender === "Male" ||
-        req.query.selectedGender === "Female"
-      ) {
-        const genderExists = cats.some(
-          (cat) => cat.gender === req.query.selectedGender,
+      const ageTypes = await AgeType.findAll();
+      const ageTypeNames = ageTypes.map((ageType) => ageType.type);
+      if (ageTypeNames.includes(req.query.selectedAgeType)) {
+        const ageTypeExists = cats.some(
+          (cat) => cat.ageType === req.query.selectedAgeType,
         );
-        if (!genderExists) {
-          return res
-            .status(404)
-            .json({ error: [{ field: "gender", message: "No Result Found" }] });
+        if (!ageTypeExists) {
+          return res.status(404).json({
+            error: [{ field: "ageType", message: "No Result Found" }],
+          });
         }
       } else {
-        errors.push({
-          field: "gender",
-          error: "Gender must be either Male or Female",
+        error.push({
+          field: "ageType",
+          error: "Please select a valid age type",
         });
       }
-    }
 
-    if (req.query.selectedNoHealthProblem !== undefined) {
-      const noHealthProblemExists = cats.some(
-        (cat) => cat.healthProblem === null,
-      );
-      if (!noHealthProblemExists) {
-        return res
-          .status(404)
-          .json({
+      if (req.query.selectedGender) {
+        if (
+          req.query.selectedGender === "Male" ||
+          req.query.selectedGender === "Female"
+        ) {
+          const genderExists = cats.some(
+            (cat) => cat.gender === req.query.selectedGender,
+          );
+          if (!genderExists) {
+            return res.status(404).json({
+              error: [{ field: "gender", message: "No Result Found" }],
+            });
+          }
+        } else {
+          error.push({
+            field: "gender",
+            error: "Gender must be either Male or Female",
+          });
+        }
+      }
+
+      if (req.query.selectedNoHealthProblem !== undefined) {
+        const noHealthProblemExists = cats.some(
+          (cat) => cat.healthProblem === null,
+        );
+        if (!noHealthProblemExists) {
+          return res.status(404).json({
             error: [{ field: "healthProblem", message: "No Result Found" }],
           });
+        }
       }
     }
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 const catsFilterValidator = async (catsFilter, res) => {

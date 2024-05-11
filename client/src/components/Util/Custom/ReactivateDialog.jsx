@@ -36,8 +36,20 @@ function ReactivateDialog({ title, message, onClose, onConfirm }) {
               {splitMessage[1]}
             </p>
             <div className="dialogButtons">
-              <button onClick={handleClose}>Cancel</button>
-              <button onClick={onConfirm}>Confirm</button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={handleClose}
+                className="cancelButton"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={onConfirm}
+                className="submitButton submit"
+              >
+                Confirm
+              </motion.button>
             </div>
           </motion.div>
         </div>

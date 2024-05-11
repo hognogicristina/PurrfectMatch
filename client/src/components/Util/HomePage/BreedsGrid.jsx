@@ -8,16 +8,7 @@ export default function BreedsGrid({ breeds }) {
 
   useEffect(() => {
     const totalWidth = breeds.length * 300 * 2;
-
-    const sequence = async () => {
-      await controls.start({ x: `-${totalWidth / 2}px` });
-      controls.set({ x: 0 });
-      await sequence();
-    };
-
-    sequence();
-
-    return () => controls.stop();
+    controls.start({ x: [`0px`, `-${totalWidth / 2}px`] });
   }, [breeds, controls]);
 
   return (
@@ -26,7 +17,12 @@ export default function BreedsGrid({ breeds }) {
         <motion.ul
           className="breedsGrid"
           animate={controls}
-          transition={{ repeat: Infinity, duration: 300, ease: "linear" }}
+          transition={{
+            duration: 300,
+            ease: "linear",
+            repeat: Infinity,
+            repeatType: "reverse",
+          }}
           style={{ display: "flex", width: `${breeds.length * 300 * 2}px` }}
           initial={{ x: 0 }}
         >

@@ -14,5 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     floor: DataTypes.STRING,
     apartment: DataTypes.STRING,
     postalCode: DataTypes.STRING,
+    userId: {
+      type: DataTypes.INTEGER,
+    },
   });
 };

@@ -61,20 +61,10 @@ const registerValidation = async (req, res) => {
 
   if (validator.isEmpty(req.body.firstName || "")) {
     error.push({ field: "firstName", message: "First name is required" });
-  } else if (!validator.isLength(req.body.firstName, { min: 3 })) {
-    error.push({
-      field: "firstName",
-      message: "First name must be at least 3 characters long",
-    });
   }
 
   if (validator.isEmpty(req.body.lastName || "")) {
     error.push({ field: "lastName", message: "Last name is required" });
-  } else if (!validator.isLength(req.body.lastName, { min: 3 })) {
-    error.push({
-      field: "lastName",
-      message: "Last name must be at least 3 characters long",
-    });
   }
 
   if (validator.isEmpty(req.body.username || "")) {
@@ -87,7 +77,10 @@ const registerValidation = async (req, res) => {
   } else {
     const user = await User.findOne({ where: { username: req.body.username } });
     if (user) {
-      error.push({ field: "username", message: "Username is already in use" });
+      error.push({
+        field: "username",
+        message: "This username is already in use",
+      });
     }
   }
 
@@ -103,7 +96,7 @@ const registerValidation = async (req, res) => {
     if (user) {
       error.push({
         field: "email",
-        message: "Email is already in use by another user",
+        message: "This email is already in use",
       });
     }
   }
