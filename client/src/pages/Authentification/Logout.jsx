@@ -1,11 +1,5 @@
-import {
-  Form,
-  redirect,
-  useActionData,
-  useNavigation,
-  useRouteLoaderData,
-} from "react-router-dom";
-import { extractJwt, getAuthToken } from "../../util/auth.js";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
+import { getAuthToken } from "../../util/auth.js";
 import "../../styles/Logout.css";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -65,18 +59,26 @@ function Logout() {
     <div className="containerLogout">
       <Form method="post" action="/logout">
         <motion.h1
-          initial={{ y: "100vh", opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 15,
+          }}
           className="titleLogout"
         >
-          Select account to sign out
+          Sign out of purrfectMatch
         </motion.h1>
         <div>
           <motion.div
-            initial={{ y: "100vh", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 120,
+              damping: 15,
+            }}
             className="formLogout"
           >
             <div className="imageContainer">{renderUserImage()}</div>
@@ -86,7 +88,7 @@ function Logout() {
             </h2>
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="link"
+              className="link logout"
               disabled={isSubmitting}
               type="submit"
             >

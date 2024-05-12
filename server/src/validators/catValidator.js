@@ -127,20 +127,53 @@ const catsFilterValidator = async (catsFilter, res) => {
 const catValidator = async (req, res) => {
   const errors = [];
 
-  if (req.body.name && validator.isEmpty(req.body.name)) {
+  if (!req.body.name || (req.body.name && validator.isEmpty(req.body.name))) {
     errors.push({ field: "name", error: "Name is required" });
   }
 
-  if (req.body.uri && validator.isEmpty(req.body.uri)) {
-    errors.push({ field: "uri", error: "Image is required" });
-  } else if (req.body.uri) {
-    const image = await Image.findOne({ where: { uri: req.body.uri } });
-    if (!image) {
-      errors.push({ field: "uri", error: "Please select a valid image" });
+  if (req.method === "PATCH") {
+    if ((req.body.uri && validator.isEmpty(req.body.uri)) || !req.body.uri) {
+      errors.push({ field: "uri", error: "Image is required" });
+    } else if (req.body.uri) {
+      const image = await Image.findOne({ where: { uri: req.body.uri } });
+      if (!image) {
+        errors.push({ field: "uri", error: "Please select a valid image" });
+      }
+    }
+  } else if (req.method === "POST") {
+    if (!req.body.uris || !Array.isArray(req.body.uris)) {
+      errors.push({
+        field: "uris",
+        error: "URIs must be provided as an array.",
+      });
+    } else if (req.body.uris) {
+      if (req.body.uris.length === 0) {
+        errors.push({
+          field: "uris",
+          error: "At least one image is required.",
+        });
+      }
+
+      for (const uri of req.body.uris) {
+        if (validator.isEmpty(uri)) {
+          errors.push({ field: "uris", error: "Image is required" });
+        } else {
+          const image = await Image.findOne({ where: { uri } });
+          if (!image) {
+            errors.push({
+              field: "uris",
+              error: "Please select a valid image",
+            });
+          }
+        }
+      }
     }
   }
 
-  if (req.body.breed && validator.isEmpty(req.body.breed)) {
+  if (
+    !req.body.breed ||
+    (req.body.breed && validator.isEmpty(req.body.breed))
+  ) {
     errors.push({ field: "breed", error: "Breed is required" });
   } else if (req.body.breed) {
     const breeds = await Breed.findAll();
@@ -150,7 +183,10 @@ const catValidator = async (req, res) => {
     }
   }
 
-  if (req.body.gender && validator.isEmpty(req.body.gender)) {
+  if (
+    !req.body.gender ||
+    (req.body.gender && validator.isEmpty(req.body.gender))
+  ) {
     errors.push({ field: "gender", error: "Gender is required" });
   } else if (req.body.gender && !["Male", "Female"].includes(req.body.gender)) {
     errors.push({
@@ -159,13 +195,16 @@ const catValidator = async (req, res) => {
     });
   }
 
-  if (req.body.age && validator.isEmpty(req.body.age)) {
+  if (!req.body.age || (req.body.age && validator.isEmpty(req.body.age))) {
     errors.push({ field: "age", error: "Age is required" });
   } else if (req.body.age && !validator.isInt(req.body.age)) {
     errors.push({ field: "age", error: "Age must be an integer" });
   }
 
-  if (req.body.description && validator.isEmpty(req.body.description)) {
+  if (
+    !req.body.description ||
+    (req.body.description && validator.isEmpty(req.body.description))
+  ) {
     errors.push({ field: "description", error: "Description is required" });
   } else if (
     req.body.description &&

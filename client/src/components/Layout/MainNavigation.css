@@ -21,7 +21,7 @@
 .mainContainer, .controlContainer {
   display: flex;
   align-items: center;
-  margin-right: 35px;
+  margin-right: 65px;
 }
 
 .logo {
@@ -144,6 +144,10 @@
   transition: all 0.3s ease;
 }
 
+.dropbtn.userMenu {
+  padding: 15px 15px;
+  border-radius: 50px !important;
+}
 
 .dropdownContent {
   margin-top: 5px;
@@ -154,6 +158,12 @@
   border: 1px solid rgba(151, 151, 151, 0.1);
   width: 250px;
   z-index: 1100;
+}
+
+.dropdownContent.userMenu {
+  width: 85px;
+  margin-left: 0 !important;
+  margin-right: 300px !important;
 }
 
 .dropdownContent a {

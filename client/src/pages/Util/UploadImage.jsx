@@ -28,19 +28,21 @@ function UploadImage({ initialImage }) {
         <input
           type="file"
           accept="image/*"
-          name="image"
+          name="file"
           onChange={handleImageChange}
           disabled={isSubmitting}
           style={{ display: "none" }}
         />
-        {initialImage && !image ? (
+        {initialImage && !image && (
           <div className="imageContainerUpload">
             <img src={initialImage} alt="Selected" className="selectedImage" />
             <div className="cameraIconAbove">
               <AiOutlineCamera />
             </div>
           </div>
-        ) : (
+        )}
+
+        {!initialImage && !image && (
           <div className="cameraIconCentered">
             <AiOutlineCamera />
           </div>
@@ -69,10 +71,10 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
-  const imageFile = data.get("image");
+  const imageFile = data.get("file");
 
   const formData = new FormData();
-  formData.append("image", imageFile);
+  formData.append("file", imageFile);
 
   const response = await fetch("http://localhost:3000/upload", {
     method: "POST",

@@ -26,9 +26,9 @@ import ReactivatePage, {
   action as actionReactivate,
 } from "./pages/Authentification/Reactivate.jsx";
 import CatsPage, { loader as loadCats } from "./pages/Cats/Cats.jsx";
-import CatRootLayout from "./pages/Cats/CatRoot.jsx";
+import CatsRootLayout from "./pages/Cats/CatsRoot.jsx";
 import CatDetail from "./pages/Cats/CatDetail.jsx";
-import CatAdd from "./pages/Cats/CatAdd.jsx";
+import CatAdd, { action as actionCatAdd } from "./pages/Cats/CatAdd.jsx";
 import {
   checkAuthLoader,
   checkLoginLoader,
@@ -59,6 +59,10 @@ import UploadImage, {
 } from "./pages/Util/UploadImage.jsx";
 import NotFoundPage from "./components/Util/Custom/NotFound.jsx";
 import { ToastProvider } from "./components/Util/Custom/ToastProvider.jsx";
+import CatRootLayout from "./pages/Cats/CatRoot.jsx";
+import UploadsImage, {
+  action as actionUploadsImage,
+} from "./pages/Util/UploadsImages.jsx";
 
 const router = createBrowserRouter([
   {
@@ -78,17 +82,25 @@ const router = createBrowserRouter([
       },
       {
         path: "cats",
-        element: <CatRootLayout />,
+        element: <CatsRootLayout />,
         children: [
           {
             index: true,
             element: <CatsPage />,
             loader: loadCats,
           },
+        ],
+      },
+      {
+        path: "cat",
+        element: <CatRootLayout />,
+        id: "cat-details",
+        children: [
           {
-            path: "cat",
-            id: "cat-details",
+            index: true,
             element: <CatAdd />,
+            action: actionCatAdd,
+            loader: checkAuthLoader,
           },
           {
             path: ":id",
@@ -172,17 +184,22 @@ const router = createBrowserRouter([
         element: <UploadImage />,
         action: actionUploadImage,
       },
+      {
+        path: "uploads",
+        element: <UploadsImage />,
+        action: actionUploadsImage,
+      },
+      {
+        path: "activate/:id",
+        element: <ActivationPage />,
+        loader: loadActivate,
+      },
+      {
+        path: "reactivate",
+        element: <ReactivatePage />,
+        action: actionReactivate,
+      },
     ],
-  },
-  {
-    path: "activate/:id",
-    element: <ActivationPage />,
-    loader: loadActivate,
-  },
-  {
-    path: "reactivate",
-    element: <ReactivatePage />,
-    action: actionReactivate,
   },
 ]);
 

@@ -7,7 +7,6 @@
   position: relative;
 }
 
-
 .userRootContainer {
   display: flex;
   flex-direction: row;
@@ -104,11 +103,15 @@
 
 .imageContainerUpload {
   display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
 .userImage,
 .selectedImage,
 .cameraIcon,
+.cameraIconCentered,
 .faUserCircle {
   font-size: 280px;
   border-radius: 50%;
@@ -118,6 +121,7 @@
 }
 
 .cameraIcon,
+.cameraIconCentered,
 .selectedImage {
   border: 2px solid #ccc;
   object-fit: cover;
@@ -127,7 +131,8 @@
   border: 2px solid #FF69B4;
 }
 
-.cameraIcon {
+.cameraIcon,
+.cameraIconCentered {
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -281,13 +286,6 @@
   background-color: var(--simple-button);
 }
 
-.deleteAccountHeader {
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  align-items: center;
-}
-
 .closeButton {
   background-color: transparent;
   border: var(--border-style);
@@ -312,4 +310,11 @@
 
 .imageUpload {
   cursor: pointer;
+}
+
+.deleteAccountHeader {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }

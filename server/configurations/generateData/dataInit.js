@@ -1,6 +1,6 @@
 const fs = require("fs");
 const bcrypt = require("bcrypt");
-const { faker } = require("@faker-js/faker");
+const { faker, he } = require("@faker-js/faker");
 const {
   Address,
   AdoptionRequest,
@@ -62,7 +62,6 @@ const generateUsers = async (numUsers) => {
     const username = faker.internet.userName();
     const email = faker.internet.email();
     const password = await bcrypt.hash("password", 10);
-    const birthday = faker.date.anytime();
     const address = await adminInit.generateAddress();
 
     const user = await User.create({
@@ -71,22 +70,30 @@ const generateUsers = async (numUsers) => {
       username: username,
       email: email,
       password: password,
-      addressId: address.id,
       role: "user",
       status: "active",
     });
+
+    const { birthday, description, hobbies, experienceLevel } =
+      await helperData.generateRandomUserInfo();
+
     await UserInfo.create({
       userId: user.id,
       birthday: birthday,
+      description: description,
+      hobbies: hobbies,
+      experienceLevel: experienceLevel,
     });
     await PasswordHistory.create({
       userId: user.id,
       password: password,
     });
-    const file = await helperData.generateImages(i, "user_pictures");
+    const file = await helperData.generateImages(i, "user_picture");
     const newImage = await fileHelper.uploadImage(file, "uploads");
-    newImage.userID = user.id;
+    newImage.userId = user.id;
     await newImage.save();
+    address.userId = user.id;
+    await address.save();
 
     users.push(user);
   }
@@ -98,16 +105,16 @@ const generateCats = async (numCats, users) => {
   for (let i = 0; i < numCats; i++) {
     let catData = {};
     catData = await helperData.generateCatData(catData);
-    const file = await helperData.generateImages(i, "cat_images");
+    const file = await helperData.generateImages(i, "cat_image");
     const newImage = await fileHelper.uploadImage(file, "uploads");
-    newImage.catId = catData.id;
-    await newImage.save();
 
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
     catData.userId = randomUser.id;
 
     const newCat = await Cat.create(catData);
+    newImage.catId = newCat.id;
+    await newImage.save();
     await CatUser.create({ catId: newCat.id, userId: randomUser.id });
   }
 };

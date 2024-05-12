@@ -1,14 +1,21 @@
 import "./Authentification.css";
 import { motion } from "framer-motion";
-import { Form, useActionData, useNavigation } from "react-router-dom";
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import { Spinner } from "../Util/Custom/Spinner.jsx";
 
 export default function ReactivateForm() {
   const data = useActionData();
   const navigation = useNavigation();
+  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
@@ -27,13 +34,17 @@ export default function ReactivateForm() {
 
   return (
     <div className="authContainer">
-      <motion.div
-        initial={{ y: "100vh", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 15 }}
-        className="authForm"
-      >
-        {!submitted ? (
+      {!submitted ? (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 15,
+          }}
+          className="authForm"
+        >
           <Form method="post">
             <h1>Reactivate Account</h1>
             <p>
@@ -50,31 +61,40 @@ export default function ReactivateForm() {
             </label>
             <motion.button
               whileTap={{ scale: 0.9 }}
-              type="submit"
               disabled={isSubmitting}
-              className="submitButton submit"
+              type="submit"
+              className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
             >
-              Reactivate Account
+              {isSubmitting ? <Spinner /> : "Reactivate Account"}
             </motion.button>
           </Form>
-        ) : (
-          <div>
-            <h1>
-              <FontAwesomeIcon icon={faEnvelope} size="2x" />
-            </h1>
-            <h1>Email Sent</h1>
-            <p>{data.status}</p>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              type="button"
-              onClick={() => navigate("/login")}
-              className="simpleButton submit"
-            >
-              Return to Log In
-            </motion.button>
-          </div>
-        )}
-      </motion.div>
+        </motion.div>
+      ) : (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 15,
+          }}
+          className="authForm"
+        >
+          <h1>
+            <FontAwesomeIcon icon={faEnvelope} size="2x" />
+          </h1>
+          <h1>Email Sent</h1>
+          <p>{data.status}</p>
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            type="button"
+            onClick={() => navigate("/login")}
+            className="simpleButton submit"
+          >
+            Return to Log In
+          </motion.button>
+        </motion.div>
+      )}
     </div>
   );
 }

@@ -16,7 +16,6 @@ const updateCatData = async (cat, body) => {
   if (!body) return;
   const fields = [
     "name",
-    "uri",
     "breed",
     "gender",
     "age",
@@ -33,6 +32,8 @@ const updateCatData = async (cat, body) => {
       cat[field] = body[field];
     }
   }
+
+  cat.uris = Array.isArray(body.uris) ? body.uris : [];
 
   if (body.age) {
     cat.age = ageTimestamp;

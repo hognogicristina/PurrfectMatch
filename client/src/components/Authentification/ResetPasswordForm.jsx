@@ -25,9 +25,13 @@ export default function ResetPasswordForm() {
     <div className="authContainer">
       <motion.div
         className="authForm"
-        initial={{ y: "100vh", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 120,
+          damping: 15,
+        }}
       >
         <Form method="post">
           <h1>Enter your new password</h1>
@@ -61,11 +65,11 @@ export default function ResetPasswordForm() {
           </label>
           <motion.button
             whileTap={{ scale: 0.9 }}
-            type="submit"
             disabled={isSubmitting}
-            className="simpleButton submit"
+            type="submit"
+            className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
           >
-            Save
+            {isSubmitting ? "Saving.." : "Save"}
           </motion.button>
         </Form>
       </motion.div>

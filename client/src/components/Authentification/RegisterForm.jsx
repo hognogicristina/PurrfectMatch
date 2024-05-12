@@ -20,13 +20,19 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (data) {
       if (data.error) {
+        const newErrors = {};
         data.error.forEach((error) => {
-          notifyError(error.message);
+          newErrors[error.field] = error.message;
         });
+        setErrors(newErrors);
+        if (data.error.field === "server") {
+          notifyError(data.error.message);
+        }
       }
       if (data.status) {
         notifySuccess(data.status);
@@ -44,9 +50,9 @@ export default function RegisterForm() {
       <AnimatePresence mode="wait">
         {showSuccessModal ? (
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, ease: "backOut" }}
+            initial={{ y: "100vh", opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 120, damping: 15 }}
             className="authForm"
           >
             <h2>Congratulations!</h2>
@@ -66,9 +72,13 @@ export default function RegisterForm() {
         ) : (
           <motion.div
             className="authForm"
-            initial={{ y: "100vh", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 120, damping: 15 }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              type: "spring",
+              stiffness: 120,
+              damping: 15,
+            }}
           >
             <Form method="post">
               <h2>Create Account</h2>
@@ -81,6 +91,9 @@ export default function RegisterForm() {
                     placeholder="Enter your first name"
                     required
                   />
+                  {errors.firstName && (
+                    <p className="errorText">{errors.firstName}</p>
+                  )}
                 </label>
                 <label>
                   Last Name
@@ -90,12 +103,18 @@ export default function RegisterForm() {
                     placeholder="Enter your last name"
                     required
                   />
+                  {errors.lastName && (
+                    <p className="errorText">{errors.lastName}</p>
+                  )}
                 </label>
               </div>
               <div className="formRow">
                 <label>
                   Birthday
                   <input name="birthday" type="date" />
+                  {errors.birthday && (
+                    <p className="errorText">{errors.birthday}</p>
+                  )}
                 </label>
               </div>
               <div className="formRow">
@@ -107,6 +126,9 @@ export default function RegisterForm() {
                     placeholder="Choose a username"
                     required
                   />
+                  {errors.username && (
+                    <p className="errorText">{errors.username}</p>
+                  )}
                 </label>
                 <label>
                   Email
@@ -116,6 +138,7 @@ export default function RegisterForm() {
                     placeholder="Enter your email"
                     required
                   />
+                  {errors.email && <p className="errorText">{errors.email}</p>}
                 </label>
               </div>
               <div className="formRow">
@@ -133,6 +156,9 @@ export default function RegisterForm() {
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
+                  {errors.password && (
+                    <p className="errorText">{errors.password}</p>
+                  )}
                 </label>
                 <label className="passwordInput">
                   Confirm Password
@@ -148,6 +174,9 @@ export default function RegisterForm() {
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
                   </span>
+                  {errors.confirmPassword && (
+                    <p className="errorText">{errors.confirmPassword}</p>
+                  )}
                 </label>
               </div>
               <div>
@@ -155,9 +184,9 @@ export default function RegisterForm() {
                   whileTap={{ scale: 0.9 }}
                   disabled={isSubmitting}
                   type="submit"
-                  className="submitButton submit"
+                  className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
                 >
-                  Register
+                  {isSubmitting ? "Creating account.." : "Register"}
                 </motion.button>
               </div>
               <div className="linksContainer">

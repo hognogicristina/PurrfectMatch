@@ -1,18 +1,26 @@
-const imageValidator = async (req, res) => {
-  if (!req.file) {
+const imageValidator = async (req, res, file) => {
+  let fileToValidate;
+
+  if (file) {
+    fileToValidate = file;
+  } else {
+    fileToValidate = req.file;
+  }
+
+  if (!fileToValidate) {
     return res
       .status(400)
       .json({ error: [{ field: "file", message: "Image is required" }] });
   } else {
     const maxSize = 5 * 1024 * 1024;
-    if (req.file.size > maxSize) {
+    if (fileToValidate.size > maxSize) {
       return res.status(400).json({
         error: [{ field: "file", message: "File size should not exceed 5MB" }],
       });
     }
 
-    const extension = req.file.originalname.substring(
-      req.file.originalname.lastIndexOf(".") + 1,
+    const extension = fileToValidate.originalname.substring(
+      fileToValidate.originalname.lastIndexOf(".") + 1,
     );
     const allowedTypes = /jpeg|jpg|png|gif/i;
     if (!allowedTypes.test(extension)) {
@@ -25,4 +33,20 @@ const imageValidator = async (req, res) => {
   return null;
 };
 
-module.exports = { imageValidator };
+const imagesValidator = async (req, res) => {
+  if (!req.files || req.files.length === 0) {
+    return res
+      .status(400)
+      .json({ error: [{ field: "file", message: "Images are required" }] });
+  }
+
+  if (req.files.length > 5) {
+    return res.status(400).json({
+      error: [{ field: "file", message: "Cannot upload more than 5 images" }],
+    });
+  }
+
+  return null;
+};
+
+module.exports = { imageValidator, imagesValidator };

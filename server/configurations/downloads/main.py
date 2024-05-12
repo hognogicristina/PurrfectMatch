@@ -7,7 +7,7 @@ def write_to_file(output, file_path):
     with open(file_path, 'a') as f:
         f.write(output + '\n')
 
-def download_cat_images(url, download_path, num_images=50):
+def download_cat_images(url, download_path, num_images=200):
     if not os.path.exists(download_path):
         os.makedirs(download_path)
 
@@ -50,7 +50,7 @@ def download_user_pictures(download_path, num_users=25):
         user_picture_url = user['picture']['large']
         try:
             picture_content = requests.get(user_picture_url).content
-            with open(f"{download_path}/user_{count + 1}.jpg", 'wb') as f:
+            with open(f"{download_path}/user_picture_{count + 1}.jpg", 'wb') as f:
                 f.write(picture_content)
 
             write_to_file(f"Downloaded user picture {count + 1}/{num_users}", 'output.log')
@@ -62,7 +62,7 @@ def download_user_pictures(download_path, num_users=25):
 
 
 def download_cat_breed_images(download_path):
-    print("Downloadind images...")
+    print("Downloading images...")
     if not os.path.exists(download_path):
         os.makedirs(download_path)
 
@@ -101,7 +101,7 @@ def download_cat_breed_images(download_path):
 
 url_api = 'https://thecatapi.com/'
 cat_images = 'cat_images'
-download_cat_images(url_api, cat_images, num_images=50)
+download_cat_images(url_api, cat_images, num_images=200)
 
 user_pictures_path = 'user_pictures'
 download_user_pictures(user_pictures_path, num_users=25)

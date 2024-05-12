@@ -44,15 +44,11 @@ const getFile = async (absolutePath, filename) => {
   };
 };
 
-const moveImage = async (model, uri) => {
-  if (model) {
-    const imageExist = await Image.findByPk(model.imageId);
-    if (imageExist) {
-      const oldImagePath = path.join("public", "uploads", imageExist.filename);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-      model.imageId = null;
+const moveImage = async (currentImage, uri) => {
+  if (currentImage) {
+    const oldImagePath = path.join("public", "uploads", currentImage.filename);
+    if (fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath);
     }
   }
 
@@ -65,7 +61,7 @@ const moveImage = async (model, uri) => {
   const file = await getFile(imagePath, image.filename);
   const newImage = await uploadImage(file, "uploads");
   await deleteImage(image, "temporary-uploads");
-  return newImage.id;
+  return newImage;
 };
 
 const deleteImage = async (image, folder) => {

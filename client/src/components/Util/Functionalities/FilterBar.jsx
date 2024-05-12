@@ -68,9 +68,39 @@ function FilterBar() {
     fetchHealthProblems();
   }, []);
 
+  useEffect(() => {
+    if (!searchParams.has("search")) {
+      searchParams.set("search", "");
+    }
+    [
+      "selectedBreed",
+      "selectedAgeType",
+      "selectedHealthProblem",
+      "selectedGender",
+    ].forEach((param) => {
+      if (!searchParams.has(param)) {
+        searchParams.set(param, "");
+      }
+    });
+    setSearchParams(searchParams);
+  }, []);
+
   const handleChange = (name, selectedOption) => {
     searchParams.set(name, selectedOption ? selectedOption.value : "");
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, { replace: true });
+  };
+
+  const handleClearAll = () => {
+    [
+      "selectedBreed",
+      "selectedAgeType",
+      "selectedHealthProblem",
+      "selectedGender",
+      "search",
+    ].forEach((param) => {
+      searchParams.delete(param);
+    });
+    setSearchParams(searchParams, { replace: true });
   };
 
   const handleSortOrder = (order) => {
@@ -120,6 +150,9 @@ function FilterBar() {
       whileInView={{ x: 0 }}
       viewport={{ once: true }}
     >
+      <button onClick={handleClearAll} className="simpleButton submit">
+        Reset Filters
+      </button>
       <input
         type="text"
         name="search"
@@ -144,6 +177,11 @@ function FilterBar() {
       <label>Breed</label>
       <Select
         styles={customStyles}
+        value={
+          breeds.find(
+            (option) => option.value === searchParams.get("selectedBreed"),
+          ) || null
+        }
         name="selectedBreed"
         onChange={(selectedOption) =>
           handleChange("selectedBreed", selectedOption)
@@ -156,6 +194,11 @@ function FilterBar() {
       <label>Age Type</label>
       <Select
         styles={customStyles}
+        value={
+          ageTypes.find(
+            (option) => option.value === searchParams.get("selectedAgeType"),
+          ) || null
+        }
         name="selectedAgeType"
         onChange={(selectedOption) =>
           handleChange("selectedAgeType", selectedOption)
@@ -168,6 +211,12 @@ function FilterBar() {
       <label>Health Problems</label>
       <Select
         styles={customStyles}
+        value={
+          healthProblems.find(
+            (option) =>
+              option.value === searchParams.get("selectedHealthProblem"),
+          ) || null
+        }
         name="selectedHealthProblem"
         onChange={(selectedOption) =>
           handleChange("selectedHealthProblem", selectedOption)
@@ -180,6 +229,11 @@ function FilterBar() {
       <label>Gender</label>
       <Select
         styles={customStyles}
+        value={
+          genders.find(
+            (option) => option.value === searchParams.get("selectedGender"),
+          ) || null
+        }
         name="selectedGender"
         onChange={(selectedOption) =>
           handleChange("selectedGender", selectedOption)

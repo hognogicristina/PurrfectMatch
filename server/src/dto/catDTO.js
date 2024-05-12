@@ -1,14 +1,14 @@
 const { Address, User, Image } = require("../../models");
 
 async function catToDTO(cat) {
-  const image = await Image.findOne({ where: { id: cat.imageId } });
+  const images = await Image.findAll({ where: { catId: cat.id } });
   const guardian = await User.findByPk(cat.userId);
   const owner = await User.findByPk(cat.ownerId);
   const address = await Address.findOne({ where: { id: guardian.addressId } });
 
   return {
     name: cat.name ? cat.name : null,
-    image: image ? image.url : null,
+    images: images ? images.map((image) => image.url) : null,
     breed: cat.breed ? cat.breed : null,
     gender: cat.gender ? cat.gender : null,
     adoptionRequest: cat.ageType ? cat.ageType : null,
@@ -21,7 +21,9 @@ async function catToDTO(cat) {
 }
 
 async function catsListToDTO(cat) {
-  const image = await Image.findOne({ where: { id: cat.imageId } });
+  const images = await Image.findAll({ where: { catId: cat.id } });
+  const image = images[0];
+
   return {
     image: image ? image.url : null,
     name: cat.name ? cat.name : null,
@@ -32,7 +34,9 @@ async function catsListToDTO(cat) {
 }
 
 async function catsRecentListToDTO(cat) {
-  const image = await Image.findOne({ where: { id: cat.imageId } });
+  const images = await Image.findAll({ where: { catId: cat.id } });
+  const image = images[0];
+
   return {
     image: image ? image.url : null,
     name: cat.name ? cat.name : null,

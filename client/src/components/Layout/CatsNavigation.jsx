@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
-function CatNavigation({ onClose }) {
+function CatsNavigation({ onClose }) {
   const itemVariants = {
     hidden: {
       opacity: 0,
@@ -55,4 +55,4 @@ function CatNavigation({ onClose }) {
   );
 }
 
-export default CatNavigation;
+export default CatsNavigation;

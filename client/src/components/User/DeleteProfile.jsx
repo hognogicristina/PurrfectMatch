@@ -74,9 +74,11 @@ export default function DeleteProfile({ userDetail }) {
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
-            className="simpleButton delete"
+            className={`simpleButton delete ${isSubmitting ? "submitting" : ""}`}
           >
-            I understand the consequences, delete my account
+            {isSubmitting
+              ? "Deleting your account, please wait.."
+              : "I understand the consequences, delete my account"}
           </motion.button>
         </Form>
       </motion.div>

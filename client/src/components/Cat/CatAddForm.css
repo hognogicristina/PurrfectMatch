@@ -1,0 +1,57 @@
+.authForm.catAddForm {
+  margin-top: 30px;
+}
+
+.selectAddCat {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.select__control {
+  margin-bottom: 16px;
+}
+
+.headerAddCat {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+
+.selectedImage.catAdd,
+.cameraIconCentered.catAdd {
+  width: 100px;
+  height: 100px;
+}
+
+.cameraIconAbove.catAdd {
+  font-size: 20px;
+  padding: 5px;
+}
+
+.catRemove {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background-color: rgba(216, 216, 216, 0.71);
+  color: var(--button-submit);
+  border-radius: 50%;
+  padding: 5px;
+  display: flex;
+  font-size: 20px;
+}
+
+.cameraIconAbove.catAdd:hover {
+  background-color: rgba(216, 216, 216, 0.91);
+}
+
+.catAddContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}

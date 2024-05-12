@@ -32,7 +32,7 @@ const generateImages = async (i, folder) => {
     __dirname,
     "..",
     "downloads",
-    `${folder}`,
+    `${folder}s`,
     catImageFilename,
   );
   return await fileHelper.getFile(relativePath, catImageFilename);
@@ -75,9 +75,26 @@ const generateCatData = async (cat) => {
   return cat;
 };
 
+const generateRandomUserInfo = async () => {
+  const birthday = faker.date.past({ years: 20 });
+  const description = "I love cats!";
+  const experienceLevel = randomInt(1, 5);
+
+  const hobbiesList = ["playing with cats", "games", "reading"];
+  const hobbies = hobbiesList.join(",");
+
+  return {
+    birthday: birthday,
+    description: description,
+    hobbies: hobbies,
+    experienceLevel: experienceLevel,
+  };
+};
+
 module.exports = {
   randomInt,
   generateRandomBreed,
   generateImages,
   generateCatData,
+  generateRandomUserInfo,
 };

@@ -60,9 +60,17 @@ const addCat = async (req, res) => {
 
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
-    catData.imageId = await fileHelper.moveImage(null, catData.uri);
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
+
+    const imagesDetails = [];
+    for (const uri of catData.uris) {
+      const newImage = await fileHelper.moveImage(null, uri);
+      newImage.catId = newCat.id;
+      await newImage.save();
+      imagesDetails.push(newImage);
+    }
+
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
     const catDetails = await catDTO.catsListToDTO(newCat);
     io.getIO().emit("cats", {
@@ -71,6 +79,7 @@ const addCat = async (req, res) => {
     });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -83,10 +92,13 @@ const editCat = async (req, res) => {
 
     let cat = await Cat.findByPk(req.params.id);
     cat = await catHelper.updateCatData(cat, req.body);
+    let newImage = await Image.findOne({ where: { catId: cat.id } });
     if (req.body.uri) {
-      cat.imageId = await fileHelper.moveImage(cat, req.body.uri);
+      newImage = await fileHelper.moveImage(newImage, req.body.uri);
     }
     await cat.save();
+    newImage.catId = cat.id;
+    await newImage.save();
     const catDetails = await catDTO.catsListToDTO(cat);
     io.getIO().emit("cats", {
       action: "update",
@@ -108,12 +120,12 @@ const deleteCat = async (req, res) => {
     }
 
     const cat = await Cat.findByPk(req.params.id);
-    const image = await Image.findByPk(cat.imageId);
+    const image = await Image.findOne({ where: { catId: cat.id } });
 
     await mailHelper.deleteAdoptionRequestCat(cat, req.user);
     await CatUser.destroy({ where: { catId: cat.id } });
-    await cat.destroy();
     await fileHelper.deleteImage(image, "uploads");
+    await cat.destroy();
     await transaction.commit();
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {

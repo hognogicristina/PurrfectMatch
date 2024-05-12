@@ -1,8 +1,8 @@
 const { Address, Image, UserInfo } = require("../../models");
 
 async function userToDTO(user) {
-  const address = await Address.findOne({ where: { id: user.addressId } });
-  const image = await Image.findOne({ where: { id: user.imageId } });
+  const address = await Address.findOne({ where: { userId: user.id } });
+  const image = await Image.findOne({ where: { userId: user.id } });
   const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
 
   return {

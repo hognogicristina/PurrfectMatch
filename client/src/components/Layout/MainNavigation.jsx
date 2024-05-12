@@ -8,21 +8,49 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { NavLink, useRouteLoaderData } from "react-router-dom";
+import { NavLink, useLocation, useRouteLoaderData } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 
-import CatNavigation from "./CatNavigation.jsx";
+import CatsNavigation from "./CatsNavigation.jsx";
 
 function MainNavigation() {
   const token = useRouteLoaderData("root");
   const [isOpen, setIsOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const location = useLocation();
+  const isUserPage = location.pathname === "/user";
+
+  const userMenuButtonStyle = {
+    border: isUserPage ? "3px solid #AE3D72FF" : "3px solid #e37fb6",
+    transition: "border 0.3s ease-in-out",
+  };
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
   const closeDropdown = () => {
     setIsOpen(false);
+    setIsUserMenuOpen(false);
+  };
+
+  const userMenuVariants = {
+    hidden: {
+      opacity: 0,
+      transition: {
+        duration: 0.3,
+      },
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+      },
+    },
   };
 
   const dropdownVariants = {
@@ -60,15 +88,14 @@ function MainNavigation() {
       }
     };
 
-    // Attach event listener when the dropdown is open
-    if (isOpen) {
+    if (isOpen || isUserMenuOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, isUserMenuOpen]);
 
   return (
     <header className="mainNavigatiom">
@@ -116,7 +143,7 @@ function MainNavigation() {
                   animate="visible"
                   exit="hidden"
                 >
-                  <CatNavigation onClose={closeDropdown} />
+                  <CatsNavigation onClose={closeDropdown} />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -157,16 +184,40 @@ function MainNavigation() {
                 <FontAwesomeIcon icon={faInbox} />
               </motion.div>
             </NavLink>
-            <NavLink
-              to="/user"
-              className={({ isActive }) =>
-                isActive ? "links active-link" : "links"
-              }
-            >
-              <motion.div whileTap={{ scale: 0.9 }}>
+            <div className="userMenuContainer">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={toggleUserMenu}
+                className="dropbtn userMenu"
+                style={userMenuButtonStyle}
+              >
                 <FontAwesomeIcon icon={faUser} />
-              </motion.div>
-            </NavLink>
+              </motion.button>
+              <AnimatePresence>
+                {isUserMenuOpen && (
+                  <motion.div
+                    className="dropdownContent userMenu"
+                    variants={userMenuVariants}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                  >
+                    <NavLink
+                      to="/user"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Profile
+                    </NavLink>
+                    <NavLink
+                      to="/logout"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      Logout
+                    </NavLink>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </>
         ) : (
           <>

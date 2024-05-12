@@ -72,9 +72,9 @@ export default function ChangeUsernameProfile({ userDetail }) {
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
-            className="submitButton save"
+            className={`submitButton save ${isSubmitting ? "submitting" : ""}`}
           >
-            Save
+            {isSubmitting ? "Saving.." : "Save"}
           </motion.button>
         </Form>
       </motion.div>

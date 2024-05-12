@@ -82,14 +82,7 @@ const reactivate = async (req, res) => {
 const login = async (req, res) => {
   try {
     if (await authValidator.loginValidation(req, res)) return;
-    const expiresIn = req.body.rememberMe
-      ? 30 * 24 * 60 * 60
-      : process.env.JWT_TTL;
-
-    if (req.body.rememberMe === "on") {
-      req.body.rememberMe = true;
-    }
-    console.log(req.body.rememberMe);
+    const expiresIn = process.env.JWT_TTL;
 
     const token = jwt.sign(
       {
@@ -132,7 +125,6 @@ const resetPasswordRequest = async (req, res) => {
       status: "If the email exists, a reset link will be sent to you",
     });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     res
       .status(500)

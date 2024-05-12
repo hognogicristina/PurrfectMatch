@@ -35,10 +35,6 @@ code {
   monospace;
 }
 
-button {
-  font-weight: 200;
-}
-
 a {
   text-decoration: none;
   font-weight: 270;
@@ -52,6 +48,7 @@ button {
   padding: 12px;
   font-size: 16px;
   cursor: pointer;
+  font-weight: 600;
   border-radius: var(--border-radius);
 }
 
@@ -91,16 +88,20 @@ textarea {
 }
 
 .submitButton {
-  font-weight: 500;
   text-align: center;
   text-shadow: 0 1px 1px var(--dark-shade);
   padding: 11px;
+  font-weight: 600;
   border-radius: 8px;
   border: 1px solid var(--button-submit-border);
   background-color: var(--button-submit);
   color: var(--white-color);
   cursor: pointer;
   transition: background-color 0.3s ease;
+}
+
+.submitButton a {
+  font-weight: 600;
 }
 
 .submitButton:hover {
@@ -115,16 +116,52 @@ textarea {
   width: 100px;
 }
 
+.submitButton:disabled,
+.submitting {
+  border: 1px solid #53535347;
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.simpleButton.delete.submitting,
+.simpleButton.delete:disabled {
+  border: 1px solid #53535347;
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.submitting:hover,
+.submitting.simpleButton.delete:hover {
+  background-color: #ccc;
+  color: #666;
+}
+
+.submitting.save {
+  width: 140px;
+}
+
+.submitting.save:hover {
+  background-color: #ccc;
+}
+
 .simpleButton {
   margin-top: 20px;
   color: #2d1e30;
+  font-weight: 600;
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease;
-  font-weight: 600;
   border: var(--border-style);
   background-color: var(--simple-button);
+}
+
+.simpleButton a {
+  font-weight: 600;
 }
 
 .simpleButton.submit {
@@ -132,7 +169,6 @@ textarea {
 }
 
 .simpleButtonText.submit {
-  font-weight: 600;
   font-size: 17px;
   color: #2d1e30;
   text-shadow: 0 1px 1px var(--dark-shade);
@@ -156,11 +192,15 @@ textarea {
   width: 100%;
   border-radius: var(--border-radius);
   color: white;
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
   border: 1px solid #53535347;
   background-color: var(--cancel-button);
   text-shadow: 0 1px 1px var(--dark-shade);
+}
+
+.cancelButton a {
   font-weight: 600;
 }
 
@@ -175,4 +215,22 @@ textarea {
 
 .titleFontRed {
   color: var(--button-delete);
+}
+
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

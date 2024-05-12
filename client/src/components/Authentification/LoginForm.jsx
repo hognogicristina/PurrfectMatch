@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ReactivateDialog from "../Util/Custom/ReactivateDialog.jsx";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import { Spinner } from "../Util/Custom/Spinner.jsx";
 
 export default function LoginForm() {
   const data = useActionData();
@@ -18,7 +19,6 @@ export default function LoginForm() {
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
@@ -45,9 +45,13 @@ export default function LoginForm() {
     <div className="authContainer">
       <motion.div
         className="authForm"
-        initial={{ y: "100vh", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 120, damping: 15 }}
+        initial={{ scale: 0.5, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 120,
+          damping: 15,
+        }}
       >
         <Form method="post">
           <h2>Log In</h2>
@@ -55,9 +59,6 @@ export default function LoginForm() {
             name="usernameOrEmail"
             type="text"
             placeholder="Enter your username or email"
-            onKeyPress={(e) => {
-              if (e.key === "Enter") e.preventDefault();
-            }}
             required
           />
           <label className="passwordInput">
@@ -65,9 +66,6 @@ export default function LoginForm() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
               required
             />
             <span
@@ -77,22 +75,13 @@ export default function LoginForm() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <div className="rememberMe">
-            <input
-              name="rememberMe"
-              type="checkbox"
-              defaultValue={rememberMe}
-              onClick={() => setRememberMe(!rememberMe)}
-            />
-            <label>Remember me</label>
-          </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}
             type="submit"
-            className="submitButton submit"
+            className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
           >
-            Login
+            {isSubmitting ? <Spinner /> : "Login"}
           </motion.button>
           <div className="linksContainer">
             <Link to="/register" className="linkButton">

@@ -17,7 +17,6 @@ const getOneUser = async (req, res) => {
     const userDetails = await userDTO.userToDTO(user);
     return res.json({ data: userDetails });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -31,6 +30,7 @@ const getUser = async (req, res) => {
     const userDetails = await userDTO.userToDTO(req.user);
     return res.json({ data: userDetails });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -91,10 +91,13 @@ const editUser = async (req, res) => {
     ];
     const user = await User.findByPk(req.user.id);
     await userHelper.updateEmail(user, fieldsToUpdate, req.body);
+    let newImage = await Image.findOne({ where: { userId: user.id } });
     if (req.body.uri) {
-      user.imageId = await fileHelper.moveImage(user, req.body.uri);
+      newImage = await fileHelper.moveImage(user, req.body.uri);
     }
     await user.save();
+    newImage.userId = user.id;
+    await newImage.save();
     return res.json({ status: "Your profile has been modified" });
   } catch (error) {
     logger.error(error);

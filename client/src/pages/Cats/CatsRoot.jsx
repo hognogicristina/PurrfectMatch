@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import CatsNavigation from "../../components/Layout/CatsNavigation.jsx";
 
-export default function CatRootLayout() {
+function CatsRootLayout() {
   return (
     <>
       <CatsNavigation />
@@ -9,3 +9,5 @@ export default function CatRootLayout() {
     </>
   );
 }
+
+export default CatsRootLayout;

@@ -56,6 +56,12 @@ router.post(
   upload.single("file"),
   imageController.uploadImage,
 );
+router.post(
+  "/uploads",
+  authMiddleware.authenticateToken,
+  upload.array("files", 10),
+  imageController.uploadImages,
+);
 
 // User routes
 router.get("/user-profile/:id", userController.getOneUser);

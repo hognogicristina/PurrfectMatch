@@ -1,7 +1,8 @@
 import { getAuthToken } from "../../util/auth.js";
+import CatAddForm from "../../components/Cat/CatAddForm.jsx";
 
 function CatAdd() {
-  return <p>Cat Add</p>;
+  return <CatAddForm />;
 }
 
 export default CatAdd;

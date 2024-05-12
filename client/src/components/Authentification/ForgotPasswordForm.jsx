@@ -36,9 +36,13 @@ export default function ForgotPasswordForm() {
       {!submitted ? (
         <motion.div
           className="authForm"
-          initial={{ y: "100vh", opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 120, damping: 15 }}
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{
+            type: "spring",
+            stiffness: 120,
+            damping: 15,
+          }}
         >
           <Form method="post">
             <h2>Forgot Your Password?</h2>
@@ -62,11 +66,11 @@ export default function ForgotPasswordForm() {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                type="submit"
                 disabled={isSubmitting}
-                className="submitButton submit"
+                type="submit"
+                className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
               >
-                Submit
+                {isSubmitting ? "Submitting.." : "Submit"}
               </motion.button>
             </div>
           </Form>

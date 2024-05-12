@@ -16,6 +16,19 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 8px 16px var(--dark-shade);
+}
+
+.formConfirmation {
+  border: 1px solid #ccc;
+  margin-top: 100px;
+  padding: 5px 70px 50px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
@@ -45,43 +58,6 @@
   display: flex;
   justify-content: space-between;
   gap: 10px;
-}
-
-.rememberMe {
-  display: flex;
-  align-items: center;
-}
-
-.rememberMe label {
-  margin-bottom: 10px;
-}
-
-.rememberMe input {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 10px;
-  height: 10px;
-  border: 2px solid var(--button-submit);
-  border-radius: 6px;
-  margin-right: 10px;
-  position: relative;
-  cursor: pointer;
-}
-
-.rememberMe input[type="checkbox"]:checked {
-  border: 2px solid var(--button-submit-hover);
-  background-color: var(--button-submit-hover);
-}
-
-.rememberMe input[type="checkbox"]:checked::after {
-  content: '\2713';
-  font-size: 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #ffffff;
 }
 
 .linksContainer {
@@ -123,4 +99,13 @@
   align-items: center;
   flex-direction: column;
   width: 300px;
+}
+
+.errorText {
+  color: red;
+  font-weight: lighter;
+  font-style: italic;
+  font-size: 15px !important;
+  margin-top: 4px;
+  text-align: left !important;
 }
