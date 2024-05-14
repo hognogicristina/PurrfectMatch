@@ -7,7 +7,6 @@ import {
   useNavigation,
 } from "react-router-dom";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import "./CatAddForm.css";
 import { motion } from "framer-motion";
 import Select from "react-select";
 import UploadsImage from "../../pages/Util/UploadsImages.jsx";

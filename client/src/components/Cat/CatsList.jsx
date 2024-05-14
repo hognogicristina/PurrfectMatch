@@ -1,12 +1,18 @@
 import React from "react";
-import "./CatsList.css";
+import "./Cat.css";
 import FilterBar from "../Util/Functionalities/FilterBar.jsx";
 import SortDropdown from "../Util/Functionalities/SortDropdown.jsx";
 import Select from "react-select";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 function CatsList({ cats, currentPage, onPageChange }) {
   const { data, error, totalPages } = cats;
+  const navigate = useNavigate();
+
+  const handleClickCatItem = (id) => {
+    navigate(`/cats/cat/${id}`);
+  };
 
   const renderPagination = () => (
     <div className="pagination">
@@ -56,11 +62,6 @@ function CatsList({ cats, currentPage, onPageChange }) {
     }),
   };
 
-  const handlePageSelect = (event) => {
-    const selectedPage = parseInt(event.target.value, 10);
-    onPageChange(selectedPage);
-  };
-
   const renderPageSelectDropdown = () => {
     let options = [];
     for (let i = 1; i <= totalPages; i++) {
@@ -100,6 +101,7 @@ function CatsList({ cats, currentPage, onPageChange }) {
           viewport={{ once: true }}
           key={index}
           className="catItem"
+          onClick={() => handleClickCatItem(cat.id)}
         >
           <img src={cat.image} alt={cat.name} className="catItemImg" />
           <h3>{cat.name}</h3>

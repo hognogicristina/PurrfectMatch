@@ -3,8 +3,10 @@
   --secondary-color: #f9f9f9;
   --background-color: #f4f4f9;
   --button-submit: #FF69B4;
+  --light-pink: rgba(255, 255, 255, 0.54);
   --button-submit-hover: #FF1493;
   --button-submit-border: #ff4fa7;
+  --pink-text: #c85b8c;
   --simple-button: #D5D5D570;
   --simple-button-hover: #D5D5D5C6;
   --button-delete: #D8000C;
@@ -18,7 +20,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto-Light, "Helvetica Neue", sans-serif;
   margin: 0;
   padding: 0;
   background-color: var(--background-color);

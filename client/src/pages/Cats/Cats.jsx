@@ -1,10 +1,4 @@
-import {
-  Await,
-  defer,
-  useLoaderData,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Await, defer, useLoaderData, useSearchParams } from "react-router-dom";
 import { Suspense, useEffect, useState } from "react";
 import CatsList from "../../components/Cat/CatsList.jsx";
 import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";

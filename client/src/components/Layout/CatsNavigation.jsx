@@ -37,7 +37,7 @@ function CatsNavigation({ onClose }) {
         </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/cat"} onClick={onClose}>
+        <NavLink to={"/cats/add"} onClick={onClose}>
           Give a Cat a Home
         </NavLink>
       </motion.div>

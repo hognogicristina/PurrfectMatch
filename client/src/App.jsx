@@ -27,7 +27,7 @@ import ReactivatePage, {
 } from "./pages/Authentification/Reactivate.jsx";
 import CatsPage, { loader as loadCats } from "./pages/Cats/Cats.jsx";
 import CatsRootLayout from "./pages/Cats/CatsRoot.jsx";
-import CatDetail from "./pages/Cats/CatDetail.jsx";
+import CatDetail, { loader as loadCat } from "./pages/Cats/CatDetail.jsx";
 import CatAdd, { action as actionCatAdd } from "./pages/Cats/CatAdd.jsx";
 import {
   checkAuthLoader,
@@ -59,7 +59,6 @@ import UploadImage, {
 } from "./pages/Util/UploadImage.jsx";
 import NotFoundPage from "./components/Util/Custom/NotFound.jsx";
 import { ToastProvider } from "./components/Util/Custom/ToastProvider.jsx";
-import CatRootLayout from "./pages/Cats/CatRoot.jsx";
 import UploadsImage, {
   action as actionUploadsImage,
 } from "./pages/Util/UploadsImages.jsx";
@@ -83,28 +82,23 @@ const router = createBrowserRouter([
       {
         path: "cats",
         element: <CatsRootLayout />,
+        id: "cat-details",
         children: [
           {
             index: true,
             element: <CatsPage />,
             loader: loadCats,
           },
-        ],
-      },
-      {
-        path: "cat",
-        element: <CatRootLayout />,
-        id: "cat-details",
-        children: [
           {
-            index: true,
+            path: "add",
             element: <CatAdd />,
             action: actionCatAdd,
             loader: checkAuthLoader,
           },
           {
-            path: ":id",
+            path: "cat/:id",
             element: <CatDetail />,
+            loader: loadCat,
           },
         ],
       },
@@ -206,7 +200,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <ToastProvider>
-      <RouterProvider router={router} />;
+      <RouterProvider router={router} />
     </ToastProvider>
   );
 }

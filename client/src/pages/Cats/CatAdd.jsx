@@ -11,7 +11,7 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
-  return await fetch("http://localhost:3000/cat", {
+  return await fetch("http://localhost:3000/cats/add", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

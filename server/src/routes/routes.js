@@ -107,18 +107,23 @@ router.get("/breeds", filterController.getAllBreeds);
 router.get("/age-types", filterController.getAgeType);
 router.get("/recent-cats", filterController.getRecentCats);
 router.get("/health-problems", filterController.getHealthProblems);
+router.get("/catsByBreed/:breed", filterController.getCatsByBreed);
 
 // Cat routes
 router.get("/cats", catController.getAllCats);
-router.get("/cat/:id", catController.getOneCat);
-router.post("/cat", authMiddleware.authenticateToken, catController.addCat);
+router.get("/cats/cat/:id", catController.getOneCat);
+router.post(
+  "/cats/add",
+  authMiddleware.authenticateToken,
+  catController.addCat,
+);
 router.patch(
-  "/cat/:id/edit",
+  "/cats/edit/:id",
   authMiddleware.authenticateToken,
   catController.editCat,
 );
 router.delete(
-  "/cat/:id/delete",
+  "/cats/delete/:id",
   authMiddleware.authenticateToken,
   catController.deleteCat,
 );

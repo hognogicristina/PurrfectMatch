@@ -66,4 +66,30 @@ const getHealthProblems = async (req, res) => {
   }
 };
 
-module.exports = { getAllBreeds, getRecentCats, getAgeType, getHealthProblems };
+const getCatsByBreed = async (req, res) => {
+  try {
+    if (await filterValidator.breedsExistValidator(req, res)) return;
+    const { breed } = req.params;
+    const cats = await Cat.findAll({ where: { breed: breed } });
+    const totalItems = cats.length;
+
+    const catsDetails = [];
+    for (let cat of cats) {
+      const catsDetail = await catDTO.catsListToDTO(cat);
+      catsDetails.push(catsDetail);
+    }
+
+    return res.status(200).json({ data: catsDetails, totalItems: totalItems });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = {
+  getAllBreeds,
+  getRecentCats,
+  getAgeType,
+  getHealthProblems,
+  getCatsByBreed,
+};

@@ -12,8 +12,6 @@ function MyProfile({ userDetail }) {
     userDetail.experienceLevel || 0,
   );
 
-  console.log(userDetail);
-
   const { notifyError } = useToast();
   const navigate = useNavigate();
 
