@@ -51,12 +51,6 @@ router.post(
 
 // Image routes
 router.post(
-  "/upload",
-  authMiddleware.authenticateToken,
-  upload.single("file"),
-  imageController.uploadImage,
-);
-router.post(
   "/uploads",
   authMiddleware.authenticateToken,
   upload.array("files", 10),
@@ -107,7 +101,8 @@ router.get("/breeds", filterController.getAllBreeds);
 router.get("/age-types", filterController.getAgeType);
 router.get("/recent-cats", filterController.getRecentCats);
 router.get("/health-problems", filterController.getHealthProblems);
-router.get("/catsByBreed/:breed", filterController.getCatsByBreed);
+router.get("/catsByBreed/:catId", filterController.getCatsByBreed);
+router.get("/catsOfGuardian/:catId", filterController.getCatsOfGuardian);
 
 // Cat routes
 router.get("/cats", catController.getAllCats);

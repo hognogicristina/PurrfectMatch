@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { getAuthToken } from "../../util/auth.js";
 import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
-function MyProfileDetail() {
+function MyProfileDetailPage() {
   const data = useRouteLoaderData("user-details");
   const userDetail = data.userDetail;
 
@@ -17,7 +17,7 @@ function MyProfileDetail() {
   );
 }
 
-export default MyProfileDetail;
+export default MyProfileDetailPage;
 
 async function loadUserDetail() {
   const token = getAuthToken();

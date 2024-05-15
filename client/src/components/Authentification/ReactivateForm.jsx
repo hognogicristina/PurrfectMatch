@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
 import { Spinner } from "../Util/Custom/Spinner.jsx";
+import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
 
 export default function ReactivateForm() {
   const data = useActionData();
@@ -19,6 +20,11 @@ export default function ReactivateForm() {
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -31,6 +37,10 @@ export default function ReactivateForm() {
       }
     }
   }, [data]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="authContainer">
@@ -47,7 +57,7 @@ export default function ReactivateForm() {
         >
           <Form method="post">
             <h1>Reactivate Account</h1>
-            <p>
+            <p className="reactivate">
               In order for us to send you a reactivation link, please enter your
               email below:
             </p>
@@ -59,14 +69,24 @@ export default function ReactivateForm() {
                 required
               />
             </label>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              disabled={isSubmitting}
-              type="submit"
-              className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
-            >
-              {isSubmitting ? <Spinner /> : "Reactivate Account"}
-            </motion.button>
+            <div className="buttonContainer">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={() => navigate("/login")}
+                className="cancelButton"
+              >
+                Cancel
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                disabled={isSubmitting}
+                type="submit"
+                className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
+              >
+                {isSubmitting ? <Spinner /> : "Reactivate Account"}
+              </motion.button>
+            </div>
           </Form>
         </motion.div>
       ) : (

@@ -147,8 +147,6 @@ const editAddressValidation = async (req, res) => {
 };
 
 const deleteUserValidation = async (req, res) => {
-  const error = [];
-
   const user = await User.findByPk(req.user.id);
   if (!user) {
     return res
@@ -157,15 +155,19 @@ const deleteUserValidation = async (req, res) => {
   }
 
   if (validator.isEmpty(req.body.username || "")) {
-    error.push({ field: "username", message: "Please enter your username" });
+    return res.status(404).json({
+      error: [{ field: "username", message: "Please enter your username" }],
+    });
   } else {
     const user = await User.findByPk(req.user.id);
     if (user.username !== req.body.username) {
-      error.push({ field: "username", message: "Invalid username! Try again" });
+      return res.status(404).json({
+        error: [{ field: "invalid", message: "Invalid username! Try again" }],
+      });
     }
   }
 
-  return error.length > 0 ? res.status(400).json({ error }) : null;
+  return null;
 };
 
 module.exports = {

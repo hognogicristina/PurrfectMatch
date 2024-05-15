@@ -6,12 +6,11 @@ const fileHelper = require("../helpers/fileHelper");
 const mailHelper = require("../helpers/adoptionRequestHelper");
 const catDTO = require("../dto/catDTO");
 const logger = require("../../logger/logger");
-const io = require("../../socket");
 
 const getAllCats = async (req, res) => {
   try {
     const page = req.query.page || 1;
-    const pageSize = 6;
+    const pageSize = 24;
     if (await catValidator.catExistValidator(req, res)) return;
     const cats = await catHelper.filterCats(req);
     if (await catValidator.catsFilterValidator(cats, res)) return;
@@ -63,23 +62,15 @@ const addCat = async (req, res) => {
     catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
 
-    const imagesDetails = [];
     for (const uri of catData.uris) {
       const newImage = await fileHelper.moveImage(null, uri);
       newImage.catId = newCat.id;
       await newImage.save();
-      imagesDetails.push(newImage);
     }
 
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
-    const catDetails = await catDTO.catsListToDTO(newCat);
-    io.getIO().emit("cats", {
-      action: "create",
-      cat: catDetails,
-    });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -92,18 +83,15 @@ const editCat = async (req, res) => {
 
     let cat = await Cat.findByPk(req.params.id);
     cat = await catHelper.updateCatData(cat, req.body);
-    let newImage = await Image.findOne({ where: { catId: cat.id } });
-    if (req.body.uri) {
-      newImage = await fileHelper.moveImage(newImage, req.body.uri);
-    }
     await cat.save();
-    newImage.catId = cat.id;
-    await newImage.save();
-    const catDetails = await catDTO.catsListToDTO(cat);
-    io.getIO().emit("cats", {
-      action: "update",
-      cat: catDetails,
-    });
+
+    let newImage = await Image.findOne({ where: { catId: cat.id } });
+    for (const uri of cat.uris) {
+      newImage = await fileHelper.moveImage(newImage, uri);
+      newImage.catId = cat.id;
+      await newImage.save();
+    }
+
     return res.json({ status: "Cat updated successfully" });
   } catch (error) {
     logger.error(error);

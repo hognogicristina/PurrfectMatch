@@ -5,7 +5,7 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import DeleteAccount from "../../pages/Users/DeleteAccount.jsx";
+import DeleteProfile from "./DeleteProfile.jsx";
 
 function MyProfile({ userDetail }) {
   const [tempExperienceLevel, setTempExperienceLevel] = useState(
@@ -13,11 +13,7 @@ function MyProfile({ userDetail }) {
   );
 
   const { notifyError } = useToast();
-  const navigate = useNavigate();
-
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const showDeleteAccount = queryParams.get("delete") === "true";
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   useEffect(() => {
     if (userDetail.error) {
@@ -62,7 +58,7 @@ function MyProfile({ userDetail }) {
   };
 
   const handleDeleteAccountOpen = () => {
-    navigate("/user?delete=true");
+    setShowDeleteAccount(true);
   };
 
   return (
@@ -123,7 +119,9 @@ function MyProfile({ userDetail }) {
           </span>
         </div>
       </motion.div>
-      {showDeleteAccount && <DeleteAccount />}
+      {showDeleteAccount && (
+        <DeleteProfile onClose={() => setShowDeleteAccount(false)} />
+      )}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { Await, Outlet, useRouteLoaderData } from "react-router-dom";
 import UserNavBar from "../../components/Layout/UserNavBar.jsx";
 import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";

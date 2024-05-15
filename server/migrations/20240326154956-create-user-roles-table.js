@@ -18,7 +18,7 @@ module.exports = {
         },
         allowNull: false,
       },
-      mailId: {
+      adoptionRequestId: {
         type: Sequelize.INTEGER,
         references: {
           model: "AdoptionRequests",

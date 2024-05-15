@@ -69,9 +69,10 @@ const getHealthProblems = async (req, res) => {
 const getCatsByBreed = async (req, res) => {
   try {
     if (await filterValidator.breedsExistValidator(req, res)) return;
-    const { breed } = req.params;
+    const { catId } = req.params;
+    const cat = await Cat.findByPk(catId);
+    const breed = cat.breed;
     const cats = await Cat.findAll({ where: { breed: breed } });
-    const totalItems = cats.length;
 
     const catsDetails = [];
     for (let cat of cats) {
@@ -79,7 +80,27 @@ const getCatsByBreed = async (req, res) => {
       catsDetails.push(catsDetail);
     }
 
-    return res.status(200).json({ data: catsDetails, totalItems: totalItems });
+    return res.status(200).json({ data: catsDetails });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getCatsOfGuardian = async (req, res) => {
+  try {
+    const { catId } = req.params;
+    const cat = await Cat.findByPk(catId);
+    const userId = cat.userId;
+    const cats = await Cat.findAll({ where: { userId: userId } });
+
+    const catsDetails = [];
+    for (let cat of cats) {
+      const catsDetail = await catDTO.catsListToDTO(cat);
+      catsDetails.push(catsDetail);
+    }
+
+    return res.status(200).json({ data: catsDetails });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -92,4 +113,5 @@ module.exports = {
   getAgeType,
   getHealthProblems,
   getCatsByBreed,
+  getCatsOfGuardian,
 };

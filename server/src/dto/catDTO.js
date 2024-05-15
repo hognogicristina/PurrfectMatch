@@ -7,13 +7,16 @@ async function catToDTO(cat) {
   const address = await Address.findOne({ where: { userId: guardian.id } });
 
   return {
+    id: cat.id ? cat.id : null,
     name: cat.name ? cat.name : null,
-    images: images ? images.map((image) => image.url) : null,
+    images: images.map((image) => image.url) || [],
     breed: cat.breed ? cat.breed : null,
     gender: cat.gender ? cat.gender : null,
     lifeStage: cat.ageType ? cat.ageType : null,
     healthProblem: cat.healthProblem ? cat.healthProblem : null,
     description: cat.description ? cat.description : null,
+    userId: cat.userId ? cat.userId : null,
+    user: guardian ? guardian.username : null,
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
     address: address ? `${address.city}, ${address.country}` : null,
@@ -39,6 +42,7 @@ async function catsRecentListToDTO(cat) {
   const image = images[0];
 
   return {
+    id: cat.id ? cat.id : null,
     image: image ? image.url : null,
     name: cat.name ? cat.name : null,
     lifeStage: cat.ageType ? cat.ageType : null,

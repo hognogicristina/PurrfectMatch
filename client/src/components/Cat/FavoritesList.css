@@ -1,0 +1,86 @@
+.favorites-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: auto;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #ff1493;
+  font-family: 'Arial', sans-serif;
+}
+
+.favorites-list {
+  list-style: none;
+  padding: 0;
+}
+
+.favorite-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffe4e1;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cat-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.cat-details {
+  flex-grow: 1;
+}
+
+.cat-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #ff1493;
+}
+
+.cat-breed {
+  font-size: 14px;
+  margin: 0;
+  color: #555;
+}
+
+.cat-actions {
+  display: flex;
+  align-items: center;
+}
+
+.heart-button, .adopt-button {
+  background-color: #ff1493;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-family: 'Arial', sans-serif;
+}
+
+.heart-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.heart-button svg {
+  margin-right: 0;
+}
+
+.adopt-button:hover, .heart-button:hover {
+  background-color: #ff69b4;
+}

@@ -7,13 +7,14 @@ import {
   useNavigation,
 } from "react-router-dom";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import Select from "react-select";
 import UploadsImage from "../../pages/Util/UploadsImages.jsx";
 import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
-import "./CatAddForm.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
-export default function CatAddForm() {
+export default function CatEditForm({ catDetail, onClose }) {
   const data = useActionData();
   const navigation = useNavigation();
   const navigate = useNavigate();
@@ -21,12 +22,25 @@ export default function CatAddForm() {
   const { notifyError, notifySuccess } = useToast();
   const [breeds, setBreeds] = useState([]);
   const [errors, setErrors] = useState({});
-  const initialImage = null;
+  const initialImage = catDetail.images;
   const [genders] = useState([
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
   ]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
+
+  console.log(catDetail);
+
+  const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      onClose();
+    }
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -106,24 +120,46 @@ export default function CatAddForm() {
     return <LoadingSpinner />;
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    formData.append("id", catDetail.id);
+    formData.append("image", initialImage);
+    const response = await fetch(
+      `http://localhost:3000/cats/edit/${catDetail.id}`,
+      {
+        method: "PUT",
+        body: formData,
+      },
+    );
+    const data = await response.json();
+    if (response.ok) {
+      notifySuccess(data.status);
+      handleClose();
+    } else {
+      notifyError(data.message);
+    }
+  };
+
   return (
-    <div className="authContainer">
+    <div className="dialogOverlay">
       <motion.div
-        className="authForm catAddForm"
+        className="authForm catEditForm"
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
+        exit={{ y: "100vh", opacity: 0 }}
         transition={{
           type: "spring",
           stiffness: 120,
           damping: 15,
         }}
       >
-        <Form method="post">
+        <div className="closeButton catEditForm" onClick={handleClose}>
+          <FontAwesomeIcon icon={faXmark} className="faXmark" />
+        </div>
+        <Form onSubmit={handleSubmit} className="addCatContainer">
           <div className="headerAddCat">
-            <h2>Add a New Cat</h2>
-            <NavLink to="/cats" className="linkButton">
-              Back to Cats
-            </NavLink>
+            <h2>Modify Cat</h2>
           </div>
           {Object.keys(errors).length > 0 && (
             <div className="error-messages">
@@ -140,8 +176,8 @@ export default function CatAddForm() {
             id="name"
             name="name"
             placeholder="Enter cat's name"
+            defaultValue={catDetail.name}
             className={errors.name ? "input-error" : ""}
-            required
           />
           <UploadsImage initialImage={initialImage} />
           <label className="selectAddCat">Breed:</label>
@@ -152,6 +188,7 @@ export default function CatAddForm() {
             placeholder="Select a breed"
             className="selectControl"
             isClearable={true}
+            defaultValue={catDetail.breed}
           />
 
           <label className="selectAddCat">Gender:</label>
@@ -162,6 +199,7 @@ export default function CatAddForm() {
             placeholder="Select a Gender"
             className="selectControl"
             isClearable={true}
+            defaultValue={catDetail.gender}
           />
           <label>Age:</label>
           <input
@@ -178,6 +216,7 @@ export default function CatAddForm() {
             name="description"
             placeholder="Enter cat's description"
             className={errors.description ? "input-error" : ""}
+            defaultValue={catDetail.description}
           ></textarea>
           <div>
             <motion.button

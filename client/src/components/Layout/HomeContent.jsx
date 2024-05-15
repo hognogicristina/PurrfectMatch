@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Intro from "../Util/HomePage/Intro.jsx";
 
 export default function HomeContent({ cats, breeds }) {
-  console.log(localStorage.getItem("token"));
   return (
     <motion.div
       className="homeContent"
@@ -131,7 +130,7 @@ export default function HomeContent({ cats, breeds }) {
               className="cardEssential"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.2, delay: index * 0.1 }}
               whileHover={{
                 rotate: 5,
                 transition: { duration: 0.1, delay: index * 0.01 },
@@ -195,7 +194,7 @@ export default function HomeContent({ cats, breeds }) {
                     whileHover={{ x: 5 }}
                     transition={{ type: "spring", stiffness: 200 }}
                   >
-                    <Link to={`/cats/${cat.id}`} className="btnCat">
+                    <Link to={`/cats/cat/${cat.id}`} className="btnCat">
                       Learn More &gt;
                     </Link>
                   </motion.div>

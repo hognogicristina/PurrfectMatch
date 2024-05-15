@@ -1,4 +1,4 @@
-import { Form, useActionData, useNavigation } from "react-router-dom";
+import { Form, Link, useActionData, useNavigation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -92,14 +92,19 @@ export default function ChangeUsernameProfile({ userDetail }) {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            disabled={isSubmitting}
-            type="submit"
-            className={`submitButton save ${isSubmitting ? "submitting" : ""}`}
-          >
-            {isSubmitting ? "Saving.." : "Save"}
-          </motion.button>
+          <div className="linksContainer">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              disabled={isSubmitting}
+              type="submit"
+              className={`submitButton save ${isSubmitting ? "submitting" : ""}`}
+            >
+              {isSubmitting ? "Saving.." : "Save"}
+            </motion.button>
+            <Link to="/reset" className="linkButton">
+              Forgot Password?
+            </Link>
+          </div>
         </Form>
       </motion.div>
     </div>

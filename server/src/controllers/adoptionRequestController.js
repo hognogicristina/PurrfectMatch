@@ -34,6 +34,7 @@ const adoptCat = async (req, res) => {
       .status(200)
       .json({ status: "Adoption request sent successfully" });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }

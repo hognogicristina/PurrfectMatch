@@ -1,7 +1,8 @@
 import { Outlet, useLoaderData, useSubmit } from "react-router-dom";
 import MainNavigation from "../../components/Layout/MainNavigation.jsx";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { getTokenDuration } from "../../util/auth.js";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
 function RootLayout() {
   const token = useLoaderData();
@@ -24,12 +25,12 @@ function RootLayout() {
   }, [token, submit]);
 
   return (
-    <>
+    <Suspense fallback={<LoadingSpinner />}>
       <MainNavigation />
       <main>
         <Outlet />
       </main>
-    </>
+    </Suspense>
   );
 }
 

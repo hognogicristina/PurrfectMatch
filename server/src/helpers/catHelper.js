@@ -54,15 +54,22 @@ const filterCats = async (req) => {
   const selectedGender = req.query.selectedGender
     ? req.query.selectedGender
     : null;
-  const selectedNoHealthProblem =
-    req.query.selectedNoHealthProblem !== undefined;
+  const selectedHealthProblem = req.query.selectedHealthProblem !== undefined;
+  const selectedUserId = req.query.selectedUserId
+    ? req.query.selectedUserId
+    : null;
   const sortBy = req.query.sortBy ? req.query.sortBy : "breed";
   const sortOrder = req.query.sortOrder ? req.query.sortOrder : "asc";
   let cats;
-  let queryOptions = {};
+  let queryOptions = {
+    where: {
+      status: "active",
+    },
+  };
 
   if (searchQuery) {
     queryOptions.where = {
+      ...queryOptions.where,
       [Op.or]: [
         { breed: { [Op.like]: `%${searchQuery}%` } },
         { healthProblem: { [Op.like]: `%${searchQuery}%` } },
@@ -81,8 +88,15 @@ const filterCats = async (req) => {
   if (selectedGender) {
     queryOptions.where = { ...queryOptions.where, gender: selectedGender };
   }
-  if (selectedNoHealthProblem) {
-    queryOptions.where = { ...queryOptions.where, healthProblem: null };
+  if (selectedHealthProblem) {
+    queryOptions.where = {
+      ...queryOptions.where,
+      healthProblem: selectedHealthProblem,
+    };
+  }
+
+  if (selectedUserId) {
+    queryOptions.where = { ...queryOptions.where, userId: selectedUserId };
   }
 
   cats = await Cat.findAll(queryOptions);

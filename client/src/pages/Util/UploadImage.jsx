@@ -71,12 +71,12 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
-  const imageFile = data.get("file");
+  const imageFile = data.get("files");
 
   const formData = new FormData();
-  formData.append("file", imageFile);
+  formData.append("files", imageFile);
 
-  const response = await fetch("http://localhost:3000/upload", {
+  const response = await fetch("http://localhost:3000/uploads", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,

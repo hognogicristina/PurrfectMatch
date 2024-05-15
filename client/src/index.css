@@ -207,6 +207,7 @@ textarea {
 }
 
 .linkButton {
+  align-content: center;
   color: #ff008d;
   transition: color 0.3s ease;
 }
@@ -235,4 +236,37 @@ textarea {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.paginationButtons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-direction: row;
+}
+
+.pagination button {
+  padding: 8px 20px 4px 20px;
+  margin: 0 5px;
+  color: white;
+  background-color: var(--button-submit);
+  border: 1px solid var(--button-submit-border);
+  text-shadow: 0 1px 1px var(--dark-shade);
+  font-weight: 400;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.pagination span {
+  font-size: 16px;
+  margin: 0 10px;
+  color: #afafaf;
 }

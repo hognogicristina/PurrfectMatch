@@ -106,7 +106,7 @@ const login = async (req, res) => {
       sameSite: "none",
     });
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, refreshToken });
   } catch (error) {
     logger.error(error);
     res

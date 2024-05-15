@@ -49,20 +49,22 @@ const adoptValidator = async (req, res) => {
     attributes: ["id"],
   });
 
-  for (const adoptionRequest of pendingAdoptionRequests) {
-    const existingRequest = await UserRole.findOne({
-      where: {
-        adoptionRequestId: adoptionRequest.id,
-        userId: userId,
-        role: "sender",
-      },
-    });
-
-    if (existingRequest) {
-      error.push({
-        field: "request",
-        message: "Adoption request already sent",
+  if (pendingAdoptionRequests.length > 0) {
+    for (const adoptionRequest of pendingAdoptionRequests) {
+      const existingRequest = await UserRole.findOne({
+        where: {
+          adoptionRequestId: adoptionRequest.id,
+          userId: userId,
+          role: "sender",
+        },
       });
+
+      if (existingRequest) {
+        error.push({
+          field: "request",
+          message: "Adoption request already sent",
+        });
+      }
     }
   }
 

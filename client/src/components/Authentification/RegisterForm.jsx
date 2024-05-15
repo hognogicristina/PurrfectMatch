@@ -10,6 +10,7 @@ import "./Authentification.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
 
 export default function RegisterForm() {
   const data = useActionData();
@@ -21,6 +22,11 @@ export default function RegisterForm() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -43,6 +49,10 @@ export default function RegisterForm() {
 
   function handleContinue() {
     navigate("/login");
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner />;
   }
 
   return (
@@ -89,7 +99,6 @@ export default function RegisterForm() {
                     name="firstName"
                     type="text"
                     placeholder="Enter your first name"
-                    required
                   />
                   {errors.firstName && (
                     <p className="errorText">{errors.firstName}</p>
@@ -101,7 +110,6 @@ export default function RegisterForm() {
                     name="lastName"
                     type="text"
                     placeholder="Enter your last name"
-                    required
                   />
                   {errors.lastName && (
                     <p className="errorText">{errors.lastName}</p>
@@ -124,7 +132,6 @@ export default function RegisterForm() {
                     name="username"
                     type="text"
                     placeholder="Choose a username"
-                    required
                   />
                   {errors.username && (
                     <p className="errorText">{errors.username}</p>
@@ -134,9 +141,8 @@ export default function RegisterForm() {
                   Email
                   <input
                     name="email"
-                    type="email"
+                    type="text"
                     placeholder="Enter your email"
-                    required
                   />
                   {errors.email && <p className="errorText">{errors.email}</p>}
                 </label>
@@ -189,7 +195,7 @@ export default function RegisterForm() {
                   {isSubmitting ? "Creating account.." : "Register"}
                 </motion.button>
               </div>
-              <div className="linksContainer">
+              <div className="linksContainer auth">
                 <Link to="/login" className="linkButton">
                   Already have an account?
                 </Link>

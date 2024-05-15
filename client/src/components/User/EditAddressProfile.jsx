@@ -60,6 +60,7 @@ export default function EditAddressProfile({ userDetail }) {
                 name="county"
                 type="text"
                 placeholder="Enter your county"
+                defaultValue={user ? user.county : ""}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") e.preventDefault();
                 }}

@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Select from "react-select";
-import { NavLink, useSearchParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useToast } from "../Custom/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import { getAuthToken } from "../../../util/auth.js";
 
-function FilterBar() {
-  let [searchParams, setSearchParams] = useSearchParams();
+function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();
   const [breeds, setBreeds] = useState([]);
   const [ageTypes, setAgeTypes] = useState([]);
   const [healthProblems, setHealthProblems] = useState([]);
   const token = getAuthToken();
   const [genders] = useState([
-    { value: "male", label: "Male" },
-    { value: "female", label: "Female" },
+    { value: "Male", label: "Male" },
+    { value: "Female", label: "Female" },
   ]);
 
   useEffect(() => {
@@ -68,38 +67,21 @@ function FilterBar() {
     fetchHealthProblems();
   }, []);
 
-  useEffect(() => {
-    if (!searchParams.has("search")) {
-      searchParams.set("search", "");
-    }
-    [
-      "selectedBreed",
-      "selectedAgeType",
-      "selectedHealthProblem",
-      "selectedGender",
-    ].forEach((param) => {
-      if (!searchParams.has(param)) {
-        searchParams.set(param, "");
-      }
-    });
-    setSearchParams(searchParams);
-  }, []);
-
   const handleChange = (name, selectedOption) => {
-    searchParams.set(name, selectedOption ? selectedOption.value : "");
+    if (selectedOption) {
+      searchParams.set(name, selectedOption.value);
+    } else {
+      searchParams.delete(name);
+    }
     setSearchParams(searchParams, { replace: true });
   };
 
   const handleClearAll = () => {
-    [
-      "selectedBreed",
-      "selectedAgeType",
-      "selectedHealthProblem",
-      "selectedGender",
-      "search",
-    ].forEach((param) => {
-      searchParams.delete(param);
-    });
+    searchParams.delete("search");
+    searchParams.delete("selectedBreed");
+    searchParams.delete("selectedAgeType");
+    searchParams.delete("selectedHealthProblem");
+    searchParams.delete("selectedGender");
     setSearchParams(searchParams, { replace: true });
   };
 
@@ -188,7 +170,7 @@ function FilterBar() {
         }
         options={breeds}
         placeholder="Any Breed"
-        classNamePrefix="select"
+        className="selectControl"
         isClearable={true}
       />
       <label>Age Type</label>
@@ -205,7 +187,7 @@ function FilterBar() {
         }
         options={ageTypes}
         placeholder="Any Age Types"
-        classNamePrefix="select"
+        className="selectControl"
         isClearable={true}
       />
       <label>Health Problems</label>
@@ -223,7 +205,7 @@ function FilterBar() {
         }
         options={healthProblems}
         placeholder="Any Health Problems"
-        classNamePrefix="select"
+        className="selectControl"
         isClearable={true}
       />
       <label>Gender</label>
@@ -240,11 +222,11 @@ function FilterBar() {
         }
         options={genders}
         placeholder="Any Gender"
-        classNamePrefix="select"
+        className="selectControl"
         isClearable={true}
       />
       {token && (
-        <NavLink className="simpleButton submit" to="/cat">
+        <NavLink className="simpleButton submit" to="/cats/add">
           Give a Cat a Home
         </NavLink>
       )}

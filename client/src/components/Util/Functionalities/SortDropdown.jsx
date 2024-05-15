@@ -63,14 +63,15 @@ function SortDropdown() {
   };
 
   return (
-    <Select
-      className="sortDropdown"
-      onChange={handleSortChange}
-      options={options}
-      value={selectedValue}
-      classNamePrefix="select"
-      styles={customStyles}
-    />
+    <div className="sortDropdown">
+      <Select
+        onChange={handleSortChange}
+        options={options}
+        value={selectedValue}
+        classNamePrefix="select"
+        styles={customStyles}
+      />
+    </div>
   );
 }
 

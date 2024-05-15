@@ -3,20 +3,6 @@ const imageValidator = require("../validators/imageValidator");
 const imageDTO = require("../dto/imageDTO");
 const logger = require("../../logger/logger");
 
-const uploadImage = async (req, res) => {
-  try {
-    if (await imageValidator.imageValidator(req, res, null)) return;
-    const image = await fileHelper.uploadImage(req.file, "temporary-uploads");
-    const imageDetails = await imageDTO.imageToDTO(image);
-    res.status(201).json({ data: imageDetails });
-  } catch (error) {
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
-  }
-};
-
 const uploadImages = async (req, res) => {
   try {
     if (await imageValidator.imagesValidator(req, res)) return;
@@ -37,4 +23,4 @@ const uploadImages = async (req, res) => {
   }
 };
 
-module.exports = { uploadImage, uploadImages };
+module.exports = { uploadImages };

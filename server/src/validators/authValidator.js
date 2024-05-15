@@ -74,6 +74,11 @@ const registerValidation = async (req, res) => {
       field: "username",
       message: "Username must be at least 3 characters long",
     });
+  } else if (!validator.isAlphanumeric(req.body.username)) {
+    error.push({
+      field: "username",
+      message: "Username must contain only letters and numbers",
+    });
   } else {
     const user = await User.findOne({ where: { username: req.body.username } });
     if (user) {

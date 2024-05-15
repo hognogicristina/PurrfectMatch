@@ -12,6 +12,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import ReactivateDialog from "../Util/Custom/ReactivateDialog.jsx";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
 import { Spinner } from "../Util/Custom/Spinner.jsx";
+import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
 
 export default function LoginForm() {
   const data = useActionData();
@@ -22,6 +23,11 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (data && data.error) {
@@ -40,6 +46,10 @@ export default function LoginForm() {
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="authContainer">
@@ -83,7 +93,7 @@ export default function LoginForm() {
           >
             {isSubmitting ? <Spinner /> : "Login"}
           </motion.button>
-          <div className="linksContainer">
+          <div className="linksContainer auth">
             <Link to="/register" className="linkButton">
               Don't have an account?
             </Link>

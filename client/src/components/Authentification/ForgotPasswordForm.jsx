@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
 
 export default function ForgotPasswordForm() {
   const data = useActionData();
@@ -18,6 +19,11 @@ export default function ForgotPasswordForm() {
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     if (data) {
@@ -30,6 +36,10 @@ export default function ForgotPasswordForm() {
       }
     }
   }, [data]);
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="authContainer">
@@ -46,7 +56,9 @@ export default function ForgotPasswordForm() {
         >
           <Form method="post">
             <h2>Forgot Your Password?</h2>
-            <p>Please provide your email address to reset your password.</p>
+            <p className="reset">
+              Please provide your email address to reset your password.
+            </p>
             <label>
               <input
                 name="email"
@@ -59,7 +71,7 @@ export default function ForgotPasswordForm() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 type="button"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(-1)}
                 className="cancelButton"
               >
                 Cancel

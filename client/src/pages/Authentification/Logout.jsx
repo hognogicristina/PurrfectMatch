@@ -2,17 +2,23 @@ import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { getAuthToken } from "../../util/auth.js";
 import "../../styles/Logout.css";
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 
-function Logout() {
+function LogoutPage() {
   const data = useActionData();
   const { notifyError } = useToast();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [userDetails, setUserDetails] = useState({ username: "", image: "" });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   useEffect(() => {
     async function fetchUserDetails() {
@@ -54,6 +60,10 @@ function Logout() {
       return <FontAwesomeIcon icon={faUserCircle} className="userIcon" />;
     }
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <div className="containerLogout">
@@ -101,7 +111,7 @@ function Logout() {
   );
 }
 
-export default Logout;
+export default LogoutPage;
 
 export async function action() {
   const token = getAuthToken();

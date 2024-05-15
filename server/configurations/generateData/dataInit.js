@@ -105,16 +105,27 @@ const generateCats = async (numCats, users) => {
   for (let i = 0; i < numCats; i++) {
     let catData = {};
     catData = await helperData.generateCatData(catData);
-    const file = await helperData.generateImages(i, "cat_image");
-    const newImage = await fileHelper.uploadImage(file, "uploads");
+
+    const numImages = helperData.randomInt(1, 4);
+    const files = await helperData.generateImages(numImages, "cat_image");
+
+    const uploadedImages = [];
+    for (const file of files) {
+      const newImage = await fileHelper.uploadImage(file, "uploads");
+      uploadedImages.push(newImage);
+    }
 
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
     catData.userId = randomUser.id;
 
     const newCat = await Cat.create(catData);
-    newImage.catId = newCat.id;
-    await newImage.save();
+
+    for (const uploadedImage of uploadedImages) {
+      uploadedImage.catId = newCat.id;
+      await uploadedImage.save();
+    }
+
     await CatUser.create({ catId: newCat.id, userId: randomUser.id });
   }
 };
@@ -172,8 +183,8 @@ const generateData = async () => {
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();
     const users = await generateUsers(25);
-    await generateCats(50, users);
-    await generateFavorite(15, users);
+    await generateCats(300, users);
+    await generateFavorite(150, users);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);

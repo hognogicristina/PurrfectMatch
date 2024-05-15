@@ -1,14 +1,14 @@
-import { Outlet, useRouteLoaderData } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import CatsNavigation from "../../components/Layout/CatsNavigation.jsx";
+import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import { Suspense } from "react";
 
 function CatsRootLayout() {
-  const data = useRouteLoaderData("cat-details");
-
   return (
-    <>
+    <Suspense fallback={<LoadingSpinner />}>
       <CatsNavigation />
       <Outlet />
-    </>
+    </Suspense>
   );
 }
 

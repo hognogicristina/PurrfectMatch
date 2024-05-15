@@ -1,11 +1,11 @@
 import { getAuthToken } from "../../util/auth.js";
 import CatAddForm from "../../components/Cat/CatAddForm.jsx";
 
-function CatAdd() {
+function CatAddPage() {
   return <CatAddForm />;
 }
 
-export default CatAdd;
+export default CatAddPage;
 
 export async function action({ request }) {
   const token = getAuthToken();

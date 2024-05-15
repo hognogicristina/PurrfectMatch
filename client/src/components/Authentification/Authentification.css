@@ -19,6 +19,14 @@
   box-shadow: 0 8px 16px var(--dark-shade);
 }
 
+.reset {
+  margin-left: 50px;
+}
+
+.reactivate {
+  margin-left: 20px;
+}
+
 .formConfirmation {
   border: 1px solid #ccc;
   margin-top: 100px;
@@ -62,9 +70,12 @@
 
 .linksContainer {
   box-sizing: border-box;
-  margin-top: 30px;
   display: flex;
   justify-content: space-between;
+}
+
+.linksContainer.auth {
+  margin-top: 30px;
 }
 
 .passwordInput {

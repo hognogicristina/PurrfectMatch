@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./index.css";
 
@@ -7,7 +6,7 @@ import HomePage, { loader as loadHome } from "./pages/Main/Home.jsx";
 import LoginPage, {
   action as actionLogin,
 } from "./pages/Authentification/Login.jsx";
-import Logout, {
+import LogoutPage, {
   action as logoutAction,
 } from "./pages/Authentification/Logout.jsx";
 import RegisterPage, {
@@ -27,15 +26,15 @@ import ReactivatePage, {
 } from "./pages/Authentification/Reactivate.jsx";
 import CatsPage, { loader as loadCats } from "./pages/Cats/Cats.jsx";
 import CatsRootLayout from "./pages/Cats/CatsRoot.jsx";
-import CatDetail, { loader as loadCat } from "./pages/Cats/CatDetail.jsx";
-import CatAdd, { action as actionCatAdd } from "./pages/Cats/CatAdd.jsx";
+import CatDetailPage, { loader as loadCat } from "./pages/Cats/CatDetail.jsx";
+import CatAddPage, { action as actionCatAdd } from "./pages/Cats/CatAdd.jsx";
 import {
   checkAuthLoader,
   checkLoginLoader,
   checkLogoutLoader,
   tokenLoader,
 } from "./util/auth.js";
-import MyProfileDetail, {
+import MyProfileDetailPage, {
   loader as loadUser,
 } from "./pages/Users/MyProfileDetail.jsx";
 import UserRootLayout from "./pages/Users/UserRoot.jsx";
@@ -51,9 +50,6 @@ import UserEditAddressPage, {
 import ChangePasswordPage, {
   action as actionChangePassword,
 } from "./pages/Users/ChangePassword.jsx";
-import DeleteAccount, {
-  action as actionDeleteAccount,
-} from "./pages/Users/DeleteAccount.jsx";
 import UploadImage, {
   action as actionUploadImage,
 } from "./pages/Util/UploadImage.jsx";
@@ -62,6 +58,15 @@ import { ToastProvider } from "./components/Util/Custom/ToastProvider.jsx";
 import UploadsImage, {
   action as actionUploadsImage,
 } from "./pages/Util/UploadsImages.jsx";
+import SendToAdoptionCatsPage, {
+  loader as loadSendToAdoptionCats,
+} from "./pages/UserCatsList/SendToAdoptionCats.jsx";
+import OwnedCatsPage, {
+  loader as loadOwnedCats,
+} from "./pages/UserCatsList/OwnedCats.jsx";
+import FavoritesPage, {
+  loader as loadFavorites,
+} from "./pages/Cats/Favorites.jsx";
 
 const router = createBrowserRouter([
   {
@@ -91,16 +96,21 @@ const router = createBrowserRouter([
           },
           {
             path: "add",
-            element: <CatAdd />,
+            element: <CatAddPage />,
             action: actionCatAdd,
             loader: checkAuthLoader,
           },
           {
             path: "cat/:id",
-            element: <CatDetail />,
+            element: <CatDetailPage />,
             loader: loadCat,
           },
         ],
+      },
+      {
+        path: "favorites",
+        element: <FavoritesPage />,
+        loader: loadFavorites,
       },
       {
         path: "login",
@@ -110,7 +120,7 @@ const router = createBrowserRouter([
       },
       {
         path: "logout",
-        element: <Logout />,
+        element: <LogoutPage />,
         action: logoutAction,
         loader: checkLogoutLoader,
       },
@@ -138,7 +148,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <MyProfileDetail />,
+            element: <MyProfileDetailPage />,
             loader: checkAuthLoader,
           },
           {
@@ -166,10 +176,14 @@ const router = createBrowserRouter([
             loader: checkAuthLoader,
           },
           {
-            path: "delete",
-            element: <DeleteAccount />,
-            action: actionDeleteAccount,
-            loader: checkAuthLoader,
+            path: "cats-sent-to-adoption",
+            element: <SendToAdoptionCatsPage />,
+            loader: loadSendToAdoptionCats,
+          },
+          {
+            path: "cats-owned",
+            element: <OwnedCatsPage />,
+            loader: loadOwnedCats,
           },
         ],
       },
@@ -192,6 +206,7 @@ const router = createBrowserRouter([
         path: "reactivate",
         element: <ReactivatePage />,
         action: actionReactivate,
+        loader: checkLoginLoader,
       },
     ],
   },

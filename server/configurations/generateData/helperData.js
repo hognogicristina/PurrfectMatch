@@ -27,15 +27,34 @@ const generateRandomBreed = () => {
 };
 
 const generateImages = async (i, folder) => {
-  const catImageFilename = `${folder}_${i + 1}.jpg`;
-  const relativePath = path.join(
-    __dirname,
-    "..",
-    "downloads",
-    `${folder}s`,
-    catImageFilename,
-  );
-  return await fileHelper.getFile(relativePath, catImageFilename);
+  if (folder === "cat_image") {
+    const numImages = i;
+    const images = [];
+    for (let i = 0; i < numImages; i++) {
+      const randomIndex = randomInt(0, 9);
+      const catImageFilename = `${folder}_${randomIndex + 1}.jpg`;
+      const relativePath = path.join(
+        __dirname,
+        "..",
+        "downloads",
+        `${folder}s`,
+        catImageFilename,
+      );
+      const file = await fileHelper.getFile(relativePath, catImageFilename);
+      images.push(file);
+    }
+    return images;
+  } else {
+    const catImageFilename = `${folder}_${i + 1}.jpg`;
+    const relativePath = path.join(
+      __dirname,
+      "..",
+      "downloads",
+      `${folder}s`,
+      catImageFilename,
+    );
+    return await fileHelper.getFile(relativePath, catImageFilename);
+  }
 };
 
 const generateRandomHealthProblem = async () => {
@@ -71,6 +90,7 @@ const generateCatData = async (cat) => {
   cat.ageType = catHelper.processAgeRange(ageInYears);
   cat.healthProblem = await generateRandomHealthProblem();
   cat.description = `A lovely ${cat.gender.toLowerCase()} ${cat.breed.toLowerCase()} cat.`;
+  cat.status = "active";
 
   return cat;
 };

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       allowNull: false,
     },
-    mailId: {
+    adoptionRequestId: {
       type: DataTypes.INTEGER,
       references: {
         model: "AdoptionRequests",

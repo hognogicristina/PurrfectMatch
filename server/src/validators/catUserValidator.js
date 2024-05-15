@@ -1,4 +1,4 @@
-const { Cat, CatUser } = require("../../models");
+const { Cat, CatUser, Address } = require("../../models");
 
 const userValidator = async (req, res) => {
   if (req.method !== "POST") {
@@ -12,46 +12,41 @@ const userValidator = async (req, res) => {
     const user = req.user;
     if (cat.ownerId === null) {
       if (cat.userId !== user.id) {
-        return res
-          .status(403)
-          .json({
-            error: [
-              {
-                field: "cat",
-                message: "You are not authorized to perform this action",
-              },
-            ],
-          });
+        return res.status(403).json({
+          error: [
+            {
+              field: "cat",
+              message: "You are not authorized to perform this action",
+            },
+          ],
+        });
       }
     } else {
       if (cat.ownerId !== user.id) {
-        return res
-          .status(403)
-          .json({
-            error: [
-              {
-                field: "cat",
-                message: "You are not authorized to perform this action",
-              },
-            ],
-          });
+        return res.status(403).json({
+          error: [
+            {
+              field: "cat",
+              message: "You are not authorized to perform this action",
+            },
+          ],
+        });
       }
     }
   }
 
   if (req.method === "POST") {
     const user = req.user;
-    if (!user.addressId) {
-      return res
-        .status(403)
-        .json({
-          error: [
-            {
-              field: "address",
-              message: "Address is required in order for you to add a cat",
-            },
-          ],
-        });
+    const userAddress = await Address.findOne({ where: { userId: user.id } });
+    if (!userAddress) {
+      return res.status(403).json({
+        error: [
+          {
+            field: "address",
+            message: "Address is required in order for you to add a cat",
+          },
+        ],
+      });
     }
   }
 
@@ -65,14 +60,14 @@ const getCatsValidator = async (req, res, listType) => {
     if (cats.length === 0) {
       return res
         .status(404)
-        .json({ error: [{ field: "cats", message: "No cats found" }] });
+        .json({ error: [{ field: "cats", message: "No Cats Found" }] });
     }
   } else if (listType === "owned") {
     const cats = await CatUser.findAll({ where: { ownerId: user.id } });
     if (cats.length === 0) {
       return res
         .status(404)
-        .json({ error: [{ field: "cats", message: "No cats found" }] });
+        .json({ error: [{ field: "cats", message: "No Cats Found" }] });
     }
   }
 

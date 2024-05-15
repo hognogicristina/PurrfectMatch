@@ -1,0 +1,36 @@
+.userDetailContainer.list {
+  display: flex;
+  justify-content: center;
+}
+
+.userContent.list {
+  max-width: 900px;
+  padding: 20px;
+}
+
+.catsCountContainer {
+  position: relative;
+}
+
+.catsList.list {
+  list-style: none;
+  padding: 0;
+}
+
+.catListItem {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.catListItem:hover {
+  transform: translateY(-5px);
+}
+
+.catDetails {
+  padding: 15px;
+}

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner.jsx";
+import { motion } from "framer-motion";
 import "../../Authentification/Activation.css";
 
 function NotFoundPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -14,7 +16,17 @@ function NotFoundPage() {
   }, []);
 
   return (
-    <>
+    <motion.div
+      key={location.pathname}
+      initial={{ y: 20, scale: 0.95, opacity: 0 }}
+      animate={{ y: 0, scale: 1, opacity: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 330,
+        damping: 12,
+        duration: 0.8,
+      }}
+    >
       {isLoading && <LoadingSpinner />}
       <div className="container">
         <div className="errorContainer">
@@ -31,7 +43,7 @@ function NotFoundPage() {
           </div>
         </div>
       </div>
-    </>
+    </motion.div>
   );
 }
 

@@ -19,7 +19,6 @@ export async function action({ request }) {
     body: JSON.stringify({
       usernameOrEmail: data.get("usernameOrEmail"),
       password: data.get("password"),
-      rememberMe: data.get("rememberMe"),
     }),
   });
 
@@ -35,6 +34,5 @@ export async function action({ request }) {
   localStorage.setItem("token", dataRes.token);
   const tokenDuration = extractExpiration(dataRes.token);
   localStorage.setItem("expiration", tokenDuration);
-  console.log(localStorage.getItem("token"));
   return redirect("/");
 }

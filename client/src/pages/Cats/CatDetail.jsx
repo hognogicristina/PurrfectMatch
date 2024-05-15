@@ -3,7 +3,7 @@ import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
 import { Suspense } from "react";
 import CatItem from "../../components/Cat/CatItem.jsx";
 
-function CatDetail() {
+function CatDetailPage() {
   const { catDetail } = useLoaderData();
 
   return (
@@ -15,7 +15,7 @@ function CatDetail() {
   );
 }
 
-export default CatDetail;
+export default CatDetailPage;
 
 async function loadCat(id) {
   const response = await fetch(`http://localhost:3000/cats/cat/${id}`);

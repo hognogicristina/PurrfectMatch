@@ -21,13 +21,13 @@ const deleteUser = async (user) => {
   await UserInfo.destroy({ where: { userId: user.id } });
   await PasswordHistory.destroy({ where: { userId: user.id } });
   await RefreshToken.destroy({ where: { userId: user.id } });
-  const image = await Image.findOne({ where: { id: user.imageId } });
-  await user.destroy();
+  const image = await Image.findOne({ where: { userId: user.id } });
   await fileHelper.deleteImage(image, "uploads");
-  const address = await Address.findByPk(user.addressId);
+  const address = await Address.findOne({ where: { userId: user.id } });
   if (address) {
     await address.destroy();
   }
+  await user.destroy();
 };
 
 const updateEmail = async (user, fieldsToUpdate, body) => {
