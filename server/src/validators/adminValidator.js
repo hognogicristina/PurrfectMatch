@@ -22,7 +22,7 @@ const userExistValidator = async (req, res) => {
       if (!user) {
         return res
           .status(404)
-          .json({ error: [{ field: "user", message: "User not found" }] });
+          .json({ error: [{ field: "user", message: "Profile not found" }] });
       }
     } else {
       return res

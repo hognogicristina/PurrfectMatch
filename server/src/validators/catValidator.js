@@ -15,9 +15,9 @@ const catExistValidator = async (req, res) => {
     }
   } else {
     if (cats.length === 0) {
-      return res
-        .status(404)
-        .json({ error: [{ field: "cats", message: "No Cats Available" }] });
+      return res.status(404).json({
+        error: [{ field: "cats", message: "No Cats Available" }],
+      });
     }
 
     if (req.query.sortBy) {
@@ -73,12 +73,12 @@ const catsFilterValidator = async (catsFilter, res) => {
 const catValidator = async (req, res) => {
   const errors = [];
 
-  if (req.body.name && validator.isEmpty(req.body.name)) {
+  if (!req.body.name || validator.isEmpty(req.body.name)) {
     errors.push({ field: "name", error: "Name is required" });
   }
 
   if (req.method === "PATCH") {
-    if (req.body.uri && validator.isEmpty(req.body.uri)) {
+    if (!req.body.uri || validator.isEmpty(req.body.uri) || "") {
       errors.push({ field: "uri", error: "Image is required" });
     } else if (req.body.uri) {
       const image = await Image.findOne({ where: { uri: req.body.uri } });
@@ -87,10 +87,10 @@ const catValidator = async (req, res) => {
       }
     }
   } else if (req.method === "POST") {
-    if (!req.body.uris || !Array.isArray(req.body.uris)) {
+    if (!req.body.uris || !Array.isArray(req.body.uris) || []) {
       errors.push({
         field: "uris",
-        error: "URIs must be provided as an array.",
+        error: "URIs must be provided as a not empty array.",
       });
     } else if (req.body.uris) {
       if (req.body.uris.length === 0) {
@@ -116,7 +116,7 @@ const catValidator = async (req, res) => {
     }
   }
 
-  if (req.body.breed && validator.isEmpty(req.body.breed)) {
+  if (!req.body.breed || validator.isEmpty(req.body.breed)) {
     errors.push({ field: "breed", error: "Breed is required" });
   } else if (req.body.breed) {
     const breeds = await Breed.findAll();
@@ -126,7 +126,11 @@ const catValidator = async (req, res) => {
     }
   }
 
-  if (req.body.gender && validator.isEmpty(req.body.gender)) {
+  if (!req.body.color || validator.isEmpty(req.body.color)) {
+    errors.push({ field: "color", error: "Color is required" });
+  }
+
+  if (!req.body.gender || validator.isEmpty(req.body.gender)) {
     errors.push({ field: "gender", error: "Gender is required" });
   } else if (req.body.gender && !["Male", "Female"].includes(req.body.gender)) {
     errors.push({
@@ -135,13 +139,13 @@ const catValidator = async (req, res) => {
     });
   }
 
-  if (req.body.age && validator.isEmpty(req.body.age)) {
+  if (!req.body.age || validator.isEmpty(req.body.age)) {
     errors.push({ field: "age", error: "Age is required" });
   } else if (req.body.age && !validator.isInt(req.body.age)) {
     errors.push({ field: "age", error: "Age must be an integer" });
   }
 
-  if (req.body.description && validator.isEmpty(req.body.description)) {
+  if (!req.body.description || validator.isEmpty(req.body.description)) {
     errors.push({ field: "description", error: "Description is required" });
   } else if (
     req.body.description &&

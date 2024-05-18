@@ -1,0 +1,189 @@
+.mainNavigatiom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  overflow: visible;
+  border: 1px solid #ccc;
+}
+
+.mainContainer, .controlContainer {
+  display: flex;
+  align-items: center;
+  margin-right: 65px;
+}
+
+.logo {
+  color: #FF69B4;
+  font-size: 27px;
+}
+
+.registerLink {
+  margin-left: 15px;
+}
+
+.registerLink a {
+  background-color: #FF69B4;
+  color: white;
+  font-size: 15px;
+  padding: 10px 15px;
+  transition: background-color 0.3s;
+  border-radius: var(--border-radius);
+  text-shadow: 0 1px 1px var(--dark-shade);
+  border: 1px solid rgba(255, 79, 167, 0.25);
+  font-weight: 500;
+}
+
+.registerLink a:hover {
+  background-color: #FF1493;
+}
+
+.loginLink a {
+  color: #FF69B4;
+  font-size: 15px;
+  padding: 10px 15px;
+  border-radius: var(--border-radius);
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.loginLink a:hover {
+  text-shadow: 0 1px 1px var(--dark-shade);
+  border: 1px solid rgba(255, 79, 167, 0.25);
+  color: white;
+  background-color: #FF1493;
+}
+
+.dropbtn, .logo {
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 20px;
+  cursor: pointer;
+  font-weight: 200;
+}
+
+.logo {
+  text-transform: uppercase;
+  font-weight: 600 !important;
+}
+
+.links {
+  color: rgb(227, 127, 182);
+  margin-left: 20px;
+  transition: color 0.3s;
+  font-size: 25px;
+  cursor: pointer;
+  font-weight: 200;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.links:hover, .active-link {
+  background: rgba(182, 157, 176, 0.28);
+}
+
+.linkButton.catalog {
+  color: #FF69B4;
+  font-weight: 400;
+  font-size: 20px;
+  margin-left: 20px;
+}
+
+.linkButton.catalog:hover {
+  color: #ffa1cf;
+}
+
+.active-link {
+  color: #ae3d72;
+  font-weight: bold;
+}
+
+.vertical-line {
+  height: 50px;
+  width: 1px;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), #ccc, rgba(255, 255, 255, 0.29));
+  display: inline-block;
+  margin-left: 10px;
+  margin-right: -10px;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  align-items: center;
+}
+
+.dropbtn {
+  background: linear-gradient(135deg, #ae3d72 0%, #e37fb6 100%);
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  text-shadow: 0 1px 1px var(--dark-shade);
+  border: none;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.dropbtn.userMenu {
+  padding: 15px 15px;
+  border-radius: 50px !important;
+}
+
+.dropdownContent {
+  margin-top: 5px;
+  margin-left: 19px;
+  position: absolute;
+  background-color: rgba(255, 255, 255);
+  border-radius: 9px;
+  border: 1px solid rgba(151, 151, 151, 0.1);
+  width: 250px;
+  z-index: 1100;
+}
+
+.dropdownContent.userMenu {
+  align-items: center;
+  width: 105px;
+  margin-left: 0 !important;
+  margin-right: 300px !important;
+}
+
+.dropdownContent a {
+  font-weight: 400;
+  padding: 12px 16px;
+  display: block;
+  color: #FF69B4;
+}
+
+.dropdownContent a:hover {
+  background-color: rgba(250, 176, 216, 0.1);
+}
+
+.dropdownContent a:hover:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.dropdownContent a:hover:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}

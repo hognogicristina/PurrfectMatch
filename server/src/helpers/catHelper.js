@@ -1,6 +1,6 @@
 const { Cat } = require("../../models");
 const { Op } = require("sequelize");
-const { AgeTypes } = require("../../constants/ageTypes");
+const { AgeTypes, CatUser } = require("../../constants/ageTypes");
 
 const processAgeRange = (age) => {
   if (!age) return null;
@@ -17,6 +17,7 @@ const updateCatData = async (cat, body) => {
   const fields = [
     "name",
     "breed",
+    "color",
     "gender",
     "age",
     "healthProblem",
@@ -54,9 +55,14 @@ const filterCats = async (req) => {
   const selectedGender = req.query.selectedGender
     ? req.query.selectedGender
     : null;
-  const selectedHealthProblem = req.query.selectedHealthProblem !== undefined;
+  const selectedHealthProblem = req.query.selectedHealthProblem
+    ? req.query.selectedHealthProblem
+    : null;
   const selectedUserId = req.query.selectedUserId
     ? req.query.selectedUserId
+    : null;
+  const selectedColor = req.query.selectedColor
+    ? req.query.selectedColor
     : null;
   const sortBy = req.query.sortBy ? req.query.sortBy : "breed";
   const sortOrder = req.query.sortOrder ? req.query.sortOrder : "asc";
@@ -89,14 +95,27 @@ const filterCats = async (req) => {
     queryOptions.where = { ...queryOptions.where, gender: selectedGender };
   }
   if (selectedHealthProblem) {
-    queryOptions.where = {
-      ...queryOptions.where,
-      healthProblem: selectedHealthProblem,
-    };
+    if (selectedHealthProblem === "Healthy") {
+      queryOptions.where = {
+        ...queryOptions.where,
+        healthProblem: null,
+      };
+    } else {
+      queryOptions.where = {
+        ...queryOptions.where,
+        healthProblem: selectedHealthProblem,
+      };
+    }
   }
-
   if (selectedUserId) {
-    queryOptions.where = { ...queryOptions.where, userId: selectedUserId };
+    const catUser = await CatUser.findAll({
+      where: { userId: selectedUserId },
+    });
+    const catIds = catUser.map((cat) => cat.catId);
+    queryOptions.where = { ...queryOptions.where, id: catIds };
+  }
+  if (selectedColor) {
+    queryOptions.where = { ...queryOptions.where, color: selectedColor };
   }
 
   cats = await Cat.findAll(queryOptions);

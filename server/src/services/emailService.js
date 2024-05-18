@@ -99,7 +99,7 @@ async function sendAdoptionEmail(sender, receiver, cat, address) {
   const mailOptions = {
     from: receiver.email,
     to: sender.email,
-    subject: "Confirmation of Your Successful Cat Adoption",
+    subject: "Confirmation of Your Successful Cat AdoptionProcess",
     html: html,
   };
 
@@ -119,7 +119,7 @@ async function sendDeclineAdoption(sender, receiver, cat) {
   const mailOptions = {
     from: receiver.email,
     to: sender.email,
-    subject: "Declined the Adoption",
+    subject: "Declined the AdoptionProcess",
     html: compiledFunction({
       sender: { firstName: sender.firstName, lastName: sender.lastName },
       cat: cat,

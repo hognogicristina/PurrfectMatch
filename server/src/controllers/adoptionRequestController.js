@@ -4,6 +4,7 @@ const {
   Cat,
   AdoptionRequest,
   UserRole,
+  CatUser,
 } = require("../../models");
 const emailServ = require("../services/emailService");
 const adoptionRequestValidator = require("../validators/adoptionRequestValidator");
@@ -15,6 +16,7 @@ const adoptCat = async (req, res) => {
   try {
     if (await adoptionRequestValidator.adoptValidator(req, res)) return;
     const cat = await Cat.findByPk(req.params.id);
+    const catUser = await CatUser.findByPk(cat.id);
     const { message } = req.body;
     const adoptionRequest = await AdoptionRequest.create({
       catId: cat.id,
@@ -24,19 +26,22 @@ const adoptCat = async (req, res) => {
       userId: req.user.id,
       adoptionRequestId: adoptionRequest.id,
       role: "sender",
+      isRead: true,
     });
     await UserRole.create({
-      userId: cat.userId,
+      userId: catUser.userId,
       adoptionRequestId: adoptionRequest.id,
       role: "receiver",
+      isRead: false,
     });
     return res
       .status(200)
-      .json({ status: "Adoption request sent successfully" });
+      .json({ status: "AdoptionProcess request sent successfully" });
   } catch (error) {
-    console.log(error);
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
@@ -60,7 +65,7 @@ const handleAdoptionRequest = async (req, res) => {
     const sender = await User.findByPk(senderUserRole.userId);
     const receiver = await User.findByPk(receiverUserRole.userId);
     const userAddress = await Address.findOne({
-      where: { id: req.user.addressId },
+      where: { userId: req.user.id },
     });
 
     if (status === "accepted") {
@@ -72,15 +77,21 @@ const handleAdoptionRequest = async (req, res) => {
         cat,
         userAddress,
       );
-      return res.status(200).json({ status: "Adoption request was accepted" });
+      return res
+        .status(200)
+        .json({ status: "AdoptionProcess request was accepted" });
     } else {
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
       await adoptionRequest.update({ status });
-      return res.status(200).json({ status: "Adoption request was declined" });
+      return res
+        .status(200)
+        .json({ status: "AdoptionProcess request was declined" });
     }
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
@@ -88,18 +99,25 @@ const getAdoptionRequests = async (req, res) => {
   try {
     if (await adoptionRequestValidator.getAdoptionRequestsValidator(req, res))
       return;
-    const sortOrder = req.headers["sort-order"]
-      ? req.headers["sort-order"].toUpperCase()
-      : "DESC";
-    const adoptionRequestDTOs =
-      await adoptionRequestDTO.transformAdoptionRequestsToDTO(
-        req.user,
-        sortOrder,
-      );
-    return res.status(200).json({ data: adoptionRequestDTOs });
+    const { sentRequests, receivedRequests } =
+      await adoptionRequestDTO.transformAdoptionRequestsToDTO(req.user);
+
+    const responseData = {
+      sentRequests:
+        sentRequests.length > 0 ? sentRequests : { message: "No Result Found" },
+      receivedRequests:
+        receivedRequests.length > 0
+          ? receivedRequests
+          : { message: "No Result Found" },
+    };
+
+    return res.status(200).json({ data: responseData });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.log(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
@@ -110,10 +128,18 @@ const getAdoptionRequest = async (req, res) => {
     const adoptionRequest = await AdoptionRequest.findByPk(req.params.id);
     const adoptionRequestDetails =
       await adoptionRequestDTO.adoptionRequestToDTO(adoptionRequest, req.user);
+    const userRole = await UserRole.findOne({
+      where: { adoptionRequestId: req.params.id, userId: req.user.id },
+    });
+    if (userRole.isRead === false) {
+      await userRole.update({ isRead: true });
+    }
     return res.status(200).json({ data: adoptionRequestDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
@@ -148,7 +174,9 @@ const deleteAdoptionRequest = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 

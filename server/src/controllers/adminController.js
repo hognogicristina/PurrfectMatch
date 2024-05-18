@@ -27,7 +27,7 @@ const deleteUser = async (req, res) => {
     if (await adminValidator.userExistValidator(req, res)) return;
     const user = await User.findByPk(req.params.id);
     await adminHelper.deleteUser(user);
-    return res.status(200).json({ status: "User deleted successfully" });
+    return res.status(200).json({ status: "Profile deleted successfully" });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -51,7 +51,7 @@ const blockUser = async (req, res) => {
     if (await adminValidator.userExistValidator(req, res)) return;
     const user = await User.findByPk(req.params.id);
     await adminHelper.blockUser(user);
-    return res.status(200).json({ status: "User blocked successfully" });
+    return res.status(200).json({ status: "Profile blocked successfully" });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });

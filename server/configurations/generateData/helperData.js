@@ -70,8 +70,15 @@ const generateRandomHealthProblem = async () => {
       };
     });
 
-    const randomIndex = randomInt(0, conditions.length - 1);
-    return conditions[randomIndex].primary_name;
+    const numberOfNullsToAdd = Math.ceil(conditions.length * 0.1);
+    for (let i = 0; i < numberOfNullsToAdd; i++) {
+      const randomIndex = randomInt(0, conditions.length);
+      conditions.splice(randomIndex, 0, null);
+    }
+
+    const randomIndex = randomInt(0, conditions.length);
+    const selectedCondition = conditions[randomIndex];
+    return selectedCondition ? selectedCondition.primary_name : null;
   } catch (error) {
     logger.error(error);
     return null;
@@ -83,6 +90,14 @@ const generateCatData = async (cat) => {
   const ageInYears = randomInt(0, 20).toString();
   const ageInSeconds = ageInYears * (60 * 60 * 24 * 365);
 
+  const colorData = fs.readFileSync(
+    path.join(__dirname, "../../constants/colors.json"),
+    "utf8",
+  );
+  const colors = JSON.parse(colorData);
+  const randomIndex = randomInt(0, colors.length - 1);
+
+  cat.color = colors[randomIndex];
   cat.name = faker.person.firstName();
   cat.breed = generateRandomBreed();
   cat.gender = randomInt(0, 1) ? "Male" : "Female";

@@ -1,9 +1,9 @@
 import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useEffect, useState } from "react";
-import "./Authentification.css";
+import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 
 export default function ResetPasswordForm() {
   const data = useActionData();
@@ -40,7 +40,6 @@ export default function ResetPasswordForm() {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              required
             />
             <span
               className="togglePassword"
@@ -54,7 +53,6 @@ export default function ResetPasswordForm() {
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
-              required
             />
             <span
               className="togglePassword"

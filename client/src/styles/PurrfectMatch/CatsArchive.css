@@ -1,0 +1,59 @@
+.userDetailContainer.list {
+  display: flex;
+  justify-content: center;
+}
+
+.userContent.list {
+  justify-content: flex-start;
+  width: 1180px;
+  padding: 20px;
+}
+
+.catsCountContainer {
+  position: relative;
+}
+
+.catsCountContainer .pagination {
+  margin-top: 20px;
+}
+
+.noResultContainer {
+  margin-left: 200px;
+  width: 100%;
+}
+
+.catsList.list {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+}
+
+.catListItem {
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.catListItem:hover {
+  transform: translateY(-5px);
+}
+
+.catDetails {
+  padding: 15px;
+}
+
+.catsCountContainer h1 {
+  font-size: 1.5em;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5em;
+}
+
+.catDetails h2,
+.catDetails p {
+  color: #ffffff;
+  text-shadow: 0px 0.5px 1px #000;
+}

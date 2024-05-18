@@ -57,16 +57,16 @@ router.post(
   imageController.uploadImages,
 );
 
-// User routes
+// Profile routes
 router.get("/user-profile/:id", userController.getOneUser);
 router.get("/user", authMiddleware.authenticateToken, userController.getUser);
 router.get(
-  "/user/cats-owned",
+  "/user/matches-archive",
   authMiddleware.authenticateToken,
   userController.getOwnedCats,
 );
 router.get(
-  "/user/cats-sent-to-adoption",
+  "/user/felines-records",
   authMiddleware.authenticateToken,
   userController.getSentToAdoptionCats,
 );
@@ -103,6 +103,7 @@ router.get("/recent-cats", filterController.getRecentCats);
 router.get("/health-problems", filterController.getHealthProblems);
 router.get("/catsByBreed/:catId", filterController.getCatsByBreed);
 router.get("/catsOfGuardian/:catId", filterController.getCatsOfGuardian);
+router.get("/colors", filterController.getColors);
 
 // Cat routes
 router.get("/cats", catController.getAllCats);
@@ -123,7 +124,7 @@ router.delete(
   catController.deleteCat,
 );
 
-// Adoption request routes
+// AdoptionProcess request routes
 router.post(
   "/adopt/:id/request",
   authMiddleware.authenticateToken,
@@ -155,6 +156,11 @@ router.get(
   "/favorites",
   authMiddleware.authenticateToken,
   favoriteController.getFavorites,
+);
+router.get(
+  "/favorite/:id",
+  authMiddleware.authenticateToken,
+  favoriteController.getOneFavorite,
 );
 router.post(
   "/cat/:id/favorite",

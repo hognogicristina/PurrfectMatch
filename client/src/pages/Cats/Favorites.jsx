@@ -1,8 +1,8 @@
 import { getAuthToken } from "../../util/auth.js";
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
-import FavoritesList from "../../components/Cat/FavoritesList.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
+import FavoritesArchive from "../../components/Cat/FavoritesArchive.jsx";
 
 function FavoritesPage() {
   const { favorites } = useLoaderData();
@@ -10,7 +10,7 @@ function FavoritesPage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={favorites}>
-        {(loadedFavorites) => <FavoritesList favorites={loadedFavorites} />}
+        {(loadedFavorites) => <FavoritesArchive favorites={loadedFavorites} />}
       </Await>
     </Suspense>
   );

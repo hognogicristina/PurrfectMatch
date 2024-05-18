@@ -25,48 +25,45 @@ import ReactivatePage, {
   action as actionReactivate,
 } from "./pages/Authentification/Reactivate.jsx";
 import CatsPage, { loader as loadCats } from "./pages/Cats/Cats.jsx";
-import CatsRootLayout from "./pages/Cats/CatsRoot.jsx";
-import CatDetailPage, { loader as loadCat } from "./pages/Cats/CatDetail.jsx";
-import CatAddPage, { action as actionCatAdd } from "./pages/Cats/CatAdd.jsx";
+import CatsRootLayout from "./pages/Main/CatsRoot.jsx";
+import CatProfilePage, { loader as loadCat } from "./pages/Cats/CatProfile.jsx";
+import AddCatPage, { action as actionCatAdd } from "./pages/Cats/AddCat.jsx";
 import {
   checkAuthLoader,
   checkLoginLoader,
   checkLogoutLoader,
   tokenLoader,
 } from "./util/auth.js";
-import MyProfileDetailPage, {
+import MyProfilePage, {
   loader as loadUser,
-} from "./pages/Users/MyProfileDetail.jsx";
-import UserRootLayout from "./pages/Users/UserRoot.jsx";
-import EditUserInfoPage, {
+} from "./pages/Profile/MyProfile.jsx";
+import UserRootLayout from "./pages/Main/UserRoot.jsx";
+import ModifyMyProfilePage, {
   action as actionEditUser,
-} from "./pages/Users/EditUserInfo.jsx";
+} from "./pages/Profile/ModifyMyProfile.jsx";
 import ChangeUsernamePage, {
   action as actionChangeUsername,
-} from "./pages/Users/ChangeUsername.jsx";
-import UserEditAddressPage, {
+} from "./pages/Profile/ChangeUsername.jsx";
+import ModifyAddressPage, {
   action as actionEditAddress,
-} from "./pages/Users/UserEditAddress.jsx";
+} from "./pages/Profile/ModifyAddress.jsx";
 import ChangePasswordPage, {
   action as actionChangePassword,
-} from "./pages/Users/ChangePassword.jsx";
-import UploadImage, {
-  action as actionUploadImage,
-} from "./pages/Util/UploadImage.jsx";
-import NotFoundPage from "./components/Util/Custom/NotFound.jsx";
-import { ToastProvider } from "./components/Util/Custom/ToastProvider.jsx";
-import UploadsImage, {
-  action as actionUploadsImage,
-} from "./pages/Util/UploadsImages.jsx";
-import SendToAdoptionCatsPage, {
+} from "./pages/Profile/ChangePassword.jsx";
+import NotFoundPage from "./components/Util/Custom/PageResponse/NotFound.jsx";
+import { ToastProvider } from "./components/Util/Custom/PageResponse/ToastProvider.jsx";
+import FelinesRecordsPage, {
   loader as loadSendToAdoptionCats,
-} from "./pages/UserCatsList/SendToAdoptionCats.jsx";
-import OwnedCatsPage, {
+} from "./pages/PurrfectMatch/FelinesRecords.jsx";
+import OwnedArchivePage, {
   loader as loadOwnedCats,
-} from "./pages/UserCatsList/OwnedCats.jsx";
+} from "./pages/PurrfectMatch/OwnedArchive.jsx";
 import FavoritesPage, {
   loader as loadFavorites,
 } from "./pages/Cats/Favorites.jsx";
+import AdoptionRequestsPage, {
+  loader as loadAdoptionRequestsPage,
+} from "./pages/AdoptionProcess/AdoptionsRequests.jsx";
 
 const router = createBrowserRouter([
   {
@@ -96,13 +93,13 @@ const router = createBrowserRouter([
           },
           {
             path: "add",
-            element: <CatAddPage />,
+            element: <AddCatPage />,
             action: actionCatAdd,
             loader: checkAuthLoader,
           },
           {
             path: "cat/:id",
-            element: <CatDetailPage />,
+            element: <CatProfilePage />,
             loader: loadCat,
           },
         ],
@@ -111,6 +108,11 @@ const router = createBrowserRouter([
         path: "favorites",
         element: <FavoritesPage />,
         loader: loadFavorites,
+      },
+      {
+        path: "adopts",
+        element: <AdoptionRequestsPage />,
+        loader: loadAdoptionRequestsPage,
       },
       {
         path: "login",
@@ -148,12 +150,12 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <MyProfileDetailPage />,
+            element: <MyProfilePage />,
             loader: checkAuthLoader,
           },
           {
             path: "edit",
-            element: <EditUserInfoPage />,
+            element: <ModifyMyProfilePage />,
             action: actionEditUser,
             loader: checkAuthLoader,
           },
@@ -165,7 +167,7 @@ const router = createBrowserRouter([
           },
           {
             path: "address",
-            element: <UserEditAddressPage />,
+            element: <ModifyAddressPage />,
             action: actionEditAddress,
             loader: checkAuthLoader,
           },
@@ -176,26 +178,16 @@ const router = createBrowserRouter([
             loader: checkAuthLoader,
           },
           {
-            path: "cats-sent-to-adoption",
-            element: <SendToAdoptionCatsPage />,
+            path: "felines-records",
+            element: <FelinesRecordsPage />,
             loader: loadSendToAdoptionCats,
           },
           {
-            path: "cats-owned",
-            element: <OwnedCatsPage />,
+            path: "matches-archive",
+            element: <OwnedArchivePage />,
             loader: loadOwnedCats,
           },
         ],
-      },
-      {
-        path: "upload",
-        element: <UploadImage />,
-        action: actionUploadImage,
-      },
-      {
-        path: "uploads",
-        element: <UploadsImage />,
-        action: actionUploadsImage,
       },
       {
         path: "activate/:id",

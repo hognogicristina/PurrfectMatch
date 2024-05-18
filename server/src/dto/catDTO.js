@@ -1,9 +1,10 @@
-const { Address, User, Image } = require("../../models");
+const { Address, User, Image, CatUser } = require("../../models");
 
 async function catToDTO(cat) {
   const images = await Image.findAll({ where: { catId: cat.id } });
-  const guardian = await User.findByPk(cat.userId);
-  const owner = await User.findByPk(cat.ownerId);
+  const catUser = await CatUser.findByPk(cat.id);
+  const guardian = await User.findByPk(catUser.userId);
+  const owner = await User.findByPk(catUser.ownerId);
   const address = await Address.findOne({ where: { userId: guardian.id } });
 
   return {
@@ -15,7 +16,7 @@ async function catToDTO(cat) {
     lifeStage: cat.ageType ? cat.ageType : null,
     healthProblem: cat.healthProblem ? cat.healthProblem : null,
     description: cat.description ? cat.description : null,
-    userId: cat.userId ? cat.userId : null,
+    userId: catUser.userId ? catUser.userId : null,
     user: guardian ? guardian.username : null,
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
@@ -25,6 +26,8 @@ async function catToDTO(cat) {
 
 async function catsListToDTO(cat) {
   const images = await Image.findAll({ where: { catId: cat.id } });
+  const catUser = await CatUser.findByPk(cat.id);
+  const guardian = await User.findByPk(catUser.userId);
   const image = images[0];
 
   return {
@@ -34,6 +37,7 @@ async function catsListToDTO(cat) {
     breed: cat.breed ? cat.breed : null,
     gender: cat.gender ? cat.gender : null,
     lifeStage: cat.ageType ? cat.ageType : null,
+    guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
   };
 }
 

@@ -49,7 +49,7 @@ const sendAdoptionRequest = async (
     }
 
     await Cat.update(
-      { ownerId: sender.id },
+      { status: "adopted" },
       { where: { id: adoptionRequest.catId }, transaction: t },
     );
     const catUser = await CatUser.findOne(

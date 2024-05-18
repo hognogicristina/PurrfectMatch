@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import HomeContent from "../../components/Layout/HomeContent.jsx";
 import { Await, defer, useLoaderData } from "react-router-dom";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function HomePage() {
   const { cats, breeds } = useLoaderData();

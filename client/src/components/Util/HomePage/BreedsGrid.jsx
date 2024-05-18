@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
-import "../../Layout/HomeContent.css";
+import "../../../styles/PurrfectMatch/HomeContent.css";
 
 export default function BreedsGrid({ breeds }) {
   const ref = useRef(null);

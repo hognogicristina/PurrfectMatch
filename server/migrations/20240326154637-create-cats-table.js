@@ -18,6 +18,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      color: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
       gender: {
         type: Sequelize.STRING,
       },
@@ -39,20 +43,6 @@ module.exports = {
       status: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      userId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "users",
-          key: "id",
-        },
-      },
-      ownerId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "users",
-          key: "id",
-        },
       },
       createdAt: {
         allowNull: false,

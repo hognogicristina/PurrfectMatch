@@ -117,15 +117,12 @@ const generateCats = async (numCats, users) => {
 
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
-    catData.userId = randomUser.id;
-
     const newCat = await Cat.create(catData);
 
     for (const uploadedImage of uploadedImages) {
       uploadedImage.catId = newCat.id;
       await uploadedImage.save();
     }
-
     await CatUser.create({ catId: newCat.id, userId: randomUser.id });
   }
 };
@@ -135,16 +132,94 @@ const generateFavorite = async (numFavorites, users) => {
     const randomIndex = helperData.randomInt(0, users.length - 1);
     const randomUser = users[randomIndex];
 
-    let randomCat, catUser;
+    let randomCat, user;
     do {
       randomCat = await Cat.findOne({ order: sequelize.random() });
-      catUser = randomCat.userId;
-    } while (catUser === randomUser.id);
+      const catUser = await CatUser.findByPk(randomCat.id);
+      user = catUser.userId;
+    } while (user === randomUser.id);
 
     await Favorite.create({
       userId: randomUser.id,
       catId: randomCat.id,
     });
+  }
+};
+
+const generateAdoptionRequests = async (numRequests, users) => {
+  for (let i = 0; i < numRequests; i++) {
+    const randomIndex = helperData.randomInt(0, users.length - 1);
+    const randomUser = users[randomIndex];
+
+    let randomCat, user;
+    do {
+      randomCat = await Cat.findOne({ order: sequelize.random() });
+      const catUser = await CatUser.findByPk(randomCat.id);
+      user = catUser.userId;
+    } while (user === randomUser.id);
+
+    const adoptionRequest = await AdoptionRequest.create({
+      catId: randomCat.id,
+      message: "I would like to adopt this cat.",
+      status: "pending",
+    });
+
+    await UserRole.create({
+      userId: randomUser.id,
+      adoptionRequestId: adoptionRequest.id,
+      role: "sender",
+      isRead: true,
+    });
+    await UserRole.create({
+      userId: user,
+      adoptionRequestId: adoptionRequest.id,
+      role: "receiver",
+      isRead: false,
+    });
+  }
+};
+
+const processAdoptionRequests = async (numRequests) => {
+  for (let i = 0; i < numRequests; i++) {
+    const adoptionRequest = await AdoptionRequest.findOne({
+      where: { status: "pending" },
+    });
+
+    adoptionRequest.status =
+      helperData.randomInt(0, 1) === 0 ? "accepted" : "declined";
+    await adoptionRequest.save();
+
+    const sender = await UserRole.findOne({
+      where: { adoptionRequestId: adoptionRequest.id, role: "sender" },
+    });
+
+    const receiverRole = await UserRole.findOne({
+      where: { adoptionRequestId: adoptionRequest.id, role: "receiver" },
+    });
+    receiverRole.isRead = true;
+    await receiverRole.save();
+    const receiver = await User.findByPk(receiverRole.userId);
+
+    if (adoptionRequest.status === "accepted") {
+      const otherRequests = await AdoptionRequest.findAll({
+        where: { catId: adoptionRequest.catId, status: "pending" },
+      });
+      if (otherRequests.length > 0) {
+        for (const request of otherRequests) {
+          request.status = "declined";
+          await request.save();
+        }
+      }
+      const user = await User.findByPk(sender.userId);
+      const cat = await Cat.findByPk(adoptionRequest.catId);
+      const catUser = await CatUser.findByPk(cat.id);
+      const address = await Address.findOne({ where: { userId: receiver.id } });
+      adoptionRequest.addressId = address.id;
+      cat.status = "adopted";
+      catUser.ownerId = user.id;
+      await catUser.save();
+      await cat.save();
+    }
   }
 };
 
@@ -185,6 +260,8 @@ const generateData = async () => {
     const users = await generateUsers(25);
     await generateCats(300, users);
     await generateFavorite(150, users);
+    await generateAdoptionRequests(200, users);
+    await processAdoptionRequests(130);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);

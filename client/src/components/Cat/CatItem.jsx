@@ -1,13 +1,14 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
-import React, { useEffect, useState } from "react";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
+import { useEffect, useState } from "react";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import "./Cat.css";
+import "../../styles/PurrfectMatch/Cat.css";
 import { useNavigate } from "react-router-dom";
 import { getAuthToken } from "../../util/auth.js";
 import { AiFillCloseCircle } from "react-icons/ai";
-import CatEditForm from "./CatEditForm.jsx";
+import EditCatForm from "./EditCatForm.jsx";
+import FavoriteHeart from "../Util/Functionalities/FavoriteHeart.jsx";
 
 export default function CatItem({ catDetail }) {
   const navigate = useNavigate();
@@ -23,26 +24,27 @@ export default function CatItem({ catDetail }) {
   const [adoptionMessage, setAdoptionMessage] = useState("");
   const [userDetails, setUserDetails] = useState({ username: "", image: "" });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [inputError, setInputError] = useState("");
 
   useEffect(() => {
     async function fetchUserDetails() {
       const token = getAuthToken();
-      try {
-        const response = await fetch("http://localhost:3000/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
+      const response = await fetch("http://localhost:3000/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
 
-        if (response.ok) {
-          setUserDetails({
-            username: data.data.username,
-            image: data.data.image,
-          });
-        }
-      } catch (error) {
-        notifyError(error.message);
+      if (response.ok) {
+        setUserDetails({
+          username: data.data.username,
+          image: data.data.image,
+        });
+      } else {
+        data.error.forEach((error) => {
+          notifyError(error.message);
+        });
       }
     }
 
@@ -148,14 +150,22 @@ export default function CatItem({ catDetail }) {
       },
     );
 
-    const data = await response.json();
-
-    if (response.ok) {
+    if (
+      response.status === 400 ||
+      response.status === 401 ||
+      response.status === 500
+    ) {
+      const data = await response.json();
+      if (data.error.field === "message") {
+        setInputError(data.error.message);
+      } else {
+        notifyError(data.error.message);
+      }
+    } else {
+      const data = await response.json();
       notifySuccess(data.status);
       setShowAdoptInput(false);
       setAdoptionMessage("");
-    } else {
-      notifyError(data.error);
     }
   };
 
@@ -185,7 +195,7 @@ export default function CatItem({ catDetail }) {
         >
           {carouselImages.map((image, index) => (
             <motion.img
-              key={index}
+              key={`${catDetail.id}-image-${index}`}
               src={image}
               alt={`Additional view of ${catDetail.name}`}
               onClick={() => handleImageClick(image)}
@@ -235,6 +245,7 @@ export default function CatItem({ catDetail }) {
               {showAdoptInput && (
                 <div className="adoptInputContainer">
                   <input
+                    name="message"
                     type="text"
                     value={adoptionMessage}
                     onChange={(e) => setAdoptionMessage(e.target.value)}
@@ -252,6 +263,7 @@ export default function CatItem({ catDetail }) {
                     className="sendIcon"
                     onClick={handleAdoptionMessage}
                   />
+                  {inputError && <p className="errorMessage">{inputError}</p>}
                 </div>
               )}
             </div>
@@ -261,10 +273,8 @@ export default function CatItem({ catDetail }) {
             <h2>About {catDetail.name}</h2>
             <p>Gender: {catDetail.gender}</p>
             <p>Life Stage: {catDetail.lifeStage}</p>
-            {catDetail.healthProblem ? (
+            {catDetail.healthProblem && (
               <p>Health Problem: {catDetail.healthProblem}</p>
-            ) : (
-              <p>Health Problem: None</p>
             )}
           </div>
           {userDetails &&
@@ -293,14 +303,14 @@ export default function CatItem({ catDetail }) {
             .slice(0, 4)
             .map((cat, index) => (
               <motion.li
-                key={index}
+                key={`guardian-${cat.id}`}
                 className="otherCatCard"
                 onClick={() => handleCatClick(cat.id)}
                 initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
                 transition={{ duration: 0.3 }}
                 whileHover={{ scale: 1.05 }}
               >
+                <FavoriteHeart catId={cat.id} />
                 <img src={cat.image} alt={cat.name} className="otherCatImage" />
                 <div className="otherCatInfo">
                   <h3>{cat.name}</h3>
@@ -311,7 +321,6 @@ export default function CatItem({ catDetail }) {
             <motion.li
               className="otherCatCard exploreMoreCard"
               initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
               whileHover={{ scale: 1.05 }}
             >
@@ -341,14 +350,14 @@ export default function CatItem({ catDetail }) {
             .slice(0, 4)
             .map((cat, index) => (
               <motion.li
-                key={index}
+                key={`breed-${cat.id}`}
                 className="otherCatCard"
                 onClick={() => handleCatClick(cat.id)}
                 initial={{ scale: 0.9 }}
-                animate={{ scale: 1 }}
                 transition={{ duration: 0.3 }}
                 whileHover={{ scale: 1.05 }}
               >
+                <FavoriteHeart catId={cat.id} />
                 <img src={cat.image} alt={cat.name} className="otherCatImage" />
                 <div className="otherCatInfo">
                   <h3>{cat.name}</h3>
@@ -359,7 +368,6 @@ export default function CatItem({ catDetail }) {
             <motion.li
               className="otherCatCard exploreMoreCard"
               initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
               whileHover={{ scale: 1.05 }}
             >
@@ -376,7 +384,7 @@ export default function CatItem({ catDetail }) {
       </motion.div>
 
       {isEditDialogOpen && (
-        <CatEditForm catDetail={catDetail} onClose={handleCloseEditDialog} />
+        <EditCatForm catDetail={catDetail} onClose={handleCloseEditDialog} />
       )}
     </>
   );

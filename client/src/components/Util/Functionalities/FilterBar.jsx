@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import { NavLink } from "react-router-dom";
-import { useToast } from "../Custom/ToastProvider.jsx";
+import { useToast } from "../Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import { getAuthToken } from "../../../util/auth.js";
 
@@ -9,6 +9,7 @@ function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();
   const [breeds, setBreeds] = useState([]);
   const [ageTypes, setAgeTypes] = useState([]);
+  const [colors, setColors] = useState([]);
   const [healthProblems, setHealthProblems] = useState([]);
   const token = getAuthToken();
   const [genders] = useState([
@@ -62,9 +63,26 @@ function FilterBar({ searchParams, setSearchParams }) {
       }
     }
 
+    async function fetchColors() {
+      const response = await fetch("http://localhost:3000/colors");
+      const data = await response.json();
+      if (response.ok) {
+        setColors(
+          data.data.map((color) => ({
+            value: color,
+            label: color,
+          })),
+        );
+      } else {
+        notifyError(data.message);
+        return null;
+      }
+    }
+
     fetchBreeds();
     fetchAgeTypes();
     fetchHealthProblems();
+    fetchColors();
   }, []);
 
   const handleChange = (name, selectedOption) => {
@@ -82,6 +100,7 @@ function FilterBar({ searchParams, setSearchParams }) {
     searchParams.delete("selectedAgeType");
     searchParams.delete("selectedHealthProblem");
     searchParams.delete("selectedGender");
+    searchParams.delete("selectedColor");
     setSearchParams(searchParams, { replace: true });
   };
 
@@ -140,7 +159,7 @@ function FilterBar({ searchParams, setSearchParams }) {
         name="search"
         onChange={(e) => handleChange(e.target.name, { value: e.target.value })}
         placeholder="Search cats..."
-        value={searchParams.get("search") || ""}
+        // value={searchParams.get("search") || ""}
       />
       <div className="sortOrderButtons">
         <button
@@ -222,6 +241,23 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={genders}
         placeholder="Any Gender"
+        className="selectControl"
+        isClearable={true}
+      />
+      <label>Color</label>
+      <Select
+        styles={customStyles}
+        value={
+          colors.find(
+            (option) => option.value === searchParams.get("selectedColor"),
+          ) || null
+        }
+        name="selectedColor"
+        onChange={(selectedOption) =>
+          handleChange("selectedColor", selectedOption)
+        }
+        options={colors}
+        placeholder="Any Color"
         className="selectControl"
         isClearable={true}
       />

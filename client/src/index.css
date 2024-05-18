@@ -10,6 +10,7 @@
   --simple-button: #D5D5D570;
   --simple-button-hover: #D5D5D5C6;
   --button-delete: #D8000C;
+  --button-accept: #00A300;
   --cancel-button: #53535389;
   --title-color: #665967;
   --subtitle-color: #665967C1;
@@ -181,12 +182,22 @@ textarea {
   font-size: 17px;
 }
 
+.simpleButton.accept {
+  color: var(--button-accept);
+  font-size: 17px;
+}
+
 .simpleButton.submit:hover {
   background-color: var(--simple-button-hover);
 }
 
 .simpleButton.delete:hover {
   background-color: var(--button-delete);
+  color: var(--white-color);
+}
+
+.simpleButton.accept:hover {
+  background-color: var(--button-accept);
   color: var(--white-color);
 }
 
@@ -269,4 +280,31 @@ textarea {
   font-size: 16px;
   margin: 0 10px;
   color: #afafaf;
+}
+
+.errorText {
+  color: red;
+  font-weight: lighter;
+  font-style: italic;
+  font-size: 15px !important;
+  margin-top: 4px;
+  text-align: left !important;
+}
+
+.errorContainerCats {
+  align-items: center;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px;
+  position: absolute;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  max-width: 500px;
+}
+
+.errorMessageCats {
+  color: #757575;
+  font-size: 19px;
+  text-align: center;
 }

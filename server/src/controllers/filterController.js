@@ -1,7 +1,9 @@
-const { Breed, Cat, AgeType } = require("../../models");
+const { Breed, Cat, AgeType, CatUser } = require("../../models");
 const logger = require("../../logger/logger");
 const filterValidator = require("../validators/filterValidator");
 const catDTO = require("../dto/catDTO");
+const fs = require("fs");
+const path = require("path");
 
 const getAllBreeds = async (req, res) => {
   try {
@@ -32,7 +34,9 @@ const getRecentCats = async (req, res) => {
     return res.status(200).json({ data: catsDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -45,7 +49,9 @@ const getAgeType = async (req, res) => {
     return res.status(200).json({ data: ageTypes, totalItems: totalItems });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -55,14 +61,21 @@ const getHealthProblems = async (req, res) => {
 
     const healthProblemsList = [];
     for (let cat of cats) {
-      healthProblemsList.push(cat.healthProblem);
+      if (cat.healthProblem === null) {
+        healthProblemsList.push("Healthy");
+      } else {
+        healthProblemsList.push(cat.healthProblem);
+      }
     }
+
     const healthProblemsSet = new Set(healthProblemsList);
-    cats = [...healthProblemsSet];
-    return res.status(200).json({ data: cats });
+    const uniqueHealthProblems = [...healthProblemsSet];
+    return res.status(200).json({ data: uniqueHealthProblems });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -83,7 +96,9 @@ const getCatsByBreed = async (req, res) => {
     return res.status(200).json({ data: catsDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -91,7 +106,8 @@ const getCatsOfGuardian = async (req, res) => {
   try {
     const { catId } = req.params;
     const cat = await Cat.findByPk(catId);
-    const userId = cat.userId;
+    const catUser = await CatUser.findByPk(cat.id);
+    const userId = catUser.userId;
     const cats = await Cat.findAll({ where: { userId: userId } });
 
     const catsDetails = [];
@@ -103,7 +119,25 @@ const getCatsOfGuardian = async (req, res) => {
     return res.status(200).json({ data: catsDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+  }
+};
+
+const getColors = async (req, res) => {
+  try {
+    const colorData = fs.readFileSync(
+      path.join(__dirname, "../../constants/colors.json"),
+      "utf8",
+    );
+    const colors = JSON.parse(colorData);
+    return res.status(200).json({ data: colors });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -114,4 +148,5 @@ module.exports = {
   getHealthProblems,
   getCatsByBreed,
   getCatsOfGuardian,
+  getColors,
 };

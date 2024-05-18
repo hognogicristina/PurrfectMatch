@@ -59,7 +59,6 @@ const addCat = async (req, res) => {
 
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
-    catData.userId = req.user.id;
     const newCat = await Cat.create(catData);
 
     for (const uri of catData.uris) {

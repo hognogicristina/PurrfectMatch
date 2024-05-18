@@ -1,0 +1,269 @@
+.adoption-requests {
+  height: 100vh;
+  margin-top: 100px;
+}
+
+.adoption-requests h1 {
+  text-align: center;
+}
+
+.mails-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 20px;
+}
+
+.mails-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mailDetails {
+  background: #f7f7f7;
+  padding: 20px;
+  width: 50%;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+}
+
+.mailDetails .details {
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #ccc;
+}
+
+.expand-button {
+  background: #e37fb6;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button:hover {
+  color: #ff69b4;
+}
+
+.mailDetails .details span {
+  display: block;
+  margin: 5px;
+  color: #555;
+  padding: 2px;
+}
+
+.mailDetails .details span .label {
+  font-weight: bold;
+}
+
+.mailDetails .message {
+  color: #ae3d72;
+  line-height: 1.5;
+}
+
+.mailDetails .catImage {
+  width: 300px;
+  height: 200px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.mailDetails .headerMail {
+  display: flex;
+  align-items: center;
+}
+
+.initials {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffabda, #ff6cbb);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2em;
+  margin-right: 15px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ffffff;
+}
+
+.mailDetails .headerMail img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 15px;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ffffff;
+}
+
+.mailDetails .headerMail .info {
+  flex-grow: 1;
+}
+
+.mailDetails .headerMail .info h2 {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.cat-image {
+  width: 300px;
+  height: 200px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.mailDetails .headerMail .info .from {
+  font-weight: bold;
+}
+
+.mailDetails .headerMail .date {
+  position: absolute;
+  top: 10px;
+  right: 30px;
+  color: #777;
+  font-size: 0.9em;
+}
+
+.mail-section {
+  width: 100%;
+  margin-bottom: 40px;
+}
+
+.mail-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.mail-section h2 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  color: #333;
+  padding-bottom: 10px;
+}
+
+.adoptionRequestItem {
+  flex: 1;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  background: #fff;
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.adoptionRequestItem:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.adoptionRequestItem .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.adoptionRequestItem .header .subject {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: var(--button-submit);
+}
+
+.adoptionRequestItem .header .date {
+  color: #777;
+  font-size: 0.9em;
+}
+
+.adoptionRequestItem .details {
+  margin-top: 10px;
+}
+
+.adoptionRequestItem .details span {
+  display: block;
+  margin: 5px 0;
+  color: #555;
+}
+
+.adoptionRequestItem .details span .label {
+  font-weight: bold;
+}
+
+.mailButton {
+  display: block;
+  margin: 0 auto 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  background-color: #e37fb6;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #b69db0;
+}
+
+.unreadMail {
+  font-weight: bold;
+}
+
+.unreadIcon {
+  color: #e37fb6;
+}
+
+.mailItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.mailItem.unread {
+  padding: 0 0 0 15px;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+
+.max-width-mail-section {
+  max-width: 100%;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.min-width {
+  width: 50%;
+}
+
+.responseButtons {
+  display: flex;
+  gap: 20px;
+}

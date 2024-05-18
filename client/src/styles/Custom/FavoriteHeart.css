@@ -1,0 +1,18 @@
+.catItemHeader {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  padding: 13px 12px 7px 12px;
+  border-radius: 50%;
+  background: rgb(255, 255, 255);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.heartIcon {
+  color: #e37fb6;
+  width: 25px;
+  height: 25px;
+}

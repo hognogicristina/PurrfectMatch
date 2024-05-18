@@ -2,14 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
-const {
-  User,
-  PasswordHistory,
-  Address,
-  Token,
-  UserInfo,
-} = require("../../models");
+const { User, PasswordHistory, Address, UserInfo } = require("../../models");
 const logger = require("../../logger/logger");
+const helperData = require("../generateData/helperData");
 
 const generateAddress = async () => {
   const country = faker.location.country();
@@ -55,9 +50,16 @@ const initializeAdmin = async () => {
       role: adminDetails.role,
       status: adminDetails.status,
     });
+
+    const { birthday, description, hobbies, experienceLevel } =
+      await helperData.generateRandomUserInfo();
+
     await UserInfo.create({
       userId: user.id,
-      birthday: faker.date.anytime(),
+      birthday: birthday,
+      description: description,
+      hobbies: hobbies,
+      experienceLevel: experienceLevel,
     });
     await PasswordHistory.create({
       userId: user.id,

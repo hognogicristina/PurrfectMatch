@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     postalCode: DataTypes.STRING,
     userId: {
       type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
     },
   });
 };

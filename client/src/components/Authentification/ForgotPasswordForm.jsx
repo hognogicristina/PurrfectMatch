@@ -5,12 +5,12 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import "./Authentification.css";
+import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 export default function ForgotPasswordForm() {
   const data = useActionData();

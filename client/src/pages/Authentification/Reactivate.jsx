@@ -9,7 +9,7 @@ export default ReactivatePage;
 export async function action({ request }) {
   const data = await request.formData();
 
-  const response = await fetch("http://localhost:3000/reactivate", {
+  return await fetch("http://localhost:3000/reactivate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -18,14 +18,4 @@ export async function action({ request }) {
       email: data.get("email"),
     }),
   });
-
-  if (
-    response.status === 400 ||
-    response.status === 401 ||
-    response.status === 500
-  ) {
-    return response;
-  }
-
-  return response;
 }

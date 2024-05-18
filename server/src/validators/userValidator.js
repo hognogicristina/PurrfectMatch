@@ -8,7 +8,7 @@ const userExistValidator = async (req, res) => {
     if (!userParam) {
       return res
         .status(404)
-        .json({ error: [{ field: "id", message: "User not found" }] });
+        .json({ error: [{ field: "id", message: "Profile not found" }] });
     }
   } else {
     if (req.user.id) {
@@ -16,7 +16,7 @@ const userExistValidator = async (req, res) => {
       if (!user) {
         return res
           .status(404)
-          .json({ error: [{ field: "id", message: "User not found" }] });
+          .json({ error: [{ field: "id", message: "Profile not found" }] });
       }
     }
   }
@@ -27,15 +27,15 @@ const userExistValidator = async (req, res) => {
 const editUserValidation = async (req, res) => {
   const error = [];
 
-  if (req.body.firstName && validator.isEmpty(req.body.firstName || "")) {
+  if (!req.body.firstName || validator.isEmpty(req.body.firstName || "")) {
     error.push({ field: "firstName", message: "First name is required" });
   }
 
-  if (req.body.lastName && validator.isEmpty(req.body.lastName || "")) {
+  if (!req.body.lastName || validator.isEmpty(req.body.lastName || "")) {
     error.push({ field: "lastName", message: "Last name is required" });
   }
 
-  if (req.body.uri && validator.isEmpty(req.body.uri || "")) {
+  if (!req.body.uri || validator.isEmpty(req.body.uri || "")) {
     error.push({ field: "uri", message: "Image is required" });
   } else if (req.body.uri) {
     const image = await Image.findOne({ where: { uri: req.body.uri } });
@@ -44,7 +44,7 @@ const editUserValidation = async (req, res) => {
     }
   }
 
-  if (req.body.email && validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
     error.push({ field: "email", message: "Email is required" });
   } else if (req.body.email && !validator.isEmail(req.body.email)) {
     error.push({
@@ -58,7 +58,7 @@ const editUserValidation = async (req, res) => {
     }
   }
 
-  if (req.body.birthday && validator.isEmpty(req.body.birthday || "")) {
+  if (!req.body.birthday || validator.isEmpty(req.body.birthday || "")) {
     error.push({ field: "birthday", message: "Birthday is required" });
   } else if (req.body.birthday && !validator.isDate(req.body.birthday)) {
     error.push({
@@ -76,11 +76,13 @@ const editUsernameValidation = async (req, res) => {
   if (req.user) {
     const user = await User.findByPk(req.user.id);
     if (req.body.username && user.username === req.body.username) {
-      error.push({ field: "username", message: "Please enter a new username" });
+      return res.status(400).json({
+        error: [{ field: "username", message: "Please enter a new username" }],
+      });
     }
   }
 
-  if (validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
     error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
     error.push({
@@ -99,7 +101,7 @@ const editUsernameValidation = async (req, res) => {
     }
   }
 
-  if (req.body.password && validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
     error.push({ field: "password", message: "Password is required" });
   } else {
     const user = await User.findByPk(req.user.id);
@@ -114,19 +116,19 @@ const editUsernameValidation = async (req, res) => {
 const editAddressValidation = async (req, res) => {
   const error = [];
 
-  if (req.body.country && validator.isEmpty(req.body.country || "")) {
+  if (!req.body.country || validator.isEmpty(req.body.country)) {
     error.push({ field: "country", message: "Country is required" });
   }
 
-  if (req.body.city && validator.isEmpty(req.body.city || "")) {
+  if (!req.body.city || validator.isEmpty(req.body.city)) {
     error.push({ field: "city", message: "City is required" });
   }
 
-  if (req.body.street && validator.isEmpty(req.body.street || "")) {
+  if (!req.body.street || validator.isEmpty(req.body.street)) {
     error.push({ field: "street", message: "Street is required" });
   }
 
-  if (req.body.number && validator.isEmpty(req.body.number || "")) {
+  if (!req.body.number || validator.isEmpty(req.body.number)) {
     error.push({ field: "number", message: "Number is required" });
   }
 
@@ -134,12 +136,9 @@ const editAddressValidation = async (req, res) => {
     error.push({ field: "floor", message: "Floor must be a number" });
   }
 
-  if (req.body.postalCode && validator.isEmpty(req.body.postalCode || "")) {
+  if (!req.body.postalCode || validator.isEmpty(req.body.postalCode)) {
     error.push({ field: "postalCode", message: "Postal code is required" });
-  } else if (
-    req.body.postalCode &&
-    !validator.isPostalCode(req.body.postalCode, "any")
-  ) {
+  } else if (!validator.isPostalCode(req.body.postalCode, "any")) {
     error.push({ field: "postalCode", message: "Invalid postal code" });
   }
 
@@ -151,10 +150,10 @@ const deleteUserValidation = async (req, res) => {
   if (!user) {
     return res
       .status(404)
-      .json({ error: [{ field: "id", message: "User not found" }] });
+      .json({ error: [{ field: "id", message: "Profile not found" }] });
   }
 
-  if (validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
     return res.status(404).json({
       error: [{ field: "username", message: "Please enter your username" }],
     });

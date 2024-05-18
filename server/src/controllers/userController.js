@@ -30,7 +30,6 @@ const getUser = async (req, res) => {
     const userDetails = await userDTO.userToDTO(req.user);
     return res.json({ data: userDetails });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -58,26 +57,17 @@ const getOwnedCats = async (req, res) => {
 
 const getSentToAdoptionCats = async (req, res) => {
   try {
-    const page = req.query.page || 1;
-    const pageSize = 12;
     if (await catUserValidator.getCatsValidator(req, res, "sentToAdoption"))
       return;
     const cats = await catUserHelper.getCats(req, "sentToAdoption");
-
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = page * pageSize;
     const totalItems = cats.length;
-    const catsForPage = cats.slice(startIndex, endIndex);
 
     const catsDetails = [];
-    for (let cat of catsForPage) {
+    for (let cat of cats) {
       const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
     return res.status(200).json({
-      page: page,
-      pageSize: pageSize,
-      totalPages: Math.ceil(totalItems / pageSize),
       totalItems: totalItems,
       data: catsDetails,
     });
@@ -104,8 +94,8 @@ const editUser = async (req, res) => {
     const user = await User.findByPk(req.user.id);
     await userHelper.updateEmail(user, fieldsToUpdate, req.body);
     let newImage = await Image.findOne({ where: { userId: user.id } });
-    if (req.body.uri) {
-      newImage = await fileHelper.moveImage(user, req.body.uri);
+    if (req.body.uris) {
+      newImage = await fileHelper.moveImage(user, req.body.uris);
     }
     await user.save();
     newImage.userId = user.id;

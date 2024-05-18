@@ -1,7 +1,7 @@
 import { Await, defer, useLoaderData, useSearchParams } from "react-router-dom";
 import { Suspense } from "react";
-import CatsList from "../../components/Cat/CatsList.jsx";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import CatsCatalog from "../../components/Cat/CatsCatalog.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function CatsPage() {
   const { cats } = useLoaderData();
@@ -16,7 +16,7 @@ function CatsPage() {
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={cats}>
         {(loadedCats) => (
-          <CatsList
+          <CatsCatalog
             cats={loadedCats}
             currentPage={currentPage}
             onPageChange={handlePageChange}
@@ -36,12 +36,13 @@ async function loadCats({
   selectedGender = "",
   selectedHealthProblem = "",
   selectedUserId = "",
+  selectedColor = "",
   sortBy = "age",
   sortOrder = "asc",
   page = 1,
   pageSize = 24,
 } = {}) {
-  let query = `search=${search}&selectedBreed=${selectedBreed}&selectedAgeType=${selectedAgeType}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUserId=${selectedUserId}&sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&pageSize=${pageSize}`;
+  let query = `search=${search}&selectedBreed=${selectedBreed}&selectedAgeType=${selectedAgeType}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUserId=${selectedUserId}&selectedColor=${selectedColor}&sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&pageSize=${pageSize}`;
   query = query.replace(/&[^=]+=(?=&|$)/g, "");
 
   const response = await fetch(`http://localhost:3000/cats?${query}`);
@@ -60,6 +61,7 @@ export function loader({ request }) {
       selectedGender: params.selectedGender || "",
       selectedHealthProblem: params.selectedHealthProblem || "",
       selectedUserId: params.selectedUserId || "",
+      selectedColor: params.selectedColor || "",
       sortBy: params.sortBy || "age",
       sortOrder: params.sortOrder || "asc",
       page: parseInt(params.page || "1"),

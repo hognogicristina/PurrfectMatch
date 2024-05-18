@@ -5,11 +5,21 @@ const getCats = async (req, listType) => {
   let cats = [];
 
   if (listType === "sentToAdoption") {
-    const addedCats = await Cat.findAll({ where: { userId: req.user.id } });
-    cats = cats.concat(addedCats);
+    const addedCatsUser = await CatUser.findAll({
+      where: { userId: req.user.id },
+    });
+    for (let addedCat of addedCatsUser) {
+      const cat = await Cat.findByPk(addedCat.catId);
+      cats.push(cat);
+    }
   } else if (listType === "owned") {
-    const ownedCats = await Cat.findAll({ where: { ownerId: req.user.id } });
-    cats = cats.concat(ownedCats);
+    const ownedCatsUser = await CatUser.findAll({
+      where: { ownerId: req.user.id },
+    });
+    for (let ownedCat of ownedCatsUser) {
+      const cat = await Cat.findByPk(ownedCat.catId);
+      cats.push(cat);
+    }
   }
 
   return cats.map((cat) => {
@@ -19,21 +29,13 @@ const getCats = async (req, listType) => {
 
 const updateOwner = async (user) => {
   if (!user) return;
-  const cats = await Cat.findAll({ where: { userId: user.id } });
+  const catUsers = await CatUser.findAll({ where: { userId: user.id } });
 
-  if (cats.length > 0) {
-    for (let cat of cats) {
-      const catUsers = await CatUser.findAll({ where: { catId: cat.id } });
-      for (let catUser of catUsers) {
-        if (catUser.ownerId !== null) {
-          catUser.userId = null;
-          await catUser.save();
-        }
-      }
-
-      if (cat.ownerId !== null) {
-        cat.userId = null;
-        await cat.save();
+  if (catUsers.length > 0) {
+    for (let catUser of catUsers) {
+      if (catUser.ownerId !== null) {
+        catUser.userId = null;
+        await catUser.save();
       }
     }
   }
@@ -41,34 +43,24 @@ const updateOwner = async (user) => {
 
 const deleteCat = async (user) => {
   if (!user) return;
-  const cats = await Cat.findAll({ where: { userId: user.id } });
-
-  if (cats.length > 0) {
-    for (let cat of cats) {
-      const catUsers = await CatUser.findAll({ where: { catId: cat.id } });
-      for (let catUser of catUsers) {
-        await catUser.destroy();
-      }
-
-      const image = await Image.findOne({ where: { id: cat.imageId } });
-      await cat.destroy();
+  const catUsers = await CatUser.findAll({ where: { userId: user.id } });
+  if (catUsers.length > 0) {
+    for (let catUser of catUsers) {
+      const cat = await Cat.findByPk(catUser.catId);
+      const image = await Image.findOne({ where: { catId: cat.id } });
       await fileHelper.deleteImage(image, "uploads");
+      await catUser.destroy();
+      await cat.destroy();
     }
   } else {
-    const catOwners = await Cat.findAll({ where: { ownerId: user.id } });
-
+    const catOwners = await CatUser.findAll({ where: { ownerId: user.id } });
     if (catOwners.length > 0) {
       for (let catOwner of catOwners) {
-        const catUserOwners = await CatUser.findAll({
-          where: { catId: catOwner.id },
-        });
-        for (let catUserOwner of catUserOwners) {
-          await catUserOwner.destroy();
-        }
-
-        const image = await Image.findOne({ where: { id: catOwner.imageId } });
-        await catOwner.destroy();
+        const cat = await Cat.findByPk(catOwner.catId);
+        const image = await Image.findOne({ where: { catId: cat.id } });
         await fileHelper.deleteImage(image, "uploads");
+        await catOwner.destroy();
+        await cat.destroy();
       }
     }
   }

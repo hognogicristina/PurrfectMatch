@@ -1,7 +1,7 @@
 import { Await, defer, useLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import ActivationForm from "../../components/Authentification/ActivationForm.jsx";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function ActivationPage() {
   const { data } = useLoaderData();

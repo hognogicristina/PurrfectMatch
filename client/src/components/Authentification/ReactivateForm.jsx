@@ -1,4 +1,4 @@
-import "./Authentification.css";
+import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
 import {
   Form,
@@ -9,9 +9,9 @@ import {
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import { Spinner } from "../Util/Custom/Spinner.jsx";
-import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import { Spinner } from "../Util/Custom/PageResponse/Spinner.jsx";
+import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 export default function ReactivateForm() {
   const data = useActionData();
@@ -21,6 +21,7 @@ export default function ReactivateForm() {
   const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setIsLoading(false);
@@ -29,9 +30,14 @@ export default function ReactivateForm() {
   useEffect(() => {
     if (data) {
       if (data.error) {
+        const newErrors = {};
         data.error.forEach((error) => {
-          notifyError(error.message);
+          newErrors[error.field] = error.message;
         });
+        setErrors(newErrors);
+        if (data.error.field === "server") {
+          notifyError(data.error.message);
+        }
       } else if (data.status) {
         setSubmitted(true);
       }
@@ -62,12 +68,8 @@ export default function ReactivateForm() {
               email below:
             </p>
             <label>
-              <input
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                required
-              />
+              <input name="email" type="text" placeholder="Enter your email" />
+              {errors.email && <p className="errorText">{errors.email}</p>}
             </label>
             <div className="buttonContainer">
               <motion.button

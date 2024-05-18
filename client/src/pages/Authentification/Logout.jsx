@@ -1,12 +1,12 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import { getAuthToken } from "../../util/auth.js";
-import "../../styles/Logout.css";
+import "../../styles/Auth/Logout.css";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "../../components/Util/Custom/ToastProvider.jsx";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import { useToast } from "../../components/Util/Custom/PageResponse/ToastProvider.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function LogoutPage() {
   const data = useActionData();

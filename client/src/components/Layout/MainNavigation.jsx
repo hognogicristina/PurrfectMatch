@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./MainNavigation.css";
+import "../../styles/PurrfectMatch/MainNavigation.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEnvelope,

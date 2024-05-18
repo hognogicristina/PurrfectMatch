@@ -42,12 +42,12 @@ function CatsNavigation({ onClose }) {
         </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/user/cats-owned"} onClick={onClose}>
+        <NavLink to={"/user/matches-archive"} onClick={onClose}>
           Purrfect Matches Archive
         </NavLink>
       </motion.div>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
-        <NavLink to={"/user/cats-sent-to-adoption"} onClick={onClose}>
+        <NavLink to={"/user/felines-records"} onClick={onClose}>
           Rehomed Felines Records
         </NavLink>
       </motion.div>

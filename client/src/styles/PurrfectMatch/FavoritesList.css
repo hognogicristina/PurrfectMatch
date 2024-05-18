@@ -1,0 +1,75 @@
+.favoritesContainer {
+  margin-top: 100px;
+  padding: 20px;
+}
+
+.favoritesContainer h1 {
+  text-align: center;
+}
+
+.favoritesList {
+  list-style-type: none;
+  padding: 30px;
+}
+
+.favoriteItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: var(--border-radius);
+  border: 1px solid #ddd;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.catImage {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.catDetailsFav {
+  flex-grow: 1;
+}
+
+.catName {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.catBreed {
+  font-size: 1em;
+  color: #777;
+}
+
+.catActions {
+  display: flex;
+}
+
+.heartButton,
+.adoptButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  background-color: #e37fb6;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.heartButton:hover,
+.adoptButton:hover {
+  background-color: #b69db0;
+}
+
+.favoriteButton {
+  text-align: center;
+  margin-top: 20px;
+}

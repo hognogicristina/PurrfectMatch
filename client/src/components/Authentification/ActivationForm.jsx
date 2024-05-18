@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import "./Activation.css";
+import "../../styles/Auth/Activation.css";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 

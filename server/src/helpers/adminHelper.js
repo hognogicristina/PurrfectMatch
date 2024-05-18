@@ -11,6 +11,7 @@ const {
   UserInfo,
 } = require("../../models");
 const fileHelper = require("./fileHelper");
+const catUserHelper = require("./catUserHelper");
 
 const deleteUser = async (user) => {
   await Token.destroy({ where: { userId: user.id } });
@@ -27,15 +28,13 @@ const deleteUser = async (user) => {
     await userAdoptionRequest.destroy();
     await adoptionRequest.destroy();
   }
-  await CatUser.destroy({ where: { userId: user.id } });
-  await CatUser.destroy({ where: { ownerId: user.id } });
-  await Cat.destroy({ where: { userId: user.id } });
-  await Cat.destroy({ where: { ownerId: user.id } });
-  const address = await Address.findByPk(user.addressId);
-  const image = await Image.findByPk(user.imageId);
-  await user.destroy();
+  await catUserHelper.updateOwner(user);
+  await catUserHelper.deleteCat(user);
+  const address = await Address.findOne({ where: { userId: user.id } });
+  const image = await Image.findOne({ where: { userId: user.id } });
   if (address) await address.destroy();
   await fileHelper.deleteImage(image, "uploads");
+  await user.destroy();
 };
 
 const deleteCat = async (cat) => {

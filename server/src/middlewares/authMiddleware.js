@@ -21,7 +21,7 @@ const authenticateToken = async (req, res, next) => {
     if (!user) {
       return res
         .status(404)
-        .json({ error: [{ field: "user", message: "User not found" }] });
+        .json({ error: [{ field: "user", message: "Profile not found" }] });
     }
 
     req.user = user;
@@ -118,7 +118,7 @@ const validateRefreshToken = async (req, res, next) => {
     if (!user) {
       return res
         .status(401)
-        .json({ error: [{ field: "user", message: "User not found" }] });
+        .json({ error: [{ field: "user", message: "Profile not found" }] });
     }
 
     req.user = user;

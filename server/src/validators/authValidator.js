@@ -7,7 +7,7 @@ const validateUser = async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .json({ error: [{ field: "user", message: "User not found" }] });
+      .json({ error: [{ field: "user", message: "Profile not found" }] });
   } else if (user) {
     const tokenUser = await Token.findOne({ where: { userId: user.id } });
 
@@ -59,15 +59,15 @@ const validateUser = async (req, res) => {
 const registerValidation = async (req, res) => {
   const error = [];
 
-  if (validator.isEmpty(req.body.firstName || "")) {
+  if (!req.body.firstName || validator.isEmpty(req.body.firstName || "")) {
     error.push({ field: "firstName", message: "First name is required" });
   }
 
-  if (validator.isEmpty(req.body.lastName || "")) {
+  if (!req.body.lastName || validator.isEmpty(req.body.lastName || "")) {
     error.push({ field: "lastName", message: "Last name is required" });
   }
 
-  if (validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
     error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
     error.push({
@@ -89,7 +89,7 @@ const registerValidation = async (req, res) => {
     }
   }
 
-  if (validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
     error.push({ field: "email", message: "Email is required" });
   } else if (!validator.isEmail(req.body.email)) {
     error.push({
@@ -106,7 +106,7 @@ const registerValidation = async (req, res) => {
     }
   }
 
-  if (validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
     error.push({ field: "password", message: "Password is required" });
   } else if (!validator.isStrongPassword(req.body.password)) {
     error.push({
@@ -116,7 +116,10 @@ const registerValidation = async (req, res) => {
     });
   }
 
-  if (validator.isEmpty(req.body.confirmPassword || "")) {
+  if (
+    !req.body.confirmPassword ||
+    validator.isEmpty(req.body.confirmPassword || "")
+  ) {
     error.push({
       field: "confirmPassword",
       message: "Confirm password is required",
@@ -125,7 +128,7 @@ const registerValidation = async (req, res) => {
     error.push({ field: "confirmPassword", message: "Passwords do not match" });
   }
 
-  if (validator.isEmpty(req.body.birthday || "")) {
+  if (!req.body.birthday || validator.isEmpty(req.body.birthday || "")) {
     error.push({ field: "birthday", message: "Birthday is required" });
   } else if (!validator.isDate(req.body.birthday)) {
     error.push({
@@ -139,23 +142,25 @@ const registerValidation = async (req, res) => {
 
 const loginValidation = async (req, res) => {
   const error = [];
-  const { usernameOrEmail, password } = req.body;
 
-  if (validator.isEmpty(req.body.usernameOrEmail || "")) {
+  if (
+    !req.body.usernameOrEmail ||
+    validator.isEmpty(req.body.usernameOrEmail || "")
+  ) {
     error.push({
       field: "usernameOrEmail",
       message: "Username or email is required",
     });
   }
 
-  if (validator.isEmpty(password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
     error.push({ field: "password", message: "Password is required" });
   }
 
   let user;
   user = await User.findOne({ where: { username: req.body.usernameOrEmail } });
   if (!user) {
-    user = await User.findOne({ where: { email: usernameOrEmail } });
+    user = await User.findOne({ where: { email: req.body.usernameOrEmail } });
   }
 
   if (user) {
@@ -193,7 +198,7 @@ const resetValidationEmail = async (req, res) => {
   const error = [];
   const user = await User.findOne({ where: { email: req.body.email } });
 
-  if (validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
     return res.status(400).json({
       error: [
         {

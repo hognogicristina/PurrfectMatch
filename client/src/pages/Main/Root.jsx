@@ -2,7 +2,7 @@ import { Outlet, useLoaderData, useSubmit } from "react-router-dom";
 import MainNavigation from "../../components/Layout/MainNavigation.jsx";
 import { Suspense, useEffect } from "react";
 import { getTokenDuration } from "../../util/auth.js";
-import LoadingSpinner from "../../components/Util/Custom/LoadingSpinner.jsx";
+import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function RootLayout() {
   const token = useLoaderData();

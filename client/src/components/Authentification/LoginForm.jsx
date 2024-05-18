@@ -6,13 +6,13 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import "./Authentification.css";
+import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import ReactivateDialog from "../Util/Custom/ReactivateDialog.jsx";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import { Spinner } from "../Util/Custom/Spinner.jsx";
-import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
+import ConfirmDialog from "../Util/Custom/Reuse/ConfirmDialog.jsx";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import { Spinner } from "../Util/Custom/PageResponse/Spinner.jsx";
+import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 export default function LoginForm() {
   const data = useActionData();
@@ -69,14 +69,12 @@ export default function LoginForm() {
             name="usernameOrEmail"
             type="text"
             placeholder="Enter your username or email"
-            required
           />
           <label className="passwordInput">
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              required
             />
             <span
               className="togglePassword"
@@ -104,7 +102,7 @@ export default function LoginForm() {
         </Form>
       </motion.div>
       {isDialogOpen && (
-        <ReactivateDialog
+        <ConfirmDialog
           title={statusMessage}
           message="Your account needs to be activated before you can log in. Please press the button below to resend the activation email."
           onClose={handleCloseDialog}

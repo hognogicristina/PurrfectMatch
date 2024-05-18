@@ -6,11 +6,11 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-import "./Authentification.css";
+import "../../styles/Auth/Authentification.css";
 import { AnimatePresence, motion } from "framer-motion";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useToast } from "../Util/Custom/ToastProvider.jsx";
-import LoadingSpinner from "../Util/Custom/LoadingSpinner.jsx";
+import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 export default function RegisterForm() {
   const data = useActionData();
@@ -48,7 +48,7 @@ export default function RegisterForm() {
   }, [data]);
 
   function handleContinue() {
-    navigate("/login");
+    navigate("/");
   }
 
   if (isLoading) {
