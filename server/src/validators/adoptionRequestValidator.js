@@ -105,8 +105,8 @@ const handleAdoptionRequestValidator = async (req, res) => {
   const userId = req.user.id;
 
   if (req.params.id) {
-    const mail = await AdoptionRequest.findByPk(id);
-    if (!mail) {
+    const adoptionRequest = await AdoptionRequest.findByPk(id);
+    if (!adoptionRequest) {
       return res.status(404).json({
         error: [
           { field: "adoption", message: "AdoptionProcess request not found" },
@@ -114,7 +114,7 @@ const handleAdoptionRequestValidator = async (req, res) => {
       });
     }
 
-    const cat = await Cat.findByPk(mail.catId);
+    const cat = await Cat.findByPk(adoptionRequest.catId);
     const catUser = await CatUser.findByPk(cat.id);
     if (catUser.userId !== userId) {
       return res.status(403).json({
@@ -127,7 +127,7 @@ const handleAdoptionRequestValidator = async (req, res) => {
       });
     }
 
-    if (mail.status !== "pending") {
+    if (adoptionRequest.status !== "pending") {
       return res.status(403).json({
         error: [{ field: "status", message: "Status already updated" }],
       });
@@ -160,10 +160,10 @@ const handleAdoptionRequestValidator = async (req, res) => {
 const deleteAdoptionRequestValidator = async (req, res) => {
   const error = [];
   const userId = req.user.id;
-  const mailId = req.params.id;
+  const adoptionRequestId = req.params.id;
 
-  const mail = await AdoptionRequest.findByPk(mailId);
-  if (!mail) {
+  const adoptionRequest = await AdoptionRequest.findByPk(adoptionRequestId);
+  if (!adoptionRequest) {
     return res.status(404).json({
       error: [
         { field: "adoption", message: "AdoptionProcess request not found" },
@@ -171,12 +171,15 @@ const deleteAdoptionRequestValidator = async (req, res) => {
     });
   }
 
-  if (mail.status === "pending") {
+  const userRole = await UserRole.findOne({
+    where: { userId, adoptionRequestId },
+  });
+  if (adoptionRequest.status === "pending" && userRole.role === "receiver") {
     error.push({ field: "mails", message: "Cannot delete pending mails" });
   }
 
   const userAdoptionRequest = await UserRole.findOne({
-    where: { userId, mailId },
+    where: { userId, adoptionRequestId },
   });
   if (!userAdoptionRequest) {
     return res.status(403).json({
@@ -205,8 +208,8 @@ const deleteAdoptionRequestValidator = async (req, res) => {
 
 const getAdoptionRequestsValidator = async (req, res) => {
   if (req.params.id) {
-    const mail = await AdoptionRequest.findByPk(req.params.id);
-    if (!mail) {
+    const adoptionRequest = await AdoptionRequest.findByPk(req.params.id);
+    if (!adoptionRequest) {
       return res.status(404).json({
         error: [
           { field: "adoption", message: "AdoptionProcess request not found" },

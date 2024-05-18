@@ -71,15 +71,12 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     id: "root",
     loader: tokenLoader,
+    errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
         element: <HomePage />,
         loader: loadHome,
-      },
-      {
-        path: "*",
-        element: <NotFoundPage />,
       },
       {
         path: "cats",
@@ -105,14 +102,19 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "favorites",
-        element: <FavoritesPage />,
-        loader: loadFavorites,
-      },
-      {
-        path: "adopts",
-        element: <AdoptionRequestsPage />,
-        loader: loadAdoptionRequestsPage,
+        loader: checkAuthLoader,
+        children: [
+          {
+            path: "favorites",
+            element: <FavoritesPage />,
+            loader: loadFavorites,
+          },
+          {
+            path: "adopts",
+            element: <AdoptionRequestsPage />,
+            loader: loadAdoptionRequestsPage,
+          },
+        ],
       },
       {
         path: "login",
@@ -178,14 +180,19 @@ const router = createBrowserRouter([
             loader: checkAuthLoader,
           },
           {
-            path: "felines-records",
-            element: <FelinesRecordsPage />,
-            loader: loadSendToAdoptionCats,
-          },
-          {
-            path: "matches-archive",
-            element: <OwnedArchivePage />,
-            loader: loadOwnedCats,
+            loader: checkAuthLoader,
+            children: [
+              {
+                path: "felines-records",
+                element: <FelinesRecordsPage />,
+                loader: loadSendToAdoptionCats,
+              },
+              {
+                path: "matches-archive",
+                element: <OwnedArchivePage />,
+                loader: loadOwnedCats,
+              },
+            ],
           },
         ],
       },

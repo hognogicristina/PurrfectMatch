@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { Address, User, PasswordHistory, UserInfo } = require("../../models");
+const { Address, User, PasswordHistory } = require("../../models");
 const userValidator = require("../validators/userValidator");
 const passwordValidator = require("../validators/passwordValidator");
 const catUserValidator = require("../validators/catUserValidator");
@@ -183,15 +183,22 @@ const deleteUser = async (req, res) => {
       await transaction.rollback();
       return;
     }
-    await userHelper.deleteUser(req.user);
+    await userHelper.deleteUser(req.user, transaction);
     await transaction.commit();
     return res.status(200).json({ status: "We are sorry to see you go" });
   } catch (error) {
-    await transaction.rollback();
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+    console.log(error);
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
+    if (!res.headersSent) {
+      logger.error(error);
+      return res.status(500).json({
+        error: [{ field: "server", message: "Internal server error" }],
+      });
+    } else {
+      logger.error("Response already sent:", error);
+    }
   }
 };
 

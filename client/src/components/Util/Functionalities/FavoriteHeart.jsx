@@ -5,7 +5,7 @@ import "../../../styles/Custom/FavoriteHeart.css";
 import { useToast } from "../Custom/PageResponse/ToastProvider.jsx";
 import { getAuthToken } from "../../../util/auth.js";
 
-const FavoriteHeart = ({ catId }) => {
+const FavoriteHeart = ({ catId, isFavoritesArchive }) => {
   const { notifyError } = useToast();
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -91,7 +91,7 @@ const FavoriteHeart = ({ catId }) => {
 
   return (
     <motion.div
-      className="catItemHeader"
+      className={`catItemHeader ${isFavoritesArchive ? "favHeart" : ""}`}
       onClick={handleToggleFavorite}
       whileTap={{ scale: 1.2 }}
     >

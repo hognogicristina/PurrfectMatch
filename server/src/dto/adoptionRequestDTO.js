@@ -30,13 +30,13 @@ async function adoptionRequestToDTO(adoptionRequest, user) {
     address = await Address.findOne({ where: { userId: receiver.id } });
   }
 
-  let isReceived = false;
+  let isReceived;
   if (user.id === receiver.id) {
     isReceived = true;
   }
 
   return {
-    subject: "AdoptionProcess request",
+    subject: "Adoption Process Request",
     imageFrom: imageFrom ? imageFrom.url : null,
     from: `${sender.firstName} ${sender.lastName}`,
     to: `${receiver.firstName} ${receiver.lastName}`,

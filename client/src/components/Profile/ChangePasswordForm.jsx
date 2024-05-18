@@ -49,7 +49,7 @@ export default function ChangeUsernameProfile({ userDetail }) {
               }}
             />
             <span
-              className="togglePassword"
+              className={`togglePassword ${errors.currentPassword ? "show" : ""}`}
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             >
               {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
@@ -68,7 +68,7 @@ export default function ChangeUsernameProfile({ userDetail }) {
               }}
             />
             <span
-              className="togglePassword"
+              className={`togglePassword ${errors.newPassword ? "show" : ""}`}
               onClick={() => setShowNewPassword(!showNewPassword)}
             >
               {showNewPassword ? <FaEyeSlash /> : <FaEye />}
@@ -87,7 +87,7 @@ export default function ChangeUsernameProfile({ userDetail }) {
               }}
             />
             <span
-              className="togglePassword"
+              className={`togglePassword ${errors.confirmPassword ? "show" : ""}`}
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

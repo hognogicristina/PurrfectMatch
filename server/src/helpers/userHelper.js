@@ -12,22 +12,28 @@ const catUserHelper = require("./catUserHelper");
 const fileHelper = require("./fileHelper");
 const emailServ = require("../services/emailService");
 
-const deleteUser = async (user) => {
+const deleteUser = async (user, transaction) => {
   await emailService.sendDeleteAccount(user);
-  await adoptionRequestHelper.deleteAdoptionRequestUser(user);
-  await catUserHelper.updateOwner(user);
-  await catUserHelper.deleteCat(user);
-  await Token.destroy({ where: { userId: user.id } });
-  await UserInfo.destroy({ where: { userId: user.id } });
-  await PasswordHistory.destroy({ where: { userId: user.id } });
-  await RefreshToken.destroy({ where: { userId: user.id } });
-  const image = await Image.findOne({ where: { userId: user.id } });
-  await fileHelper.deleteImage(image, "uploads");
-  const address = await Address.findOne({ where: { userId: user.id } });
+  await adoptionRequestHelper.deleteAdoptionRequestUser(user, transaction);
+  await catUserHelper.deleteCat(user, transaction);
+  await Token.destroy({ where: { userId: user.id }, transaction });
+  await UserInfo.destroy({ where: { userId: user.id }, transaction });
+  await PasswordHistory.destroy({ where: { userId: user.id }, transaction });
+  await RefreshToken.destroy({ where: { userId: user.id }, transaction });
+  const image = await Image.findOne({
+    where: { userId: user.id },
+    transaction,
+  });
+  await fileHelper.deleteImage(image, "uploads", transaction);
+  const address = await Address.findOne({
+    where: { userId: user.id },
+    transaction,
+  });
   if (address) {
-    await address.destroy();
+    await address.destroy({ transaction });
   }
-  await user.destroy();
+
+  await user.destroy({ transaction });
 };
 
 const updateEmail = async (user, fieldsToUpdate, body) => {

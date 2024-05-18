@@ -104,11 +104,18 @@ const getCatsByBreed = async (req, res) => {
 
 const getCatsOfGuardian = async (req, res) => {
   try {
-    const { catId } = req.params;
-    const cat = await Cat.findByPk(catId);
-    const catUser = await CatUser.findByPk(cat.id);
-    const userId = catUser.userId;
-    const cats = await Cat.findAll({ where: { userId: userId } });
+    const catUser = await CatUser.findOne({
+      where: { catId: req.params.catId },
+    });
+    const catUsers = await CatUser.findAll({
+      where: { userId: catUser.userId },
+    });
+
+    const cats = [];
+    for (let catUser of catUsers) {
+      const cat = await Cat.findByPk(catUser.catId);
+      cats.push(cat);
+    }
 
     const catsDetails = [];
     for (let cat of cats) {

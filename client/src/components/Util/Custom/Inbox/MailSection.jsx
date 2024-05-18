@@ -1,30 +1,34 @@
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { FaCircle } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 import { BiCollapseVertical, BiExpandVertical } from "react-icons/bi";
+import MailItem from "./MailItem.jsx";
 
-const MailSection = ({
+function MailSection({
   title,
   mails,
   selectedMailId,
   openMail,
-  getStatusIcon,
   itemsToShow,
   setItemsToShow,
   isExpanded,
   setIsExpanded,
-  mailDetails,
-}) => {
+  setMailDetails,
+  isSent,
+}) {
+  const handleExpandClick = () => {
+    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      setItemsToShow(1);
+    }
+  };
+
   return (
-    <div
-      className={`mail-section ${selectedMailId && "max-width-mail-section"}`}
-    >
-      <div className="section-header">
+    <div className={`mailSection ${selectedMailId && "maxWidthMailSection"}`}>
+      <div className="sectionHeader">
         <h2>{title}</h2>
         <motion.button
           whileTap={{ scale: 0.9 }}
-          className="expand-button"
-          onClick={() => setIsExpanded(!isExpanded)}
+          className="expandButton"
+          onClick={handleExpandClick}
         >
           {isExpanded ? <BiCollapseVertical /> : <BiExpandVertical />}
         </motion.button>
@@ -33,35 +37,18 @@ const MailSection = ({
         <>
           {mails.length > 0 ? (
             <ul>
-              {mails.slice(0, itemsToShow).map((mail) => (
-                <div
-                  className={`mail-item ${mail.isRead ? "unread" : ""}`}
-                  key={mail.id}
-                >
-                  <div className="icon-wrapper">
-                    {!mail.isRead && <FaCircle className="unread-icon" />}
-                  </div>
-                  <li
-                    className={`adoption-request-item ${
-                      !mail.isRead ? "unread-mail" : ""
-                    } ${selectedMailId === mail.id ? "selected-mail" : ""}`}
-                    onClick={() => openMail(mail.id)}
-                  >
-                    <div className="mail-content">
-                      <div className="header">
-                        <span className="subject">{mail.subject}</span>
-                        <span className="date">{mail.date}</span>
-                      </div>
-                      <div className="details">
-                        <span className="from">From: {mail.from.name}</span>
-                        <span className="status">
-                          {getStatusIcon(mail.status)}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                </div>
-              ))}
+              <AnimatePresence>
+                {mails.slice(0, itemsToShow).map((mail, index) => (
+                  <MailItem
+                    key={mail.id}
+                    mail={mail}
+                    isSelected={selectedMailId === mail.id}
+                    openMail={openMail}
+                    setMailDetails={setMailDetails}
+                    isSent={isSent}
+                  />
+                ))}
+              </AnimatePresence>
             </ul>
           ) : (
             <p className="errorMessageCats">{mails.message}</p>
@@ -79,6 +66,6 @@ const MailSection = ({
       )}
     </div>
   );
-};
+}
 
 export default MailSection;

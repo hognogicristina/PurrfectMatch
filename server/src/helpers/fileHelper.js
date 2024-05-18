@@ -60,15 +60,15 @@ const moveImage = async (currentImage, uri) => {
   const imagePath = path.join("public", "temporary-uploads", image.filename);
   const file = await getFile(imagePath, image.filename);
   const newImage = await uploadImage(file, "uploads");
-  await deleteImage(image, "temporary-uploads");
+  await deleteImage(image, "temporary-uploads", null);
   return newImage;
 };
 
-const deleteImage = async (image, folder) => {
+const deleteImage = async (image, folder, transaction) => {
   if (!image) return;
   const imagePath = path.join("public", folder, image.filename);
-  await fs.unlinkSync(imagePath);
-  await image.destroy();
+  if (fs.existsSync(imagePath)) await fs.unlinkSync(imagePath);
+  await image.destroy({ transaction });
 };
 
 module.exports = {

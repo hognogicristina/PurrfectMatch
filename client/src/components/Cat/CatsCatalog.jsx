@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import FilterBar from "../Util/Functionalities/FilterBar.jsx";
-import SortDropdown from "../Util/Functionalities/SortDropdown.jsx";
+import FilterBar from "../Util/Features/FilterBar.jsx";
+import SortDropdown from "../Util/Features/SortDropdown.jsx";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import Pagination from "../Util/Custom/Reuse/Pagination.jsx";

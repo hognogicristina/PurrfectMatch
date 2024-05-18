@@ -57,13 +57,13 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
       for (let i = 1; i <= totalPages; i++) {
         options.push({
           value: i,
-          label: `Page ${i} of ${totalPages}`,
+          label: `Page ${i}`,
         });
       }
     } else {
       options.push({
         value: 1,
-        label: `Page 1 of ${totalPages}`,
+        label: `Page 1`,
       });
 
       let startPage = Math.max(2, currentPage - 2);
@@ -80,7 +80,7 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
       for (let i = startPage; i <= endPage; i++) {
         options.push({
           value: i,
-          label: `Page ${i} of ${totalPages}`,
+          label: `Page ${i}`,
         });
       }
 
@@ -94,7 +94,7 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
 
       options.push({
         value: totalPages,
-        label: `Page ${totalPages} of ${totalPages}`,
+        label: `Page ${totalPages}`,
       });
     }
 

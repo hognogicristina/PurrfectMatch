@@ -36,7 +36,9 @@ const getAllCats = async (req, res) => {
     });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -48,7 +50,9 @@ const getOneCat = async (req, res) => {
     return res.status(200).json({ data: catDetails });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -71,7 +75,9 @@ const addCat = async (req, res) => {
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -94,7 +100,9 @@ const editCat = async (req, res) => {
     return res.json({ status: "Cat updated successfully" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -106,19 +114,27 @@ const deleteCat = async (req, res) => {
       return;
     }
 
-    const cat = await Cat.findByPk(req.params.id);
-    const image = await Image.findOne({ where: { catId: cat.id } });
+    const cat = await Cat.findOne({
+      where: { id: req.params.id },
+      transaction,
+    });
+    const image = await Image.findOne({
+      where: { catId: cat.id },
+      transaction,
+    });
 
-    await mailHelper.deleteAdoptionRequestCat(cat, req.user);
-    await CatUser.destroy({ where: { catId: cat.id } });
-    await fileHelper.deleteImage(image, "uploads");
-    await cat.destroy();
+    await mailHelper.deleteAdoptionRequestCat(cat, req.user, transaction);
+    await CatUser.destroy({ where: { catId: cat.id }, transaction });
+    await fileHelper.deleteImage(image, "uploads", transaction);
+    await cat.destroy({ transaction });
     await transaction.commit();
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 

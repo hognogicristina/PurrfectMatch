@@ -1,16 +1,28 @@
-import React, { useState } from "react";
-import { FaHeart } from "react-icons/fa";
+import { useState } from "react";
 import "../../styles/PurrfectMatch/FavoritesList.css";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
+import FavoriteHeart from "../Util/Functionalities/FavoriteHeart.jsx";
+import SubmitDialog from "../Util/Custom/Reuse/SubmitDialog.jsx";
+import { getAuthToken } from "../../util/auth.js";
 
 export default function FavoritesArchive({ favorites }) {
   const { data, error } = favorites;
   const { notifyError } = useToast();
+  const token = getAuthToken();
   const [visibleCount, setVisibleCount] = useState(7);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleShowMore = () => {
     setVisibleCount((prevCount) => prevCount + 3);
+  };
+
+  const handleAdoptMeClick = () => {
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
   };
 
   const renderFavorites = () => {
@@ -35,10 +47,12 @@ export default function FavoritesArchive({ favorites }) {
             <p className="catBreed">{favorite.breed}</p>
           </div>
           <div className="catActions">
-            <motion.button whileTap={{ scale: 0.9 }} className="heartButton">
-              <FaHeart />
-            </motion.button>
-            <motion.button whileTap={{ scale: 0.9 }} className="adoptButton">
+            <FavoriteHeart catId={favorite.id} isFavoritesArchive />
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="submitButton save"
+              onClick={() => handleAdoptMeClick(favorite.id)}
+            >
               Adopt Me
             </motion.button>
           </div>
@@ -72,6 +86,12 @@ export default function FavoritesArchive({ favorites }) {
           </motion.button>
         </div>
       )}
+      <SubmitDialog
+        isOpen={isDialogOpen}
+        onClose={handleCloseDialog}
+        catDetail={data}
+        token={token}
+      />
     </div>
   );
 }

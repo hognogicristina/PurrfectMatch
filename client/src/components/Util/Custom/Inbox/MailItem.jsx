@@ -1,54 +1,30 @@
 import { motion } from "framer-motion";
 import { FaCircle } from "react-icons/fa";
-import { getAuthToken } from "../../../../util/auth.js";
-import { useToast } from "../PageResponse/ToastProvider.jsx";
+import { getStatusIcon } from "./MailDetails.jsx";
 
-const MailItem = ({
-  mail,
-  isSelected,
-  openMail,
-  getStatusIcon,
-  setMailDetails,
-}) => {
-  const { notifyError } = useToast();
+const itemVariants = {
+  hidden: { opacity: 0, height: 0 },
+  visible: { opacity: 1, height: "auto" },
+  exit: { opacity: 0, height: 0 },
+};
 
-  const handleResponse = async (status) => {
-    const token = getAuthToken();
-    const response = await fetch(
-      `http://localhost:3000/adopt/${mail.id}/response`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ status }),
-      },
-    );
-
-    if (response.ok) {
-      const mailData = await response.json();
-      setMailDetails(mailData.data);
-    } else {
-      const mailError = await response.json();
-      notifyError(mailError.error.message);
-    }
-  };
-
+export default function MailItem({ mail, isSelected, openMail, isSent }) {
   return (
     <motion.div
-      initial={{ x: "-9vh", opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 90, damping: 20 }}
       className={`mailItem ${mail.isRead ? "unread" : ""}`}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={itemVariants}
+      transition={{ duration: 0.5 }}
     >
-      <div className="icon-wrapper">
+      <div className="iconWrapper">
         {!mail.isRead && <FaCircle className="unreadIcon" />}
       </div>
       <li
         className={`adoptionRequestItem ${
           !mail.isRead ? "unreadMail" : ""
-        } ${isSelected ? "selected-mail" : ""}`}
+        } ${isSelected ? "selectedMail" : ""}`}
         onClick={() => openMail(mail.id)}
       >
         <div className="mailContent">
@@ -57,31 +33,15 @@ const MailItem = ({
             <span className="date">{mail.date}</span>
           </div>
           <div className="details">
-            <span className="from">From: {mail.from.name}</span>
+            {isSent ? (
+              <span className="to">To: {mail.to.name}</span>
+            ) : (
+              <span className="from">From: {mail.from.name}</span>
+            )}
             <span className="status">{getStatusIcon(mail.status)}</span>
           </div>
         </div>
       </li>
-      {mail.status === "pending" && mail.isReceived && (
-        <div className="responseButtons">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="simpleButton accept"
-            onClick={() => handleResponse("accepted")}
-          >
-            Accept
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="simpleButton delete"
-            onClick={() => handleResponse("declined")}
-          >
-            Decline
-          </motion.button>
-        </div>
-      )}
     </motion.div>
   );
-};
-
-export default MailItem;
+}

@@ -23,24 +23,42 @@ const getAllUsers = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  const transaction = await User.sequelize.transaction();
   try {
-    if (await adminValidator.userExistValidator(req, res)) return;
-    const user = await User.findByPk(req.params.id);
-    await adminHelper.deleteUser(user);
+    if (await adminValidator.userExistValidator(req, res)) {
+      await transaction.rollback();
+      return;
+    }
+    const user = await User.findOne({
+      where: { id: req.params.id },
+      transaction,
+    });
+    await adminHelper.deleteUser(user, transaction);
+    await transaction.commit();
     return res.status(200).json({ status: "Profile deleted successfully" });
   } catch (error) {
+    await transaction.rollback();
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const deleteCat = async (req, res) => {
+  const transaction = await Cat.sequelize.transaction();
   try {
-    if (await catValidator.catExistValidator(req, res)) return;
-    const cat = await Cat.findByPk(req.params.id);
-    await adminHelper.deleteCat(cat);
+    if (await catValidator.catExistValidator(req, res)) {
+      await transaction.rollback();
+      return;
+    }
+    const cat = await Cat.findOne({
+      where: { id: req.params.id },
+      transaction,
+    });
+    await adminHelper.deleteCat(cat, transaction);
+    await transaction.commit();
     return res.status(200).json({ status: "Cat deleted successfully" });
   } catch (error) {
+    await transaction.rollback();
     logger.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }

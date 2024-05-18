@@ -67,7 +67,7 @@ export default function ChangeUsernameForm({ userDetail }) {
               }}
             />
             <span
-              className="togglePassword"
+              className={`togglePassword ${errors.password ? "show" : ""}`}
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}

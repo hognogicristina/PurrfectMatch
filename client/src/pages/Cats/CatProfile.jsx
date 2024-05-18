@@ -9,7 +9,6 @@ function CatProfilePage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={catDetail}>
-        xw
         {(loadedCatDetail) => <CatItem catDetail={loadedCatDetail} />}
       </Await>
     </Suspense>

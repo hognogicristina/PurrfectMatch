@@ -73,33 +73,38 @@ const sendAdoptionRequest = async (
   });
 };
 
-const deleteAdoptionRequestCat = async (cat, receiver) => {
+const deleteAdoptionRequestCat = async (cat, receiver, transaction) => {
   const adoptionRequests = await AdoptionRequest.findAll({
     where: { catId: cat.id },
+    transaction,
   });
 
   for (const adoptionRequest of adoptionRequests) {
     if (adoptionRequest.status === "pending") {
       const userAdoptionRequests = await UserRole.findAll({
         where: { adoptionRequestId: adoptionRequest.id },
+        transaction,
       });
       for (let userAdoptionRequest of userAdoptionRequests) {
         if (userAdoptionRequest.role === "sender") {
           const sender = await User.findOne({
             where: { id: userAdoptionRequest.userId },
+            transaction,
           });
           await emailService.sendDeclineAdoption(sender, receiver, cat);
         }
       }
       await UserRole.destroy({
         where: { adoptionRequestId: adoptionRequest.id },
+        transaction,
       });
-      await adoptionRequest.destroy();
+      await adoptionRequest.destroy({ transaction });
     } else {
       await UserRole.destroy({
         where: { adoptionRequestId: adoptionRequest.id },
+        transaction,
       });
-      await adoptionRequest.destroy();
+      await adoptionRequest.destroy({ transaction });
     }
   }
 };
@@ -133,26 +138,33 @@ const deleteAdoptionRequest = async (
   }
 };
 
-const deleteAdoptionRequestUser = async (user) => {
+const deleteAdoptionRequestUser = async (user, transaction) => {
   const userAdoptionRequests = await UserRole.findAll({
     where: { userId: user.id },
+    transaction,
   });
   for (let userAdoptionRequest of userAdoptionRequests) {
     if (userAdoptionRequest.role === "receiver") {
       const adoptionRequest = await AdoptionRequest.findOne({
         where: { id: userAdoptionRequest.adoptionRequestId },
+        transaction,
       });
       if (adoptionRequest && adoptionRequest.status === "pending") {
-        const cat = await Cat.findOne({ where: { id: adoptionRequest.catId } });
+        const cat = await Cat.findOne({
+          where: { id: adoptionRequest.catId },
+          transaction,
+        });
         const senderUserRoles = await UserRole.findAll({
           where: {
             adoptionRequestId: adoptionRequest.id,
             role: "sender",
           },
+          transaction,
         });
         for (let senderUserRole of senderUserRoles) {
           const sender = await User.findOne({
             where: { id: senderUserRole.userId },
+            transaction,
           });
           await emailService.sendDeclineAdoption(sender, user, cat);
         }
@@ -161,14 +173,16 @@ const deleteAdoptionRequestUser = async (user) => {
 
     const adoptionRequest = await AdoptionRequest.findOne({
       where: { id: userAdoptionRequest.adoptionRequestId },
+      transaction,
     });
     const otherUserRoles = await UserRole.findAll({
       where: { adoptionRequestId: adoptionRequest.id },
+      transaction,
     });
     for (let otherUserRole of otherUserRoles) {
-      await otherUserRole.destroy();
+      await otherUserRole.destroy({ transaction });
     }
-    await adoptionRequest.destroy();
+    await adoptionRequest.destroy({ transaction });
   }
 };
 

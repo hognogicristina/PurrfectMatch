@@ -217,6 +217,7 @@ const processAdoptionRequests = async (numRequests) => {
       adoptionRequest.addressId = address.id;
       cat.status = "adopted";
       catUser.ownerId = user.id;
+      await adoptionRequest.save();
       await catUser.save();
       await cat.save();
     }
@@ -232,7 +233,7 @@ const emptyDatabase = () => {
   CatUser.destroy({ truncate: true });
   Image.findAll().then((images) => {
     for (const image of images) {
-      fileHelper.deleteImage(image, "uploads");
+      fileHelper.deleteImage(image, "uploads", null);
     }
   });
   Cat.destroy({ truncate: true });
@@ -243,7 +244,7 @@ const emptyDatabase = () => {
   AgeType.destroy({ truncate: true });
   Breed.findAll().then((breeds) => {
     for (const breed of breeds) {
-      fileHelper.deleteImage(breed, "breeds");
+      fileHelper.deleteImage(breed, "breeds", null);
     }
   });
 
@@ -261,7 +262,7 @@ const generateData = async () => {
     await generateCats(300, users);
     await generateFavorite(150, users);
     await generateAdoptionRequests(200, users);
-    await processAdoptionRequests(130);
+    await processAdoptionRequests(120);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);

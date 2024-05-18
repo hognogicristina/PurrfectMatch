@@ -70,19 +70,19 @@ export default function ForgotPasswordForm() {
             <div className="buttonContainer">
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                type="button"
-                onClick={() => navigate(-1)}
-                className="cancelButton"
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
                 disabled={isSubmitting}
                 type="submit"
                 className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
               >
                 {isSubmitting ? "Submitting.." : "Submit"}
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={() => navigate(-1)}
+                className="cancelButton"
+              >
+                Cancel
               </motion.button>
             </div>
           </Form>

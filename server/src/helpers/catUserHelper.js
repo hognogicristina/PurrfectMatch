@@ -1,4 +1,11 @@
-const { Image, Cat, CatUser } = require("../../models");
+const {
+  Image,
+  Cat,
+  CatUser,
+  Favorite,
+  AdoptionRequest,
+  UserRole,
+} = require("../../models");
 const fileHelper = require("./fileHelper");
 
 const getCats = async (req, listType) => {
@@ -27,43 +34,128 @@ const getCats = async (req, listType) => {
   });
 };
 
-const updateOwner = async (user) => {
+const deleteCat = async (user, transaction) => {
   if (!user) return;
-  const catUsers = await CatUser.findAll({ where: { userId: user.id } });
+  const catUsers = await CatUser.findAll({
+    where: { userId: user.id },
+    transaction,
+  });
+
+  const userFavorites = await Favorite.findAll({
+    where: { userId: user.id },
+    transaction,
+  });
+
+  for (let fav of userFavorites) {
+    await fav.destroy({ transaction });
+  }
 
   if (catUsers.length > 0) {
     for (let catUser of catUsers) {
-      if (catUser.ownerId !== null) {
+      if (catUser.ownerId !== null && catUser.ownerId !== user.id) {
         catUser.userId = null;
-        await catUser.save();
+        await catUser.save({ transaction });
+      } else {
+        const cat = await Cat.findByPk(catUser.catId, { transaction });
+        const images = await Image.findAll({
+          where: { catId: cat.id },
+          transaction,
+        });
+
+        if (images.length > 0) {
+          for (let img of images) {
+            await fileHelper.deleteImage(img, "uploads", transaction);
+          }
+        }
+
+        await catUser.destroy({ transaction });
+        const favorite = await Favorite.findAll({
+          where: { catId: cat.id },
+          transaction,
+        });
+        for (let fav of favorite) {
+          await fav.destroy({ transaction });
+        }
+        const adoptionRequests = await AdoptionRequest.findAll({
+          where: { catId: cat.id },
+          transaction,
+        });
+
+        if (adoptionRequests.length > 0) {
+          for (let adoptionRequest of adoptionRequests) {
+            const userAdoptionRequests = await UserRole.findAll({
+              where: { adoptionRequestId: adoptionRequest.id },
+              transaction,
+            });
+
+            if (userAdoptionRequests.length > 0) {
+              for (let userAdoptionRequest of userAdoptionRequests) {
+                await userAdoptionRequest.destroy({ transaction });
+              }
+            }
+            await adoptionRequest.destroy({ transaction });
+          }
+        }
+        await cat.destroy({ transaction });
       }
+    }
+  }
+
+  const catOwners = await CatUser.findAll({
+    where: { ownerId: user.id },
+    transaction,
+  });
+  if (catOwners.length > 0) {
+    for (let catOwner of catOwners) {
+      const cat = await Cat.findByPk(catOwner.catId, { transaction });
+      const images = await Image.findAll({
+        where: { catId: cat.id },
+        transaction,
+      });
+
+      if (images.length > 0) {
+        for (let img of images) {
+          await fileHelper.deleteImage(img, "uploads", transaction);
+        }
+      }
+
+      const favorite = await Favorite.findAll({
+        where: { catId: cat.id },
+        transaction,
+      });
+
+      if (favorite.length > 0) {
+        for (let fav of favorite) {
+          await fav.destroy({ transaction });
+        }
+      }
+
+      const adoptionRequests = await AdoptionRequest.findAll({
+        where: { catId: cat.id },
+        transaction,
+      });
+
+      if (adoptionRequests.length > 0) {
+        for (let adoptionRequest of adoptionRequests) {
+          const userAdoptionRequests = await UserRole.findAll({
+            where: { adoptionRequestId: adoptionRequest.id },
+            transaction,
+          });
+
+          if (userAdoptionRequests.length > 0) {
+            for (let userAdoptionRequest of userAdoptionRequests) {
+              await userAdoptionRequest.destroy({ transaction });
+            }
+          }
+
+          await adoptionRequest.destroy({ transaction });
+        }
+      }
+
+      await catOwner.destroy({ transaction });
+      await cat.destroy({ transaction });
     }
   }
 };
 
-const deleteCat = async (user) => {
-  if (!user) return;
-  const catUsers = await CatUser.findAll({ where: { userId: user.id } });
-  if (catUsers.length > 0) {
-    for (let catUser of catUsers) {
-      const cat = await Cat.findByPk(catUser.catId);
-      const image = await Image.findOne({ where: { catId: cat.id } });
-      await fileHelper.deleteImage(image, "uploads");
-      await catUser.destroy();
-      await cat.destroy();
-    }
-  } else {
-    const catOwners = await CatUser.findAll({ where: { ownerId: user.id } });
-    if (catOwners.length > 0) {
-      for (let catOwner of catOwners) {
-        const cat = await Cat.findByPk(catOwner.catId);
-        const image = await Image.findOne({ where: { catId: cat.id } });
-        await fileHelper.deleteImage(image, "uploads");
-        await catOwner.destroy();
-        await cat.destroy();
-      }
-    }
-  }
-};
-
-module.exports = { getCats, updateOwner, deleteCat };
+module.exports = { getCats, deleteCat };

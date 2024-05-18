@@ -46,30 +46,22 @@
 }
 
 .catActions {
+  position: relative;
   display: flex;
-}
-
-.heartButton,
-.adoptButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 10px;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  background-color: #e37fb6;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.heartButton:hover,
-.adoptButton:hover {
-  background-color: #b69db0;
+  gap: 10px;
 }
 
 .favoriteButton {
   text-align: center;
   margin-top: 20px;
+}
+
+.catItemHeader.favHeart {
+  top: 0;
+  position: relative;
+}
+
+.favoriteHeart {
+  position: relative;
+  top: 0;
 }

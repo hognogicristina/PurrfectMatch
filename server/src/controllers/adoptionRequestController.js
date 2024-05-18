@@ -114,7 +114,6 @@ const getAdoptionRequests = async (req, res) => {
     return res.status(200).json({ data: responseData });
   } catch (error) {
     logger.error(error);
-    console.log(error);
     return res
       .status(500)
       .json({ error: [{ field: "server", message: "Internal server error" }] });
@@ -172,11 +171,18 @@ const deleteAdoptionRequest = async (req, res) => {
       .status(200)
       .json({ status: "AdoptionRequest deleted successfully" });
   } catch (error) {
-    await transaction.rollback();
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal server error" }] });
+    if (!transaction.finished) {
+      await transaction.rollback();
+    }
+
+    if (!res.headersSent) {
+      logger.error(error);
+      return res.status(500).json({
+        error: [{ field: "server", message: "Internal server error" }],
+      });
+    } else {
+      logger.error("Response already sent:", error);
+    }
   }
 };
 

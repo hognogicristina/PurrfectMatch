@@ -1,34 +1,33 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/Cat.css";
-import { useNavigate } from "react-router-dom";
 import { getAuthToken } from "../../util/auth.js";
-import { AiFillCloseCircle } from "react-icons/ai";
 import EditCatForm from "./EditCatForm.jsx";
-import FavoriteHeart from "../Util/Functionalities/FavoriteHeart.jsx";
+import MoreCats from "../Util/Features/MoreCats.jsx";
+import AdoptCat from "../Util/Features/AdoptCat.jsx";
 
 export default function CatItem({ catDetail }) {
-  const navigate = useNavigate();
-  const token = getAuthToken();
-  const { notifyError, notifySuccess } = useToast();
+  const { notifyError } = useToast();
   const [catsBreed, setCatsBreed] = useState([]);
   const [catsGuardian, setCatsGuardian] = useState([]);
   const [mainImage, setMainImage] = useState(catDetail.images[0]);
   const [carouselImages, setCarouselImages] = useState(
     catDetail.images.slice(1),
   );
-  const [showAdoptInput, setShowAdoptInput] = useState(false);
-  const [adoptionMessage, setAdoptionMessage] = useState("");
   const [userDetails, setUserDetails] = useState({ username: "", image: "" });
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [inputError, setInputError] = useState("");
+  const [userEditCat, setUserEditCat] = useState("");
 
   useEffect(() => {
     async function fetchUserDetails() {
       const token = getAuthToken();
+      if (!token) {
+        return;
+      }
+
       const response = await fetch("http://localhost:3000/user", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -46,6 +45,12 @@ export default function CatItem({ catDetail }) {
           notifyError(error.message);
         });
       }
+    }
+
+    if (!catDetail.owner) {
+      setUserEditCat(catDetail.user);
+    } else {
+      setUserEditCat(catDetail.ownerUsername);
     }
 
     fetchUserDetails();
@@ -81,11 +86,6 @@ export default function CatItem({ catDetail }) {
 
     fetchCatsByBreed();
     fetchCatsOfGuardian();
-
-    return () => {
-      setAdoptionMessage("");
-      setShowAdoptInput(false);
-    };
   }, [catDetail.id, catDetail, notifyError]);
 
   const mainImageStyle = {
@@ -105,68 +105,12 @@ export default function CatItem({ catDetail }) {
     setMainImage(selectedImage);
   };
 
-  const handleCatClick = (id) => {
-    navigate(`/cats/cat/${id}`);
-  };
-
-  const handleExploreMore = (type) => {
-    navigate(`/cats?selectedUserId=${type}&page=1`);
-  };
-
-  const handleExploreMoreBreed = (type) => {
-    navigate(`/cats?selectedBreed=${type}&page=1`);
-  };
-
-  const toggleAdoptInput = () => {
-    setShowAdoptInput(!showAdoptInput);
-  };
-
-  const handleClearAdoptionMessage = () => {
-    setAdoptionMessage("");
-    setShowAdoptInput(false);
-  };
-
   const handleEditClick = () => {
     setIsEditDialogOpen(true);
   };
 
   const handleCloseEditDialog = () => {
     setIsEditDialogOpen(false);
-  };
-
-  const handleAdoptionMessage = async (e) => {
-    e.preventDefault();
-
-    const token = getAuthToken();
-    const response = await fetch(
-      `http://localhost:3000/adopt/${catDetail.id}/request`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message: adoptionMessage }),
-      },
-    );
-
-    if (
-      response.status === 400 ||
-      response.status === 401 ||
-      response.status === 500
-    ) {
-      const data = await response.json();
-      if (data.error.field === "message") {
-        setInputError(data.error.message);
-      } else {
-        notifyError(data.error.message);
-      }
-    } else {
-      const data = await response.json();
-      notifySuccess(data.status);
-      setShowAdoptInput(false);
-      setAdoptionMessage("");
-    }
   };
 
   return (
@@ -224,164 +168,42 @@ export default function CatItem({ catDetail }) {
               </p>
             </div>
             <p className="aboutCat">{catDetail.description}</p>
-            <div className="ownerGuardian">
-              {!catDetail.owner && (
-                <>
-                  <p className="guardian">Regards,</p>
-                  <p className="guardian">{catDetail.guardian}</p>
-                </>
-              )}
-              {!catDetail.owner &&
-                !showAdoptInput &&
-                token &&
-                catDetail.user !== userDetails.username && (
-                  <button
-                    className="simpleButton submit"
-                    onClick={toggleAdoptInput}
-                  >
-                    Adopt Me
-                  </button>
-                )}
-              {showAdoptInput && (
-                <div className="adoptInputContainer">
-                  <input
-                    name="message"
-                    type="text"
-                    value={adoptionMessage}
-                    onChange={(e) => setAdoptionMessage(e.target.value)}
-                    placeholder="Write your message"
-                    className="adoptInput"
-                  />
-                  <div className="clearIconContainer">
-                    <AiFillCloseCircle
-                      className="clearIcon"
-                      onClick={handleClearAdoptionMessage}
-                    />
-                  </div>
-                  <FontAwesomeIcon
-                    icon={faPaperPlane}
-                    className="sendIcon"
-                    onClick={handleAdoptionMessage}
-                  />
-                  {inputError && <p className="errorMessage">{inputError}</p>}
-                </div>
-              )}
-            </div>
+            <AdoptCat catDetail={catDetail} userDetails={userDetails} />
           </div>
           <div className="delimiter"></div>
           <div className="rightSection">
             <h2>About {catDetail.name}</h2>
             <p>Gender: {catDetail.gender}</p>
             <p>Life Stage: {catDetail.lifeStage}</p>
-            {catDetail.healthProblem && (
+            {catDetail.healthProblem ? (
               <p>Health Problem: {catDetail.healthProblem}</p>
+            ) : (
+              <p>Health Problem: No health problems</p>
             )}
           </div>
-          {userDetails &&
-            userDetails.username === catDetail.user &&
-            !catDetail.owner && (
-              <FontAwesomeIcon
-                icon={faEdit}
-                className="editIcon"
-                onClick={handleEditClick}
-              />
-            )}
+          {userDetails && userDetails.username === userEditCat && (
+            <FontAwesomeIcon
+              icon={faEdit}
+              className="editIcon"
+              onClick={handleEditClick}
+            />
+          )}
         </div>
       </motion.div>
 
-      <motion.div
-        key={catDetail.id}
-        className="otherCatsContainer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2>More Cats from {catDetail.guardian}</h2>
-        <ul className="otherCatsList">
-          {catsGuardian
-            .filter((cat) => cat.id !== catDetail.id)
-            .slice(0, 4)
-            .map((cat, index) => (
-              <motion.li
-                key={`guardian-${cat.id}`}
-                className="otherCatCard"
-                onClick={() => handleCatClick(cat.id)}
-                initial={{ scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <FavoriteHeart catId={cat.id} />
-                <img src={cat.image} alt={cat.name} className="otherCatImage" />
-                <div className="otherCatInfo">
-                  <h3>{cat.name}</h3>
-                </div>
-              </motion.li>
-            ))}
-          {catsGuardian.length > 4 && (
-            <motion.li
-              className="otherCatCard exploreMoreCard"
-              initial={{ scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <p>{catsGuardian.length - 4} more cats available</p>
-              <button
-                className="submitButton save"
-                onClick={() => handleExploreMore(catDetail.userId)}
-              >
-                Explore More
-              </button>
-            </motion.li>
-          )}
-        </ul>
-      </motion.div>
+      <MoreCats
+        title={`More Cats from ${catDetail.guardian}`}
+        cats={catsGuardian}
+        type="guardian"
+        catDetail={catDetail}
+      />
 
-      <motion.div
-        key={catDetail.id}
-        className="otherCatsContainer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2>Other Cats You May Like</h2>
-        <ul className="otherCatsList">
-          {catsBreed
-            .filter((cat) => cat.id !== catDetail.id)
-            .slice(0, 4)
-            .map((cat, index) => (
-              <motion.li
-                key={`breed-${cat.id}`}
-                className="otherCatCard"
-                onClick={() => handleCatClick(cat.id)}
-                initial={{ scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <FavoriteHeart catId={cat.id} />
-                <img src={cat.image} alt={cat.name} className="otherCatImage" />
-                <div className="otherCatInfo">
-                  <h3>{cat.name}</h3>
-                </div>
-              </motion.li>
-            ))}
-          {catsBreed.length > 4 && (
-            <motion.li
-              className="otherCatCard exploreMoreCard"
-              initial={{ scale: 0.9 }}
-              transition={{ duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-            >
-              <p>{catsBreed.length - 4} more cats available</p>
-              <button
-                className="submitButton save"
-                onClick={() => handleExploreMoreBreed(catDetail.breed)}
-              >
-                Explore More
-              </button>
-            </motion.li>
-          )}
-        </ul>
-      </motion.div>
+      <MoreCats
+        title="Other Cats You May Like"
+        cats={catsBreed}
+        type="breed"
+        catDetail={catDetail}
+      />
 
       {isEditDialogOpen && (
         <EditCatForm catDetail={catDetail} onClose={handleCloseEditDialog} />

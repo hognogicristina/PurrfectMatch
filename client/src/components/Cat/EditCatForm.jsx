@@ -209,6 +209,29 @@ export default function EditCatForm({ catDetail, onClose }) {
             className={errors.age ? "input-error" : ""}
             min="0"
           />
+          <div className="colorHealthContainer">
+            <div>
+              <label>Color:</label>
+              <input
+                type="text"
+                id="color"
+                name="color"
+                placeholder="Enter cat's color"
+                className={errors.color ? "input-error" : ""}
+                defaultValue={catDetail.color}
+              />
+            </div>
+            <div>
+              <label>Health Problems (optional):</label>
+              <input
+                id="healthProblems"
+                name="healthProblems"
+                placeholder="Enter cat's health problems"
+                className={errors.healthProblems ? "input-error" : ""}
+                defaultValue={catDetail.healthProblems}
+              />
+            </div>
+          </div>
           <label>Description:</label>
           <textarea
             id="description"
@@ -216,7 +239,7 @@ export default function EditCatForm({ catDetail, onClose }) {
             placeholder="Enter cat's description"
             className={errors.description ? "input-error" : ""}
             defaultValue={catDetail.description}
-          ></textarea>
+          />
           <div>
             <motion.button
               whileTap={{ scale: 0.9 }}

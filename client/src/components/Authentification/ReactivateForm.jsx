@@ -74,19 +74,19 @@ export default function ReactivateForm() {
             <div className="buttonContainer">
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                type="button"
-                onClick={() => navigate("/login")}
-                className="cancelButton"
-              >
-                Cancel
-              </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
                 disabled={isSubmitting}
                 type="submit"
                 className={`submitButton submit ${isSubmitting ? "submitting" : ""}`}
               >
                 {isSubmitting ? <Spinner /> : "Reactivate Account"}
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={() => navigate("/login")}
+                className="cancelButton"
+              >
+                Cancel
               </motion.button>
             </div>
           </Form>

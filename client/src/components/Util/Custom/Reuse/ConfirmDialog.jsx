@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 
 function ConfirmDialog({ title, message, onClose, onConfirm }) {
   const [isOpen, setIsOpen] = useState(true);
-  const splitMessage = message.split(/(?<=\.\s)/);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -30,25 +29,21 @@ function ConfirmDialog({ title, message, onClose, onConfirm }) {
             onClick={(e) => e.stopPropagation()}
           >
             <h2>{title}</h2>
-            <p>
-              {splitMessage[0]}
-              <br />
-              {splitMessage[1]}
-            </p>
+            <p>{message}</p>
             <div className="dialogButtons">
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={handleClose}
-                className="cancelButton"
-              >
-                Cancel
-              </motion.button>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={onConfirm}
                 className="submitButton submit"
               >
                 Confirm
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={handleClose}
+                className="cancelButton"
+              >
+                Cancel
               </motion.button>
             </div>
           </motion.div>

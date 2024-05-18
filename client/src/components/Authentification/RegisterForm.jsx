@@ -154,10 +154,9 @@ export default function RegisterForm() {
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    required
                   />
                   <span
-                    className="togglePassword"
+                    className={`togglePassword ${errors.password ? "show" : ""}`}
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -172,10 +171,9 @@ export default function RegisterForm() {
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm your password"
-                    required
                   />
                   <span
-                    className="togglePassword"
+                    className={`togglePassword ${errors.confirmPassword ? "show" : ""}`}
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

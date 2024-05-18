@@ -1,13 +1,13 @@
-.adoption-requests {
+.adoptionRequests {
   height: 100vh;
   margin-top: 100px;
 }
 
-.adoption-requests h1 {
+.adoptionRequests h1 {
   text-align: center;
 }
 
-.mails-container {
+.mailsContainer {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -15,7 +15,7 @@
   gap: 20px;
 }
 
-.mails-list {
+.mailsList {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -35,18 +35,25 @@
   position: relative;
 }
 
+.trashIcon {
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+  cursor: pointer;
+}
+
 .mailDetails .details {
   margin-bottom: 20px;
 }
 
-.section-header {
+.sectionHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 2px solid #ccc;
 }
 
-.expand-button {
+.expandButton {
   background: #e37fb6;
   border-radius: 50%;
   border: none;
@@ -57,7 +64,7 @@
   justify-content: center;
 }
 
-.expand-button:hover {
+.expandButton:hover {
   color: #ff69b4;
 }
 
@@ -126,7 +133,7 @@
   color: #333;
 }
 
-.cat-image {
+.catImageMail {
   width: 300px;
   height: 200px;
   margin-bottom: 20px;
@@ -147,17 +154,17 @@
   font-size: 0.9em;
 }
 
-.mail-section {
+.mailSection {
   width: 100%;
   margin-bottom: 40px;
 }
 
-.mail-section ul {
+.mailSection ul {
   list-style-type: none;
   padding: 0;
 }
 
-.mail-section h2 {
+.mailSection h2 {
   font-size: 1.8em;
   margin-bottom: 20px;
   color: #333;
@@ -245,21 +252,21 @@ button:hover {
   padding: 0 0 0 15px;
 }
 
-.icon-wrapper {
+.iconWrapper {
   display: flex;
   align-items: center;
   margin-right: 10px;
 }
 
-.max-width-mail-section {
+.maxWidthMailSection {
   max-width: 100%;
 }
 
-.full-width {
+.fullWidth {
   width: 100%;
 }
 
-.min-width {
+.minWidth {
   width: 50%;
 }
 

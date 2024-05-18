@@ -22,7 +22,7 @@ const setupAdoptionRequestCronJob = () => {
       if (adoptionRequests.length > 0) {
         for (const record of adoptionRequests) {
           const userRoles = await UserRole.findAll({
-            where: { mailId: record.id },
+            where: { adoptionRequestId: record.id },
           });
 
           if (userRoles.length > 0) {

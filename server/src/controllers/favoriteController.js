@@ -85,15 +85,18 @@ const adoptFavorite = async (req, res) => {
     const cat = await Cat.findByPk(favorite.catId);
     const catUser = await CatUser.findByPk(cat.id);
     const { message } = req.body;
-    const mail = await AdoptionRequest.create({ catId: cat.id, message });
+    const adoptionRequest = await AdoptionRequest.create({
+      catId: cat.id,
+      message,
+    });
     await UserRole.create({
       userId: req.user.id,
-      mailId: mail.id,
+      adoptionRequestId: adoptionRequest.id,
       role: "sender",
     });
     await UserRole.create({
       userId: catUser.userId,
-      mailId: mail.id,
+      adoptionRequestId: adoptionRequest.id,
       role: "receiver",
     });
     await favorite.destroy();

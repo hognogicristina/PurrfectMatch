@@ -1,6 +1,7 @@
 .authForm.catAddForm,
 .authForm.catEditForm {
   margin-top: 30px;
+  max-height: 880px;
 }
 
 .authForm.catEditForm {
@@ -17,6 +18,18 @@
   display: block;
   margin-bottom: 8px;
 }
+
+.colorHealthContainer {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.colorHealthContainer label,
+.colorHealthContainer input {
+  flex: 1;
+}
+
 
 .selectControl {
   margin-bottom: 16px;
