@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { FaCircle } from "react-icons/fa";
-import { getStatusIcon } from "./MailDetails.jsx";
+import { getStatusIcon } from "./MailDetailsSection.jsx";
 
 const itemVariants = {
-  hidden: { opacity: 0, height: 0 },
-  visible: { opacity: 1, height: "auto" },
-  exit: { opacity: 0, height: 0 },
+  hidden: { opacity: 0, x: -50, scale: 0.8 },
+  visible: { opacity: 1, x: 0, scale: 1 },
+  exit: { opacity: 0, x: 50, scale: 0.8 },
 };
 
 export default function MailItem({ mail, isSelected, openMail, isSent }) {
@@ -16,7 +16,7 @@ export default function MailItem({ mail, isSelected, openMail, isSent }) {
       animate="visible"
       exit="exit"
       variants={itemVariants}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
     >
       <div className="iconWrapper">
         {!mail.isRead && <FaCircle className="unreadIcon" />}

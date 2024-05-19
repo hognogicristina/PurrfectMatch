@@ -23,7 +23,9 @@ export default function DeleteProfileDialog({ onClose }) {
   const handleDelete = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    const username = e.target.elements.username.value;
+    const username = e.target.username.value;
+    const messageConfirm = e.target.messageConfirm.value;
+    const password = e.target.password.value;
 
     const token = getAuthToken();
     const response = await fetch("http://localhost:3000/user/delete", {
@@ -32,7 +34,11 @@ export default function DeleteProfileDialog({ onClose }) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username }),
+      body: JSON.stringify({
+        username,
+        messageConfirm,
+        password,
+      }),
     });
 
     if (response.ok) {
@@ -83,18 +89,45 @@ export default function DeleteProfileDialog({ onClose }) {
                 certain.
               </p>
               <p>
-                Please enter your username to confirm that you understand the
-                consequences of deleting your account.
+                Please enter your username or email to confirm that you
+                understand the consequences of deleting your account.
               </p>
               <label>
                 <input
                   className="deleteAccountInput"
                   name="username"
                   type="text"
-                  placeholder="Enter your username"
                 />
                 {errors.username && (
                   <p className="errorText">{errors.username}</p>
+                )}
+              </label>
+              <p>
+                To verify, type{" "}
+                <strong>
+                  <em className="unSelect">delete my account</em>
+                </strong>{" "}
+                below:
+              </p>
+              <label>
+                <input
+                  className="deleteAccountInput"
+                  name="messageConfirm"
+                  type="text"
+                />
+                {errors.messageConfirm && (
+                  <p className="errorText">{errors.messageConfirm}</p>
+                )}
+              </label>
+              <p>Confirm your password:</p>
+              <label>
+                <input
+                  className="deleteAccountInput"
+                  name="password"
+                  type="password"
+                />
+                {errors.password && (
+                  <p className="errorText">{errors.password}</p>
                 )}
               </label>
               <motion.button

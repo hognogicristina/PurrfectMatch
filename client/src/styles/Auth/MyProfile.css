@@ -287,6 +287,10 @@
   border: 2px solid var(--button-delete);
 }
 
+.unSelect {
+  -webkit-user-select: none;
+}
+
 .closeButton {
   position: absolute;
   top: 10px;

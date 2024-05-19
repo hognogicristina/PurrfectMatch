@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/PurrfectMatch/FavoritesList.css";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import FavoriteHeart from "../Util/Functionalities/FavoriteHeart.jsx";
+import FavoriteHeart from "../Util/Features/FavoriteHeart.jsx";
 import SubmitDialog from "../Util/Custom/Reuse/SubmitDialog.jsx";
 import { getAuthToken } from "../../util/auth.js";
 
@@ -12,17 +12,21 @@ export default function FavoritesArchive({ favorites }) {
   const token = getAuthToken();
   const [visibleCount, setVisibleCount] = useState(7);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedCat, setSelectedCat] = useState(null);
+  const [requestStatus, setRequestStatus] = useState({});
 
   const handleShowMore = () => {
     setVisibleCount((prevCount) => prevCount + 3);
   };
 
-  const handleAdoptMeClick = () => {
+  const handleAdoptMeClick = (cat) => {
+    setSelectedCat(cat);
     setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
+    setSelectedCat(null);
   };
 
   const renderFavorites = () => {
@@ -50,8 +54,9 @@ export default function FavoritesArchive({ favorites }) {
             <FavoriteHeart catId={favorite.id} isFavoritesArchive />
             <motion.button
               whileTap={{ scale: 0.9 }}
-              className="submitButton save"
-              onClick={() => handleAdoptMeClick(favorite.id)}
+              disabled={requestStatus[favorite.id]}
+              className={`submitButton submit ${requestStatus[favorite.id] ? "submitting" : ""}`}
+              onClick={() => handleAdoptMeClick(favorite)}
             >
               Adopt Me
             </motion.button>
@@ -68,6 +73,44 @@ export default function FavoritesArchive({ favorites }) {
           </p>
         ));
       }
+    }
+  };
+
+  useEffect(() => {
+    const checkAdoptionRequests = async () => {
+      if (token && Array.isArray(data)) {
+        const statusPromises = data.map(async (cat) => {
+          const response = await fetch(
+            `http://localhost:3000/adopt/${cat.id}/validate`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+          const result = await response.json();
+          return { id: cat.id, exists: result.exists };
+        });
+
+        const statusResults = await Promise.all(statusPromises);
+        const statusMap = statusResults.reduce((acc, { id, exists }) => {
+          acc[id] = exists;
+          return acc;
+        }, {});
+
+        setRequestStatus(statusMap);
+      }
+    };
+
+    checkAdoptionRequests();
+  }, [data, token]);
+
+  const handleRequestSuccess = () => {
+    if (selectedCat) {
+      setRequestStatus((prevStatus) => ({
+        ...prevStatus,
+        [selectedCat.id]: true,
+      }));
     }
   };
 
@@ -89,8 +132,9 @@ export default function FavoritesArchive({ favorites }) {
       <SubmitDialog
         isOpen={isDialogOpen}
         onClose={handleCloseDialog}
-        catDetail={data}
+        catDetail={selectedCat}
         token={token}
+        onRequestSuccess={handleRequestSuccess}
       />
     </div>
   );

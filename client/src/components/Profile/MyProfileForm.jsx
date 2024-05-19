@@ -7,7 +7,7 @@ import {
   useNavigation,
 } from "react-router-dom";
 
-import UploadImage from "../Util/Functionalities/UploadImage.jsx";
+import UploadImage from "../Util/Features/UploadImage.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 
 export default function MyProfileForm({ userDetail }) {

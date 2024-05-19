@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Select from "react-select";
 import { NavLink } from "react-router-dom";
-import { useToast } from "../Custom/PageResponse/ToastProvider.jsx";
+import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import { getAuthToken } from "../../../util/auth.js";
+import { getAuthToken } from "../../../../util/auth.js";
 
 function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();

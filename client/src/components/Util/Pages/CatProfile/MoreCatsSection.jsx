@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import FavoriteHeart from "../Functionalities/FavoriteHeart.jsx";
+import FavoriteHeart from "../../Features/FavoriteHeart.jsx";
+import { getAuthToken } from "../../../../util/auth.js";
 
-export default function MoreCats({ title, cats, type, catDetail }) {
+export default function MoreCatsSection({ title, cats, type, catDetail }) {
   const navigate = useNavigate();
+  const token = getAuthToken();
 
   const handleCatClick = (id) => {
     navigate(`/cats/cat/${id}`);
@@ -39,7 +41,7 @@ export default function MoreCats({ title, cats, type, catDetail }) {
               transition={{ duration: 0.3 }}
               whileHover={{ scale: 1.05 }}
             >
-              <FavoriteHeart catId={cat.id} className="favHeart" />
+              {token && <FavoriteHeart catId={cat.id} className="favHeart" />}
               <img src={cat.image} alt={cat.name} className="otherCatImage" />
               <div className="otherCatInfo">
                 <h3>{cat.name}</h3>

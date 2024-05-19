@@ -1,15 +1,35 @@
 import { useState, useEffect } from "react";
-import { getAuthToken } from "../../../util/auth.js";
+import { getAuthToken } from "../../../../util/auth.js";
 import { motion } from "framer-motion";
-import SubmitDialog from "../Custom/Reuse/SubmitDialog.jsx";
+import SubmitDialog from "../../Custom/Reuse/SubmitDialog.jsx";
 
 export default function AdoptCat({ catDetail, userDetails }) {
   const [token, setToken] = useState(getAuthToken());
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [requestExists, setRequestExists] = useState(false);
 
   useEffect(() => {
     setToken(getAuthToken());
   }, []);
+
+  useEffect(() => {
+    const checkAdoptionRequest = async () => {
+      if (token) {
+        const response = await fetch(
+          `http://localhost:3000/adopt/${catDetail.id}/validate`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const data = await response.json();
+        setRequestExists(data.exists);
+      }
+    };
+
+    checkAdoptionRequest();
+  }, [catDetail.id, token]);
 
   const handleAdoptMeClick = () => {
     setIsDialogOpen(true);
@@ -17,6 +37,10 @@ export default function AdoptCat({ catDetail, userDetails }) {
 
   const handleCloseDialog = () => {
     setIsDialogOpen(false);
+  };
+
+  const handleRequestSuccess = () => {
+    setRequestExists(true);
   };
 
   return (
@@ -28,13 +52,13 @@ export default function AdoptCat({ catDetail, userDetails }) {
         </>
       )}
       {!catDetail.owner &&
-        !isDialogOpen &&
         token &&
+        !requestExists &&
         catDetail.user !== userDetails.username && (
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="simpleButton submit"
-            onClick={() => handleAdoptMeClick(catDetail.id)}
+            onClick={handleAdoptMeClick}
           >
             Adopt Me
           </motion.button>
@@ -44,6 +68,7 @@ export default function AdoptCat({ catDetail, userDetails }) {
         onClose={handleCloseDialog}
         catDetail={catDetail}
         token={token}
+        onRequestSuccess={handleRequestSuccess}
       />
     </div>
   );

@@ -8,7 +8,7 @@ import {
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import Select from "react-select";
-import UploadsImage from "../Util/Functionalities/UploadsImages.jsx";
+import UploadsImage from "../Util/Features/UploadsImages.jsx";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";

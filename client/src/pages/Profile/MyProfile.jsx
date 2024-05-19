@@ -1,4 +1,4 @@
-import UserItem from "../../components/Profile/UserItem.jsx";
+import MyProfileSection from "../../components/Profile/MyProfileSection.jsx";
 import { Await, defer, useRouteLoaderData } from "react-router-dom";
 import { Suspense } from "react";
 import { getAuthToken } from "../../util/auth.js";
@@ -11,7 +11,9 @@ function MyProfilePage() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={userDetail}>
-        {(loadedUserDetail) => <UserItem userDetail={loadedUserDetail} />}
+        {(loadedUserDetail) => (
+          <MyProfileSection userDetail={loadedUserDetail} />
+        )}
       </Await>
     </Suspense>
   );

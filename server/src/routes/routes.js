@@ -124,11 +124,16 @@ router.delete(
   catController.deleteCat,
 );
 
-// AdoptionProcess request routes
+// Adoption request routes
 router.post(
   "/adopt/:id/request",
   authMiddleware.authenticateToken,
   adoptionRequestController.adoptCat,
+);
+router.get(
+  "/adopt/:catId/validate",
+  authMiddleware.authenticateToken,
+  adoptionRequestController.validateAdoptionRequest,
 );
 router.patch(
   "/adopt/:id/response",

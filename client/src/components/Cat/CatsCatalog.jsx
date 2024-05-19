@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import FilterBar from "../Util/Features/FilterBar.jsx";
-import SortDropdown from "../Util/Features/SortDropdown.jsx";
+import FilterBar from "../Util/Pages/Catalog/FilterBar.jsx";
+import SortDropdown from "../Util/Pages/Catalog/SortDropdown.jsx";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
-import FavoriteHeart from "../Util/Functionalities/FavoriteHeart.jsx";
+import FavoriteHeart from "../Util/Features/FavoriteHeart.jsx";
+import { getAuthToken } from "../../util/auth.js";
 
 function CatsCatalog({ cats, currentPage, onPageChange }) {
   const { data, error, totalPages } = cats;
   const navigate = useNavigate();
+  const token = getAuthToken();
   const { notifyError } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchParamsKey, setSearchParamsKey] = useState(0);
@@ -44,7 +46,7 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
           className="catItem"
           onClick={() => handleClickCatItem(cat.id)}
         >
-          <FavoriteHeart catId={cat.id} />
+          {token && <FavoriteHeart catId={cat.id} />}
           <img src={cat.image} alt={cat.name} className="catItemImg" />
           <h3>{cat.name}</h3>
           <ul>

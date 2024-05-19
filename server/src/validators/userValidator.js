@@ -146,6 +146,7 @@ const editAddressValidation = async (req, res) => {
 };
 
 const deleteUserValidation = async (req, res) => {
+  const error = [];
   const user = await User.findByPk(req.user.id);
   if (!user) {
     return res
@@ -154,19 +155,39 @@ const deleteUserValidation = async (req, res) => {
   }
 
   if (!req.body.username || validator.isEmpty(req.body.username || "")) {
-    return res.status(404).json({
-      error: [{ field: "username", message: "Please enter your username" }],
-    });
+    error.push({ field: "username", message: "Please enter your username" });
   } else {
     const user = await User.findByPk(req.user.id);
     if (user.username !== req.body.username) {
-      return res.status(404).json({
-        error: [{ field: "invalid", message: "Invalid username! Try again" }],
-      });
+      error.push({ field: "invalid", message: "Invalid username! Try again" });
     }
   }
 
-  return null;
+  if (
+    !req.body.messageConfirm ||
+    validator.isEmpty(req.body.messageConfirm || "")
+  ) {
+    error.push({
+      field: "messageConfirm",
+      message: "Please enter delete my account",
+    });
+  } else if (req.body.messageConfirm !== "delete my account") {
+    error.push({
+      field: "messageConfirm",
+      message: "Invalid message! Try again",
+    });
+  }
+
+  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
+    error.push({ field: "password", message: "Password is required" });
+  } else {
+    const user = await User.findByPk(req.user.id);
+    if (!(await bcrypt.compare(req.body.password, user.password))) {
+      error.push({ field: "password", message: "Invalid password" });
+    }
+  }
+
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 module.exports = {

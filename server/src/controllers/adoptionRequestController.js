@@ -36,7 +36,42 @@ const adoptCat = async (req, res) => {
     });
     return res
       .status(200)
-      .json({ status: "AdoptionProcess request sent successfully" });
+      .json({ status: "Your request has been sent to the guardian" });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
+  }
+};
+
+const validateAdoptionRequest = async (req, res) => {
+  try {
+    if (req.user) {
+      const cat = await Cat.findByPk(req.params.catId);
+      if (cat) {
+        const adoptionRequest = await AdoptionRequest.findOne({
+          where: { catId: cat.id },
+        });
+        if (adoptionRequest) {
+          const userRole = await UserRole.findOne({
+            where: {
+              adoptionRequestId: adoptionRequest.id,
+              userId: req.user.id,
+            },
+          });
+          if (userRole) {
+            return res.json({ exists: true });
+          } else {
+            return res.json({ exists: false });
+          }
+        } else {
+          return res.json({ exists: false });
+        }
+      }
+    } else {
+      return res.json({ exists: false });
+    }
   } catch (error) {
     logger.error(error);
     return res
@@ -77,15 +112,11 @@ const handleAdoptionRequest = async (req, res) => {
         cat,
         userAddress,
       );
-      return res
-        .status(200)
-        .json({ status: "AdoptionProcess request was accepted" });
+      return res.status(200).json({ status: "Adoption request was accepted" });
     } else {
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
       await adoptionRequest.update({ status });
-      return res
-        .status(200)
-        .json({ status: "AdoptionProcess request was declined" });
+      return res.status(200).json({ status: "Adoption request was declined" });
     }
   } catch (error) {
     logger.error(error);
@@ -167,9 +198,7 @@ const deleteAdoptionRequest = async (req, res) => {
       res,
     );
     await transaction.commit();
-    return res
-      .status(200)
-      .json({ status: "AdoptionRequest deleted successfully" });
+    return res.status(200).json({ status: "Mail deleted successfully" });
   } catch (error) {
     if (!transaction.finished) {
       await transaction.rollback();
@@ -188,6 +217,7 @@ const deleteAdoptionRequest = async (req, res) => {
 
 module.exports = {
   adoptCat,
+  validateAdoptionRequest,
   handleAdoptionRequest,
   getAdoptionRequests,
   getAdoptionRequest,

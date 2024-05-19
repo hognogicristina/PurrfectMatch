@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import DeleteProfileDialog from "./DeleteProfileDialog.jsx";
 
-function UserItem({ userDetail }) {
+function MyProfileSection({ userDetail }) {
   const [tempExperienceLevel, setTempExperienceLevel] = useState(
     userDetail.experienceLevel || 0,
   );
@@ -120,10 +120,13 @@ function UserItem({ userDetail }) {
         </div>
       </motion.div>
       {showDeleteAccount && (
-        <DeleteProfileDialog onClose={() => setShowDeleteAccount(false)} />
+        <DeleteProfileDialog
+          onClose={() => setShowDeleteAccount(false)}
+          username={userDetail.username}
+        />
       )}
     </div>
   );
 }
 
-export default UserItem;
+export default MyProfileSection;

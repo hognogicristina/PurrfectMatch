@@ -11,6 +11,7 @@ const FavoriteHeart = ({ catId, isFavoritesArchive }) => {
 
   useEffect(() => {
     const token = getAuthToken();
+    if (!token) return;
     const checkIfFavorite = async () => {
       const response = await fetch(`http://localhost:3000/favorite/${catId}`, {
         method: "GET",

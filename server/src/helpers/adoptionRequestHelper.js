@@ -5,6 +5,7 @@ const {
   User,
   Cat,
   CatUser,
+  Favourite,
 } = require("../../models");
 const emailService = require("../services/emailService");
 const emailServ = require("../services/emailService");

@@ -1,13 +1,11 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
-import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/Cat.css";
 import { getAuthToken } from "../../util/auth.js";
 import EditCatForm from "./EditCatForm.jsx";
-import MoreCats from "../Util/Features/MoreCats.jsx";
-import AdoptCat from "../Util/Features/AdoptCat.jsx";
+import CatImageSection from "../Util/Pages/CatProfile/CatImageSection.jsx";
+import CatDetailsSection from "../Util/Pages/CatProfile/CatDetailsSection.jsx";
+import MoreCatsSection from "../Util/Pages/CatProfile/MoreCatsSection.jsx";
 
 export default function CatItem({ catDetail }) {
   const { notifyError } = useToast();
@@ -88,23 +86,6 @@ export default function CatItem({ catDetail }) {
     fetchCatsOfGuardian();
   }, [catDetail.id, catDetail, notifyError]);
 
-  const mainImageStyle = {
-    backgroundImage: `url(${mainImage})`,
-    backgroundPosition: "center",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    filter: "blur(20px)",
-    transform: "scale(1.1)",
-  };
-
-  const handleImageClick = (selectedImage) => {
-    setCarouselImages([
-      mainImage,
-      ...carouselImages.filter((img) => img !== selectedImage),
-    ]);
-    setMainImage(selectedImage);
-  };
-
   const handleEditClick = () => {
     setIsEditDialogOpen(true);
   };
@@ -115,90 +96,29 @@ export default function CatItem({ catDetail }) {
 
   return (
     <>
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.5 }}
-        key={catDetail.id}
-        className="catImagesContainer"
-      >
-        <div className="catItemImages" style={mainImageStyle}></div>
-        <motion.img
-          src={mainImage}
-          alt={catDetail.name}
-          className="mainImage"
-          whileInView={{ y: [-30, 0], opacity: [0, 1] }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3 }}
-        />
-        <motion.div
-          className="imageCarousel"
-          whileInView={{ y: [-30, 0], opacity: [0, 1] }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.3 }}
-        >
-          {carouselImages.map((image, index) => (
-            <motion.img
-              key={`${catDetail.id}-image-${index}`}
-              src={image}
-              alt={`Additional view of ${catDetail.name}`}
-              onClick={() => handleImageClick(image)}
-              whileHover={{ scale: 1.1 }}
-            />
-          ))}
-        </motion.div>
-      </motion.div>
-      <motion.div
-        key={catDetail.id}
-        className="catItemContainer"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="catItemDetails">
-          <div className="leftSection">
-            <h1>{catDetail.name}</h1>
-            <div className="catItemDetailsTop">
-              <p className="breedLink">{catDetail.breed}</p>
-              <div className="dotSeparator"></div>
-              <p className="addressGuardian">
-                {catDetail.owner
-                  ? "This cat is already adopted"
-                  : catDetail.address}
-              </p>
-            </div>
-            <p className="aboutCat">{catDetail.description}</p>
-            <AdoptCat catDetail={catDetail} userDetails={userDetails} />
-          </div>
-          <div className="delimiter"></div>
-          <div className="rightSection">
-            <h2>About {catDetail.name}</h2>
-            <p>Gender: {catDetail.gender}</p>
-            <p>Life Stage: {catDetail.lifeStage}</p>
-            {catDetail.healthProblem ? (
-              <p>Health Problem: {catDetail.healthProblem}</p>
-            ) : (
-              <p>Health Problem: No health problems</p>
-            )}
-          </div>
-          {userDetails && userDetails.username === userEditCat && (
-            <FontAwesomeIcon
-              icon={faEdit}
-              className="editIcon"
-              onClick={handleEditClick}
-            />
-          )}
-        </div>
-      </motion.div>
+      <CatImageSection
+        catDetail={catDetail}
+        mainImage={mainImage}
+        setMainImage={setMainImage}
+        carouselImages={carouselImages}
+        setCarouselImages={setCarouselImages}
+      />
 
-      <MoreCats
+      <CatDetailsSection
+        catDetail={catDetail}
+        userDetails={userDetails}
+        userEditCat={userEditCat}
+        handleEditClick={handleEditClick}
+      />
+
+      <MoreCatsSection
         title={`More Cats from ${catDetail.guardian}`}
         cats={catsGuardian}
         type="guardian"
         catDetail={catDetail}
       />
 
-      <MoreCats
+      <MoreCatsSection
         title="Other Cats You May Like"
         cats={catsBreed}
         type="breed"

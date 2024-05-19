@@ -2,10 +2,18 @@ import { motion } from "framer-motion";
 import "../../../../styles/Custom/SubmitDialog.css";
 import { Form } from "react-router-dom";
 import { useToast } from "../PageResponse/ToastProvider.jsx";
+import { useState } from "react";
 
-export default function SubmitDialog({ isOpen, onClose, catDetail, token }) {
+export default function SubmitDialog({
+  isOpen,
+  onClose,
+  catDetail,
+  token,
+  onRequestSuccess,
+}) {
   if (!isOpen) return null;
   const { notifyError, notifySuccess } = useToast();
+  const [error, setError] = useState(null);
 
   const handleAdoptionMessage = async (e, message) => {
     e.preventDefault();
@@ -34,11 +42,15 @@ export default function SubmitDialog({ isOpen, onClose, catDetail, token }) {
     ) {
       const data = await response.json();
       if (data.error.field === "server") {
-        notifyError(data.error.message);
+        notifyError(data.error[0].message);
+      } else {
+        setError(data.error[0].message);
       }
     } else {
       const data = await response.json();
       notifySuccess(data.status);
+      onRequestSuccess();
+      onClose();
     }
   };
 
@@ -58,6 +70,7 @@ export default function SubmitDialog({ isOpen, onClose, catDetail, token }) {
         <Form
           method="post"
           onSubmit={(e) => handleAdoptionMessage(e, e.target.message.value)}
+          className="submitForm"
         >
           <h2>Adopt Me</h2>
           <p>
@@ -69,6 +82,7 @@ export default function SubmitDialog({ isOpen, onClose, catDetail, token }) {
             type="text"
             placeholder="Type your message here..."
           />
+          {error && <p className="errorText">{error}</p>}
           <div className="dialogActions">
             <motion.button
               whileTap={{ scale: 0.9 }}
@@ -80,6 +94,7 @@ export default function SubmitDialog({ isOpen, onClose, catDetail, token }) {
               whileTap={{ scale: 0.9 }}
               className="cancelButton"
               onClick={onClose}
+              type="button"
             >
               Cancel
             </motion.button>

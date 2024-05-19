@@ -1,8 +1,8 @@
 import "../../styles/PurrfectMatch/HomeContent.css";
-import BreedsGrid from "../Util/HomePage/BreedsGrid.jsx";
+import BreedsGrid from "../Util/Pages/HomePage/BreedsGrid.jsx";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import Intro from "../Util/HomePage/Intro.jsx";
+import Intro from "../Util/Pages/HomePage/Intro.jsx";
 
 export default function HomeContent({ cats, breeds }) {
   return (

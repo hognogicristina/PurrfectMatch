@@ -41,12 +41,17 @@ const getOwnedCats = async (req, res) => {
   try {
     if (await catUserValidator.getCatsValidator(req, res, "owned")) return;
     const cats = await catUserHelper.getCats(req, "owned");
+    const totalItems = cats.length;
+
     const catsDetails = [];
     for (let cat of cats) {
       const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
-    return res.status(200).json({ data: catsDetails });
+    return res.status(200).json({
+      totalItems: totalItems,
+      data: catsDetails,
+    });
   } catch (error) {
     logger.error(error);
     return res
@@ -187,7 +192,6 @@ const deleteUser = async (req, res) => {
     await transaction.commit();
     return res.status(200).json({ status: "We are sorry to see you go" });
   } catch (error) {
-    console.log(error);
     if (!transaction.finished) {
       await transaction.rollback();
     }

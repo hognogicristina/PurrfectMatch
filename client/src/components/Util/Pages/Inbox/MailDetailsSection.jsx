@@ -1,12 +1,8 @@
 import { motion } from "framer-motion";
-import {
-  FaRegCheckCircle,
-  FaBan,
-  FaAngleDoubleRight,
-  FaTrash,
-} from "react-icons/fa";
-import { useToast } from "../PageResponse/ToastProvider.jsx";
+import { FaRegCheckCircle, FaBan, FaAngleDoubleRight } from "react-icons/fa";
+import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { getAuthToken } from "../../../../util/auth.js";
+import { IoTrashBin } from "react-icons/io5";
 
 export const getStatusIcon = (status) => {
   switch (status) {
@@ -36,13 +32,17 @@ export const getStatusIcon = (status) => {
   }
 };
 
-function MailDetails({
+function MailDetailsSection({
+  mails,
   mailDetails,
   setMailDetails,
   selectedMailId,
+  setMessage,
   removeMailFromList,
 }) {
   const { notifyError } = useToast();
+
+  console.log(mails);
 
   const handleResponse = async (status) => {
     const token = getAuthToken();
@@ -61,6 +61,16 @@ function MailDetails({
     if (response.ok) {
       const mailData = await response.json();
       setMailDetails(mailData.data);
+
+      if (mails.sentRequests === 0) {
+        setMessage(mails.message);
+        console.log(mails.message);
+      }
+
+      if (mails.receivedRequests.message) {
+        console.log(mails.message);
+        setMessage(mails.message);
+      }
     } else {
       const mailError = await response.json();
       notifyError(mailError.error.message);
@@ -93,15 +103,25 @@ function MailDetails({
   };
 
   return (
-    <div className="mailDetails">
+    <motion.div
+      className="mailDetails"
+      initial={{ scale: 0.7, opacity: 0.8 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{
+        type: "spring",
+        stiffness: 170,
+        damping: 18,
+      }}
+      key={selectedMailId}
+    >
       <div className="details">
         <motion.div
           className="trashIcon"
           initial={{ scale: 1 }}
-          whileTap={{ scale: 1.5, rotate: 360 }}
+          whileTap={{ scale: 1.3, rotate: 180 }}
           onClick={handleDeleteMail}
         >
-          <FaTrash color="red" />
+          <IoTrashBin />
         </motion.div>
         <div className="headerMail">
           {mailDetails.imageFrom ? (
@@ -143,8 +163,8 @@ function MailDetails({
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-export default MailDetails;
+export default MailDetailsSection;

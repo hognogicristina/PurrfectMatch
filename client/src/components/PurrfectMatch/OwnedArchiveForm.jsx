@@ -4,7 +4,7 @@ import "../../styles/PurrfectMatch/CatsArchive.css";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 
 export default function OwnedArchiveForm({ cats }) {
-  const { data, error } = cats;
+  const { data, error, totalItems } = cats;
   const { notifyError } = useToast();
 
   const renderCats = () => {
@@ -69,8 +69,11 @@ export default function OwnedArchiveForm({ cats }) {
             <span>Currently you have no cats adopted</span>
           ) : (
             cats &&
-            data.length !== 0 && (
-              <span>Currently you have {data.length} cats adopted</span>
+            totalItems !== 0 && (
+              <span>
+                Currently you have {totalItems} cat{totalItems > 1 && "s"}{" "}
+                adopted
+              </span>
             )
           )}
         </div>
