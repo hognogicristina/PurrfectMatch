@@ -1,7 +1,7 @@
 import React from "react";
-import Select from "react-select";
 import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 import { motion } from "framer-motion";
+import CustomSelect from "./CustomSelect.jsx";
 
 function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
   const handlePrevClick = () => {
@@ -14,40 +14,6 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
     if (currentPage < totalPages) {
       onPageChange(currentPage + 1);
     }
-  };
-
-  const customStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "white",
-      borderColor: "#ff8bbd",
-      boxShadow: "none",
-      "&:hover": {
-        borderColor: "#ff6392",
-      },
-      borderRadius: "8px",
-      cursor: "pointer",
-    }),
-    option: (styles, { isFocused, isSelected, isActive }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? "#ff8bbd"
-        : isFocused
-          ? "#ffe6f2"
-          : isActive
-            ? "#ffadd6"
-            : null,
-      color: isSelected ? "white" : "black",
-      cursor: "pointer",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: isActive ? "#ff6392" : null,
-      },
-    }),
-    singleValue: (styles) => ({
-      ...styles,
-      color: "#333",
-    }),
   };
 
   const renderPageSelectDropdown = () => {
@@ -103,8 +69,7 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
     );
 
     return (
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={selectedOption}
         onChange={(selectedOption) => onPageChange(selectedOption.value)}
         options={options}

@@ -15,9 +15,11 @@ function MailSection({
   isSent,
 }) {
   const handleExpandClick = () => {
-    setIsExpanded(!isExpanded);
-    if (isExpanded) {
-      setItemsToShow(1);
+    if (mails.length > 0) {
+      setIsExpanded(!isExpanded);
+      if (isExpanded) {
+        setItemsToShow(1);
+      }
     }
   };
 
@@ -40,6 +42,7 @@ function MailSection({
           animate="normal"
           variants={buttonVariants}
           className="expandButton"
+          // if  && mails.length > 0 then handleExpandClick
           onClick={handleExpandClick}
         >
           {isExpanded ? <BiCollapseVertical /> : <BiExpandVertical />}

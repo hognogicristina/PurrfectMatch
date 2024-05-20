@@ -33,16 +33,12 @@ export const getStatusIcon = (status) => {
 };
 
 function MailDetailsSection({
-  mails,
   mailDetails,
   setMailDetails,
   selectedMailId,
-  setMessage,
   removeMailFromList,
 }) {
   const { notifyError } = useToast();
-
-  console.log(mails);
 
   const handleResponse = async (status) => {
     const token = getAuthToken();
@@ -61,16 +57,6 @@ function MailDetailsSection({
     if (response.ok) {
       const mailData = await response.json();
       setMailDetails(mailData.data);
-
-      if (mails.sentRequests === 0) {
-        setMessage(mails.message);
-        console.log(mails.message);
-      }
-
-      if (mails.receivedRequests.message) {
-        console.log(mails.message);
-        setMessage(mails.message);
-      }
     } else {
       const mailError = await response.json();
       notifyError(mailError.error.message);

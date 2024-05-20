@@ -31,7 +31,7 @@ export default function MoreCatsSection({ title, cats, type, catDetail }) {
         {cats
           .filter((cat) => cat.id !== catDetail.id)
           .slice(0, 4)
-          .map((cat, index) => (
+          .map((cat) => (
             <motion.li
               key={`${type}-${cat.id}`}
               className="otherCatCard"

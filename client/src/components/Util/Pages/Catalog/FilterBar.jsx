@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import Select from "react-select";
 import { NavLink } from "react-router-dom";
 import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import { getAuthToken } from "../../../../util/auth.js";
+import { HiSortAscending, HiSortDescending } from "react-icons/hi";
+import { GrPowerReset } from "react-icons/gr";
+import CustomSelect from "../../Custom/Reuse/CustomSelect.jsx";
 
 function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();
@@ -91,6 +93,7 @@ function FilterBar({ searchParams, setSearchParams }) {
     } else {
       searchParams.delete(name);
     }
+    searchParams.set("page", 1);
     setSearchParams(searchParams, { replace: true });
   };
 
@@ -101,46 +104,13 @@ function FilterBar({ searchParams, setSearchParams }) {
     searchParams.delete("selectedHealthProblem");
     searchParams.delete("selectedGender");
     searchParams.delete("selectedColor");
+    searchParams.set("page", 1);
     setSearchParams(searchParams, { replace: true });
   };
 
   const handleSortOrder = (order) => {
     searchParams.set("sortOrder", order);
     setSearchParams(searchParams);
-  };
-
-  const customStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "white",
-      borderColor: "#ff8bbd",
-      boxShadow: "none",
-      "&:hover": {
-        borderColor: "#ff6392",
-      },
-      borderRadius: "8px",
-      cursor: "pointer",
-    }),
-    option: (styles, { isFocused, isSelected, isActive }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? "#ff8bbd"
-        : isFocused
-          ? "#ffe6f2"
-          : isActive
-            ? "#ffadd6"
-            : null,
-      color: isSelected ? "white" : "black",
-      cursor: "pointer",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: isActive ? "#ff6392" : null,
-      },
-    }),
-    singleValue: (styles) => ({
-      ...styles,
-      color: "#333",
-    }),
   };
 
   return (
@@ -151,9 +121,37 @@ function FilterBar({ searchParams, setSearchParams }) {
       whileInView={{ x: 0 }}
       viewport={{ once: true }}
     >
-      <button onClick={handleClearAll} className="simpleButton submit">
-        Reset Filters
-      </button>
+      <div className="filterBarButtonsContainer">
+        <motion.div
+          onClick={handleClearAll}
+          className="filterBarButtons"
+          whileTap={{ scale: 0.9 }}
+        >
+          <GrPowerReset />
+        </motion.div>
+        <motion.div
+          onClick={() => handleSortOrder("asc")}
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiSortAscending
+            color={
+              searchParams.get("sortOrder") === "asc" ? "#e37fb6" : "#665967"
+            }
+            className="filterBarButtons"
+          />
+        </motion.div>
+        <motion.div
+          onClick={() => handleSortOrder("desc")}
+          whileTap={{ scale: 0.9 }}
+        >
+          <HiSortDescending
+            color={
+              searchParams.get("sortOrder") === "desc" ? "#e37fb6" : "#665967"
+            }
+            className="filterBarButtons"
+          />
+        </motion.div>
+      </div>
       <input
         type="text"
         name="search"
@@ -161,23 +159,8 @@ function FilterBar({ searchParams, setSearchParams }) {
         placeholder="Search cats..."
         // value={searchParams.get("search") || ""}
       />
-      <div className="sortOrderButtons">
-        <button
-          onClick={() => handleSortOrder("asc")}
-          className="simpleButton submit"
-        >
-          Asc
-        </button>
-        <button
-          onClick={() => handleSortOrder("desc")}
-          className="simpleButton submit"
-        >
-          Desc
-        </button>
-      </div>
       <label>Breed</label>
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={
           breeds.find(
             (option) => option.value === searchParams.get("selectedBreed"),
@@ -189,12 +172,10 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={breeds}
         placeholder="Any Breed"
-        className="selectControl"
         isClearable={true}
       />
       <label>Age Type</label>
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={
           ageTypes.find(
             (option) => option.value === searchParams.get("selectedAgeType"),
@@ -206,12 +187,10 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={ageTypes}
         placeholder="Any Age Types"
-        className="selectControl"
         isClearable={true}
       />
       <label>Health Problems</label>
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={
           healthProblems.find(
             (option) =>
@@ -224,12 +203,10 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={healthProblems}
         placeholder="Any Health Problems"
-        className="selectControl"
         isClearable={true}
       />
       <label>Gender</label>
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={
           genders.find(
             (option) => option.value === searchParams.get("selectedGender"),
@@ -241,12 +218,10 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={genders}
         placeholder="Any Gender"
-        className="selectControl"
         isClearable={true}
       />
       <label>Color</label>
-      <Select
-        styles={customStyles}
+      <CustomSelect
         value={
           colors.find(
             (option) => option.value === searchParams.get("selectedColor"),
@@ -258,13 +233,14 @@ function FilterBar({ searchParams, setSearchParams }) {
         }
         options={colors}
         placeholder="Any Color"
-        className="selectControl"
         isClearable={true}
       />
       {token && (
-        <NavLink className="simpleButton submit" to="/cats/add">
-          Give a Cat a Home
-        </NavLink>
+        <motion.div className="addCatButtonContainer" whileTap={{ scale: 0.9 }}>
+          <NavLink className="addCatButton" to="/cats/add">
+            Give a Cat a Home
+          </NavLink>
+        </motion.div>
       )}
     </motion.div>
   );

@@ -135,11 +135,9 @@ const getAdoptionRequests = async (req, res) => {
 
     const responseData = {
       sentRequests:
-        sentRequests.length > 0 ? sentRequests : { message: "No Result Found" },
+        sentRequests.length > 0 ? sentRequests : { message: "No Mail" },
       receivedRequests:
-        receivedRequests.length > 0
-          ? receivedRequests
-          : { message: "No Result Found" },
+        receivedRequests.length > 0 ? receivedRequests : { message: "No Mail" },
     };
 
     return res.status(200).json({ data: responseData });

@@ -7,11 +7,11 @@ import {
 } from "react-router-dom";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import Select from "react-select";
 import UploadsImage from "../Util/Features/UploadsImages.jsx";
-import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
+import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
+import DeleteCatDialog from "./DeleteCatDialog";
 
 export default function EditCatForm({ catDetail, onClose }) {
   const data = useActionData();
@@ -28,6 +28,7 @@ export default function EditCatForm({ catDetail, onClose }) {
   ]);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -81,44 +82,6 @@ export default function EditCatForm({ catDetail, onClose }) {
     }
   }, [data]);
 
-  const customStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "white",
-      boxShadow: "none",
-      borderColor: "#6666665E",
-      "&:hover": {
-        borderColor: "#6666665E",
-      },
-      borderRadius: "8px",
-      cursor: "pointer",
-    }),
-    option: (styles, { isFocused, isSelected, isActive }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? "#ff8bbd"
-        : isFocused
-          ? "#ffe6f2"
-          : isActive
-            ? "#ffadd6"
-            : null,
-      color: isSelected ? "white" : "black",
-      cursor: "pointer",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: isActive ? "#ff6392" : null,
-      },
-    }),
-    singleValue: (styles) => ({
-      ...styles,
-      color: "#333",
-    }),
-  };
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -140,6 +103,14 @@ export default function EditCatForm({ catDetail, onClose }) {
     }
   };
 
+  const openDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
   return (
     <div className="dialogOverlay">
       <motion.div
@@ -157,90 +128,95 @@ export default function EditCatForm({ catDetail, onClose }) {
           <FontAwesomeIcon icon={faXmark} className="faXmark" />
         </div>
         <Form onSubmit={handleSubmit} className="addCatContainer">
-          <div className="headerAddCat">
-            <h2>Modify Cat</h2>
-          </div>
-          {Object.keys(errors).length > 0 && (
-            <div className="error-messages">
-              {Object.values(errors).map((error, index) => (
-                <p key={index} className="error">
-                  {error}
-                </p>
-              ))}
-            </div>
-          )}
-          <label>Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter cat's name"
-            defaultValue={catDetail.name}
-            className={errors.name ? "input-error" : ""}
-          />
+          <label>
+            Name
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter cat's name"
+              defaultValue={catDetail.name}
+            />
+          </label>
           <UploadsImage initialImage={initialImage} />
-          <label className="selectAddCat">Breed:</label>
-          <Select
-            styles={customStyles}
-            name="selectedBreed"
-            options={breeds}
-            placeholder="Select a breed"
-            className="selectControl"
-            isClearable={true}
-            defaultValue={catDetail.breed}
-          />
-
-          <label className="selectAddCat">Gender:</label>
-          <Select
-            styles={customStyles}
-            name="selectedGender"
-            options={genders}
-            placeholder="Select a Gender"
-            className="selectControl"
-            isClearable={true}
-            defaultValue={catDetail.gender}
-          />
-          <label>Age:</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            placeholder="Enter cat's age"
-            className={errors.age ? "input-error" : ""}
-            min="0"
-          />
+          <label>
+            Breed
+            <label className="selectAddCat">
+              <CustomSelect
+                name="selectedBreed"
+                options={breeds}
+                placeholder="Select a breed"
+                className="selectControl"
+                isClearable={true}
+                defaultValue={{
+                  value: catDetail.breed,
+                  label: catDetail.breed,
+                }}
+              />
+            </label>
+          </label>
+          <label>
+            Gender
+            <label className="selectAddCat">
+              <CustomSelect
+                name="selectedGender"
+                options={genders}
+                placeholder="Select a Gender"
+                className="selectControl"
+                isClearable={true}
+                defaultValue={{
+                  value: catDetail.gender,
+                  label: catDetail.gender,
+                }}
+              />
+            </label>
+          </label>
+          <label>
+            Age
+            <input
+              type="number"
+              id="age"
+              name="age"
+              placeholder="Enter cat's age"
+              defaultValue={catDetail.age}
+              min="0"
+            />
+          </label>
           <div className="colorHealthContainer">
             <div>
-              <label>Color:</label>
-              <input
-                type="text"
-                id="color"
-                name="color"
-                placeholder="Enter cat's color"
-                className={errors.color ? "input-error" : ""}
-                defaultValue={catDetail.color}
-              />
+              <label>
+                Color
+                <input
+                  type="text"
+                  id="color"
+                  name="color"
+                  placeholder="Enter cat's color"
+                  defaultValue={catDetail.color}
+                />
+              </label>
             </div>
             <div>
-              <label>Health Problems (optional):</label>
-              <input
-                id="healthProblems"
-                name="healthProblems"
-                placeholder="Enter cat's health problems"
-                className={errors.healthProblems ? "input-error" : ""}
-                defaultValue={catDetail.healthProblems}
-              />
+              <label>
+                Health Problems (optional)
+                <input
+                  id="healthProblems"
+                  name="healthProblems"
+                  placeholder="Enter cat's health problems"
+                  defaultValue={catDetail.healthProblem}
+                />
+              </label>
             </div>
           </div>
-          <label>Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Enter cat's description"
-            className={errors.description ? "input-error" : ""}
-            defaultValue={catDetail.description}
-          />
-          <div>
+          <label>
+            Description
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter cat's description"
+              defaultValue={catDetail.description}
+            />
+          </label>
+          <div className="buttonEditContainer">
             <motion.button
               whileTap={{ scale: 0.9 }}
               disabled={isSubmitting}
@@ -249,8 +225,19 @@ export default function EditCatForm({ catDetail, onClose }) {
             >
               {isSubmitting ? "Submitting..." : "Submit"}
             </motion.button>
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              type="button"
+              className="simpleButton delete edit"
+              onClick={openDeleteDialog}
+            >
+              Delete
+            </motion.button>
           </div>
         </Form>
+        {isDeleteDialogOpen && (
+          <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
+        )}
       </motion.div>
     </div>
   );

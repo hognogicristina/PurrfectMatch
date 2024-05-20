@@ -165,9 +165,7 @@ const deleteAdoptionRequestValidator = async (req, res) => {
   const adoptionRequest = await AdoptionRequest.findByPk(adoptionRequestId);
   if (!adoptionRequest) {
     return res.status(404).json({
-      error: [
-        { field: "adoption", message: "AdoptionProcess request not found" },
-      ],
+      error: [{ field: "adoption", message: "Mail not found" }],
     });
   }
 
@@ -197,7 +195,7 @@ const deleteAdoptionRequestValidator = async (req, res) => {
       error: [
         {
           field: "request",
-          message: "AdoptionProcess request already deleted",
+          message: "Mail already deleted",
         },
       ],
     });

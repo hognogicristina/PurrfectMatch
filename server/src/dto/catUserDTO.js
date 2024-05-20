@@ -9,6 +9,12 @@ async function catUserToDTO(cat) {
     image: image ? image.url : null,
     name: cat.name ? cat.name : null,
     breed: cat.breed ? cat.breed : null,
+    gender: cat.gender ? cat.gender : null,
+    lifeStage: cat.ageType ? cat.ageType : null,
+    color: cat.color ? cat.color : null,
+    healthProblem: cat.healthProblem ? cat.healthProblem : null,
+    description: cat.description ? cat.description : null,
+    status: cat.status ? cat.status : null,
   };
 }
 

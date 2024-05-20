@@ -8,10 +8,10 @@ import {
 } from "react-router-dom";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import Select from "react-select";
 import UploadsImage from "../Util/Features/UploadsImages.jsx";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import "../../styles/PurrfectMatch/CatAddForm.css";
+import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
 
 export default function AddCatForm() {
   const data = useActionData();
@@ -70,40 +70,6 @@ export default function AddCatForm() {
     }
   }, [data]);
 
-  const customStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "white",
-      boxShadow: "none",
-      borderColor: "#6666665E",
-      "&:hover": {
-        borderColor: "#6666665E",
-      },
-      borderRadius: "8px",
-      cursor: "pointer",
-    }),
-    option: (styles, { isFocused, isSelected, isActive }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? "#ff8bbd"
-        : isFocused
-          ? "#ffe6f2"
-          : isActive
-            ? "#ffadd6"
-            : null,
-      color: isSelected ? "white" : "black",
-      cursor: "pointer",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: isActive ? "#ff6392" : null,
-      },
-    }),
-    singleValue: (styles) => ({
-      ...styles,
-      color: "#333",
-    }),
-  };
-
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -127,81 +93,82 @@ export default function AddCatForm() {
               Back to Cats
             </NavLink>
           </div>
-          {Object.keys(errors).length > 0 && (
-            <div className="error-messages">
-              {Object.values(errors).map((error, index) => (
-                <p key={index} className="error">
-                  {error}
-                </p>
-              ))}
-            </div>
-          )}
-          <label>Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter cat's name"
-            className={errors.name ? "input-error" : ""}
-            required
-          />
+          <label>
+            Name
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter cat's name"
+              required
+            />
+          </label>
           <UploadsImage initialImage={initialImage} />
-          <label className="selectAddCat">Breed:</label>
-          <Select
-            styles={customStyles}
-            name="selectedBreed"
-            options={breeds}
-            placeholder="Select a breed"
-            className="selectControl"
-            isClearable={true}
-          />
-
-          <label className="selectAddCat">Gender:</label>
-          <Select
-            styles={customStyles}
-            name="selectedGender"
-            options={genders}
-            placeholder="Select a Gender"
-            className="selectControl"
-            isClearable={true}
-          />
-          <label>Age:</label>
-          <input
-            type="number"
-            id="age"
-            name="age"
-            placeholder="Enter cat's age"
-            className={errors.age ? "input-error" : ""}
-            min="0"
-          />
+          <label>
+            Breed
+            <label className="selectAddCat">
+              <CustomSelect
+                name="selectedBreed"
+                options={breeds}
+                placeholder="Select a breed"
+                className="selectControl"
+                isClearable={true}
+              />
+            </label>
+          </label>
+          <label>
+            Gender
+            <label className="selectAddCat">
+              <CustomSelect
+                name="selectedGender"
+                options={genders}
+                placeholder="Select a Gender"
+                className="selectControl"
+                isClearable={true}
+              />
+            </label>
+          </label>
+          <label>
+            Age
+            <input
+              type="number"
+              id="age"
+              name="age"
+              placeholder="Enter cat's age"
+              min="0"
+            />
+          </label>
           <div className="colorHealthContainer">
             <div>
-              <label>Color:</label>
-              <input
-                type="text"
-                id="color"
-                name="color"
-                placeholder="Enter cat's color"
-                className={errors.color ? "input-error" : ""}
-              />
+              <label>
+                Color
+                <input
+                  type="text"
+                  id="color"
+                  name="color"
+                  placeholder="Enter cat's color"
+                />
+              </label>
             </div>
             <div>
-              <label>Health Problems (optional):</label>
-              <input
-                id="healthProblems"
-                name="healthProblems"
-                placeholder="Enter cat's health problems"
-                className={errors.healthProblems ? "input-error" : ""}
-              />
+              <label>
+                Health Problems (optional)
+                <input
+                  id="healthProblems"
+                  name="healthProblems"
+                  placeholder="Enter cat's health problems"
+                />
+              </label>
             </div>
           </div>
-          <label>Description:</label>
-          <textarea
-            id="description"
-            name="description"
-            placeholder="Enter cat's description"
-            className={errors.description ? "input-error" : ""}
-          />
+          <label>
+            Description
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Enter cat's description"
+            />
+          </label>
           <div>
             <motion.button
               whileTap={{ scale: 0.9 }}

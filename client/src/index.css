@@ -3,7 +3,7 @@
   --secondary-color: #f9f9f9;
   --background-color: #f4f4f9;
   --button-submit: #FF69B4;
-  --light-pink: rgba(255, 255, 255, 0.54);
+  --light-pink: rgba(255, 216, 237, 0.7);
   --button-submit-hover: #FF1493;
   --button-submit-border: #ff4fa7;
   --pink-text: #c85b8c;
@@ -215,6 +215,10 @@ textarea {
 
 .cancelButton a {
   font-weight: 600;
+}
+
+.cancelButton:hover {
+  background-color: rgba(83, 83, 83, 0.41);
 }
 
 .linkButton {

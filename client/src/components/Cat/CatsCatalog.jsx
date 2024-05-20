@@ -80,14 +80,16 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
       />
       <div className="catsListContainer">
         <div className="topControls">
-          <SortDropdown />
           {Array.isArray(data) && data.length > 0 && (
-            <Pagination
-              displayPages="true"
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-            />
+            <>
+              <SortDropdown />
+              <Pagination
+                displayPages="true"
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            </>
           )}
         </div>
         <div className="catsContainer">

@@ -123,19 +123,28 @@ const deleteAdoptionRequest = async (
     }
   }
 
+  const adoptionRequest = await AdoptionRequest.findOne({
+    where: { id: adoptionRequestId },
+  });
+
+  if (
+    userAdoptionRequest.role === "sender" &&
+    adoptionRequest.status === "pending"
+  ) {
+    await UserRole.destroy({ where: { adoptionRequestId } });
+    await AdoptionRequest.destroy({ where: { id: adoptionRequestId } });
+    return res.status(200).json({ status: "Mail deleted successfully" });
+  }
+
   if (visibleCount === 1) {
     await UserRole.destroy({ where: { adoptionRequestId } });
     await AdoptionRequest.destroy({ where: { id: adoptionRequestId } });
-    return res
-      .status(200)
-      .json({ status: "AdoptionRequest deleted successfully" });
+    return res.status(200).json({ status: "Mail deleted successfully" });
   } else {
     await userAdoptionRequest.update({
       isVisible: !userAdoptionRequest.isVisible,
     });
-    return res
-      .status(200)
-      .json({ status: "AdoptionRequest deleted successfully" });
+    return res.status(200).json({ status: "Mail deleted successfully" });
   }
 };
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import Select from "react-select";
+import CustomSelect from "../../Custom/Reuse/CustomSelect.jsx";
 
 function SortDropdown() {
   let [searchParams, setSearchParams] = useSearchParams();
@@ -28,48 +28,13 @@ function SortDropdown() {
     setSearchParams(searchParams, { replace: true });
   };
 
-  const customStyles = {
-    control: (styles) => ({
-      ...styles,
-      backgroundColor: "white",
-      borderColor: "#ff8bbd",
-      boxShadow: "none",
-      "&:hover": {
-        borderColor: "#ff6392",
-      },
-      borderRadius: "8px",
-      cursor: "pointer",
-    }),
-    option: (styles, { isFocused, isSelected, isActive }) => ({
-      ...styles,
-      backgroundColor: isSelected
-        ? "#ff8bbd"
-        : isFocused
-          ? "#ffe6f2"
-          : isActive
-            ? "#ffadd6"
-            : null,
-      color: isSelected ? "white" : "black",
-      cursor: "pointer",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: isActive ? "#ff6392" : null,
-      },
-    }),
-    singleValue: (styles) => ({
-      ...styles,
-      color: "#333",
-    }),
-  };
-
   return (
     <div className="sortDropdown">
-      <Select
+      <CustomSelect
         onChange={handleSortChange}
         options={options}
         value={selectedValue}
         classNamePrefix="select"
-        styles={customStyles}
       />
     </div>
   );

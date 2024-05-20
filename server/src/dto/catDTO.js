@@ -14,6 +14,7 @@ async function catToDTO(cat) {
     breed: cat.breed ? cat.breed : null,
     gender: cat.gender ? cat.gender : null,
     lifeStage: cat.ageType ? cat.ageType : null,
+    color: cat.color ? cat.color : null,
     healthProblem: cat.healthProblem ? cat.healthProblem : null,
     description: cat.description ? cat.description : null,
     userId: guardian ? guardian.id : null,
@@ -29,6 +30,7 @@ async function catsListToDTO(cat) {
   const images = await Image.findAll({ where: { catId: cat.id } });
   const catUser = await CatUser.findByPk(cat.id);
   const guardian = await User.findByPk(catUser.userId);
+  const owner = await User.findByPk(catUser.ownerId);
   const image = images[0];
 
   return {
@@ -39,6 +41,7 @@ async function catsListToDTO(cat) {
     gender: cat.gender ? cat.gender : null,
     lifeStage: cat.ageType ? cat.ageType : null,
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
+    owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
   };
 }
 

@@ -1,14 +1,17 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AdoptCat from "./AdoptCat.jsx";
+import FavoriteHeart from "../../Features/FavoriteHeart.jsx";
+import EditCatForm from "../../../Cat/EditCatForm.jsx";
+import { FaEdit } from "react-icons/fa";
 
 export default function CatDetailsSection({
   catDetail,
   userDetails,
   userEditCat,
   handleEditClick,
+  isEditDialogOpen,
+  handleCloseEditDialog,
 }) {
   const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ export default function CatDetailsSection({
             <div className="dotSeparator"></div>
             <p className="addressGuardian">
               {catDetail.owner
-                ? "This cat is already adopted"
+                ? `${catDetail.name} is already adopted`
                 : catDetail.address}
             </p>
           </div>
@@ -52,12 +55,60 @@ export default function CatDetailsSection({
             <p>Health Problem: No health problems</p>
           )}
         </div>
-        {userDetails && userDetails.username === userEditCat && (
-          <FontAwesomeIcon
-            icon={faEdit}
-            className="editIcon"
-            onClick={handleEditClick}
-          />
+        <div className="delimiter"></div>
+        <div className="addFavoriteSection">
+          {!catDetail.owner ? (
+            <>
+              {userDetails && userDetails.username === userEditCat ? (
+                <>
+                  <h3>Because you are the guardian of {catDetail.name},</h3>
+                  <p>
+                    you may edit the details or remove the cat from your profile
+                    until it finds a loving home.
+                  </p>
+                  <div className="editIconContainer" onClick={handleEditClick}>
+                    <FaEdit className="editIcon" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3>Consider {catDetail.name} for adoption?</h3>
+                  <p>
+                    Click the heart to add to your favorites until you decide
+                  </p>
+                  <FavoriteHeart catId={catDetail.id} />
+                </>
+              )}
+            </>
+          ) : (
+            <>
+              {userDetails && userDetails.username === userEditCat ? (
+                <>
+                  <h3>
+                    Congratulations! You are now the owner of {catDetail.name}.
+                  </h3>
+                  <p>
+                    You may edit the details or remove the cat from your
+                    profile.
+                  </p>
+                  <div className="editIconContainer" onClick={handleEditClick}>
+                    <FaEdit className="editIcon" />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3>{catDetail.name} has already found a loving home.</h3>
+                  <p>
+                    If you need further assistance, please contact the owner
+                    <strong> {catDetail.owner}</strong>.
+                  </p>
+                </>
+              )}
+            </>
+          )}
+        </div>
+        {isEditDialogOpen && (
+          <EditCatForm catDetail={catDetail} onClose={handleCloseEditDialog} />
         )}
       </div>
     </motion.div>

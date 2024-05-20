@@ -3,7 +3,6 @@
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
-  gap: 20px;
   width: 100%;
 }
 
@@ -34,9 +33,57 @@
   color: var(--title-color);
 }
 
+.filterBarButtonsContainer {
+  display: flex;
+  margin-top: 10px;
+  flex-direction: row;
+  justify-content: center;
+  width: auto;
+  gap: 10px;
+}
+
+.filterBarButtons {
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  border: 1px solid #e9e9e9;
+  cursor: pointer;
+  color: #e37fb6;
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+}
+
+.filterBarButtons:hover {
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.addCatButton {
+  text-align: center;
+  max-width: 180px;
+  padding: 10px 20px;
+  margin-top: 10px;
+  background-color: #ffffff;
+  color: var(--title-color);
+  font-size: 20px;
+  border: 1px solid #e9e9e9;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.addCatButton:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.addCatButtonContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .catsListContainer {
   padding: 20px;
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -115,19 +162,6 @@
   padding: 10px;
 }
 
-.sortOrderButtons {
-  width: 100%;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.sortOrderButtons button {
-  margin-top: 0 !important;
-}
-
 .catItemContainer {
   display: flex;
   flex-direction: column;
@@ -136,6 +170,7 @@
   overflow: hidden;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
   margin: 20px;
+  position: relative;
 }
 
 .catItemImages {
@@ -167,6 +202,7 @@
   padding: 10px;
   gap: 10px;
   justify-content: center;
+  position: relative;
 }
 
 .catImagesContainer .imageCarousel img {
@@ -186,7 +222,12 @@
 
 .catItemDetails .leftSection,
 .catItemDetails .rightSection {
-  flex: 1;
+  flex: 1 1 45%;
+  padding: 20px;
+}
+
+.catItemDetails .addFavoriteSection {
+  flex: 0 1 10%;
   padding: 20px;
 }
 
@@ -209,14 +250,19 @@
   margin: 0 20px;
 }
 
-.editIcon {
+.editIconContainer {
   position: absolute;
+  display: flex;
+  align-items: center;
   top: 10px;
   right: 10px;
   padding: 10px;
   cursor: pointer;
   color: #ff69b4;
-  font-size: 20px;
+  font-size: 25px;
+  border-radius: 50%;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .catItemDetails h1 {
@@ -284,6 +330,7 @@
   overflow: hidden;
   margin: 20px;
   justify-content: center;
+  position: relative;
 }
 
 .otherCatsContainer h2 {
@@ -396,4 +443,16 @@
 
 .clearIconContainer:hover {
   transform: scale(1.5);
+}
+
+.buttonEditContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.simpleButton.delete.edit {
+  margin-top: 0;
+  width: 100%;
 }

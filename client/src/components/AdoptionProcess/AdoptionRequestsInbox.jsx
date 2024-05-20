@@ -9,7 +9,6 @@ function AdoptionRequestsInbox({ mails }) {
   const { data, error } = mails;
   const [selectedMailId, setSelectedMailId] = useState(null);
   const [mailDetails, setMailDetails] = useState({});
-  const [message, setMessage] = useState("");
   const { notifyError } = useToast();
   const [receivedItemsToShow, setReceivedItemsToShow] = useState(1);
   const [sentItemsToShow, setSentItemsToShow] = useState(1);
@@ -58,9 +57,6 @@ function AdoptionRequestsInbox({ mails }) {
         data.receivedRequests = data.receivedRequests.filter(
           (mail) => mail.id !== id,
         );
-        if (data.receivedRequests.length === 0) {
-          setIsReceivedExpanded(false);
-        }
       }
       if (Array.isArray(data.sentRequests)) {
         data.sentRequests = data.sentRequests.filter((mail) => mail.id !== id);
@@ -109,11 +105,9 @@ function AdoptionRequestsInbox({ mails }) {
         </div>
         {selectedMailId && (
           <MailDetailsSection
-            mails={data}
             mailDetails={mailDetails}
             setMailDetails={setMailDetails}
             selectedMailId={selectedMailId}
-            setMessage={setMessage}
             removeMailFromList={removeMailFromList}
           />
         )}

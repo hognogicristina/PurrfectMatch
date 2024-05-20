@@ -2,10 +2,37 @@ import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/CatsArchive.css";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
+import { useNavigate } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";
+import EditCatForm from "../Cat/EditCatForm.jsx";
+import { useState } from "react";
 
 export default function OwnedArchiveForm({ cats }) {
   const { data, error, totalItems } = cats;
   const { notifyError } = useToast();
+  const navigate = useNavigate();
+  const [currentCat, setCurrentCat] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const catsPerPage = 12;
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleEditClick = (cat) => {
+    setCurrentCat(cat);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleCloseEditDialog = () => {
+    setIsEditDialogOpen(false);
+    setCurrentCat(null);
+  };
+
+  const handleCatClick = (id) => {
+    navigate(`/cats/cat/${id}`);
+  };
 
   const renderCats = () => {
     if (cats && Array.isArray(data)) {
@@ -23,7 +50,17 @@ export default function OwnedArchiveForm({ cats }) {
           key={cat.id}
           className="catListItem"
           style={{ backgroundImage: `url(${cat.image})` }}
+          onClick={() => handleCatClick(cat.id)}
         >
+          <div
+            className="editIconContainer"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditClick(cat);
+            }}
+          >
+            <FaEdit className="editIcon" />
+          </div>
           <div className="catDetails">
             <h2>{cat.name}</h2>
             <p>{cat.breed}</p>
@@ -79,6 +116,9 @@ export default function OwnedArchiveForm({ cats }) {
         </div>
         <ul className="catsList list">{renderCats()}</ul>
       </motion.div>
+      {isEditDialogOpen && (
+        <EditCatForm catDetail={currentCat} onClose={handleCloseEditDialog} />
+      )}
     </div>
   );
 }

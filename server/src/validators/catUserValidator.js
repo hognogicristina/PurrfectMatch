@@ -1,4 +1,6 @@
 const { Cat, CatUser, Address } = require("../../models");
+const { isEmpty } = require("validator");
+const validator = require("validator");
 
 const userValidator = async (req, res) => {
   const user = req.user;
@@ -33,6 +35,31 @@ const userValidator = async (req, res) => {
             ],
           });
         }
+      }
+    }
+  }
+
+  if (req.method === "DELETE") {
+    if (!req.body.name || validator.isEmpty(req.body.name || "")) {
+      return res.status(403).json({
+        error: [
+          {
+            field: "name",
+            message: "Please enter the name of the cat",
+          },
+        ],
+      });
+    } else {
+      const cat = await Cat.findByPk(req.params.id);
+      if (cat.name !== req.body.name) {
+        return res.status(403).json({
+          error: [
+            {
+              field: "name",
+              message: "The name you entered does not match the cat's name",
+            },
+          ],
+        });
       }
     }
   }

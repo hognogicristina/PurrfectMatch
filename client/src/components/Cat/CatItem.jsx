@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
 import { getAuthToken } from "../../util/auth.js";
-import EditCatForm from "./EditCatForm.jsx";
 import CatImageSection from "../Util/Pages/CatProfile/CatImageSection.jsx";
 import CatDetailsSection from "../Util/Pages/CatProfile/CatDetailsSection.jsx";
 import MoreCatsSection from "../Util/Pages/CatProfile/MoreCatsSection.jsx";
@@ -11,6 +10,7 @@ export default function CatItem({ catDetail }) {
   const { notifyError } = useToast();
   const [catsBreed, setCatsBreed] = useState([]);
   const [catsGuardian, setCatsGuardian] = useState([]);
+  const [catsOwner, setCatsOwner] = useState([]);
   const [mainImage, setMainImage] = useState(catDetail.images[0]);
   const [carouselImages, setCarouselImages] = useState(
     catDetail.images.slice(1),
@@ -60,7 +60,7 @@ export default function CatItem({ catDetail }) {
 
     async function fetchCatsByBreed() {
       const response = await fetch(
-        `http://localhost:3000/catsByBreed/${catDetail.id}`,
+        `http://localhost:3000/cats-by-breed/${catDetail.id}`,
       );
       const data = await response.json();
       if (response.ok) {
@@ -72,11 +72,12 @@ export default function CatItem({ catDetail }) {
 
     async function fetchCatsOfGuardian() {
       const response = await fetch(
-        `http://localhost:3000/catsOfGuardian/${catDetail.id}`,
+        `http://localhost:3000/cats-by-user/${catDetail.id}`,
       );
       const data = await response.json();
       if (response.ok) {
-        setCatsGuardian(data.data);
+        setCatsGuardian(data.data.catsUserList);
+        setCatsOwner(data.data.catsOwnerList);
       } else {
         notifyError(data.message);
       }
@@ -103,30 +104,38 @@ export default function CatItem({ catDetail }) {
         carouselImages={carouselImages}
         setCarouselImages={setCarouselImages}
       />
-
       <CatDetailsSection
         catDetail={catDetail}
         userDetails={userDetails}
         userEditCat={userEditCat}
         handleEditClick={handleEditClick}
+        isEditDialogOpen={isEditDialogOpen}
+        handleCloseEditDialog={handleCloseEditDialog}
       />
 
-      <MoreCatsSection
-        title={`More Cats from ${catDetail.guardian}`}
-        cats={catsGuardian}
-        type="guardian"
-        catDetail={catDetail}
-      />
-
-      <MoreCatsSection
-        title="Other Cats You May Like"
-        cats={catsBreed}
-        type="breed"
-        catDetail={catDetail}
-      />
-
-      {isEditDialogOpen && (
-        <EditCatForm catDetail={catDetail} onClose={handleCloseEditDialog} />
+      {catsGuardian.length > 0 && (
+        <MoreCatsSection
+          title={`More Cats from ${catDetail.guardian}`}
+          cats={catsGuardian}
+          type="guardian"
+          catDetail={catDetail}
+        />
+      )}
+      {catsOwner.length > 0 && (
+        <MoreCatsSection
+          title={`More Cats from ${catDetail.owner}`}
+          cats={catsOwner}
+          type="guardian"
+          catDetail={catDetail}
+        />
+      )}
+      {catsBreed.length > 0 && (
+        <MoreCatsSection
+          title="Other Cats You May Like"
+          cats={catsBreed}
+          type="breed"
+          catDetail={catDetail}
+        />
       )}
     </>
   );

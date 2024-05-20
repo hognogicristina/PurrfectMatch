@@ -79,6 +79,7 @@ const filterCats = async (req) => {
       [Op.or]: [
         { breed: { [Op.like]: `%${searchQuery}%` } },
         { healthProblem: { [Op.like]: `%${searchQuery}%` } },
+        { name: { [Op.like]: `%${searchQuery}%` } },
       ],
     };
   }

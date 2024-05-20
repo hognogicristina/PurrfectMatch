@@ -101,8 +101,8 @@ router.get("/breeds", filterController.getAllBreeds);
 router.get("/age-types", filterController.getAgeType);
 router.get("/recent-cats", filterController.getRecentCats);
 router.get("/health-problems", filterController.getHealthProblems);
-router.get("/catsByBreed/:catId", filterController.getCatsByBreed);
-router.get("/catsOfGuardian/:catId", filterController.getCatsOfGuardian);
+router.get("/cats-by-breed/:catId", filterController.getCatsByBreed);
+router.get("/cats-by-user/:catId", filterController.getCatsOfUser);
 router.get("/colors", filterController.getColors);
 
 // Cat routes

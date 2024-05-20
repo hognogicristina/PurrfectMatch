@@ -5,11 +5,13 @@ import { motion } from "framer-motion";
 import FavoriteHeart from "../Util/Features/FavoriteHeart.jsx";
 import SubmitDialog from "../Util/Custom/Reuse/SubmitDialog.jsx";
 import { getAuthToken } from "../../util/auth.js";
+import { useNavigate } from "react-router-dom";
 
 export default function FavoritesArchive({ favorites }) {
   const { data, error } = favorites;
   const { notifyError } = useToast();
   const token = getAuthToken();
+  const navigate = useNavigate();
   const [visibleCount, setVisibleCount] = useState(7);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCat, setSelectedCat] = useState(null);
@@ -29,6 +31,10 @@ export default function FavoritesArchive({ favorites }) {
     setSelectedCat(null);
   };
 
+  const handleCatClick = (id) => {
+    navigate(`/cats/cat/${id}`);
+  };
+
   const renderFavorites = () => {
     if (favorites && Array.isArray(data) && data.length > 0) {
       return data.slice(0, visibleCount).map((favorite, index) => (
@@ -44,6 +50,7 @@ export default function FavoritesArchive({ favorites }) {
           viewport={{ once: true }}
           key={favorite.id}
           className="favoriteItem"
+          onClick={() => handleCatClick(favorite.id)}
         >
           <img src={favorite.image} alt={favorite.name} className="catImage" />
           <div className="catDetailsFav">

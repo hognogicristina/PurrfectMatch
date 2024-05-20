@@ -107,7 +107,7 @@ function MainNavigation() {
         </NavLink>
         {!token ? (
           <NavLink to="/cats" className="linkButton catalog">
-            <motion.p whileTap={{ scale: 0.9 }}>Catalog</motion.p>
+            <motion.p whileTap={{ scale: 0.9 }}>Find a Friend</motion.p>
           </NavLink>
         ) : (
           <div className="dropdown">

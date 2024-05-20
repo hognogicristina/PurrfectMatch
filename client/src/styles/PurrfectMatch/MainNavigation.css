@@ -99,13 +99,14 @@
 
 .linkButton.catalog {
   color: #FF69B4;
-  font-weight: 400;
   font-size: 20px;
   margin-left: 20px;
 }
 
 .linkButton.catalog:hover {
   color: #ffa1cf;
+  font-style: italic;
+  text-decoration: none;
 }
 
 .active-link {
