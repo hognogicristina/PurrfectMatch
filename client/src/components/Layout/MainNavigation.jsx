@@ -184,7 +184,7 @@ function MainNavigation() {
                 <FontAwesomeIcon icon={faInbox} />
               </motion.div>
             </NavLink>
-            <div className="userMenuContainer">
+            <div>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={toggleUserMenu}

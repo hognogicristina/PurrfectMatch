@@ -27,7 +27,7 @@ export default function MailItem({ mail, isSelected, openMail, isSent }) {
         } ${isSelected ? "selectedMail" : ""}`}
         onClick={() => openMail(mail.id)}
       >
-        <div className="mailContent">
+        <div>
           <div className="header">
             <span className="subject">{mail.subject}</span>
             <span className="date">{mail.date}</span>

@@ -52,9 +52,6 @@ export default function ModifyAddressForm({ userDetail }) {
               type="text"
               placeholder="Enter your country"
               defaultValue={user ? user.country : ""}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             {errors.country && <p className="errorText">{errors.country}</p>}
           </label>
@@ -151,9 +148,6 @@ export default function ModifyAddressForm({ userDetail }) {
               type="text"
               placeholder="Enter your postal code"
               defaultValue={user ? user.postalCode : ""}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             {errors.postalCode && (
               <p className="errorText">{errors.postalCode}</p>

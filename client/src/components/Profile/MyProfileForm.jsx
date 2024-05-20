@@ -38,7 +38,7 @@ export default function MyProfileForm({ userDetail }) {
           newErrors[error.field] = error.message;
         });
         setErrors(newErrors);
-        if (data.error.field === "server") {
+        if (data.error.field === "server" || data.error.field === "image") {
           notifyError(data.error.message);
         }
       }
@@ -148,7 +148,7 @@ export default function MyProfileForm({ userDetail }) {
               whileTap={{ scale: 0.9 }}
               type="button"
               onClick={handleCancel}
-              className="simpleButton submit"
+              className="simpleButton submit resize"
             >
               Cancel
             </motion.button>

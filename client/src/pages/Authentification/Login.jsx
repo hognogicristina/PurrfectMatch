@@ -20,6 +20,7 @@ export async function action({ request }) {
       usernameOrEmail: data.get("usernameOrEmail"),
       password: data.get("password"),
     }),
+    credentials: "include",
   });
 
   if (

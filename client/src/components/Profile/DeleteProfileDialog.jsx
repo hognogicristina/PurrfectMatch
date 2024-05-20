@@ -43,7 +43,6 @@ export default function DeleteProfileDialog({ onClose }) {
 
     if (response.ok) {
       localStorage.removeItem("token");
-      localStorage.removeItem("expiration");
       navigate("/");
     } else {
       const errorData = await response.json();

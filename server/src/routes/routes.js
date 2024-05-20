@@ -51,7 +51,7 @@ router.post(
 
 // Image routes
 router.post(
-  "/uploads",
+  "/upload",
   authMiddleware.authenticateToken,
   upload.array("files", 10),
   imageController.uploadImages,

@@ -13,34 +13,6 @@ function UploadsImage({ initialImages = [] }) {
   const [imageToReplace, setImageToReplace] = useState(null);
   const fileInputRef = useRef(null);
 
-  const handleImage = async (e) => {
-    const token = getAuthToken();
-    const imageFiles = data.getAll("image");
-
-    const formData = new FormData();
-    imageFiles.forEach((file, index) => {
-      formData.append(`files[${index}]`, file);
-    });
-
-    const response = await fetch("http://localhost:3000/uploads", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (
-      response.status === 400 ||
-      response.status === 401 ||
-      response.status === 500
-    ) {
-      return data;
-    }
-
-    return data.data;
-  };
-
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (imageToReplace !== null) {

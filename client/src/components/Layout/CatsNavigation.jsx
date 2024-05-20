@@ -30,7 +30,7 @@ function CatsNavigation({ onClose }) {
   };
 
   return (
-    <motion.nav className="catsDropdown">
+    <motion.nav>
       <motion.div variants={itemVariants} whileTap={tapEffects}>
         <NavLink to={"/cats"} onClick={onClose}>
           Feline Friends Catalog

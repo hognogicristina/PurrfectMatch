@@ -48,16 +48,16 @@ button path {
 }
 
 button {
-  padding: 12px;
-  font-size: 16px;
+  padding: 7px;
+  font-size: 15px;
   cursor: pointer;
   font-weight: 600;
   border-radius: var(--border-radius);
 }
 
 input {
-  padding: 12px;
-  font-size: 16px;
+  padding: 8px;
+  font-size: 15px;
   margin-bottom: 20px;
   border-radius: 8px;
   width: 100%;
@@ -79,8 +79,8 @@ input::placeholder {
 
 textarea {
   resize: none;
-  padding: 12px;
-  font-size: 16px;
+  padding: 10px;
+  font-size: 15px;
   margin-bottom: 20px;
   border-radius: 8px;
   border: 3px solid transparent;
@@ -93,7 +93,7 @@ textarea {
 .submitButton {
   text-align: center;
   text-shadow: 0 1px 1px var(--dark-shade);
-  padding: 10px;
+  padding: 9px;
   font-weight: 600;
   border-radius: 8px;
   border: 1px solid var(--button-submit-border);
@@ -155,8 +155,9 @@ textarea {
   margin-top: 20px;
   color: #2d1e30;
   font-weight: 600;
-  padding: 10px 20px;
+  padding: 9px 13px 10px 13px;
   border-radius: 8px;
+  font-size: 14px;
   cursor: pointer;
   transition: background 0.3s ease;
   border: var(--border-style);
@@ -167,24 +168,17 @@ textarea {
   font-weight: 600;
 }
 
-.simpleButton.submit {
-  font-size: 17px;
-}
-
 .simpleButtonText.submit {
-  font-size: 17px;
   color: #2d1e30;
   text-shadow: 0 1px 1px var(--dark-shade);
 }
 
 .simpleButton.delete {
   color: var(--button-delete);
-  font-size: 17px;
 }
 
 .simpleButton.accept {
   color: var(--button-accept);
-  font-size: 17px;
 }
 
 .simpleButton.submit:hover {
@@ -199,6 +193,10 @@ textarea {
 .simpleButton.accept:hover {
   background-color: var(--button-accept);
   color: var(--white-color);
+}
+
+.simpleButton.submit.resize {
+  width: 100px;
 }
 
 .cancelButton {
@@ -222,6 +220,7 @@ textarea {
 }
 
 .linkButton {
+  font-size: 15px;
   align-content: center;
   color: #ff008d;
   transition: color 0.3s ease;
@@ -276,7 +275,7 @@ textarea {
   border: 1px solid var(--button-submit-border);
   text-shadow: 0 1px 1px var(--dark-shade);
   font-weight: 400;
-  font-size: 20px;
+  font-size: 17px;
   cursor: pointer;
 }
 

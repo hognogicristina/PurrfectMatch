@@ -6,7 +6,6 @@ const {
   PasswordHistory,
   UserInfo,
   Token,
-  Image,
 } = require("../../models");
 const emailServ = require("../services/emailService");
 const authValidator = require("../validators/authValidator");
@@ -102,7 +101,7 @@ const login = async (req, res) => {
     res.cookie("refreshToken", refreshToken, {
       maxAge: expiresIn * 1000,
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
     });
 
@@ -164,7 +163,11 @@ const logout = async (req, res) => {
     for (const token1 of refreshToken) {
       await token1.destroy();
     }
-    res.clearCookie("refreshToken");
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
     res.status(200).json({ status: "Logged out" });
   } catch (error) {
     logger.error(error);

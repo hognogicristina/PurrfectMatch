@@ -62,9 +62,6 @@ export default function ChangeUsernameForm({ userDetail }) {
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             <span
               className={`togglePassword ${errors.password ? "show" : ""}`}

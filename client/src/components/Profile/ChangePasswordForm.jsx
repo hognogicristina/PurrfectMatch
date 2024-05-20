@@ -44,9 +44,6 @@ export default function ChangeUsernameProfile({ userDetail }) {
               name="currentPassword"
               type={showCurrentPassword ? "text" : "password"}
               placeholder="Enter your current password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             <span
               className={`togglePassword ${errors.currentPassword ? "show" : ""}`}
@@ -63,9 +60,6 @@ export default function ChangeUsernameProfile({ userDetail }) {
               name="newPassword"
               type={showNewPassword ? "text" : "password"}
               placeholder="Enter your new password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             <span
               className={`togglePassword ${errors.newPassword ? "show" : ""}`}
@@ -82,9 +76,6 @@ export default function ChangeUsernameProfile({ userDetail }) {
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your new password"
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
             />
             <span
               className={`togglePassword ${errors.confirmPassword ? "show" : ""}`}

@@ -9,9 +9,9 @@ const customStyles = {
     "&:hover": {
       borderColor: "#ff6392",
     },
-    borderRadius: "10px",
+    borderRadius: "8px",
     cursor: "pointer",
-    padding: "2px 3px",
+    fontSize: "14px",
   }),
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,
@@ -22,10 +22,13 @@ const customStyles = {
       ...styles[":active"],
       backgroundColor: isSelected ? "#ff6392" : "#e5e5e5",
     },
+    fontSize: "14px",
+    padding: "8px",
   }),
   singleValue: (styles) => ({
     ...styles,
     color: "#333",
+    fontSize: "14px",
   }),
   placeholder: (styles) => ({
     ...styles,
@@ -33,9 +36,10 @@ const customStyles = {
   }),
   menu: (styles) => ({
     ...styles,
-    borderRadius: "10px",
+    borderRadius: "8px",
     overflow: "hidden",
     boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+    fontSize: "14px",
   }),
   menuList: (styles) => ({
     ...styles,
@@ -44,6 +48,7 @@ const customStyles = {
   noOptionsMessage: (styles) => ({
     ...styles,
     color: "#d1d1d1",
+    fontSize: "14px",
   }),
 };
 

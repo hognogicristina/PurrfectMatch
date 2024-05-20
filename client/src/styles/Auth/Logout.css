@@ -17,23 +17,22 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .imageContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
+  padding: 10px 0 10px 0;
 }
 
 .userImageLogout {
-  max-width: 70px;
-  max-height: 70px;
+  max-width: 50px;
+  max-height: 50px;
   border-radius: 50%;
   border: var(--border-style);
 }
-
 
 .userIcon {
   border-radius: 50%;
@@ -43,13 +42,13 @@
 }
 
 .titleLogout {
-  font-size: 38px;
+  font-size: 33px;
   color: #665967;
   text-align: center;
 }
 
 .subtitleLogout {
-  font-size: 26px;
+  font-size: 20px;
   color: rgba(147, 146, 146, 0.84);
   text-align: center;
   font-weight: 420;
@@ -59,22 +58,20 @@
   font-weight: 600;
 }
 
-.formLogout button {
+.link.logout {
+  font-size: 15px;
   width: 30%;
   color: #2d1e30;
-  padding: 10px 20px;
+  padding: 8px 15px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease;
   border: 1px solid #ccc;
   background-color: rgba(213, 213, 213, 0.44);
   text-align: center;
+  font-weight: 600;
 }
 
 .formLogout button:hover {
   background-color: rgba(213, 213, 213, 0.78);
-}
-
-.link.logout {
-  font-weight: 600;
 }

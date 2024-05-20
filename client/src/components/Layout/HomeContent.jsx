@@ -211,7 +211,9 @@ export default function HomeContent({ cats, breeds }) {
             <Link to={"/cats"}>Explore More</Link>
           </motion.button>
         </div>
-        <p>&copy; 2024 Your Online Cat Adoption Center</p>
+        <p className="footerSignature">
+          &copy; 2024 Your Online Cat Adoption Center
+        </p>
       </footer>
     </motion.div>
   );

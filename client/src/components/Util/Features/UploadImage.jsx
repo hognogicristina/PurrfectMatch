@@ -1,8 +1,9 @@
-import { getAuthToken } from "../../../util/auth.js";
 import { AiOutlineCamera } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { useLoaderData, useNavigation } from "react-router-dom";
 import { useToast } from "../Custom/PageResponse/ToastProvider.jsx";
+import axios from "axios";
+import { getAuthToken } from "../../../util/auth.js";
 
 function UploadImage({ initialImage }) {
   const data = useLoaderData();
@@ -10,17 +11,42 @@ function UploadImage({ initialImage }) {
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const handleImageChange = (e) => {
+  const handleImageChange = async (e) => {
     const selectedImage = e.target.files[0];
     setImage(selectedImage);
+
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append("files", selectedImage);
+      const token = getAuthToken();
+
+      setIsUploading(true);
+      const response = await axios.post(
+        "http://localhost:3000/upload",
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+
+      if (response.status === 201) {
+        setIsUploading(false);
+      } else {
+        notifyError(response.data.error[0].message);
+      }
+    }
   };
 
   useEffect(() => {
     if (data && data.error) {
       notifyError(data.error[0].message);
     }
-  }, []);
+  }, [data, notifyError]);
 
   return (
     <div className="imageUploadContainer">
@@ -30,7 +56,7 @@ function UploadImage({ initialImage }) {
           accept="image/*"
           name="file"
           onChange={handleImageChange}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           style={{ display: "none" }}
         />
         {initialImage && !image && (

@@ -120,6 +120,7 @@ export async function action() {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    credentials: "include",
   });
 
   if (
@@ -131,6 +132,5 @@ export async function action() {
   }
 
   localStorage.removeItem("token");
-  localStorage.removeItem("expiration");
   return redirect("/");
 }

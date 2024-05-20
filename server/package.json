@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize-cli db:migrate",
-    "postinstall": "npm run migrate && node ./configurations/generateData/dataInit.js"
+    "postinstall": "npm run migrate && node ./configurations/generateData/dataInit.js",
+    "start": "NODE_ENV=production node server.js"
   },
   "keywords": [],
   "author": "",

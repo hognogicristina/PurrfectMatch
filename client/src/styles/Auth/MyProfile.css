@@ -10,7 +10,6 @@
 .userRootContainer {
   display: flex;
   flex-direction: row;
-  gap: 10px;
   padding: 20px;
   align-items: flex-start;
 }
@@ -28,8 +27,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 250px;
-  width: 250px;
+  max-height: 230px;
+  width: 210px;
   flex-shrink: 0;
 }
 
@@ -37,7 +36,7 @@
   color: black;
   padding: 10px;
   border-radius: 5px;
-  font-size: 18px;
+  font-size: 15px;
   background-color: white;
   transition: background-color 0.3s, border-left 0.3s;
 }
@@ -71,7 +70,7 @@
 }
 
 .userContent {
-  padding: 50px;
+  padding: 40px;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: var(--border-radius);
   display: flex;
@@ -85,7 +84,7 @@
 }
 
 .userContent.myProfile {
-  width: 1180px;
+  width: 1000px;
 }
 
 .userSlideBarLeft {
@@ -115,8 +114,8 @@
 .faUserCircle {
   font-size: 280px;
   border-radius: 50%;
-  width: 200px;
-  height: 200px;
+  width: 170px;
+  height: 170px;
   color: #ccc;
 }
 
@@ -149,7 +148,7 @@
   border-radius: 50%;
   padding: 7px;
   display: flex;
-  font-size: 30px;
+  font-size: 20px;
 }
 
 .cameraIconAbove:hover {
@@ -165,12 +164,12 @@
 
 .userContent .titleFont {
   margin-top: 20px;
-  font-size: 40px;
+  font-size: 33px;
   font-weight: bold;
 }
 
 .userContent .textFont {
-  font-size: 30px;
+  font-size: 27px;
   font-weight: 370;
 }
 
@@ -180,7 +179,7 @@
 }
 
 .userContent .userPersonal {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 200;
 }
 

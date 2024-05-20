@@ -64,26 +64,26 @@
 }
 
 .errorContainer img {
-  width: 150px;
+  width: 100px;
   height: auto;
   margin-bottom: 20px;
 }
 
 .elementsContainer h1,
 .errorContainer h1 {
-  font-size: 24px;
+  font-size: 20px;
   text-align: center;
   margin: 0;
 }
 
 .elementsContainer p {
-  font-size: 16px;
+  font-size: 15px;
   text-align: center;
 }
 
 .errorContainer a {
   color: rgba(83, 83, 83, 0.98);
-  font-size: 15px;
+  font-size: 13px;
   text-align: center;
 }
 

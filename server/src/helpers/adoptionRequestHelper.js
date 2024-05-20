@@ -5,7 +5,6 @@ const {
   User,
   Cat,
   CatUser,
-  Favourite,
 } = require("../../models");
 const emailService = require("../services/emailService");
 const emailServ = require("../services/emailService");
@@ -49,10 +48,10 @@ const sendAdoptionRequest = async (
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
     }
 
-    await Cat.update(
-      { status: "adopted" },
-      { where: { id: adoptionRequest.catId }, transaction: t },
-    );
+    await Cat.update({
+      where: { id: adoptionRequest.catId, status: "adopted" },
+      transaction: t,
+    });
     const catUser = await CatUser.findOne(
       { where: { catId: adoptionRequest.catId } },
       { transaction: t },
