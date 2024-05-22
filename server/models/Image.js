@@ -7,18 +7,27 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     filename: {
+      allowNull: false,
       type: DataTypes.STRING,
       unique: true,
     },
-    filetype: DataTypes.STRING,
-    filesize: DataTypes.INTEGER,
+    filetype: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    filesize: {
+      allowNull: false,
+      type: DataTypes.INTEGER,
+    },
     url: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
     uri: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
     userId: {
       type: DataTypes.INTEGER,

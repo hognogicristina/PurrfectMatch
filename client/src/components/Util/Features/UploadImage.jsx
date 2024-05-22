@@ -35,21 +35,26 @@ function UploadImage({ initialImage, initialUris, onImageUpload }) {
         },
       );
 
+      const data = response.data;
       if (response.status === 201) {
         setIsUploading(false);
-        const newUri = response.data.data[0].uri;
+        const newUri = data.data[0].uri;
         const updatedUris = [...uris, newUri];
         setUris(updatedUris);
         onImageUpload(updatedUris);
       } else {
-        notifyError(response.data.data.error[0].message);
+        data.forEach((error) => {
+          notifyError(error.message);
+        });
       }
     }
   };
 
   useEffect(() => {
     if (data && data.error) {
-      notifyError(data.error[0].message);
+      data.forEach((error) => {
+        notifyError(error.message);
+      });
     }
   }, [data, notifyError]);
 
@@ -66,7 +71,7 @@ function UploadImage({ initialImage, initialUris, onImageUpload }) {
         />
         {initialImage && !image && (
           <div className="imageContainerUpload">
-            <img src={initialImage} alt="Selected" className="selectedImage" />
+            <img src={initialImage} alt="selected" className="selectedImage" />
             <div className="cameraIconAbove">
               <AiOutlineCamera />
             </div>

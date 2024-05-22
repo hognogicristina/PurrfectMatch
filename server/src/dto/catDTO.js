@@ -1,19 +1,28 @@
 const { Address, User, Image, CatUser } = require("../../models");
 
+const calculateAgeInYears = (timestamp) => {
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  const ageInSeconds = currentTimestamp - timestamp;
+  return Math.floor(ageInSeconds / (60 * 60 * 24 * 365));
+};
+
 async function catToDTO(cat) {
   const images = await Image.findAll({ where: { catId: cat.id } });
   const catUser = await CatUser.findOne({ where: { catId: cat.id } });
   const guardian = await User.findOne({ where: { id: catUser.userId } });
   const owner = await User.findOne({ where: { id: catUser.ownerId } });
   const address = await Address.findOne({ where: { userId: guardian.id } });
+  const ageInYears = cat.age ? calculateAgeInYears(cat.age) : null;
 
   return {
     id: cat.id ? cat.id : null,
     name: cat.name ? cat.name : null,
     images: images ? images.map((image) => image.url) : null,
+    uris: images ? images.map((image) => image.uri) : null,
     breed: cat.breed ? cat.breed : null,
     gender: cat.gender ? cat.gender : null,
     lifeStage: cat.ageType ? cat.ageType : null,
+    age: ageInYears,
     color: cat.color ? cat.color : null,
     healthProblem: cat.healthProblem ? cat.healthProblem : null,
     description: cat.description ? cat.description : null,

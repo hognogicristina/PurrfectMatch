@@ -19,6 +19,7 @@ const register = async (req, res) => {
     const { firstName, lastName, username, email, password, birthday } =
       req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
+    const birthdayTimestamp = new Date(birthday).getTime();
     const user = await User.create({
       firstName,
       lastName,
@@ -27,8 +28,11 @@ const register = async (req, res) => {
       password: hashedPassword,
       status: "active_pending",
     });
-    await UserInfo.create({ userId: user.id, birthday });
-    await PasswordHistory.create({ userId: user.id, password: hashedPassword });
+    await UserInfo.create({ userId: user.id, birthday: birthdayTimestamp });
+    await PasswordHistory.create({
+      userId: user.id,
+      password: hashedPassword,
+    });
     await emailServ.sendActivationEmail(user);
     res.status(201).json({ status: "Your account has been created" });
   } catch (error) {

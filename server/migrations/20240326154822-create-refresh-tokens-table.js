@@ -11,12 +11,12 @@ module.exports = {
         autoIncrement: true,
       },
       userId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",
           key: "id",
         },
-        allowNull: false,
       },
       token: {
         type: Sequelize.STRING,

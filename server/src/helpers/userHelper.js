@@ -43,6 +43,8 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
       if (field === "email" && body[field] !== user.email) {
         user[field] = body[field];
         emailChanged = true;
+      } else if (field === "birthday") {
+        user[field] = new Date(body[field]).getTime();
       } else {
         if (field === "hobbies" && Array.isArray(body[field])) {
           user[field] = body[field].join(", ");
@@ -58,14 +60,7 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
     await emailServ.sendResetEmail(user);
   }
 
-  // if (typeof user.birthday === "string") {
-  //   console.log(typeof user.birthday);
-  //   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  //   if (!dateRegex.test(user.birthday)) {
-  //     console.log(typeof user.birthday);
-  //     user.birthday = new Date(user.birthday).toISOString().split("T")[0];
-  //   }
-  // }
+  console.log(typeof user.birthday);
 
   if (user.description === "") {
     user.description = null;

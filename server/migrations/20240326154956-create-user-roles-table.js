@@ -11,20 +11,20 @@ module.exports = {
         autoIncrement: true,
       },
       userId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",
           key: "id",
         },
-        allowNull: false,
       },
       adoptionRequestId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "AdoptionRequests",
           key: "id",
         },
-        allowNull: false,
       },
       role: {
         type: Sequelize.STRING,

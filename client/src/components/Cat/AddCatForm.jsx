@@ -133,7 +133,11 @@ export default function AddCatForm() {
             <input type="text" name="name" placeholder="How do you call it?" />
             {errors.name && <ErrorMessage message={errors.name} />}
           </label>
-          <UploadImages initialImages={[]} onImageUpload={handleImageUpload} />
+          <UploadImages
+            initialImages={[]}
+            initialUris={[]}
+            onImageUpload={handleImageUpload}
+          />
           <input type="hidden" name="uris" value={imageUris.join(",")} />
           <div className="orderAddContainer">
             <label>

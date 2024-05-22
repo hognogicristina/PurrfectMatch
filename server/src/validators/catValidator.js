@@ -81,40 +81,29 @@ const catValidator = async (req, res) => {
     });
   }
 
-  if (req.method === "PATCH") {
-    if (!req.body.uri || validator.isEmpty(req.body.uri)) {
-      error.push({ field: "uri", message: "Image is required" });
-    } else if (req.body.uri) {
-      const image = await Image.findOne({ where: { uri: req.body.uri } });
-      if (!image) {
-        error.push({ field: "uri", message: "Please select a valid image" });
-      }
-    }
-  } else if (req.method === "POST") {
-    if (!req.body.uris || !Array.isArray(req.body.uris)) {
+  if (!req.body.uris || !Array.isArray(req.body.uris)) {
+    error.push({
+      field: "uris",
+      message: "You must upload at least one image",
+    });
+  } else if (req.body.uris) {
+    if (req.body.uris.length === 0) {
       error.push({
         field: "uris",
         message: "You must upload at least one image",
       });
-    } else if (req.body.uris) {
-      if (req.body.uris.length === 0) {
-        error.push({
-          field: "uris",
-          message: "You must upload at least one image",
-        });
-      }
+    }
 
-      for (const uri of req.body.uris) {
-        if (validator.isEmpty(uri)) {
-          error.push({ field: "uris", message: "Image is required" });
-        } else {
-          const image = await Image.findOne({ where: { uri } });
-          if (!image) {
-            error.push({
-              field: "uris",
-              message: "Please select a valid image",
-            });
-          }
+    for (const uri of req.body.uris) {
+      if (validator.isEmpty(uri)) {
+        error.push({ field: "uris", message: "Image is required" });
+      } else {
+        const image = await Image.findOne({ where: { uri } });
+        if (!image) {
+          error.push({
+            field: "uris",
+            message: "Please select a valid image",
+          });
         }
       }
     }

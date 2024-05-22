@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     userId: {
+      allowNull: false,
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
@@ -14,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     birthday: {
-      type: DataTypes.DATEONLY,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     description: DataTypes.STRING,

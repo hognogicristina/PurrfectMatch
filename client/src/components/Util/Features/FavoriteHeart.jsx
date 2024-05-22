@@ -24,7 +24,7 @@ const FavoriteHeart = ({ catId, isFavoritesArchive }) => {
       if (response.ok) {
         setIsFavorite(data.isFavorite);
       } else {
-        notifyError(data.error.message);
+        data.forEach((err) => notifyError(err.message));
       }
     };
 

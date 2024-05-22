@@ -13,20 +13,25 @@ module.exports = {
       filename: {
         type: Sequelize.STRING,
         unique: true,
+        allowNull: false,
       },
       filetype: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       filesize: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       url: {
         type: Sequelize.STRING,
         unique: true,
+        allowNull: false,
       },
       uri: {
         type: Sequelize.STRING,
         unique: true,
+        allowNull: false,
       },
       userId: {
         type: Sequelize.INTEGER,

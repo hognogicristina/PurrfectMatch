@@ -11,12 +11,12 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       catId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Cats",
           key: "id",
         },
-        allowNull: false,
       },
       userId: {
         type: Sequelize.INTEGER,

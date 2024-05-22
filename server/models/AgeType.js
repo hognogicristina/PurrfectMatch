@@ -14,9 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    max: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
+    max: DataTypes.INTEGER,
   });
 };

@@ -18,12 +18,12 @@ export default function ChangeUsernameProfile({ userDetail }) {
     if (data && data.error) {
       const newErrors = {};
       data.error.forEach((error) => {
+        if (error.field === "server") {
+          notifyError(error.message);
+        }
         newErrors[error.field] = error.message;
       });
       setErrors(newErrors);
-      if (data.error.field === "server") {
-        notifyError(data.error.message);
-      }
     } else if (data && data.status) {
       notifySuccess(data.status);
     }

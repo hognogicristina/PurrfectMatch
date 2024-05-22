@@ -223,12 +223,12 @@
 
 .catItemDetails .leftSection,
 .catItemDetails .rightSection {
-  flex: 1 1 45%;
+  flex: 1 1 44%;
   padding: 20px;
 }
 
 .catItemDetails .addFavoriteSection {
-  flex: 0 1 10%;
+  flex: 0 1 14%;
   padding: 20px;
 }
 
@@ -455,10 +455,10 @@
   display: flex;
   justify-content: center;
   flex-direction: row;
+  margin-top: 15px;
   gap: 10px;
 }
 
 .simpleButton.delete.edit {
-  margin-top: 0;
   width: 100%;
 }

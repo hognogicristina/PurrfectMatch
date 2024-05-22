@@ -212,7 +212,7 @@ const resetValidationEmail = async (req, res, type) => {
       error: [
         {
           field: "email",
-          message: User.rawAttributes.email.validate.isEmail.msg,
+          message: "Please use a valid email address",
         },
       ],
     });

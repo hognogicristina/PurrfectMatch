@@ -18,10 +18,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      max: {
-        type: Sequelize.INTEGER,
-        allowNull: true,
-      },
+      max: Sequelize.INTEGER,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

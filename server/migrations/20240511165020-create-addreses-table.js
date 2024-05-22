@@ -12,29 +12,29 @@ module.exports = {
       },
       country: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
-      county: {
-        type: Sequelize.STRING,
-      },
+      county: Sequelize.STRING,
       city: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       street: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       number: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
-      floor: {
-        type: Sequelize.STRING,
-      },
-      apartment: {
-        type: Sequelize.STRING,
-      },
+      floor: Sequelize.STRING,
+      apartment: Sequelize.STRING,
       postalCode: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       userId: {
+        allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: "Users",

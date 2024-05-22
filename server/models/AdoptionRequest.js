@@ -7,23 +7,26 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     catId: {
+      allowNull: false,
       type: DataTypes.INTEGER,
       references: {
         model: "Cats",
         key: "id",
       },
-      allowNull: true,
     },
-    message: DataTypes.TEXT,
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     addressId: {
       type: DataTypes.INTEGER,
       references: {
         model: "Addresses",
         key: "id",
       },
-      allowNull: true,
     },
     status: {
+      allowNull: false,
       type: DataTypes.STRING,
       defaultValue: "pending",
     },

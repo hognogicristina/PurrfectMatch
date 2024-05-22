@@ -111,7 +111,7 @@ const generateCatData = async (cat) => {
 };
 
 const generateRandomUserInfo = async () => {
-  const birthday = faker.date.past({ years: 20 });
+  let birthday = faker.date.past({ years: 20 }).getTime();
   const description = "I love cats!";
   const experienceLevel = randomInt(1, 5);
 

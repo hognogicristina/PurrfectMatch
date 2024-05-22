@@ -62,7 +62,6 @@ const generateUsers = async (numUsers) => {
     const username = faker.internet.userName();
     const email = faker.internet.email();
     const password = await bcrypt.hash("password", 10);
-    const address = await adminInit.generateAddress();
 
     const user = await User.create({
       firstName: faker.person.firstName(),
@@ -74,6 +73,7 @@ const generateUsers = async (numUsers) => {
       status: "active",
     });
 
+    await adminInit.generateAddress(user.id);
     const { birthday, description, hobbies, experienceLevel } =
       await helperData.generateRandomUserInfo();
 
@@ -92,8 +92,6 @@ const generateUsers = async (numUsers) => {
     const newImage = await fileHelper.uploadImage(file, "uploads");
     newImage.userId = user.id;
     await newImage.save();
-    address.userId = user.id;
-    await address.save();
 
     users.push(user);
   }

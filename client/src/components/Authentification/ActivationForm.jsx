@@ -11,15 +11,17 @@ export default function ActivationForm({ data }) {
 
   useEffect(() => {
     if (data.error) {
-      if (data.error[0].field === "email") {
-        setIsExpired(true);
-        setIsError(false);
-        setStatusMessage(data.error[0].message);
-      } else {
-        setIsError(true);
-        setIsExpired(false);
-        setStatusMessage(data.error[0].message);
-      }
+      data.forEach((error) => {
+        if (error.field === "email") {
+          setIsExpired(true);
+          setIsError(false);
+          setStatusMessage(error.message);
+        } else {
+          setIsError(true);
+          setIsExpired(false);
+          setStatusMessage(error.message);
+        }
+      });
     } else {
       setIsExpired(false);
       setStatusMessage(data);

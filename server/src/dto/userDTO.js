@@ -4,6 +4,8 @@ async function userToDTO(user) {
   const address = await Address.findOne({ where: { userId: user.id } });
   const images = await Image.findAll({ where: { userId: user.id } });
   const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
+  const birthdayTimestamp = userInfo.birthday;
+  const birthday = new Date(birthdayTimestamp).toISOString().split("T")[0];
 
   return {
     firstName: user.firstName ? user.firstName : null,
@@ -12,7 +14,7 @@ async function userToDTO(user) {
     uri: images.map((image) => image.uri),
     username: user.username ? user.username : null,
     email: user.email ? user.email : null,
-    birthday: userInfo ? userInfo.birthday : null,
+    birthday: userInfo ? birthday : null,
     description: userInfo ? userInfo.description : null,
     hobbies: userInfo ? userInfo.hobbies : null,
     experienceLevel: userInfo ? userInfo.experienceLevel : null,

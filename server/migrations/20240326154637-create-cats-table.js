@@ -33,13 +33,8 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      healthProblem: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      description: {
-        type: Sequelize.TEXT,
-      },
+      healthProblem: Sequelize.STRING,
+      description: Sequelize.TEXT,
       status: {
         type: Sequelize.STRING,
         allowNull: false,

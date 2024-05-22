@@ -122,7 +122,6 @@ const handleAdoptionRequest = async (req, res) => {
       return res.status(200).json({ status: "Adoption request was declined" });
     }
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)

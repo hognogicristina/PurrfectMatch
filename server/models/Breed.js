@@ -13,19 +13,26 @@ module.exports = (sequelize, DataTypes) => {
     },
     filename: {
       type: DataTypes.STRING,
+      allowNull: false,
     },
     filetype: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
-    filesize: DataTypes.INTEGER,
+    filesize: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     url: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
     uri: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: false,
     },
   });
 };

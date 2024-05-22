@@ -35,7 +35,7 @@ export default function CatImageSection({
       <div className="catItemImages" style={mainImageStyle}></div>
       <motion.img
         src={mainImage}
-        alt={catDetail.name}
+        alt={catDetail.id}
         className="mainImage"
         whileInView={{ y: [-30, 0], opacity: [0, 1] }}
         viewport={{ once: true }}

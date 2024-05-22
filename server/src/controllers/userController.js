@@ -39,16 +39,26 @@ const getUser = async (req, res) => {
 
 const getOwnedCats = async (req, res) => {
   try {
+    const page = req.query.page || 1;
+    const pageSize = 12;
     if (await catUserValidator.getCatsValidator(req, res, "owned")) return;
     const cats = await catUserHelper.getCats(req, "owned");
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
     const totalItems = cats.length;
 
+    const catsForPage = cats.slice(startIndex, endIndex);
+
     const catsDetails = [];
-    for (let cat of cats) {
+    for (let cat of catsForPage) {
       const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
     return res.status(200).json({
+      page: page,
+      pageSize: pageSize,
+      totalPages: Math.ceil(totalItems / pageSize),
       totalItems: totalItems,
       data: catsDetails,
     });
@@ -62,17 +72,28 @@ const getOwnedCats = async (req, res) => {
 
 const getSentToAdoptionCats = async (req, res) => {
   try {
+    const page = req.query.page || 1;
+    const pageSize = 12;
     if (await catUserValidator.getCatsValidator(req, res, "sentToAdoption"))
       return;
     const cats = await catUserHelper.getCats(req, "sentToAdoption");
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
     const totalItems = cats.length;
 
+    const catsForPage = cats.slice(startIndex, endIndex);
+
     const catsDetails = [];
-    for (let cat of cats) {
+    for (let cat of catsForPage) {
       const catsDetail = await catUserDTO.catUserToDTO(cat);
       catsDetails.push(catsDetail);
     }
+
     return res.status(200).json({
+      page: page,
+      pageSize: pageSize,
+      totalPages: Math.ceil(totalItems / pageSize),
       totalItems: totalItems,
       data: catsDetails,
     });
@@ -102,7 +123,7 @@ const editUser = async (req, res) => {
     await user.save();
     if (req.body.uri && req.body.uri.length > 0) {
       for (let uri of req.body.uri) {
-        const newImage = await fileHelper.moveImage(user, uri);
+        const newImage = await fileHelper.moveImage(user, null, uri);
         if (newImage) {
           newImage.userId = user.id;
           await newImage.save();
@@ -111,6 +132,7 @@ const editUser = async (req, res) => {
     }
     return res.json({ status: "Your changes has been saved" });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -137,6 +159,7 @@ const editAddressUser = async (req, res) => {
   try {
     if (await userValidator.validateActiveAccount(req, res)) return;
     if (await userValidator.editAddressValidation(req, res)) return;
+
     const addressFields = [
       "country",
       "county",
@@ -147,9 +170,13 @@ const editAddressUser = async (req, res) => {
       "apartment",
       "postalCode",
     ];
+
     const user = await User.findByPk(req.user.id);
-    const address =
-      (await Address.findOne({ where: { userId: user.id } })) || new Address();
+    let address = await Address.findOne({ where: { userId: user.id } });
+
+    if (!address) {
+      address = new Address({ userId: user.id });
+    }
 
     addressFields.forEach((field) => {
       address[field] =
@@ -158,8 +185,8 @@ const editAddressUser = async (req, res) => {
           : req.body[field];
     });
 
-    address.userId = user.id;
     await address.save();
+
     return res.json({ status: "Your address has been modified" });
   } catch (error) {
     logger.error(error);

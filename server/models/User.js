@@ -6,23 +6,28 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    firstName: DataTypes.STRING,
-    lastName: DataTypes.STRING,
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     username: {
       type: DataTypes.STRING,
       unique: true,
-    },
-    email: {
-      type: DataTypes.STRING,
-      validate: {
-        isEmail: {
-          msg: "Please use a valid email address",
-        },
-      },
-      unique: true,
       allowNull: false,
     },
-    password: DataTypes.STRING,
+    email: {
+      allowNull: false,
+      type: DataTypes.STRING,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     role: {
       type: DataTypes.STRING,
       defaultValue: "user",

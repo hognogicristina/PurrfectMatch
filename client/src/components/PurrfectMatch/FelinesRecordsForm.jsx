@@ -3,23 +3,26 @@ import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/CatsArchive.css";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import EditCatForm from "../Cat/EditCatForm.jsx";
 import { useNavigate } from "react-router-dom";
 
-export default function FelinesRecordsForm({ cats }) {
-  const { data, error, totalItems } = cats;
+export default function FelinesRecordsForm({
+  cats,
+  currentPage,
+  onPageChange,
+}) {
+  const { data, error, totalPages, totalItems } = cats;
   const { notifyError } = useToast();
   const navigate = useNavigate();
   const [currentCat, setCurrentCat] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const catsPerPage = 12;
+  const [searchParamsKey, setSearchParamsKey] = useState(0);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  useEffect(() => {
+    setSearchParamsKey((prevKey) => prevKey + 1);
+  }, [currentPage, cats]);
 
   const handleEditClick = (cat) => {
     setCurrentCat(cat);
@@ -36,12 +39,8 @@ export default function FelinesRecordsForm({ cats }) {
   };
 
   const renderCats = () => {
-    if (cats && Array.isArray(data)) {
-      const startIndex = (currentPage - 1) * catsPerPage;
-      const endIndex = startIndex + catsPerPage;
-      const currentCats = data.slice(startIndex, endIndex);
-
-      return currentCats.map((cat, index) => (
+    if (cats && Array.isArray(data) && data.length > 0) {
+      return data.map((cat, index) => (
         <motion.li
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -52,7 +51,7 @@ export default function FelinesRecordsForm({ cats }) {
             transition: { duration: 0.3, delay: index * 0.01 },
           }}
           viewport={{ once: true }}
-          key={cat.id}
+          key={`${cat.id}-${searchParamsKey}-${index}`}
           className="catListItem"
           style={{ backgroundImage: `url(${cat.image})` }}
           onClick={() => handleCatClick(cat.id)}
@@ -122,8 +121,8 @@ export default function FelinesRecordsForm({ cats }) {
           )}
           <Pagination
             currentPage={currentPage}
-            totalPages={Math.ceil(totalItems / catsPerPage)}
-            onPageChange={handlePageChange}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
           />
         </div>
         <ul className="catsList list">{renderCats()}</ul>

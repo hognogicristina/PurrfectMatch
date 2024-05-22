@@ -13,6 +13,8 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
 
+  console.log(data.get("country"));
+
   return await fetch("http://localhost:3000/user/address", {
     method: "PATCH",
     headers: {

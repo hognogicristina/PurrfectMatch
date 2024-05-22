@@ -11,8 +11,8 @@ module.exports = {
         primaryKey: true,
       },
       catId: {
-        type: Sequelize.INTEGER,
         allowNull: false,
+        type: Sequelize.INTEGER,
         references: {
           model: "Cats",
           key: "id",
@@ -24,7 +24,6 @@ module.exports = {
       },
       addressId: {
         type: Sequelize.INTEGER,
-        allowNull: true,
         references: {
           model: "Addresses",
           key: "id",

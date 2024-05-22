@@ -7,20 +7,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     userId: {
+      allowNull: false,
       type: DataTypes.INTEGER,
       references: {
         model: "Users",
         key: "id",
       },
-      allowNull: false,
     },
     adoptionRequestId: {
+      allowNull: false,
       type: DataTypes.INTEGER,
       references: {
         model: "AdoptionRequests",
         key: "id",
       },
-      allowNull: false,
     },
     role: {
       type: DataTypes.STRING,

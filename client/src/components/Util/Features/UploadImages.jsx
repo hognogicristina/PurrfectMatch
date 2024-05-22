@@ -53,11 +53,16 @@ function UploadImages({ initialImages, onImageUpload }) {
 
     if (imageToReplace !== null) {
       setImages((prev) =>
-        prev.map((img, index) => (index === imageToReplace ? files[0] : img)),
+        prev.map((img, index) =>
+          index === imageToReplace ? URL.createObjectURL(files[0]) : img,
+        ),
       );
       setImageToReplace(null);
     } else {
-      setImages((prev) => [...prev, ...files]);
+      setImages((prev) => [
+        ...prev,
+        ...files.map((file) => URL.createObjectURL(file)),
+      ]);
     }
 
     if (fileInputRef.current) {
@@ -88,7 +93,9 @@ function UploadImages({ initialImages, onImageUpload }) {
 
   useEffect(() => {
     if (data && data.error) {
-      notifyError(data.error[0].message);
+      data.forEach((error) => {
+        notifyError(error.message);
+      });
     }
   }, [data, notifyError]);
 
@@ -114,7 +121,9 @@ function UploadImages({ initialImages, onImageUpload }) {
               onClick={(e) => handleImageClick(index, e)}
             >
               <img
-                src={URL.createObjectURL(image)}
+                src={
+                  typeof image === "string" ? image : URL.createObjectURL(image)
+                }
                 alt={`Selected ${index + 1}`}
                 className="selectedImage catAdd"
               />

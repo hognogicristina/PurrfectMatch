@@ -27,10 +27,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    healthProblem: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
+    healthProblem: DataTypes.STRING,
     description: DataTypes.TEXT,
     status: {
       type: DataTypes.STRING,

@@ -43,12 +43,11 @@ export default function DeleteCatDialog({ onClose, cat }) {
       onClose();
     } else {
       const errorData = await response.json();
-      if (errorData.error[0].field === "invalid") {
-        notifyError(errorData.error[0].message);
-      }
-
       const newErrors = {};
       errorData.error.forEach((error) => {
+        if (error.field === "invalid" || error.message === "server") {
+          notifyError(error.message);
+        }
         newErrors[error.field] = error.message;
       });
       setErrors(newErrors);

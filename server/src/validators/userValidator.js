@@ -40,7 +40,7 @@ const editUserValidation = async (req, res) => {
   } else if (req.body.email && !validator.isEmail(req.body.email)) {
     error.push({
       field: "email",
-      message: User.rawAttributes.email.validate.isEmail.msg,
+      message: "Please use a valid email address",
     });
   } else if (req.body.email) {
     const user = await User.findOne({ where: { email: req.body.email } });

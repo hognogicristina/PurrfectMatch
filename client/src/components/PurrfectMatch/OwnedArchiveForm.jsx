@@ -5,20 +5,20 @@ import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import EditCatForm from "../Cat/EditCatForm.jsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 
-export default function OwnedArchiveForm({ cats }) {
-  const { data, error, totalItems } = cats;
+export default function OwnedArchiveForm({ cats, currentPage, onPageChange }) {
+  const { data, error, totalPages, totalItems } = cats;
   const { notifyError } = useToast();
   const navigate = useNavigate();
   const [currentCat, setCurrentCat] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const catsPerPage = 12;
+  const [searchParamsKey, setSearchParamsKey] = useState(0);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
+  useEffect(() => {
+    setSearchParamsKey((prevKey) => prevKey + 1);
+  }, [currentPage, cats]);
 
   const handleEditClick = (cat) => {
     setCurrentCat(cat);
@@ -35,7 +35,7 @@ export default function OwnedArchiveForm({ cats }) {
   };
 
   const renderCats = () => {
-    if (cats && Array.isArray(data)) {
+    if (cats && Array.isArray(data) && data.length > 0) {
       return data.map((cat, index) => (
         <motion.li
           initial={{ opacity: 0, y: 50 }}
@@ -47,7 +47,7 @@ export default function OwnedArchiveForm({ cats }) {
             transition: { duration: 0.3, delay: index * 0.01 },
           }}
           viewport={{ once: true }}
-          key={cat.id}
+          key={`${cat.id}-${searchParamsKey}-${index}`}
           className="catListItem"
           style={{ backgroundImage: `url(${cat.image})` }}
           onClick={() => handleCatClick(cat.id)}
@@ -113,6 +113,11 @@ export default function OwnedArchiveForm({ cats }) {
               </span>
             )
           )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
         </div>
         <ul className="catsList list">{renderCats()}</ul>
       </motion.div>

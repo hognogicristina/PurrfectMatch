@@ -9,6 +9,7 @@ import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
 import DeleteCatDialog from "./DeleteCatDialog";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
+import { getAuthToken } from "../../util/auth.js";
 
 export default function EditCatForm({ catDetail, onClose }) {
   const data = useActionData();
@@ -18,9 +19,7 @@ export default function EditCatForm({ catDetail, onClose }) {
   const [breeds, setBreeds] = useState([]);
   const [colors, setColors] = useState([]);
   const [errors, setErrors] = useState({});
-  const [imageUris, setImageUris] = useState(
-    catDetail.images.map((image) => image.uri),
-  );
+  const [imageUris, setImageUris] = useState(catDetail.uris || []);
   const [genders] = useState([
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -97,14 +96,26 @@ export default function EditCatForm({ catDetail, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    formData.append("id", catDetail.id);
-    formData.append("uris", imageUris.join(","));
+    const token = getAuthToken();
+
     const response = await fetch(
       `http://localhost:3000/cats/edit/${catDetail.id}`,
       {
-        method: "PUT",
-        body: formData,
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: e.target.name.value,
+          breed: e.target.breed.value,
+          gender: e.target.gender.value,
+          color: e.target.color.value,
+          age: e.target.age.value,
+          healthProblem: e.target.healthProblem.value,
+          description: e.target.description.value,
+          uris: imageUris,
+        }),
       },
     );
     const data = await response.json();
@@ -112,7 +123,15 @@ export default function EditCatForm({ catDetail, onClose }) {
       notifySuccess(data.status);
       handleClose();
     } else {
-      notifyError(data.message);
+      data.error.forEach((error) => {
+        if (error.field === "server" || error.field === "uris") {
+          notifyError(error.message);
+        }
+        setErrors((prev) => ({
+          ...prev,
+          [error.field]: error.message,
+        }));
+      });
     }
   };
 
@@ -132,7 +151,7 @@ export default function EditCatForm({ catDetail, onClose }) {
     return <LoadingSpinner />;
   }
 
-  console.log(catDetail.images);
+  const imagesCat = catDetail.images;
 
   return (
     <div className="dialogOverlay">
@@ -162,7 +181,8 @@ export default function EditCatForm({ catDetail, onClose }) {
             {errors.name && <ErrorMessage message={errors.name} />}
           </label>
           <UploadImages
-            initialImages={initialImages}
+            initialImages={imagesCat}
+            initialUris={imageUris}
             onImageUpload={handleImageUpload}
           />
           <input type="hidden" name="uris" value={imageUris.join(",")} />

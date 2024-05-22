@@ -44,19 +44,23 @@ const getFile = async (absolutePath, filename) => {
   };
 };
 
-const moveImage = async (user, uri) => {
+const moveImage = async (user, cat, uri) => {
   if (!uri) return null;
   if (!uri.includes("temporary-uploads")) return null;
+  let oldImage;
 
   if (user) {
-    const oldImage = await Image.findOne({ where: { userId: user.id } });
-    if (oldImage) {
-      const oldImagePath = path.join("public", "uploads", oldImage.filename);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
-      }
-      await deleteImage(oldImage, "uploads", null);
+    oldImage = await Image.findOne({ where: { userId: user.id } });
+  } else if (cat) {
+    oldImage = await Image.findOne({ where: { catId: cat.id } });
+  }
+
+  if (oldImage) {
+    const oldImagePath = path.join("public", "uploads", oldImage.filename);
+    if (fs.existsSync(oldImagePath)) {
+      fs.unlinkSync(oldImagePath);
     }
+    await deleteImage(oldImage, "uploads", null);
   }
 
   let image = await Image.findOne({ where: { uri: uri } });
@@ -66,7 +70,6 @@ const moveImage = async (user, uri) => {
   const file = await getFile(imagePath, image.filename);
   const newImage = await uploadImage(file, "uploads");
   await deleteImage(image, "temporary-uploads", null);
-  console.log(newImage);
   return newImage;
 };
 

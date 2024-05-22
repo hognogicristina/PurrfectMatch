@@ -75,7 +75,9 @@ const addCat = async (req, res) => {
       }
     }
 
-    res.status(201).json({ status: "Cat added successfully" });
+    res
+      .status(201)
+      .json({ status: `${newCat.name} is now available for adoption` });
   } catch (error) {
     logger.error(error);
     return res
@@ -94,14 +96,17 @@ const editCat = async (req, res) => {
     cat = await catHelper.updateCatData(cat, req.body);
     await cat.save();
 
-    let newImage = await Image.findOne({ where: { catId: cat.id } });
-    for (const uri of cat.uris) {
-      newImage = await fileHelper.moveImage(newImage, uri);
-      newImage.catId = cat.id;
-      await newImage.save();
+    if (req.body.uris && req.body.uris.length > 0) {
+      for (const uri of cat.uris) {
+        const newImage = await fileHelper.moveImage(null, cat, uri);
+        if (newImage) {
+          newImage.catId = cat.id;
+          await newImage.save();
+        }
+      }
     }
 
-    return res.json({ status: "Cat updated successfully" });
+    return res.json({ status: `Changes to ${cat.name} have been saved` });
   } catch (error) {
     logger.error(error);
     return res
@@ -133,7 +138,7 @@ const deleteCat = async (req, res) => {
     await fileHelper.deleteImage(image, "uploads", transaction);
     await cat.destroy({ transaction });
     await transaction.commit();
-    return res.status(200).json({ status: "Cat deleted successfully" });
+    return res.status(200).json({ status: `${cat.name} has been deleted` });
   } catch (error) {
     await transaction.rollback();
     logger.error(error);

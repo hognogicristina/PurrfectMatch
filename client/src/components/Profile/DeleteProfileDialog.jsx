@@ -46,12 +46,11 @@ export default function DeleteProfileDialog({ onClose }) {
       navigate("/");
     } else {
       const errorData = await response.json();
-      if (errorData.error[0].field === "invalid") {
-        notifyError(errorData.error[0].message);
-      }
-
       const newErrors = {};
       errorData.error.forEach((error) => {
+        if (error.field === "server" || error.field === "invalid") {
+          notifyError(error.message);
+        }
         newErrors[error.field] = error.message;
       });
       setErrors(newErrors);

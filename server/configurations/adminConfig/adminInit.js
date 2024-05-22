@@ -6,7 +6,7 @@ const { User, PasswordHistory, Address, UserInfo } = require("../../models");
 const logger = require("../../logger/logger");
 const helperData = require("../generateData/helperData");
 
-const generateAddress = async () => {
+const generateAddress = async (userId) => {
   const country = faker.location.country();
   const county = faker.location.county();
   const city = faker.location.city();
@@ -25,6 +25,7 @@ const generateAddress = async () => {
     floor: floor,
     apartment: apartment,
     postalCode: postalCode,
+    userId: userId,
   });
 };
 
@@ -37,7 +38,6 @@ const initializeAdmin = async () => {
     );
     const adminUser = JSON.parse(adminData);
     const adminDetails = adminUser.admin;
-    const address = await generateAddress();
 
     const hashedPassword = await bcrypt.hash(adminDetails.password, 10);
     const user = await User.create({
@@ -50,9 +50,7 @@ const initializeAdmin = async () => {
       status: adminDetails.status,
     });
 
-    address.userId = user.id;
-    await address.save();
-
+    await generateAddress(user.id);
     const { birthday, description, hobbies, experienceLevel } =
       await helperData.generateRandomUserInfo();
 

@@ -14,6 +14,8 @@ export async function action({ request }) {
   const data = await request.formData();
   const uriArray = data.get("uri").split(",");
 
+  console.log(typeof data.get("birthday"));
+
   return await fetch("http://localhost:3000/user/edit", {
     method: "PATCH",
     headers: {

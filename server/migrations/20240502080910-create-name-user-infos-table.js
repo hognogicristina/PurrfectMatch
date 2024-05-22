@@ -18,7 +18,7 @@ module.exports = {
         },
       },
       birthday: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       description: {

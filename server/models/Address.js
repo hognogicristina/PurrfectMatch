@@ -6,16 +6,32 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    country: DataTypes.STRING,
+    country: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     county: DataTypes.STRING,
-    city: DataTypes.STRING,
-    street: DataTypes.STRING,
-    number: DataTypes.STRING,
+    city: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    street: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     floor: DataTypes.STRING,
     apartment: DataTypes.STRING,
-    postalCode: DataTypes.STRING,
+    postalCode: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     userId: {
       type: DataTypes.INTEGER,
+      allowNull: false,
       references: {
         model: "Users",
         key: "id",
