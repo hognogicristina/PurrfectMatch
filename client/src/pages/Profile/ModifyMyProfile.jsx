@@ -12,6 +12,7 @@ export default ModifyMyProfilePage;
 export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
+  const uriArray = data.get("uri").split(",");
 
   return await fetch("http://localhost:3000/user/edit", {
     method: "PATCH",
@@ -22,7 +23,7 @@ export async function action({ request }) {
     body: JSON.stringify({
       firstName: data.get("firstName"),
       lastName: data.get("lastName"),
-      uri: data.get("uri"),
+      uri: uriArray,
       email: data.get("email"),
       birthday: data.get("birthday"),
       description: data.get("description"),

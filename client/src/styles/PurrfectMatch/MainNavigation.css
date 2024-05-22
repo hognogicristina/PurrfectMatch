@@ -163,8 +163,8 @@
 
 .dropdownContent.userMenu {
   align-items: center;
-  width: 90px;
-  margin-left: 10px !important;
+  width: 75px;
+  margin-left: 0;
 }
 
 .dropdownContent a {

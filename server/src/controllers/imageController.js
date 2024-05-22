@@ -1,10 +1,12 @@
 const fileHelper = require("../helpers/fileHelper");
 const imageValidator = require("../validators/imageValidator");
+const userValidator = require("../validators/userValidator");
 const imageDTO = require("../dto/imageDTO");
 const logger = require("../../logger/logger");
 
 const uploadImages = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await imageValidator.imagesValidator(req, res)) return;
     const imagesDetails = [];
     for (const file of req.files) {

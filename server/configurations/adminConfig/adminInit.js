@@ -46,10 +46,12 @@ const initializeAdmin = async () => {
       username: adminDetails.username,
       password: hashedPassword,
       email: adminDetails.email,
-      addressId: address.id,
       role: adminDetails.role,
       status: adminDetails.status,
     });
+
+    address.userId = user.id;
+    await address.save();
 
     const { birthday, description, hobbies, experienceLevel } =
       await helperData.generateRandomUserInfo();

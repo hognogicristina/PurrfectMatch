@@ -1,7 +1,7 @@
 const validator = require("validator");
 const { User, Token } = require("../../models");
 
-const validateUser = async (req, res) => {
+const validateUser = async (req, res, type) => {
   const user = await User.findOne({ where: { id: req.params.id } });
 
   if (!user) {
@@ -19,7 +19,7 @@ const validateUser = async (req, res) => {
         tokenUser.signature !== signature ||
         new Date() > new Date(tokenUser.expires)
       ) {
-        if (user.status === "active") {
+        if (user.status === "active" && type === "active") {
           return res.status(400).json({
             error: [
               {
@@ -40,7 +40,7 @@ const validateUser = async (req, res) => {
         }
       }
     } else {
-      if (user.status === "active") {
+      if (user.status === "active" && type === "active") {
         return res.status(400).json({
           error: [
             {
@@ -59,15 +59,15 @@ const validateUser = async (req, res) => {
 const registerValidation = async (req, res) => {
   const error = [];
 
-  if (!req.body.firstName || validator.isEmpty(req.body.firstName || "")) {
+  if (!req.body.firstName || validator.isEmpty(req.body.firstName)) {
     error.push({ field: "firstName", message: "First name is required" });
   }
 
-  if (!req.body.lastName || validator.isEmpty(req.body.lastName || "")) {
+  if (!req.body.lastName || validator.isEmpty(req.body.lastName)) {
     error.push({ field: "lastName", message: "Last name is required" });
   }
 
-  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username)) {
     error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
     error.push({
@@ -89,7 +89,7 @@ const registerValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email)) {
     error.push({ field: "email", message: "Email is required" });
   } else if (!validator.isEmail(req.body.email)) {
     error.push({
@@ -106,7 +106,7 @@ const registerValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password)) {
     error.push({ field: "password", message: "Password is required" });
   } else if (!validator.isStrongPassword(req.body.password)) {
     error.push({
@@ -118,7 +118,7 @@ const registerValidation = async (req, res) => {
 
   if (
     !req.body.confirmPassword ||
-    validator.isEmpty(req.body.confirmPassword || "")
+    validator.isEmpty(req.body.confirmPassword)
   ) {
     error.push({
       field: "confirmPassword",
@@ -128,7 +128,7 @@ const registerValidation = async (req, res) => {
     error.push({ field: "confirmPassword", message: "Passwords do not match" });
   }
 
-  if (!req.body.birthday || validator.isEmpty(req.body.birthday || "")) {
+  if (!req.body.birthday || validator.isEmpty(req.body.birthday)) {
     error.push({ field: "birthday", message: "Birthday is required" });
   } else if (!validator.isDate(req.body.birthday)) {
     error.push({
@@ -145,7 +145,7 @@ const loginValidation = async (req, res) => {
 
   if (
     !req.body.usernameOrEmail ||
-    validator.isEmpty(req.body.usernameOrEmail || "")
+    validator.isEmpty(req.body.usernameOrEmail)
   ) {
     error.push({
       field: "usernameOrEmail",
@@ -153,7 +153,7 @@ const loginValidation = async (req, res) => {
     });
   }
 
-  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password)) {
     error.push({ field: "password", message: "Password is required" });
   }
 
@@ -194,11 +194,11 @@ const loginValidation = async (req, res) => {
   return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
-const resetValidationEmail = async (req, res) => {
+const resetValidationEmail = async (req, res, type) => {
   const error = [];
   const user = await User.findOne({ where: { email: req.body.email } });
 
-  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email)) {
     return res.status(400).json({
       error: [
         {
@@ -218,12 +218,12 @@ const resetValidationEmail = async (req, res) => {
     });
   }
 
-  if (user) {
+  if (user && type === "active") {
     if (user.status === "active") {
       return res.status(400).json({
         error: [
           {
-            field: "email",
+            field: "account",
             message: "This account is already active",
           },
         ],
@@ -245,7 +245,7 @@ const resetValidationEmail = async (req, res) => {
       return res.status(400).json({
         error: [
           {
-            field: "link",
+            field: "account",
             message: "A reset link has already been sent to this email",
           },
         ],

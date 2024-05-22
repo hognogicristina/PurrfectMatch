@@ -8,12 +8,14 @@ const {
 } = require("../../models");
 const emailServ = require("../services/emailService");
 const adoptionRequestValidator = require("../validators/adoptionRequestValidator");
+const userValidator = require("../validators/userValidator");
 const adoptionRequestHelper = require("../helpers/adoptionRequestHelper");
 const adoptionRequestDTO = require("../dto/adoptionRequestDTO");
 const logger = require("../../logger/logger");
 
 const adoptCat = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await adoptionRequestValidator.adoptValidator(req, res)) return;
     const cat = await Cat.findByPk(req.params.id);
     const catUser = await CatUser.findByPk(cat.id);
@@ -82,6 +84,7 @@ const validateAdoptionRequest = async (req, res) => {
 
 const handleAdoptionRequest = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await adoptionRequestValidator.handleAdoptionRequestValidator(req, res))
       return;
 
@@ -119,6 +122,7 @@ const handleAdoptionRequest = async (req, res) => {
       return res.status(200).json({ status: "Adoption request was declined" });
     }
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -174,6 +178,7 @@ const getAdoptionRequest = async (req, res) => {
 const deleteAdoptionRequest = async (req, res) => {
   const transaction = await AdoptionRequest.sequelize.transaction();
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (
       await adoptionRequestValidator.deleteAdoptionRequestValidator(req, res)
     ) {

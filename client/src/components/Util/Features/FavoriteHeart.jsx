@@ -33,51 +33,44 @@ const FavoriteHeart = ({ catId, isFavoritesArchive }) => {
 
   const handleAddToFavorites = async () => {
     const token = getAuthToken();
-    try {
-      const response = await fetch(
-        `http://localhost:3000/cat/${catId}/favorite`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
 
-      const data = await response.json();
-      if (response.ok) {
-        setIsFavorite(true);
-      } else {
-        notifyError(data.error.message);
-      }
-    } catch (error) {
-      notifyError("Failed to add to favorites.");
+    const response = await fetch(
+      `http://localhost:3000/cat/${catId}/favorite`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    const data = await response.json();
+    if (response.ok) {
+      setIsFavorite(true);
+    } else {
+      data.error.forEach((err) => notifyError(err.message));
     }
   };
 
   const handleRemoveFromFavorites = async () => {
     const token = getAuthToken();
-    try {
-      const response = await fetch(
-        `http://localhost:3000/favorite/${catId}/delete`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+    const response = await fetch(
+      `http://localhost:3000/favorite/${catId}/delete`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+      },
+    );
 
-      const data = await response.json();
-      if (response.ok) {
-        setIsFavorite(false);
-      } else {
-        notifyError(data.error.message);
-      }
-    } catch (error) {
-      notifyError("Failed to remove from favorites.");
+    const data = await response.json();
+    if (response.ok) {
+      setIsFavorite(false);
+    } else {
+      data.error.forEach((err) => notifyError(err.message));
     }
   };
 

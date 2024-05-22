@@ -2,13 +2,14 @@ const { Address, Image, UserInfo } = require("../../models");
 
 async function userToDTO(user) {
   const address = await Address.findOne({ where: { userId: user.id } });
-  const image = await Image.findOne({ where: { userId: user.id } });
+  const images = await Image.findAll({ where: { userId: user.id } });
   const userInfo = await UserInfo.findOne({ where: { userId: user.id } });
 
   return {
     firstName: user.firstName ? user.firstName : null,
     lastName: user.lastName ? user.lastName : null,
-    image: image ? image.url : null,
+    image: images.length > 0 ? images[0].url : null,
+    uri: images.map((image) => image.uri),
     username: user.username ? user.username : null,
     email: user.email ? user.email : null,
     birthday: userInfo ? userInfo.birthday : null,

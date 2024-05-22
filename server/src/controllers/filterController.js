@@ -84,9 +84,11 @@ const getColors = async (req, res) => {
 const getRecentCats = async (req, res) => {
   try {
     const cats = await Cat.findAll({
+      where: {
+        status: "adopted",
+      },
       limit: 4,
       order: [["createdAt", "DESC"]],
-      status: "active",
     });
     const catsDetails = [];
     if (cats.length > 0) {

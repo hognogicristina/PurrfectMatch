@@ -50,9 +50,13 @@ export default function FavoritesArchive({ favorites }) {
           viewport={{ once: true }}
           key={favorite.id}
           className="favoriteItem"
-          onClick={() => handleCatClick(favorite.id)}
         >
-          <img src={favorite.image} alt={favorite.name} className="catImage" />
+          <img
+            src={favorite.image}
+            alt={favorite.name}
+            className="catImage"
+            onClick={() => handleCatClick(favorite.id)}
+          />
           <div className="catDetailsFav">
             <p className="catName">{favorite.name}</p>
             <p className="catBreed">{favorite.breed}</p>

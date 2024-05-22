@@ -5,13 +5,14 @@ import { useToast } from "../Custom/PageResponse/ToastProvider.jsx";
 import axios from "axios";
 import { getAuthToken } from "../../../util/auth.js";
 
-function UploadImage({ initialImage }) {
+function UploadImage({ initialImage, initialUris, onImageUpload }) {
   const data = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [image, setImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uris, setUris] = useState(initialUris || []);
 
   const handleImageChange = async (e) => {
     const selectedImage = e.target.files[0];
@@ -36,8 +37,12 @@ function UploadImage({ initialImage }) {
 
       if (response.status === 201) {
         setIsUploading(false);
+        const newUri = response.data.data[0].uri;
+        const updatedUris = [...uris, newUri];
+        setUris(updatedUris);
+        onImageUpload(updatedUris);
       } else {
-        notifyError(response.data.error[0].message);
+        notifyError(response.data.data.error[0].message);
       }
     }
   };
@@ -54,7 +59,7 @@ function UploadImage({ initialImage }) {
         <input
           type="file"
           accept="image/*"
-          name="file"
+          name="files"
           onChange={handleImageChange}
           disabled={isSubmitting || isUploading}
           style={{ display: "none" }}

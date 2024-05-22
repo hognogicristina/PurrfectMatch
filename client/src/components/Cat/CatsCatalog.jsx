@@ -40,7 +40,7 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
           whileHover={{
             scale: 1.03,
             boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.2)",
-            transition: { duration: 0.25, delay: index * 0.0001 },
+            transition: { duration: 0.25, delay: index * 0.1 },
           }}
           viewport={{ once: true }}
           className="catItem"

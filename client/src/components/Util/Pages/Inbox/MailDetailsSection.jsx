@@ -59,7 +59,7 @@ function MailDetailsSection({
       setMailDetails(mailData.data);
     } else {
       const mailError = await response.json();
-      notifyError(mailError.error.message);
+      mailError.error.forEach((error) => notifyError(error.message));
     }
   };
 
@@ -84,7 +84,7 @@ function MailDetailsSection({
       setMailDetails({});
     } else {
       const mailError = await response.json();
-      notifyError(mailError.error[0].message);
+      mailError.error.forEach((error) => notifyError(error.message));
     }
   };
 

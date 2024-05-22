@@ -9,11 +9,12 @@ import {
 
 import UploadImage from "../Util/Features/UploadImage.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 
 export default function MyProfileForm({ userDetail }) {
   const data = useActionData();
   const navigate = useNavigate();
-  const { notifyError, notifySuccess } = useToast();
+  const { notifyError, notifySuccess, notifyLoading } = useToast();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const [user, setUser] = useState();
@@ -35,19 +36,21 @@ export default function MyProfileForm({ userDetail }) {
       if (data.error) {
         const newErrors = {};
         data.error.forEach((error) => {
+          if (error.field === "server" || error.field === "uris") {
+            notifyError(error.message);
+            return;
+          }
           newErrors[error.field] = error.message;
         });
         setErrors(newErrors);
-        if (data.error.field === "server" || data.error.field === "image") {
-          notifyError(data.error.message);
-        }
       }
       if (data.status) {
+        // notifyLoading("Saving changes..");
         notifySuccess(data.status);
         navigate("/user");
       }
     }
-  }, [data]);
+  }, [data, notifyError, notifySuccess, navigate]);
 
   function handleCancel() {
     navigate("/user");
@@ -84,11 +87,23 @@ export default function MyProfileForm({ userDetail }) {
 
   const initialImage = user ? user.image : null;
 
+  const handleImageUpload = (uris) => {
+    const newImage = { ...user, uri: uris };
+    setUser(newImage);
+  };
+
   return (
     <motion.div className="userDetailContainer" animate={trembleAnimation}>
       <Form method="patch" className="userContent myProfile">
         <div className="userSlideBarLeft">
-          <UploadImage initialImage={initialImage} />
+          <UploadImage
+            initialImage={initialImage}
+            initialUris={user ? user.uri : []}
+            onImageUpload={(uris) => handleImageUpload(uris)}
+          />
+          {user?.uri && (
+            <input type="hidden" name="uri" defaultValue={user.uri.join(",")} />
+          )}
           <label>
             <span>First name</span>
             <input
@@ -100,9 +115,7 @@ export default function MyProfileForm({ userDetail }) {
                 if (e.key === "Enter") e.preventDefault();
               }}
             />
-            {errors.firstName && (
-              <p className="errorText">{errors.firstName}</p>
-            )}
+            {errors.firstName && <ErrorMessage message={errors.firstName} />}
           </label>
           <label>
             <span>Last name</span>
@@ -115,7 +128,7 @@ export default function MyProfileForm({ userDetail }) {
                 if (e.key === "Enter") e.preventDefault();
               }}
             />
-            {errors.lastName && <p className="errorText">{errors.lastName}</p>}
+            {errors.lastName && <ErrorMessage message={errors.lastName} />}
           </label>
           <label className="userPersonalInput">
             <span>Email</span>
@@ -128,7 +141,18 @@ export default function MyProfileForm({ userDetail }) {
                 if (e.key === "Enter") e.preventDefault();
               }}
             />
-            {errors.email && <p className="errorText">{errors.email}</p>}
+            {!errors.email && (
+              <motion.p
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -10, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="warningText"
+              >
+                Requires verification to change email
+              </motion.p>
+            )}
+            {errors.email && <ErrorMessage message={errors.email} />}
           </label>
           <label className="userPersonalInput">
             <span>Birthday</span>
@@ -140,7 +164,7 @@ export default function MyProfileForm({ userDetail }) {
                 if (e.key === "Enter") e.preventDefault();
               }}
             />
-            {errors.birthday && <p className="errorText">{errors.birthday}</p>}
+            {errors.birthday && <ErrorMessage message={errors.birthday} />}
           </label>
 
           <div className="controlProfileContainer">
@@ -165,7 +189,7 @@ export default function MyProfileForm({ userDetail }) {
         <div className="userSlideBarRight">
           <span className="titleFont">About me</span>
           <label>
-            <span>Description</span>
+            <span>Description (optional)</span>
             <textarea
               name="description"
               placeholder="Enter a description"
@@ -177,15 +201,15 @@ export default function MyProfileForm({ userDetail }) {
               cols="55"
             />
             {errors.description && (
-              <p className="errorText">{errors.description}</p>
+              <ErrorMessage message={errors.description} />
             )}
           </label>
           <div className="hobbiesLabel">
-            <span>Hobbies</span>
+            <span>Hobbies (optional)</span>
             <input
               type="text"
               name="hobbies"
-              placeholder="Add a hobby"
+              placeholder="Enter your hobbies"
               defaultValue={user ? user.hobbies : ""}
               onKeyPress={(e) => {
                 if (e.key === "Enter") {
@@ -193,8 +217,18 @@ export default function MyProfileForm({ userDetail }) {
                 }
               }}
             />
-            <p className="errorText">Separate hobbies with a comma</p>
-            {errors.hobbies && <p className="errorText">{errors.hobbies}</p>}
+            {!errors.hobbies && (
+              <motion.p
+                initial={{ y: -10, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -10, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="warningText"
+              >
+                Separate hobbies with a comma
+              </motion.p>
+            )}
+            {errors.hobbies && <ErrorMessage message={errors.hobbies} />}
           </div>
           <div className="experienceLevelEdit">
             <span>Experience level:</span>
@@ -205,7 +239,7 @@ export default function MyProfileForm({ userDetail }) {
               defaultValue={experienceLevel}
             />
             {errors.experienceLevel && (
-              <p className="errorText">{errors.experienceLevel}</p>
+              <ErrorMessage message={errors.experienceLevel} />
             )}
           </div>
         </div>

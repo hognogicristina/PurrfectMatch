@@ -172,11 +172,6 @@ router.post(
   authMiddleware.authenticateToken,
   favoriteController.addCatToFavorites,
 );
-router.post(
-  "/favorites/:id",
-  authMiddleware.authenticateToken,
-  favoriteController.adoptFavorite,
-);
 router.delete(
   "/favorite/:id/delete",
   authMiddleware.authenticateToken,

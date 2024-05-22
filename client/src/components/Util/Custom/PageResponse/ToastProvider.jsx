@@ -1,6 +1,5 @@
 import { createContext, useContext, useCallback } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toast, { Toaster } from "react-hot-toast";
 
 const ToastContext = createContext(null);
 
@@ -15,14 +14,20 @@ export const ToastProvider = ({ children }) => {
     toast.success(message);
   }, []);
 
+  const notifyLoading = useCallback((promise, messages) => {
+    toast.promise(promise, {
+      loading: messages.loading,
+      success: messages.success,
+      error: messages.error,
+    });
+  }, []);
+
   return (
-    <ToastContext.Provider value={{ notifyError, notifySuccess }}>
+    <ToastContext.Provider
+      value={{ notifyError, notifySuccess, notifyLoading }}
+    >
       {children}
-      <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        closeButton={false}
-      />
+      <Toaster />
     </ToastContext.Provider>
   );
 };

@@ -1,5 +1,4 @@
 const validator = require("validator");
-const { Op } = require("sequelize");
 const { Cat, Breed, Image, AgeType } = require("../../models");
 
 const catExistValidator = async (req, res) => {
@@ -71,44 +70,49 @@ const catsFilterValidator = async (catsFilter, res) => {
 };
 
 const catValidator = async (req, res) => {
-  const errors = [];
+  const error = [];
 
   if (!req.body.name || validator.isEmpty(req.body.name)) {
-    errors.push({ field: "name", error: "Name is required" });
+    error.push({ field: "name", message: "Name is required" });
+  } else if (!validator.isAlpha(req.body.name.replace(/\s/g, ""))) {
+    error.push({
+      field: "name",
+      message: "Name can only contain letters and spaces",
+    });
   }
 
   if (req.method === "PATCH") {
-    if (!req.body.uri || validator.isEmpty(req.body.uri) || "") {
-      errors.push({ field: "uri", error: "Image is required" });
+    if (!req.body.uri || validator.isEmpty(req.body.uri)) {
+      error.push({ field: "uri", message: "Image is required" });
     } else if (req.body.uri) {
       const image = await Image.findOne({ where: { uri: req.body.uri } });
       if (!image) {
-        errors.push({ field: "uri", error: "Please select a valid image" });
+        error.push({ field: "uri", message: "Please select a valid image" });
       }
     }
   } else if (req.method === "POST") {
-    if (!req.body.uris || !Array.isArray(req.body.uris) || []) {
-      errors.push({
+    if (!req.body.uris || !Array.isArray(req.body.uris)) {
+      error.push({
         field: "uris",
-        error: "URIs must be provided as a not empty array.",
+        message: "You must upload at least one image",
       });
     } else if (req.body.uris) {
       if (req.body.uris.length === 0) {
-        errors.push({
+        error.push({
           field: "uris",
-          error: "At least one image is required.",
+          message: "You must upload at least one image",
         });
       }
 
       for (const uri of req.body.uris) {
         if (validator.isEmpty(uri)) {
-          errors.push({ field: "uris", error: "Image is required" });
+          error.push({ field: "uris", message: "Image is required" });
         } else {
           const image = await Image.findOne({ where: { uri } });
           if (!image) {
-            errors.push({
+            error.push({
               field: "uris",
-              error: "Please select a valid image",
+              message: "Please select a valid image",
             });
           }
         }
@@ -117,47 +121,51 @@ const catValidator = async (req, res) => {
   }
 
   if (!req.body.breed || validator.isEmpty(req.body.breed)) {
-    errors.push({ field: "breed", error: "Breed is required" });
+    error.push({ field: "breed", message: "Breed is required" });
   } else if (req.body.breed) {
     const breeds = await Breed.findAll();
     const breedNames = breeds.map((breed) => breed.name);
     if (!breedNames.includes(req.body.breed)) {
-      errors.push({ field: "breed", error: "Please select a valid breed" });
+      error.push({ field: "breed", message: "Please select a valid breed" });
     }
   }
 
   if (!req.body.color || validator.isEmpty(req.body.color)) {
-    errors.push({ field: "color", error: "Color is required" });
+    error.push({ field: "color", message: "Color is required" });
   }
 
   if (!req.body.gender || validator.isEmpty(req.body.gender)) {
-    errors.push({ field: "gender", error: "Gender is required" });
+    error.push({ field: "gender", message: "Gender is required" });
   } else if (req.body.gender && !["Male", "Female"].includes(req.body.gender)) {
-    errors.push({
+    error.push({
       field: "gender",
       error: "Gender must be either Male or Female",
     });
   }
 
   if (!req.body.age || validator.isEmpty(req.body.age)) {
-    errors.push({ field: "age", error: "Age is required" });
+    error.push({ field: "age", message: "Age is required" });
   } else if (req.body.age && !validator.isInt(req.body.age)) {
-    errors.push({ field: "age", error: "Age must be an integer" });
+    error.push({ field: "age", message: "Age must be an integer" });
+  } else if (req.body.age && !validator.isInt(req.body.age, { min: 0 })) {
+    error.push({ field: "age", message: "Age must be a positive integer" });
+  } else if (req.body.age && !validator.isInt(req.body.age, { max: 40 })) {
+    error.push({ field: "age", message: "A cat lives up to 40 years" });
   }
 
   if (!req.body.description || validator.isEmpty(req.body.description)) {
-    errors.push({ field: "description", error: "Description is required" });
+    error.push({ field: "description", message: "Description is required" });
   } else if (
     req.body.description &&
     !validator.isLength(req.body.description, { min: 5 })
   ) {
-    errors.push({
+    error.push({
       field: "description",
-      error: "Description must be at least 5 characters long",
+      message: "Description must be at least 5 characters long",
     });
   }
 
-  return errors.length > 0 ? res.status(400).json({ errors }) : null;
+  return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
 module.exports = {

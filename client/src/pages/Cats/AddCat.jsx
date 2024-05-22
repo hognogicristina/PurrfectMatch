@@ -10,6 +10,7 @@ export default AddCatPage;
 export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
+  const uriArray = data.get("uris").split(",");
 
   return await fetch("http://localhost:3000/cats/add", {
     method: "POST",
@@ -19,9 +20,10 @@ export async function action({ request }) {
     },
     body: JSON.stringify({
       name: data.get("name"),
-      uri: data.get("uri"),
+      uris: uriArray,
       breed: data.get("breed"),
       gender: data.get("gender"),
+      color: data.get("color"),
       age: data.get("age"),
       healthProblem: data.get("healthProblem"),
       description: data.get("description"),

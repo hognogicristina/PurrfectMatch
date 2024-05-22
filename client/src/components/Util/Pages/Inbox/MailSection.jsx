@@ -42,7 +42,6 @@ function MailSection({
           animate="normal"
           variants={buttonVariants}
           className="expandButton"
-          // if  && mails.length > 0 then handleExpandClick
           onClick={handleExpandClick}
         >
           {isExpanded ? <BiCollapseVertical /> : <BiExpandVertical />}

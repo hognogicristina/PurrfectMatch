@@ -12,7 +12,7 @@ function FilterBar({ searchParams, setSearchParams }) {
   const [breeds, setBreeds] = useState([]);
   const [ageTypes, setAgeTypes] = useState([]);
   const [colors, setColors] = useState([]);
-  const [healthProblems, setHealthProblems] = useState([]);
+  const [healthProblem, setHealthProblem] = useState([]);
   const token = getAuthToken();
   const [genders] = useState([
     { value: "Male", label: "Male" },
@@ -53,7 +53,7 @@ function FilterBar({ searchParams, setSearchParams }) {
       const response = await fetch("http://localhost:3000/health-problems");
       const data = await response.json();
       if (response.ok) {
-        setHealthProblems(
+        setHealthProblem(
           data.data.map((cats) => ({
             value: cats,
             label: cats,
@@ -192,7 +192,7 @@ function FilterBar({ searchParams, setSearchParams }) {
       <label>Health Problems</label>
       <CustomSelect
         value={
-          healthProblems.find(
+          healthProblem.find(
             (option) =>
               option.value === searchParams.get("selectedHealthProblem"),
           ) || null
@@ -201,7 +201,7 @@ function FilterBar({ searchParams, setSearchParams }) {
         onChange={(selectedOption) =>
           handleChange("selectedHealthProblem", selectedOption)
         }
-        options={healthProblems}
+        options={healthProblem}
         placeholder="Any Health Problems"
         isClearable={true}
       />

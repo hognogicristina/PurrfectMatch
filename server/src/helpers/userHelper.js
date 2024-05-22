@@ -58,6 +58,15 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
     await emailServ.sendResetEmail(user);
   }
 
+  // if (typeof user.birthday === "string") {
+  //   console.log(typeof user.birthday);
+  //   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  //   if (!dateRegex.test(user.birthday)) {
+  //     console.log(typeof user.birthday);
+  //     user.birthday = new Date(user.birthday).toISOString().split("T")[0];
+  //   }
+  // }
+
   if (user.description === "") {
     user.description = null;
   }

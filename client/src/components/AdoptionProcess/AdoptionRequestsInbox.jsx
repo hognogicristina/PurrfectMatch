@@ -38,7 +38,7 @@ function AdoptionRequestsInbox({ mails }) {
       markMailAsRead(id);
     } else {
       const mailError = await response.json();
-      notifyError(mailError.error.message);
+      mailError.forEach((error) => notifyError(error.message));
       setMailDetails({});
     }
   };

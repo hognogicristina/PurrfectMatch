@@ -1,6 +1,6 @@
 .userDetailContainer {
   padding: 20px;
-  margin-top: 70px;
+  margin-top: 40px;
   width: fit-content;
   display: flex;
   flex-direction: row;
@@ -75,7 +75,6 @@
   border-radius: var(--border-radius);
   display: flex;
   flex-direction: row;
-  gap: 10px;
   justify-content: center;
   align-items: flex-start;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -117,6 +116,7 @@
   width: 170px;
   height: 170px;
   color: #ccc;
+  object-fit: cover;
 }
 
 .cameraIcon,
@@ -141,8 +141,8 @@
 
 .cameraIconAbove {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 10px;
+  right: 10px;
   background-color: rgba(216, 216, 216, 0.71);
   color: var(--button-submit);
   border-radius: 50%;
@@ -192,6 +192,10 @@
   margin-left: 30px;
   padding: 20px;
   flex: 2;
+}
+
+.userSlideBarRight .textFont {
+  font-size: 15px;
 }
 
 .controlProfileContainer {
@@ -249,7 +253,7 @@
   background-color: rgba(224, 224, 224, 0.25);
   padding: 6px;
   border-radius: 5px;
-  font-size: 0.8em;
+  font-size: 14px;
   border: 1px solid #ccc;
 }
 

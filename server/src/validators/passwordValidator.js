@@ -2,9 +2,9 @@ const bcrypt = require("bcrypt");
 const validator = require("validator");
 const { PasswordHistory, User } = require("../../models");
 
-const doNotUsePreviousPassword = async (password, user) => {
+const doNotUsePreviousPassword = async (password, id) => {
   const passwordHistories = await PasswordHistory.findAll({
-    where: { userId: user.id },
+    where: { userId: id },
     order: [["createdAt", "DESC"]],
     limit: 5,
   });
@@ -15,7 +15,7 @@ const doNotUsePreviousPassword = async (password, user) => {
 };
 
 const resetValidationPassword = async (req, res) => {
-  if (validator.isEmpty(req.body.password || "")) {
+  if (validator.isEmpty(req.body.password)) {
     return res.status(400).json({
       error: [{ field: "password", message: "Password is required" }],
     });
@@ -34,7 +34,7 @@ const resetValidationPassword = async (req, res) => {
       error: [{ field: "confirmPassword", message: "Passwords do not match" }],
     });
   }
-  if (await doNotUsePreviousPassword(req.body.password, req.user)) {
+  if (await doNotUsePreviousPassword(req.body.password, req.params.id)) {
     return res.status(400).json({
       error: [
         {
@@ -52,7 +52,7 @@ const editPasswordValidation = async (req, res) => {
 
   if (
     !req.body.currentPassword ||
-    validator.isEmpty(req.body.currentPassword || "")
+    validator.isEmpty(req.body.currentPassword)
   ) {
     error.push({
       field: "currentPassword",
@@ -68,7 +68,7 @@ const editPasswordValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.newPassword || validator.isEmpty(req.body.newPassword || "")) {
+  if (!req.body.newPassword || validator.isEmpty(req.body.newPassword)) {
     error.push({ field: "newPassword", message: "New password is required" });
   } else if (await doNotUsePreviousPassword(req.body.newPassword, req.user)) {
     error.push({
@@ -85,7 +85,7 @@ const editPasswordValidation = async (req, res) => {
 
   if (
     !req.body.confirmPassword ||
-    validator.isEmpty(req.body.confirmPassword || "")
+    validator.isEmpty(req.body.confirmPassword)
   ) {
     error.push({
       field: "confirmPassword",

@@ -1,5 +1,4 @@
 const { Cat, CatUser, Address } = require("../../models");
-const { isEmpty } = require("validator");
 const validator = require("validator");
 
 const userValidator = async (req, res) => {

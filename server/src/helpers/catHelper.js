@@ -23,6 +23,7 @@ const updateCatData = async (cat, body) => {
     "healthProblem",
     "description",
   ];
+
   const currentTimestamp = Math.floor(Date.now() / 1000);
   const ageInYears = body.age;
   const ageInSeconds = ageInYears * (60 * 60 * 24 * 365);
@@ -35,6 +36,7 @@ const updateCatData = async (cat, body) => {
   }
 
   cat.uris = Array.isArray(body.uris) ? body.uris : [];
+  cat.status = "active";
 
   if (body.age) {
     cat.age = ageTimestamp;

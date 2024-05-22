@@ -86,6 +86,7 @@ const getSentToAdoptionCats = async (req, res) => {
 
 const editUser = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await userValidator.editUserValidation(req, res)) return;
     const fieldsToUpdate = [
       "firstName",
@@ -98,14 +99,17 @@ const editUser = async (req, res) => {
     ];
     const user = await User.findByPk(req.user.id);
     await userHelper.updateEmail(user, fieldsToUpdate, req.body);
-    let newImage = await Image.findOne({ where: { userId: user.id } });
-    if (req.body.uris) {
-      newImage = await fileHelper.moveImage(user, req.body.uris);
-    }
     await user.save();
-    newImage.userId = user.id;
-    await newImage.save();
-    return res.json({ status: "Your profile has been modified" });
+    if (req.body.uri && req.body.uri.length > 0) {
+      for (let uri of req.body.uri) {
+        const newImage = await fileHelper.moveImage(user, uri);
+        if (newImage) {
+          newImage.userId = user.id;
+          await newImage.save();
+        }
+      }
+    }
+    return res.json({ status: "Your changes has been saved" });
   } catch (error) {
     logger.error(error);
     return res
@@ -116,6 +120,7 @@ const editUser = async (req, res) => {
 
 const editUsername = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await userValidator.editUsernameValidation(req, res)) return;
     req.user.username = req.body.username;
     await req.user.save();
@@ -130,6 +135,7 @@ const editUsername = async (req, res) => {
 
 const editAddressUser = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await userValidator.editAddressValidation(req, res)) return;
     const addressFields = [
       "country",
@@ -165,6 +171,7 @@ const editAddressUser = async (req, res) => {
 
 const editPassword = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await passwordValidator.editPasswordValidation(req, res)) return;
     req.user.password = await bcrypt.hash(req.body.newPassword, 10);
     await req.user.save();
@@ -184,6 +191,7 @@ const editPassword = async (req, res) => {
 const deleteUser = async (req, res) => {
   const transaction = await User.sequelize.transaction();
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await userValidator.deleteUserValidation(req, res)) {
       await transaction.rollback();
       return;

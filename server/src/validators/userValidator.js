@@ -27,24 +27,15 @@ const userExistValidator = async (req, res) => {
 const editUserValidation = async (req, res) => {
   const error = [];
 
-  if (!req.body.firstName || validator.isEmpty(req.body.firstName || "")) {
+  if (!req.body.firstName || validator.isEmpty(req.body.firstName)) {
     error.push({ field: "firstName", message: "First name is required" });
   }
 
-  if (!req.body.lastName || validator.isEmpty(req.body.lastName || "")) {
+  if (!req.body.lastName || validator.isEmpty(req.body.lastName)) {
     error.push({ field: "lastName", message: "Last name is required" });
   }
 
-  if (!req.body.uri || validator.isEmpty(req.body.uri || "")) {
-    error.push({ field: "uri", message: "Image is required" });
-  } else if (req.body.uri) {
-    const image = await Image.findOne({ where: { uri: req.body.uri } });
-    if (!image) {
-      error.push({ field: "uri", message: "Please select a valid image" });
-    }
-  }
-
-  if (!req.body.email || validator.isEmpty(req.body.email || "")) {
+  if (!req.body.email || validator.isEmpty(req.body.email)) {
     error.push({ field: "email", message: "Email is required" });
   } else if (req.body.email && !validator.isEmail(req.body.email)) {
     error.push({
@@ -58,13 +49,40 @@ const editUserValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.birthday || validator.isEmpty(req.body.birthday || "")) {
+  if (!req.body.birthday || validator.isEmpty(req.body.birthday)) {
     error.push({ field: "birthday", message: "Birthday is required" });
   } else if (req.body.birthday && !validator.isDate(req.body.birthday)) {
     error.push({
       field: "birthday",
       message: "Invalid date format! Please use YYYY-MM-DD",
     });
+  }
+
+  if (req.body.hobbies) {
+    const hobbies = req.body.hobbies.split(",");
+    for (let hobby of hobbies) {
+      if (!validator.isAlpha(hobby.replace(/\s/g, ""))) {
+        error.push({
+          field: "hobbies",
+          message: "Hobbies must contain only letters and spaces",
+        });
+        break;
+      }
+    }
+  }
+
+  if (!req.body.uri || req.body.uri.length === 0) {
+    return res
+      .status(400)
+      .json({ error: [{ field: "uri", message: "Image is required" }] });
+  } else {
+    const uri = req.body.uri[0];
+    const image = await Image.findOne({ where: { uri: uri } });
+    if (!image) {
+      return res.status(400).json({
+        error: [{ field: "uri", message: "Please select a valid image" }],
+      });
+    }
   }
 
   return error.length > 0 ? res.status(400).json({ error }) : null;
@@ -82,7 +100,7 @@ const editUsernameValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username)) {
     error.push({ field: "username", message: "Username is required" });
   } else if (!validator.isLength(req.body.username, { min: 3 })) {
     error.push({
@@ -101,7 +119,7 @@ const editUsernameValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password)) {
     error.push({ field: "password", message: "Password is required" });
   } else {
     const user = await User.findByPk(req.user.id);
@@ -154,7 +172,7 @@ const deleteUserValidation = async (req, res) => {
       .json({ error: [{ field: "id", message: "Profile not found" }] });
   }
 
-  if (!req.body.username || validator.isEmpty(req.body.username || "")) {
+  if (!req.body.username || validator.isEmpty(req.body.username)) {
     error.push({ field: "username", message: "Please enter your username" });
   } else {
     const user = await User.findByPk(req.user.id);
@@ -190,10 +208,20 @@ const deleteUserValidation = async (req, res) => {
   return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
+const validateActiveAccount = async (req, res) => {
+  const user = await User.findByPk(req.user.id);
+  if (user.status === "active_pending") {
+    return res.status(403).json({
+      error: [{ field: "server", message: "Profile not activated" }],
+    });
+  }
+};
+
 module.exports = {
   userExistValidator,
   editUserValidation,
   editAddressValidation,
   editUsernameValidation,
   deleteUserValidation,
+  validateActiveAccount,
 };

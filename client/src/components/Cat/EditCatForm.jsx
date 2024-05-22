@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
-import {
-  Form,
-  useActionData,
-  useNavigate,
-  useNavigation,
-} from "react-router-dom";
+import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
-import UploadsImage from "../Util/Features/UploadsImages.jsx";
+import UploadImages from "../Util/Features/UploadImages.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
 import DeleteCatDialog from "./DeleteCatDialog";
+import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
+import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 
 export default function EditCatForm({ catDetail, onClose }) {
   const data = useActionData();
   const navigation = useNavigation();
-  const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError, notifySuccess } = useToast();
   const [breeds, setBreeds] = useState([]);
+  const [colors, setColors] = useState([]);
   const [errors, setErrors] = useState({});
-  const initialImage = catDetail.images;
+  const [imageUris, setImageUris] = useState(
+    catDetail.images.map((image) => image.uri),
+  );
   const [genders] = useState([
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -60,6 +59,20 @@ export default function EditCatForm({ catDetail, onClose }) {
       }
     }
 
+    async function fetchColors() {
+      const response = await fetch("http://localhost:3000/colors");
+      const data = await response.json();
+      if (response.ok) {
+        setColors(data.data.map((color) => ({ value: color, label: color })));
+      } else {
+        data.error.forEach((error) => {
+          notifyError(error.message);
+        });
+        return null;
+      }
+    }
+
+    fetchColors();
     fetchBreeds();
   }, []);
 
@@ -68,16 +81,16 @@ export default function EditCatForm({ catDetail, onClose }) {
       if (data.error) {
         const newErrors = {};
         data.error.forEach((error) => {
+          if (error.field === "server" || error.field === "uris") {
+            notifyError(error.message);
+          }
           newErrors[error.field] = error.message;
         });
         setErrors(newErrors);
-        if (data.error.field === "server") {
-          notifyError(data.error.message);
-        }
       }
       if (data.status) {
         notifySuccess(data.status);
-        setTimeout(() => navigate("/cats"), 2000);
+        closeDeleteDialog();
       }
     }
   }, [data]);
@@ -86,7 +99,7 @@ export default function EditCatForm({ catDetail, onClose }) {
     e.preventDefault();
     const formData = new FormData(e.target);
     formData.append("id", catDetail.id);
-    formData.append("image", initialImage);
+    formData.append("uris", imageUris.join(","));
     const response = await fetch(
       `http://localhost:3000/cats/edit/${catDetail.id}`,
       {
@@ -103,6 +116,10 @@ export default function EditCatForm({ catDetail, onClose }) {
     }
   };
 
+  const handleImageUpload = (uris) => {
+    setImageUris(uris);
+  };
+
   const openDeleteDialog = () => {
     setIsDeleteDialogOpen(true);
   };
@@ -110,6 +127,12 @@ export default function EditCatForm({ catDetail, onClose }) {
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
   };
+
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
+
+  console.log(catDetail.images);
 
   return (
     <div className="dialogOverlay">
@@ -132,89 +155,107 @@ export default function EditCatForm({ catDetail, onClose }) {
             Name
             <input
               type="text"
-              id="name"
               name="name"
-              placeholder="Enter cat's name"
+              placeholder="How do you call your cat?"
               defaultValue={catDetail.name}
             />
+            {errors.name && <ErrorMessage message={errors.name} />}
           </label>
-          <UploadsImage initialImage={initialImage} />
-          <label>
-            Breed
-            <label className="selectAddCat">
-              <CustomSelect
-                name="selectedBreed"
-                options={breeds}
-                placeholder="Select a breed"
-                className="selectControl"
-                isClearable={true}
-                defaultValue={{
-                  value: catDetail.breed,
-                  label: catDetail.breed,
-                }}
-              />
+          <UploadImages
+            initialImages={initialImages}
+            onImageUpload={handleImageUpload}
+          />
+          <input type="hidden" name="uris" value={imageUris.join(",")} />
+          <div className="orderAddContainer">
+            <label>
+              Breed
+              <label className="selectAddCat">
+                <CustomSelect
+                  name="selectedBreed"
+                  options={breeds}
+                  placeholder="Select a breed"
+                  className="selectControl"
+                  isClearable={true}
+                  defaultValue={{
+                    value: catDetail.breed,
+                    label: catDetail.breed,
+                  }}
+                />
+                {errors.breed && <ErrorMessage message={errors.breed} />}
+              </label>
+              <input type="hidden" name="breed" value={catDetail.breed} />
             </label>
-          </label>
-          <label>
-            Gender
-            <label className="selectAddCat">
-              <CustomSelect
-                name="selectedGender"
-                options={genders}
-                placeholder="Select a Gender"
-                className="selectControl"
-                isClearable={true}
-                defaultValue={{
-                  value: catDetail.gender,
-                  label: catDetail.gender,
-                }}
-              />
+            <label>
+              Gender
+              <label className="selectAddCat">
+                <CustomSelect
+                  name="selectedGender"
+                  options={genders}
+                  placeholder="Select a Gender"
+                  className="selectControl"
+                  isClearable={true}
+                  defaultValue={{
+                    value: catDetail.gender,
+                    label: catDetail.gender,
+                  }}
+                />
+                {errors.gender && <ErrorMessage message={errors.gender} />}
+              </label>
+              <input type="hidden" name="gender" value={catDetail.gender} />
             </label>
-          </label>
-          <label>
-            Age
-            <input
-              type="number"
-              id="age"
-              name="age"
-              placeholder="Enter cat's age"
-              defaultValue={catDetail.age}
-              min="0"
-            />
-          </label>
-          <div className="colorHealthContainer">
-            <div>
-              <label>
-                Color
-                <input
-                  type="text"
-                  id="color"
+            <label>
+              Color
+              <label className="selectAddCat">
+                <CustomSelect
                   name="color"
-                  placeholder="Enter cat's color"
-                  defaultValue={catDetail.color}
+                  options={colors}
+                  placeholder="Select a color"
+                  className="selectControl"
+                  isClearable={true}
+                  defaultValue={{
+                    value: catDetail.color,
+                    label: catDetail.color,
+                  }}
                 />
+                {errors.color && <ErrorMessage message={errors.color} />}
               </label>
-            </div>
-            <div>
-              <label>
-                Health Problems (optional)
-                <input
-                  id="healthProblems"
-                  name="healthProblems"
-                  placeholder="Enter cat's health problems"
-                  defaultValue={catDetail.healthProblem}
-                />
-              </label>
-            </div>
+              <input type="hidden" name="color" value={catDetail.color} />
+            </label>
+          </div>
+          <div className="orderAddContainer">
+            <label>
+              Age
+              <input
+                type="text"
+                name="age"
+                placeholder="Age in years"
+                defaultValue={catDetail.age}
+              />
+              {errors.age && <ErrorMessage message={errors.age} />}
+            </label>
+            <label>
+              Health Problems (optional)
+              <input
+                name="healthProblem"
+                placeholder="Any health problems?"
+                defaultValue={catDetail.healthProblem}
+              />
+              {errors.healthProblem && (
+                <ErrorMessage message={errors.healthProblem} />
+              )}
+            </label>
           </div>
           <label>
             Description
             <textarea
               id="description"
               name="description"
-              placeholder="Enter cat's description"
+              placeholder="Tell us more about your cat"
               defaultValue={catDetail.description}
             />
+            {errors.description && (
+              <ErrorMessage message={errors.description} />
+            )}
           </label>
           <div className="buttonEditContainer">
             <motion.button

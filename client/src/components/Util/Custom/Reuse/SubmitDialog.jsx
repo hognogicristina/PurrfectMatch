@@ -18,11 +18,6 @@ export default function SubmitDialog({
   const handleAdoptionMessage = async (e, message) => {
     e.preventDefault();
 
-    if (!token) {
-      notifyError("User not authenticated.");
-      return;
-    }
-
     const response = await fetch(
       `http://localhost:3000/adopt/${catDetail.id}/request`,
       {
@@ -41,11 +36,13 @@ export default function SubmitDialog({
       response.status === 500
     ) {
       const data = await response.json();
-      if (data.error.field === "server") {
-        notifyError(data.error[0].message);
-      } else {
-        setError(data.error[0].message);
-      }
+      data.error.forEach((err) => {
+        if (error.field === "server") {
+          notifyError(error.message);
+        } else {
+          setError(error.message);
+        }
+      });
     } else {
       const data = await response.json();
       notifySuccess(data.status);

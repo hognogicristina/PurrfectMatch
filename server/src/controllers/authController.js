@@ -41,7 +41,7 @@ const register = async (req, res) => {
 
 const activate = async (req, res) => {
   try {
-    if (await authValidator.validateUser(req, res)) return;
+    if (await authValidator.validateUser(req, res, "active")) return;
     const user = await User.findByPk(req.params.id);
     const tokenUser = await Token.findOne({ where: { userId: user.id } });
     user.update({ status: "active" });
@@ -60,7 +60,7 @@ const activate = async (req, res) => {
 
 const reactivate = async (req, res) => {
   try {
-    if (await authValidator.resetValidationEmail(req, res)) return;
+    if (await authValidator.resetValidationEmail(req, res, "active")) return;
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
     await Token.destroy({
@@ -116,7 +116,7 @@ const login = async (req, res) => {
 
 const resetPasswordRequest = async (req, res) => {
   try {
-    if (await authValidator.resetValidationEmail(req, res)) return;
+    if (await authValidator.resetValidationEmail(req, res, "pass")) return;
     const { email } = req.body;
     const user = await User.findOne({ where: { email } });
     await emailServ.sendResetPassword(user);
@@ -133,7 +133,7 @@ const resetPasswordRequest = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    if (await authValidator.validateUser(req, res)) return;
+    if (await authValidator.validateUser(req, res, "pass")) return;
     if (await passwordValidator.resetValidationPassword(req, res)) return;
     const user = await User.findByPk(req.params.id);
     const tokenUser = await Token.findOne({ where: { userId: user.id } });

@@ -1,12 +1,6 @@
-const {
-  Favorite,
-  Cat,
-  AdoptionRequest,
-  UserRole,
-  CatUser,
-} = require("../../models");
+const { Favorite, Cat } = require("../../models");
 const favoriteValidator = require("../validators/favoriteValidator");
-const mailValidator = require("../validators/adoptionRequestValidator");
+const userValidator = require("../validators/userValidator");
 const catDTO = require("../dto/catDTO");
 const logger = require("../../logger/logger");
 
@@ -67,6 +61,7 @@ const getOneFavorite = async (req, res) => {
 
 const addCatToFavorites = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await favoriteValidator.catExistValidator(req, res)) return;
     await Favorite.create({ userId: req.user.id, catId: req.params.id });
     return res.json({ status: "Cat added to favorites" });
@@ -78,41 +73,9 @@ const addCatToFavorites = async (req, res) => {
   }
 };
 
-const adoptFavorite = async (req, res) => {
-  try {
-    if (await mailValidator.adoptValidator(req, res)) return;
-    const favorite = await Favorite.findByPk(req.params.id);
-    const cat = await Cat.findByPk(favorite.catId);
-    const catUser = await CatUser.findByPk(cat.id);
-    const { message } = req.body;
-    const adoptionRequest = await AdoptionRequest.create({
-      catId: cat.id,
-      message,
-    });
-    await UserRole.create({
-      userId: req.user.id,
-      adoptionRequestId: adoptionRequest.id,
-      role: "sender",
-    });
-    await UserRole.create({
-      userId: catUser.userId,
-      adoptionRequestId: adoptionRequest.id,
-      role: "receiver",
-    });
-    await favorite.destroy();
-    return res
-      .status(200)
-      .json({ status: "AdoptionProcess request sent successfully" });
-  } catch (error) {
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
-  }
-};
-
 const deleteFavorite = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await favoriteValidator.favoriteExistValidator(req, res)) return;
     const catID = req.params.id;
     const favorite = await Favorite.findOne({
@@ -132,6 +95,5 @@ module.exports = {
   getFavorites,
   getOneFavorite,
   addCatToFavorites,
-  adoptFavorite,
   deleteFavorite,
 };

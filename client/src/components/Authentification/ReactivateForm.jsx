@@ -32,12 +32,12 @@ export default function ReactivateForm() {
       if (data.error) {
         const newErrors = {};
         data.error.forEach((error) => {
+          if (error.field === "server" || error.field === "account") {
+            notifyError(error.message);
+          }
           newErrors[error.field] = error.message;
         });
         setErrors(newErrors);
-        if (data.error.field === "server") {
-          notifyError(data.error.message);
-        }
       } else if (data.status) {
         setSubmitted(true);
       }

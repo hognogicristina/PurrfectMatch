@@ -23,13 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     password: DataTypes.STRING,
-    addressId: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: "Addresses",
-        key: "id",
-      },
-    },
     role: {
       type: DataTypes.STRING,
       defaultValue: "user",

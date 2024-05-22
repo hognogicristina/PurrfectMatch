@@ -84,14 +84,15 @@ function MyProfileSection({ userDetail }) {
             {userDetail.birthday}
           </span>
           <div className="controlProfileContainer">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              className="simpleButton submit"
-            >
-              <NavLink to="/user/edit" className="simpleButtonText submit">
+            <NavLink to="/user/edit" className="simpleButtonText submit">
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                className="simpleButton submit"
+              >
                 Edit Profile
-              </NavLink>
-            </motion.button>
+              </motion.button>
+            </NavLink>
+
             <motion.button
               whileTap={{ scale: 0.9 }}
               type="button"

@@ -35,13 +35,6 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      addressId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: "Addresses",
-          key: "id",
-        },
-      },
       role: {
         type: Sequelize.STRING,
         allowNull: false,

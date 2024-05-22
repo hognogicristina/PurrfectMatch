@@ -1,6 +1,7 @@
 const { Image, Cat, CatUser } = require("../../models");
 const catValidator = require("../validators/catValidator");
 const catUserValidator = require("../validators/catUserValidator");
+const userValidator = require("../validators/userValidator");
 const catHelper = require("../helpers/catHelper");
 const fileHelper = require("../helpers/fileHelper");
 const mailHelper = require("../helpers/adoptionRequestHelper");
@@ -58,20 +59,22 @@ const getOneCat = async (req, res) => {
 
 const addCat = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await catValidator.catValidator(req, res)) return;
     if (await catUserValidator.userValidator(req, res)) return;
 
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
     const newCat = await Cat.create(catData);
-
-    for (const uri of catData.uris) {
-      const newImage = await fileHelper.moveImage(null, uri);
-      newImage.catId = newCat.id;
-      await newImage.save();
+    await CatUser.create({ catId: newCat.id, userId: req.user.id });
+    if (req.body.uris) {
+      for (let uri of catData.uris) {
+        const newImage = await fileHelper.moveImage(null, uri);
+        newImage.catId = newCat.id;
+        await newImage.save();
+      }
     }
 
-    await CatUser.create({ catId: newCat.id, userId: req.user.id });
     res.status(201).json({ status: "Cat added successfully" });
   } catch (error) {
     logger.error(error);
@@ -83,6 +86,7 @@ const addCat = async (req, res) => {
 
 const editCat = async (req, res) => {
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await catValidator.catValidator(req, res)) return;
     if (await catUserValidator.userValidator(req, res)) return;
 
@@ -109,6 +113,7 @@ const editCat = async (req, res) => {
 const deleteCat = async (req, res) => {
   const transaction = await Cat.sequelize.transaction();
   try {
+    if (await userValidator.validateActiveAccount(req, res)) return;
     if (await catUserValidator.userValidator(req, res)) {
       await transaction.rollback();
       return;
