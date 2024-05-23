@@ -64,6 +64,12 @@ import FavoritesPage, {
 import AdoptionRequestsPage, {
   loader as loadAdoptionRequestsPage,
 } from "./pages/AdoptionProcess/AdoptionsRequests.jsx";
+import UserProfilePage, {
+  loader as loadUserProfile,
+} from "./pages/Profile/UserProfile.jsx";
+import ArchiveOfUsersPage, {
+  loader as loadArchiveOfUsers,
+} from "./pages/PurrfectMatch/Users.jsx";
 
 const router = createBrowserRouter([
   {
@@ -143,6 +149,26 @@ const router = createBrowserRouter([
         path: "reset/:id",
         element: <ResetPasswordPage />,
         action: actionReset,
+      },
+      {
+        path: "users",
+        element: <ArchiveOfUsersPage />,
+        loader: loadArchiveOfUsers,
+      },
+      {
+        path: "user-profile/:username",
+        children: [
+          {
+            index: true,
+            element: <UserProfilePage />,
+            loader: loadUserProfile,
+          },
+          {
+            path: "matches-archive",
+            element: <FavoritesPage />,
+            loader: loadFavorites,
+          },
+        ],
       },
       {
         path: "user",

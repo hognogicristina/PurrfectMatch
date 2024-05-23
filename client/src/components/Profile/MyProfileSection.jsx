@@ -80,6 +80,14 @@ function MyProfileSection({ userDetail }) {
             {userDetail.email}
           </span>
           <span className="userPersonal">
+            {userDetail.status === "active_pending" && (
+              <span className="errorText">
+                We have sent you an email to verify your account. Please check
+                your email.
+              </span>
+            )}
+          </span>
+          <span className="userPersonal">
             <strong>Birthday: </strong>
             {userDetail.birthday}
           </span>

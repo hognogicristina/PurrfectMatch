@@ -2,9 +2,13 @@ import { useState, useEffect } from "react";
 import { getAuthToken } from "../../../../util/auth.js";
 import { motion } from "framer-motion";
 import SubmitDialog from "../../Custom/Reuse/SubmitDialog.jsx";
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function AdoptCat({ catDetail, userDetails }) {
   const [token, setToken] = useState(getAuthToken());
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [requestExists, setRequestExists] = useState(false);
 
@@ -43,18 +47,42 @@ export default function AdoptCat({ catDetail, userDetails }) {
     setRequestExists(true);
   };
 
+  const openUserDetails = () => {
+    navigate(`/user-profile/${catDetail.user}`);
+  };
+
+  const renderUserImage = () => {
+    if (catDetail.imageUser) {
+      return (
+        <img
+          className="userImageLogout catAdopt"
+          src={catDetail.imageUser}
+          alt="user"
+        />
+      );
+    } else {
+      return <FontAwesomeIcon icon={faUserCircle} className="userIcon" />;
+    }
+  };
+
   return (
     <div className="ownerGuardian">
       {!catDetail.owner && (
         <>
-          <p className="guardian">Regards,</p>
-          <p className="guardian">{catDetail.guardian}</p>
+          <div className="regardsContainer" onClick={openUserDetails}>
+            {renderUserImage()}
+            <div>
+              <p className="guardian">Regards,</p>
+              <p className="guardian linkUser">{catDetail.guardian}</p>
+            </div>
+          </div>
         </>
       )}
       {!catDetail.owner &&
         token &&
         !requestExists &&
-        catDetail.user !== userDetails.username && (
+        catDetail.user !== userDetails.username &&
+        userDetails.role === "user" && (
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="simpleButton submit"

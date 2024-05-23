@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import FilterBar from "../Util/Pages/Catalog/FilterBar.jsx";
@@ -9,6 +9,7 @@ import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
 import FavoriteHeart from "../Util/Features/FavoriteHeart.jsx";
 import { getAuthToken } from "../../util/auth.js";
+import { useUserDetails } from "../../util/useUserDetails.js";
 
 function CatsCatalog({ cats, currentPage, onPageChange }) {
   const { data, error, totalPages } = cats;
@@ -17,6 +18,7 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
   const { notifyError } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchParamsKey, setSearchParamsKey] = useState(0);
+  const { userDetails } = useUserDetails();
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
@@ -46,7 +48,9 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
           className="catItem"
           onClick={() => handleClickCatItem(cat.id)}
         >
-          {token && <FavoriteHeart catId={cat.id} />}
+          {token && userDetails.role === "user" && (
+            <FavoriteHeart catId={cat.id} />
+          )}
           <img src={cat.image} alt={cat.name} className="catItemImg" />
           <h3>{cat.name}</h3>
           <ul>

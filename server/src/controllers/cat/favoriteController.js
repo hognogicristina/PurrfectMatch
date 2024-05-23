@@ -1,8 +1,8 @@
-const { Favorite, Cat } = require("../../models");
-const favoriteValidator = require("../validators/favoriteValidator");
-const userValidator = require("../validators/userValidator");
-const catDTO = require("../dto/catDTO");
-const logger = require("../../logger/logger");
+const { Favorite, Cat } = require("../../../models");
+const favoriteValidator = require("../../validators/favoriteValidator");
+const userValidator = require("../../validators/userValidator");
+const catDTO = require("../../dto/catDTO");
+const logger = require("../../../logger/logger");
 
 const getFavorites = async (req, res) => {
   try {

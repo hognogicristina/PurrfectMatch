@@ -13,7 +13,9 @@ export default function MoreCatsSection({ title, cats, type, catDetail }) {
 
   const handleExploreMore = (type) => {
     if (type === "guardian") {
-      navigate(`/cats?selectedUserId=${catDetail.userId}&page=1`);
+      navigate(`/cats?selectedUser=${catDetail.user}&page=1`);
+    } else if (type === "owner") {
+      navigate(`/cats?selectedUser=${catDetail.owner}&page=1`);
     } else if (type === "breed") {
       navigate(`/cats?selectedBreed=${catDetail.breed}&page=1`);
     }

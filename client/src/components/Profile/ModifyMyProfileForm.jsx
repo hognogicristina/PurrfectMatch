@@ -6,18 +6,18 @@ import {
   useNavigate,
   useNavigation,
 } from "react-router-dom";
-
+import Datetime from "react-datetime";
 import UploadImage from "../Util/Features/UploadImage.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 
-export default function MyProfileForm({ userDetail }) {
+export default function ModifyMyProfileForm({ userDetail }) {
   const data = useActionData();
   const navigate = useNavigate();
   const { notifyError, notifySuccess, notifyLoading } = useToast();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [experienceLevel, setExperienceLevel] = useState(0);
   const [errors, setErrors] = useState({});
 
@@ -45,7 +45,6 @@ export default function MyProfileForm({ userDetail }) {
         setErrors(newErrors);
       }
       if (data.status) {
-        // notifyLoading("Saving changes..");
         notifySuccess(data.status);
         navigate("/user");
       }
@@ -90,6 +89,20 @@ export default function MyProfileForm({ userDetail }) {
   const handleImageUpload = (uris) => {
     const newImage = { ...user, uri: uris };
     setUser(newImage);
+  };
+
+  const handleBirthdayChange = (date) => {
+    if (date && date._isAMomentObject && date.isValid()) {
+      setUser((prevUser) => ({
+        ...prevUser,
+        birthday: date.format("YYYY-MM-DD"),
+      }));
+    } else {
+      setUser((prevUser) => ({
+        ...prevUser,
+        birthday: "",
+      }));
+    }
   };
 
   return (
@@ -156,14 +169,15 @@ export default function MyProfileForm({ userDetail }) {
           </label>
           <label className="userPersonalInput">
             <span>Birthday</span>
-            <input
-              type="date"
-              name="birthday"
-              defaultValue={user ? user.birthday : ""}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
+            <Datetime
+              className="reactDatetimePicker"
+              value={user ? new Date(user.birthday) : null}
+              timeFormat={false}
+              onChange={handleBirthdayChange}
             />
+            {user?.birthday && (
+              <input type="hidden" name="birthday" value={user.birthday} />
+            )}
             {errors.birthday && <ErrorMessage message={errors.birthday} />}
           </label>
 

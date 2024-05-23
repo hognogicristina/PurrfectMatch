@@ -1,4 +1,4 @@
-const { Cat, CatUser, Address } = require("../../models");
+const { Cat, CatUser, Address, User } = require("../../models");
 const validator = require("validator");
 
 const userValidator = async (req, res) => {
@@ -82,7 +82,16 @@ const userValidator = async (req, res) => {
 };
 
 const getCatsValidator = async (req, res, listType) => {
-  const user = req.user;
+  let user;
+
+  if (req.params.username) {
+    user = await User.findOne({
+      where: { username: req.params.username },
+    });
+  } else {
+    user = req.user;
+  }
+
   if (listType === "sentToAdoption") {
     const cats = await CatUser.findAll({ where: { userId: user.id } });
     if (cats.length === 0) {

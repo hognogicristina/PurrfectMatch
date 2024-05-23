@@ -2,6 +2,7 @@ import { Await, defer, useLoaderData, useSearchParams } from "react-router-dom";
 import { Suspense } from "react";
 import CatsCatalog from "../../components/Cat/CatsCatalog.jsx";
 import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
+import { getAuthToken } from "../../util/auth.js";
 
 function CatsPage() {
   const { cats } = useLoaderData();
@@ -32,20 +33,25 @@ export default CatsPage;
 async function loadCats({
   search = "",
   selectedBreed = "",
-  selectedAgeType = "",
+  selectedLifeStage = "",
   selectedGender = "",
   selectedHealthProblem = "",
-  selectedUserId = "",
+  selectedUser = "",
   selectedColor = "",
   sortBy = "age",
   sortOrder = "asc",
   page = 1,
   pageSize = 24,
 } = {}) {
-  let query = `search=${search}&selectedBreed=${selectedBreed}&selectedAgeType=${selectedAgeType}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUserId=${selectedUserId}&selectedColor=${selectedColor}&sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&pageSize=${pageSize}`;
+  const token = getAuthToken();
+  let query = `search=${search}&selectedBreed=${selectedBreed}&selectedLifeStage=${selectedLifeStage}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUser=${selectedUser}&selectedColor=${selectedColor}&sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&pageSize=${pageSize}`;
   query = query.replace(/&[^=]+=(?=&|$)/g, "");
 
-  const response = await fetch(`http://localhost:3000/cats?${query}`);
+  const response = await fetch(`http://localhost:3000/cats?${query}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return await response.json();
 }
 
@@ -57,10 +63,10 @@ export function loader({ request }) {
     cats: loadCats({
       search: params.search || "",
       selectedBreed: params.selectedBreed || "",
-      selectedAgeType: params.selectedAgeType || "",
+      selectedLifeStage: params.selectedLifeStage || "",
       selectedGender: params.selectedGender || "",
       selectedHealthProblem: params.selectedHealthProblem || "",
-      selectedUserId: params.selectedUserId || "",
+      selectedUser: params.selectedUser || "",
       selectedColor: params.selectedColor || "",
       sortBy: params.sortBy || "age",
       sortOrder: params.sortOrder || "asc",

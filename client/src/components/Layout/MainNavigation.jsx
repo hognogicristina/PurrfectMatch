@@ -10,8 +10,8 @@ import {
 import { motion } from "framer-motion";
 import { NavLink, useLocation, useRouteLoaderData } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-
 import CatsNavigation from "./CatsNavigation.jsx";
+import { useUserDetails } from "../../util/useUserDetails.js";
 
 function MainNavigation() {
   const token = useRouteLoaderData("root");
@@ -19,6 +19,7 @@ function MainNavigation() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const isUserPage = location.pathname === "/user";
+  const { userDetails } = useUserDetails();
 
   const userMenuButtonStyle = {
     border: isUserPage ? "3px solid #AE3D72FF" : "3px solid #e37fb6",
@@ -105,7 +106,7 @@ function MainNavigation() {
             <h1 className="logo">purrfectMatch</h1>
           </motion.div>
         </NavLink>
-        {!token ? (
+        {!token || userDetails.role === "admin" ? (
           <NavLink to="/cats" className="linkButton catalog">
             <motion.p whileTap={{ scale: 0.9 }}>Find a Friend</motion.p>
           </NavLink>
@@ -153,71 +154,77 @@ function MainNavigation() {
       <div className="controlContainer">
         {token ? (
           <>
-            <NavLink
-              to="/adopts"
-              className={({ isActive }) =>
-                isActive ? "links active-link" : "links"
-              }
-            >
-              <motion.div whileTap={{ scale: 0.9 }}>
-                <FontAwesomeIcon icon={faEnvelope} />
-              </motion.div>
-            </NavLink>
-            <NavLink
-              to="/favorites"
-              className={({ isActive }) =>
-                isActive ? "links active-link" : "links"
-              }
-            >
-              <motion.div whileTap={{ scale: 0.9 }}>
-                <FontAwesomeIcon icon={faHeart} />
-              </motion.div>
-            </NavLink>
-            <div className="vertical-line"></div>
-            <NavLink
-              to="/inbox"
-              className={({ isActive }) =>
-                isActive ? "links active-link" : "links"
-              }
-            >
-              <motion.div whileTap={{ scale: 0.9 }}>
-                <FontAwesomeIcon icon={faInbox} />
-              </motion.div>
-            </NavLink>
-            <div>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={toggleUserMenu}
-                className="dropbtn userMenu"
-                style={userMenuButtonStyle}
-              >
-                <FontAwesomeIcon icon={faUser} />
-              </motion.button>
-              <AnimatePresence>
-                {isUserMenuOpen && (
-                  <motion.div
-                    className="dropdownContent userMenu"
-                    variants={userMenuVariants}
-                    initial="hidden"
-                    animate="visible"
-                    exit="hidden"
-                  >
-                    <NavLink
-                      to="/user"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      Profile
-                    </NavLink>
-                    <NavLink
-                      to="/logout"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
-                      Logout
-                    </NavLink>
+            {userDetails.role !== "admin" && (
+              <>
+                <NavLink
+                  to="/adopts"
+                  className={({ isActive }) =>
+                    isActive ? "links active-link" : "links"
+                  }
+                >
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <FontAwesomeIcon icon={faEnvelope} />
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                </NavLink>
+                <NavLink
+                  to="/favorites"
+                  className={({ isActive }) =>
+                    isActive ? "links active-link" : "links"
+                  }
+                >
+                  <motion.div whileTap={{ scale: 0.9 }}>
+                    <FontAwesomeIcon icon={faHeart} />
+                  </motion.div>
+                </NavLink>
+                <div className="vertical-line"></div>
+              </>
+            )}
+            <>
+              <NavLink
+                to="/inbox"
+                className={({ isActive }) =>
+                  isActive ? "links active-link" : "links"
+                }
+              >
+                <motion.div whileTap={{ scale: 0.9 }}>
+                  <FontAwesomeIcon icon={faInbox} />
+                </motion.div>
+              </NavLink>
+              <div>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={toggleUserMenu}
+                  className="dropbtn userMenu"
+                  style={userMenuButtonStyle}
+                >
+                  <FontAwesomeIcon icon={faUser} />
+                </motion.button>
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      className="dropdownContent userMenu"
+                      variants={userMenuVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="hidden"
+                    >
+                      <NavLink
+                        to="/user"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Profile
+                      </NavLink>
+                      <NavLink
+                        to="/logout"
+                        onClick={() => setIsUserMenuOpen(false)}
+                      >
+                        Logout
+                      </NavLink>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </>
           </>
         ) : (
           <>

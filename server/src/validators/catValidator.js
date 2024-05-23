@@ -20,9 +20,9 @@ const catExistValidator = async (req, res) => {
     }
 
     if (req.query.sortBy) {
-      const sortBy = ["breed", "age"];
+      const sortBy = ["breed", "age", "location"];
       if (!sortBy.includes(req.query.sortBy)) {
-        error.push({ field: "sortBy", error: "Invalid Sort By" });
+        error.push({ field: "sortBy", message: "Invalid Sort By" });
       }
     }
 
@@ -30,17 +30,17 @@ const catExistValidator = async (req, res) => {
       const breeds = await Breed.findAll();
       const breedNames = breeds.map((breed) => breed.name);
       if (!breedNames.includes(req.query.selectedBreed)) {
-        error.push({ field: "breed", error: "Please select a valid breed" });
+        error.push({ field: "breed", message: "Please select a valid breed" });
       }
     }
 
-    if (req.query.selectedAgeType) {
+    if (req.query.selectedLifeStage) {
       const ageTypes = await AgeType.findAll();
       const ageTypeNames = ageTypes.map((ageType) => ageType.type);
-      if (!ageTypeNames.includes(req.query.selectedAgeType)) {
+      if (!ageTypeNames.includes(req.query.selectedLifeStage)) {
         error.push({
           field: "ageType",
-          error: "Please select a valid age type",
+          message: "Please select a valid age type",
         });
       }
     }
@@ -52,7 +52,7 @@ const catExistValidator = async (req, res) => {
       ) {
         error.push({
           field: "gender",
-          error: "Gender must be either Male or Female",
+          message: "Gender must be either Male or Female",
         });
       }
     }

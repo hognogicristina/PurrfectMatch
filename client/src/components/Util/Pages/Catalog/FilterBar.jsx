@@ -6,6 +6,7 @@ import { getAuthToken } from "../../../../util/auth.js";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
 import { GrPowerReset } from "react-icons/gr";
 import CustomSelect from "../../Custom/Reuse/CustomSelect.jsx";
+import { useUserDetails } from "../../../../util/useUserDetails.js";
 
 function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();
@@ -14,6 +15,7 @@ function FilterBar({ searchParams, setSearchParams }) {
   const [colors, setColors] = useState([]);
   const [healthProblem, setHealthProblem] = useState([]);
   const token = getAuthToken();
+  const { userDetails } = useUserDetails();
   const [genders] = useState([
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -100,7 +102,7 @@ function FilterBar({ searchParams, setSearchParams }) {
   const handleClearAll = () => {
     searchParams.delete("search");
     searchParams.delete("selectedBreed");
-    searchParams.delete("selectedAgeType");
+    searchParams.delete("selectedLifeStage");
     searchParams.delete("selectedHealthProblem");
     searchParams.delete("selectedGender");
     searchParams.delete("selectedColor");
@@ -178,12 +180,12 @@ function FilterBar({ searchParams, setSearchParams }) {
       <CustomSelect
         value={
           ageTypes.find(
-            (option) => option.value === searchParams.get("selectedAgeType"),
+            (option) => option.value === searchParams.get("selectedLifeStage"),
           ) || null
         }
-        name="selectedAgeType"
+        name="selectedLifeStage"
         onChange={(selectedOption) =>
-          handleChange("selectedAgeType", selectedOption)
+          handleChange("selectedLifeStage", selectedOption)
         }
         options={ageTypes}
         placeholder="Any Age Types"
@@ -235,7 +237,7 @@ function FilterBar({ searchParams, setSearchParams }) {
         placeholder="Any Color"
         isClearable={true}
       />
-      {token && (
+      {token && userDetails.role === "user" && (
         <motion.div className="addCatButtonContainer" whileTap={{ scale: 0.9 }}>
           <NavLink className="addCatButton" to="/cats/add">
             Give a Cat a Home

@@ -5,13 +5,14 @@ const {
   AdoptionRequest,
   UserRole,
   CatUser,
-} = require("../../models");
-const emailServ = require("../services/emailService");
-const adoptionRequestValidator = require("../validators/adoptionRequestValidator");
-const userValidator = require("../validators/userValidator");
-const adoptionRequestHelper = require("../helpers/adoptionRequestHelper");
-const adoptionRequestDTO = require("../dto/adoptionRequestDTO");
-const logger = require("../../logger/logger");
+} = require("../../../models");
+const emailServ = require("../../services/emailService");
+const adoptionRequestValidator = require("../../validators/adoptionRequestValidator");
+const userValidator = require("../../validators/userValidator");
+const adoptionRequestHelper = require("../../helpers/adoptionRequestHelper");
+const adoptionRequestDTO = require("../../dto/adoptionRequestDTO");
+const userDTO = require("../../dto/userDTO");
+const logger = require("../../../logger/logger");
 
 const adoptCat = async (req, res) => {
   try {
@@ -136,6 +137,9 @@ const getAdoptionRequests = async (req, res) => {
     const { sentRequests, receivedRequests } =
       await adoptionRequestDTO.transformAdoptionRequestsToDTO(req.user);
 
+    const user = await User.findByPk(req.user.id);
+    const userDetails = await userDTO.userToDTO(user);
+
     const responseData = {
       sentRequests:
         sentRequests.length > 0 ? sentRequests : { message: "No Mail" },
@@ -143,7 +147,9 @@ const getAdoptionRequests = async (req, res) => {
         receivedRequests.length > 0 ? receivedRequests : { message: "No Mail" },
     };
 
-    return res.status(200).json({ data: responseData });
+    return res
+      .status(200)
+      .json({ data: responseData, userDetails: userDetails });
   } catch (error) {
     logger.error(error);
     return res

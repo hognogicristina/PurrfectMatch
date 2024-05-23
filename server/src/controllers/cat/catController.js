@@ -1,12 +1,12 @@
-const { Image, Cat, CatUser } = require("../../models");
-const catValidator = require("../validators/catValidator");
-const catUserValidator = require("../validators/catUserValidator");
-const userValidator = require("../validators/userValidator");
-const catHelper = require("../helpers/catHelper");
-const fileHelper = require("../helpers/fileHelper");
-const mailHelper = require("../helpers/adoptionRequestHelper");
-const catDTO = require("../dto/catDTO");
-const logger = require("../../logger/logger");
+const { Image, Cat, CatUser } = require("../../../models");
+const catValidator = require("../../validators/catValidator");
+const catUserValidator = require("../../validators/catUserValidator");
+const userValidator = require("../../validators/userValidator");
+const catHelper = require("../../helpers/catHelper");
+const fileHelper = require("../../helpers/fileHelper");
+const mailHelper = require("../../helpers/adoptionRequestHelper");
+const catDTO = require("../../dto/catDTO");
+const logger = require("../../../logger/logger");
 
 const getAllCats = async (req, res) => {
   try {
@@ -67,11 +67,14 @@ const addCat = async (req, res) => {
     catData = await catHelper.updateCatData(catData, req.body);
     const newCat = await Cat.create(catData);
     await CatUser.create({ catId: newCat.id, userId: req.user.id });
-    if (req.body.uris) {
+
+    if (req.body.uris && req.body.uris.length > 0) {
       for (let uri of catData.uris) {
-        const newImage = await fileHelper.moveImage(null, uri);
-        newImage.catId = newCat.id;
-        await newImage.save();
+        const newImage = await fileHelper.moveImage(uri);
+        if (newImage) {
+          newImage.catId = newCat.id;
+          await newImage.save();
+        }
       }
     }
 
@@ -97,8 +100,9 @@ const editCat = async (req, res) => {
     await cat.save();
 
     if (req.body.uris && req.body.uris.length > 0) {
-      for (const uri of cat.uris) {
-        const newImage = await fileHelper.moveImage(null, cat, uri);
+      const newUris = await fileHelper.eliminateImageCat(cat, cat.uris);
+      for (const uri of newUris) {
+        const newImage = await fileHelper.moveImage(uri);
         if (newImage) {
           newImage.catId = cat.id;
           await newImage.save();
@@ -135,7 +139,13 @@ const deleteCat = async (req, res) => {
 
     await mailHelper.deleteAdoptionRequestCat(cat, req.user, transaction);
     await CatUser.destroy({ where: { catId: cat.id }, transaction });
-    await fileHelper.deleteImage(image, "uploads", transaction);
+    const images = await Image.findAll({
+      where: { catId: cat.id },
+      transaction,
+    });
+    for (const img of images) {
+      await fileHelper.deleteImage(img, "uploads", transaction);
+    }
     await cat.destroy({ transaction });
     await transaction.commit();
     return res.status(200).json({ status: `${cat.name} has been deleted` });

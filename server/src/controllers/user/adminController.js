@@ -1,24 +1,41 @@
 const { Op } = require("sequelize");
-const { User, Cat } = require("../../models");
-const adminValidator = require("../validators/adminValidator");
-const adminHelper = require("../helpers/adminHelper");
-const catValidator = require("../validators/catValidator");
-const userDTO = require("../dto/userDTO");
-const logger = require("../../logger/logger");
+const { User, Cat } = require("../../../models");
+const adminValidator = require("../../validators/adminValidator");
+const adminHelper = require("../../helpers/adminHelper");
+const catValidator = require("../../validators/catValidator");
+const userDTO = require("../../dto/userDTO");
+const logger = require("../../../logger/logger");
 
 const getAllUsers = async (req, res) => {
   try {
+    const page = req.query.page || 1;
+    const pageSize = 9;
     if (await adminValidator.userExistValidator(req, res)) return;
     const users = await User.findAll({ where: { role: { [Op.ne]: "admin" } } });
+
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    const totalItems = users.length;
+
+    const usersForPage = users.slice(startIndex, endIndex);
+
     const usersDetails = [];
-    for (let user of users) {
+    for (let user of usersForPage) {
       const userDetails = await userDTO.userListToDTO(user);
       usersDetails.push(userDetails);
     }
-    return res.status(200).json({ data: usersDetails });
+    return res.status(200).json({
+      page: page,
+      pageSize: pageSize,
+      totalPages: Math.ceil(totalItems / pageSize),
+      totalItems: totalItems,
+      data: usersDetails,
+    });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -39,7 +56,9 @@ const deleteUser = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -60,7 +79,9 @@ const deleteCat = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 
@@ -72,7 +93,9 @@ const blockUser = async (req, res) => {
     return res.status(200).json({ status: "Profile blocked successfully" });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
   }
 };
 

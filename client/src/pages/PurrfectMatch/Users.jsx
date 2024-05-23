@@ -2,10 +2,10 @@ import { Suspense } from "react";
 import { Await, defer, useLoaderData, useSearchParams } from "react-router-dom";
 import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 import { getAuthToken } from "../../util/auth.js";
-import OwnedArchiveCatalog from "../../components/PurrfectMatch/OwnedArchiveCatalog.jsx";
+import UsersArchive from "../../components/PurrfectMatch/UsersArchive.jsx";
 
-function OwnedArchivePage() {
-  const { cats } = useLoaderData();
+function ArchiveOfUsersPage() {
+  const { users } = useLoaderData();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
@@ -15,11 +15,11 @@ function OwnedArchivePage() {
 
   return (
     <Suspense fallback={<LoadingSpinner />}>
-      <Await resolve={cats}>
-        {(loadedCats) => (
+      <Await resolve={users}>
+        {(loadedUsers) => (
           <div>
-            <OwnedArchiveCatalog
-              cats={loadedCats}
+            <UsersArchive
+              initialUsers={loadedUsers}
               currentPage={currentPage}
               onPageChange={handlePageChange}
             />
@@ -30,12 +30,12 @@ function OwnedArchivePage() {
   );
 }
 
-export default OwnedArchivePage;
+export default ArchiveOfUsersPage;
 
-export async function loadCats({ page = 1, pageSize = 12 } = {}) {
+export async function loadUsers({ page = 1, pageSize = 9 } = {}) {
   const token = getAuthToken();
   const response = await fetch(
-    `http://localhost:3000/user/matches-archive?page=${page}&pageSize=${pageSize}`,
+    `http://localhost:3000/users?page=${page}&pageSize=${pageSize}`,
     {
       method: "GET",
       headers: {
@@ -52,8 +52,9 @@ export function loader({ request }) {
   const params = Object.fromEntries(url.searchParams);
 
   return defer({
-    cats: loadCats(),
-    page: parseInt(params.page || "1"),
-    pageSize: parseInt(params.pageSize || "12"),
+    users: loadUsers({
+      page: parseInt(params.page || "1"),
+      pageSize: parseInt(params.pageSize || "9"),
+    }),
   });
 }

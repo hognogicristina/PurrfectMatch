@@ -1,14 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import CustomSelect from "../../Custom/Reuse/CustomSelect.jsx";
+import { getAuthToken } from "../../../../util/auth.js";
 
 function SortDropdown() {
   let [searchParams, setSearchParams] = useSearchParams();
+  const token = getAuthToken();
 
-  const options = [
-    { value: "breed", label: "Breed" },
-    { value: "age", label: "Age" },
-  ];
+  const options = useMemo(() => {
+    const baseOptions = [
+      { value: "breed", label: "Breed" },
+      { value: "age", label: "Age" },
+    ];
+
+    if (token) {
+      baseOptions.push({ value: "location", label: "Location" });
+    }
+
+    return baseOptions;
+  }, []);
 
   let currentSortBy = searchParams.get("sortBy");
 

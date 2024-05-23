@@ -24,6 +24,7 @@ export default function LoginForm() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setIsLoading(false);
@@ -36,9 +37,15 @@ export default function LoginForm() {
         setStatusMessage(data.error[0].message);
         setIsDialogOpen(true);
       } else {
+        const newErrors = {};
         data.error.forEach((error) => {
-          notifyError(error.message);
+          if (error.field === "server") {
+            notifyError(error.message);
+          }
+
+          newErrors[error.field] = error.message;
         });
+        setErrors(newErrors);
       }
     }
   }, [data]);
@@ -63,13 +70,16 @@ export default function LoginForm() {
           damping: 15,
         }}
       >
-        <Form method="post">
+        <Form method="post" className="formContainer">
           <h2>Log In</h2>
           <input
             name="usernameOrEmail"
             type="text"
             placeholder="Enter your username or email"
           />
+          {errors.usernameOrEmail && (
+            <p className="errorText">{errors.usernameOrEmail}</p>
+          )}
           <label className="passwordInput">
             <input
               name="password"
@@ -77,11 +87,12 @@ export default function LoginForm() {
               placeholder="Enter your password"
             />
             <span
-              className="togglePassword"
+              className={`togglePassword ${errors.currentPassword ? "show" : ""}`}
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
+            {errors.password && <p className="errorText">{errors.password}</p>}
           </label>
           <motion.button
             whileTap={{ scale: 0.9 }}

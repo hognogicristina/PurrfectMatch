@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Await, defer, useLoaderData, useSearchParams } from "react-router-dom";
 import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
-import FelinesRecordsForm from "../../components/PurrfectMatch/FelinesRecordsForm.jsx";
+import FelinesRecordsCatalog from "../../components/PurrfectMatch/FelinesRecordsCatalog.jsx";
 import { getAuthToken } from "../../util/auth.js";
 
 function FelinesRecordsPage() {
@@ -18,7 +18,7 @@ function FelinesRecordsPage() {
       <Await resolve={cats}>
         {(loadedCats) => (
           <div>
-            <FelinesRecordsForm
+            <FelinesRecordsCatalog
               cats={loadedCats}
               currentPage={currentPage}
               onPageChange={handlePageChange}

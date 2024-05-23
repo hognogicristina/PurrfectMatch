@@ -1,0 +1,141 @@
+.profileContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.profileForUser, .listsContainer {
+  flex: 1;
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileContentForUser {
+  width: 100%;
+  text-align: center;
+}
+
+.userSlideDetailsLeft {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.contanctInfoUser {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+}
+
+.userImageProfile {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.faUserCircle {
+  font-size: 100px;
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.titleFontUser {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.textFontUser, .userPersonalInfo {
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+.userPersonalInfo strong {
+  color: #555;
+}
+
+.subtitleFontUser {
+  font-size: 20px;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: left;
+  width: 100%;
+}
+
+.hobbiesContainerStyle {
+  margin-top: 10px;
+}
+
+.hobbyTagUser {
+  display: inline-block;
+  background: #FF69B4B5;
+  border: 1px solid #FF6DB7C2;
+  text-shadow: 0 1px 1px var(--dark-shade);
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin: 5px;
+  font-size: 14px;
+}
+
+.experienceCirclesUser .circle {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  border-radius: 50%;
+  background-color: rgba(191, 191, 191, 0.56);
+}
+
+.experienceCirclesUser .circle.green {
+  margin-top: 10px;
+  background-color: green;
+}
+
+.catList {
+  width: 100%;
+}
+
+.catList h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.catGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.catItemList {
+  width: 100%;
+  height: 120px;
+  display: flex;
+  border-radius: 8px;
+  background-size: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.catItemList:hover {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}

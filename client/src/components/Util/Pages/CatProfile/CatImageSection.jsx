@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 export default function CatImageSection({
@@ -7,13 +8,22 @@ export default function CatImageSection({
   carouselImages,
   setCarouselImages,
 }) {
+  const [transformStyle, setTransformStyle] = useState("scale(1.1)");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTransformStyle("scale(1.1)");
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [mainImage]);
+
   const mainImageStyle = {
     backgroundImage: `url(${mainImage})`,
     backgroundPosition: "center",
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     filter: "blur(20px)",
-    transform: "scale(1.1)",
+    transform: transformStyle,
   };
 
   const handleImageClick = (selectedImage) => {
@@ -22,6 +32,7 @@ export default function CatImageSection({
       ...carouselImages.filter((img) => img !== selectedImage),
     ]);
     setMainImage(selectedImage);
+    setTransformStyle("scale(1)");
   };
 
   return (
@@ -35,7 +46,7 @@ export default function CatImageSection({
       <div className="catItemImages" style={mainImageStyle}></div>
       <motion.img
         src={mainImage}
-        alt={catDetail.id}
+        alt={`Main view of ${catDetail.name}`}
         className="mainImage"
         whileInView={{ y: [-30, 0], opacity: [0, 1] }}
         viewport={{ once: true }}

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
-import { getAuthToken } from "../../util/auth.js";
 import CatImageSection from "../Util/Pages/CatProfile/CatImageSection.jsx";
 import CatDetailsSection from "../Util/Pages/CatProfile/CatDetailsSection.jsx";
 import MoreCatsSection from "../Util/Pages/CatProfile/MoreCatsSection.jsx";
+import { useUserDetails } from "../../util/useUserDetails.js";
 
 export default function CatItem({ catDetail }) {
   const { notifyError } = useToast();
+  const { userDetails } = useUserDetails();
   const [catsBreed, setCatsBreed] = useState([]);
   const [catsGuardian, setCatsGuardian] = useState([]);
   const [catsOwner, setCatsOwner] = useState([]);
@@ -15,48 +16,15 @@ export default function CatItem({ catDetail }) {
   const [carouselImages, setCarouselImages] = useState(
     catDetail.images.slice(1),
   );
-  const [userDetails, setUserDetails] = useState({ username: "", image: "" });
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [userEditCat, setUserEditCat] = useState("");
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   useEffect(() => {
-    async function fetchUserDetails() {
-      const token = getAuthToken();
-      if (!token) {
-        return;
-      }
-
-      const response = await fetch("http://localhost:3000/user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-
-      if (response.ok) {
-        setUserDetails({
-          username: data.data.username,
-          image: data.data.image,
-        });
-      } else {
-        data.error.forEach((error) => {
-          notifyError(error.message);
-        });
-      }
-    }
-
     if (!catDetail.owner) {
       setUserEditCat(catDetail.user);
     } else {
       setUserEditCat(catDetail.ownerUsername);
     }
-
-    fetchUserDetails();
-  }, [notifyError]);
-
-  useEffect(() => {
-    setMainImage(catDetail.images[0]);
-    setCarouselImages(catDetail.images.slice(1));
 
     async function fetchCatsByBreed() {
       const response = await fetch(
@@ -66,7 +34,11 @@ export default function CatItem({ catDetail }) {
       if (response.ok) {
         setCatsBreed(data.data);
       } else {
-        notifyError(data.message);
+        data.error.forEach((error) => {
+          if (error.field === "server") {
+            notifyError(error.message);
+          }
+        });
       }
     }
 
@@ -79,7 +51,11 @@ export default function CatItem({ catDetail }) {
         setCatsGuardian(data.data.catsUserList);
         setCatsOwner(data.data.catsOwnerList);
       } else {
-        notifyError(data.message);
+        data.error.forEach((error) => {
+          if (error.field === "server") {
+            notifyError(error.message);
+          }
+        });
       }
     }
 
@@ -113,7 +89,7 @@ export default function CatItem({ catDetail }) {
         handleCloseEditDialog={handleCloseEditDialog}
       />
 
-      {catsGuardian.length > 0 && (
+      {catsGuardian.length > 1 && (
         <MoreCatsSection
           title={`More Cats from ${catDetail.guardian}`}
           cats={catsGuardian}
@@ -121,15 +97,15 @@ export default function CatItem({ catDetail }) {
           catDetail={catDetail}
         />
       )}
-      {catsOwner.length > 0 && (
+      {catsOwner.length > 1 && (
         <MoreCatsSection
           title={`More Cats from ${catDetail.owner}`}
           cats={catsOwner}
-          type="guardian"
+          type="owner"
           catDetail={catDetail}
         />
       )}
-      {catsBreed.length > 0 && (
+      {catsBreed.length > 1 && (
         <MoreCatsSection
           title="Other Cats You May Like"
           cats={catsBreed}

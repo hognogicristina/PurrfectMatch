@@ -2,13 +2,13 @@ import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/CatsArchive.css";
 import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
-import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
-import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
-import EditCatForm from "../Cat/EditCatForm.jsx";
 import { useNavigate } from "react-router-dom";
+import { FaEdit } from "react-icons/fa";
+import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
+import { useEffect, useState } from "react";
+import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 
-export default function FelinesRecordsForm({
+export default function OwnedArchiveCatalog({
   cats,
   currentPage,
   onPageChange,
@@ -56,17 +56,15 @@ export default function FelinesRecordsForm({
           style={{ backgroundImage: `url(${cat.image})` }}
           onClick={() => handleCatClick(cat.id)}
         >
-          {cat.status === "active" && (
-            <div
-              className="editIconContainer"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditClick(cat);
-              }}
-            >
-              <FaEdit className="editIcon" />
-            </div>
-          )}
+          <div
+            className="editIconContainer"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleEditClick(cat);
+            }}
+          >
+            <FaEdit className="editIcon" />
+          </div>
           <div className="catDetails">
             <h2>{cat.name}</h2>
             <p>{cat.breed}</p>
@@ -107,15 +105,15 @@ export default function FelinesRecordsForm({
         }}
       >
         <div className="catsCountContainer">
-          <h1>Rehomed Felines Records</h1>
+          <h1>Purrfect Matches Archive</h1>
           {error ? (
-            <span>Currently you have no cats sent to adoption</span>
+            <span>Currently you have no cats adopted</span>
           ) : (
             cats &&
             totalItems !== 0 && (
               <span>
-                Currently you have {totalItems} cat{totalItems > 1 && "s"} sent
-                to adoption
+                Currently you have {totalItems} cat{totalItems > 1 && "s"}{" "}
+                adopted
               </span>
             )
           )}
@@ -128,7 +126,7 @@ export default function FelinesRecordsForm({
         <ul className="catsList list">{renderCats()}</ul>
       </motion.div>
       {isEditDialogOpen && (
-        <EditCatForm catDetail={currentCat} onClose={handleCloseEditDialog} />
+        <ModifyCatForm catDetail={currentCat} onClose={handleCloseEditDialog} />
       )}
     </div>
   );

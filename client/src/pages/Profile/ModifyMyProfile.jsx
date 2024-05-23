@@ -1,10 +1,10 @@
 import { getAuthToken } from "../../util/auth.js";
-import MyProfileForm from "../../components/Profile/MyProfileForm.jsx";
+import ModifyMyProfileForm from "../../components/Profile/ModifyMyProfileForm.jsx";
 import { useRouteLoaderData } from "react-router-dom";
 
 function ModifyMyProfilePage() {
   const data = useRouteLoaderData("user-details");
-  return <MyProfileForm userDetail={data.userDetail} />;
+  return <ModifyMyProfileForm userDetail={data.userDetail} />;
 }
 
 export default ModifyMyProfilePage;
@@ -13,8 +13,6 @@ export async function action({ request }) {
   const token = getAuthToken();
   const data = await request.formData();
   const uriArray = data.get("uri").split(",");
-
-  console.log(typeof data.get("birthday"));
 
   return await fetch("http://localhost:3000/user/edit", {
     method: "PATCH",

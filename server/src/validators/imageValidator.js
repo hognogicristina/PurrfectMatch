@@ -38,6 +38,14 @@ const imagesValidator = async (req, res) => {
     return res
       .status(400)
       .json({ error: [{ field: "file", message: "Images are required" }] });
+  } else {
+    if (req.files.length > 5) {
+      return res.status(400).json({
+        error: [
+          { field: "file", message: "You can only upload up to 5 images" },
+        ],
+      });
+    }
   }
 
   return null;

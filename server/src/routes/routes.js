@@ -1,14 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const adminController = require("../controllers/adminController");
-const authController = require("../controllers/authController");
-const imageController = require("../controllers/imageController");
-const userController = require("../controllers/userController");
-const filterController = require("../controllers/filterController");
-const catController = require("../controllers/catController");
-const adoptionRequestController = require("../controllers/adoptionRequestController");
-const favoriteController = require("../controllers/favoriteController");
+const adminController = require("../controllers/user/adminController");
+const authController = require("../controllers/user/authController");
+const imageController = require("../controllers/image/imageController");
+const userController = require("../controllers/user/userController");
+const profileUserController = require("../controllers/user/profileUserController");
+const filterController = require("../controllers/cat/filterController");
+const catController = require("../controllers/cat/catController");
+const adoptionRequestController = require("../controllers/cat/adoptionRequestController");
+const favoriteController = require("../controllers/cat/favoriteController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -25,7 +26,7 @@ router.delete(
   adminController.deleteUser,
 );
 router.delete(
-  "/cats/:id/delete",
+  "/cat/:id/delete",
   authMiddleware.authenticateToken,
   adminController.deleteCat,
 );
@@ -57,8 +58,7 @@ router.post(
   imageController.uploadImages,
 );
 
-// Profile routes
-router.get("/user-profile/:id", userController.getOneUser);
+// My Profile routes
 router.get("/user", authMiddleware.authenticateToken, userController.getUser);
 router.get(
   "/user/matches-archive",
@@ -96,6 +96,17 @@ router.delete(
   userController.deleteUser,
 );
 
+// User Profile routes
+router.get("/user-profile/:username", profileUserController.getOneUser);
+router.get(
+  "/user-profile/:username/matches-archive",
+  profileUserController.getUserOwnedCats,
+);
+router.get(
+  "/user-profile/:username/felines-records",
+  profileUserController.getUserSentToAdoptionCats,
+);
+
 // Filter routes
 router.get("/breeds", filterController.getAllBreeds);
 router.get("/age-types", filterController.getAgeType);
@@ -105,8 +116,15 @@ router.get("/cats-by-breed/:catId", filterController.getCatsByBreed);
 router.get("/cats-by-user/:catId", filterController.getCatsOfUser);
 router.get("/colors", filterController.getColors);
 
+const applyMiddlewareIfSortByLocation = (req, res, next) => {
+  if (req.query.sortBy === "location") {
+    return authMiddleware.authenticateToken(req, res, next);
+  }
+  next();
+};
+
 // Cat routes
-router.get("/cats", catController.getAllCats);
+router.get("/cats", applyMiddlewareIfSortByLocation, catController.getAllCats);
 router.get("/cats/cat/:id", catController.getOneCat);
 router.post(
   "/cats/add",

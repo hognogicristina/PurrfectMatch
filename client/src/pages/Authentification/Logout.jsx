@@ -1,55 +1,26 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
-import { getAuthToken } from "../../util/auth.js";
 import "../../styles/Auth/Logout.css";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "../../components/Util/Custom/PageResponse/ToastProvider.jsx";
 import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
+import { useToast } from "../../components/Util/Custom/PageResponse/ToastProvider.jsx";
+import { useEffect } from "react";
+import { useUserDetails } from "../../util/useUserDetails.js";
+import { getAuthToken } from "../../util/auth.js";
 
 function LogoutPage() {
   const data = useActionData();
   const { notifyError } = useToast();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
-  const [userDetails, setUserDetails] = useState({ username: "", image: "" });
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    async function fetchUserDetails() {
-      const token = getAuthToken();
-      try {
-        const response = await fetch("http://localhost:3000/user", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-
-        if (response.ok) {
-          setUserDetails({
-            username: data.data.username,
-            image: data.data.image,
-          });
-        }
-      } catch (error) {
-        notifyError(error.message);
-      }
-    }
-
-    fetchUserDetails();
-  }, [notifyError]);
+  const { userDetails, isLoading } = useUserDetails();
 
   useEffect(() => {
     if (data && data.error) {
       notifyError(data.error[0].message);
     }
-  }, []);
+  }, [data, notifyError]);
 
   const renderUserImage = () => {
     if (userDetails.image) {

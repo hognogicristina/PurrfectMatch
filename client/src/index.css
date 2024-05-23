@@ -225,10 +225,17 @@ textarea {
   align-content: center;
   color: #ff008d;
   transition: color 0.3s ease;
+  cursor: pointer;
 }
 
 .linkButton:hover {
   text-decoration: underline;
+}
+
+.linkButton.cancel {
+  height: 100%;
+  position: relative;
+  bottom: 110px;
 }
 
 .titleFontRed {

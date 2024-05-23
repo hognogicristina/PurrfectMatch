@@ -6,7 +6,7 @@ import MailSection from "../Util/Pages/Inbox/MailSection.jsx";
 import MailDetailsSection from "../Util/Pages/Inbox/MailDetailsSection.jsx";
 
 function AdoptionRequestsInbox({ mails }) {
-  const { data, error } = mails;
+  const { data, error, userDetails } = mails;
   const [selectedMailId, setSelectedMailId] = useState(null);
   const [mailDetails, setMailDetails] = useState({});
   const { notifyError } = useToast();
@@ -86,19 +86,21 @@ function AdoptionRequestsInbox({ mails }) {
                 setMailDetails={setMailDetails}
                 removeMailFromList={removeMailFromList}
               />
-              <MailSection
-                title="Sent Mails"
-                mails={data.sentRequests}
-                selectedMailId={selectedMailId}
-                openMail={openMail}
-                itemsToShow={sentItemsToShow}
-                setItemsToShow={setSentItemsToShow}
-                isExpanded={isSentExpanded}
-                setIsExpanded={setIsSentExpanded}
-                setMailDetails={setMailDetails}
-                removeMailFromList={removeMailFromList}
-                isSent="true"
-              />
+              {userDetails.role === "user" && (
+                <MailSection
+                  title="Sent Mails"
+                  mails={data.sentRequests}
+                  selectedMailId={selectedMailId}
+                  openMail={openMail}
+                  itemsToShow={sentItemsToShow}
+                  setItemsToShow={setSentItemsToShow}
+                  isExpanded={isSentExpanded}
+                  setIsExpanded={setIsSentExpanded}
+                  setMailDetails={setMailDetails}
+                  removeMailFromList={removeMailFromList}
+                  isSent="true"
+                />
+              )}
             </>
           )}
           {error && error.field === "server" && notifyError(error.message)}

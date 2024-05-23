@@ -1,6 +1,6 @@
 .userDetailContainer {
-  padding: 20px;
-  margin-top: 40px;
+  padding: 0 20px 0 20px;
+  margin-top: 50px;
   width: fit-content;
   display: flex;
   flex-direction: row;
@@ -12,6 +12,7 @@
   flex-direction: row;
   padding: 20px;
   align-items: flex-start;
+  height: 100vh;
 }
 
 .linksNavibar,
@@ -93,6 +94,10 @@
   border-radius: var(--border-radius);
   align-items: flex-start;
   flex: 1;
+}
+
+.userSlideBarLeft label {
+  width: 100%;
 }
 
 .imageUploadContainer {
@@ -274,6 +279,13 @@
 
 .addressForm {
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.addressForm label {
+  margin-top: 10px;
 }
 
 .deleteAccountContainer {
@@ -335,4 +347,50 @@
   flex-direction: row;
   gap: 10px;
   align-items: center;
+}
+
+.react-datetime {
+  position: relative;
+}
+
+.reactDatetimePicker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reactDatetimePicker .rdtPicker {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.reactDatetimePicker .rdtPicker table {
+  width: 100%;
+  border-spacing: 0;
+}
+
+.reactDatetimePicker .rdtPicker th,
+.reactDatetimePicker .rdtPicker td {
+  text-align: center;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.reactDatetimePicker .rdtPicker th {
+  color: var(--button-submit);
+  font-weight: 400;
+}
+
+.reactDatetimePicker .rdtPicker td {
+  border-radius: 8px;
+  margin-right: 10px;
+}
+
+.reactDatetimePicker .rdtPicker td:hover,
+.reactDatetimePicker .rdtPicker td.rdtActive {
+  background: var(--button-submit-hover);
+  color: #fff;
 }

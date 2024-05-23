@@ -44,24 +44,48 @@ const getFile = async (absolutePath, filename) => {
   };
 };
 
-const moveImage = async (user, cat, uri) => {
-  if (!uri) return null;
+const eliminateImageUser = async (user, uri) => {
   if (!uri.includes("temporary-uploads")) return null;
-  let oldImage;
 
   if (user) {
-    oldImage = await Image.findOne({ where: { userId: user.id } });
-  } else if (cat) {
-    oldImage = await Image.findOne({ where: { catId: cat.id } });
+    const oldImage = await Image.findOne({ where: { userId: user.id } });
+
+    if (oldImage) {
+      const oldImagePath = path.join("public", "uploads", oldImage.filename);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+      await deleteImage(oldImage, "uploads", null);
+    }
   }
 
-  if (oldImage) {
-    const oldImagePath = path.join("public", "uploads", oldImage.filename);
-    if (fs.existsSync(oldImagePath)) {
-      fs.unlinkSync(oldImagePath);
+  return null;
+};
+
+const eliminateImageCat = async (cat, newUris) => {
+  const oldImages = await Image.findAll({ where: { catId: cat.id } });
+  const oldUris = oldImages.map((img) => img.uri);
+
+  const urisToDelete = oldUris.filter((uri) => !newUris.includes(uri));
+  const urisToAdd = newUris.filter((uri) => !oldUris.includes(uri));
+
+  for (const uri of urisToDelete) {
+    const oldImage = oldImages.find((img) => img.uri === uri);
+    if (oldImage) {
+      const oldImagePath = path.join("public", "uploads", oldImage.filename);
+      if (fs.existsSync(oldImagePath)) {
+        fs.unlinkSync(oldImagePath);
+      }
+      await oldImage.destroy();
     }
-    await deleteImage(oldImage, "uploads", null);
   }
+
+  return urisToAdd;
+};
+
+const moveImage = async (uri) => {
+  if (!uri) return null;
+  if (!uri.includes("temporary-uploads")) return null;
 
   let image = await Image.findOne({ where: { uri: uri } });
   if (!image) return null;
@@ -70,6 +94,7 @@ const moveImage = async (user, cat, uri) => {
   const file = await getFile(imagePath, image.filename);
   const newImage = await uploadImage(file, "uploads");
   await deleteImage(image, "temporary-uploads", null);
+
   return newImage;
 };
 
@@ -84,6 +109,8 @@ module.exports = {
   saveImageFile,
   uploadImage,
   getFile,
+  eliminateImageUser,
+  eliminateImageCat,
   moveImage,
   deleteImage,
 };

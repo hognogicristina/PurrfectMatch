@@ -29,16 +29,21 @@
 
 .userImageLogout {
   object-fit: cover;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   border: var(--border-style);
 }
 
+.userImageLogout.catAdopt {
+  width: 30px;
+  height: 30px;
+}
+
 .userIcon {
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
+  width: 60px;
+  height: 60px;
   color: rgba(147, 146, 146, 0.84);
 }
 

@@ -3,21 +3,23 @@ const { User, Image } = require("../../models");
 const bcrypt = require("bcrypt");
 
 const userExistValidator = async (req, res) => {
-  if (req.params.id) {
-    const userParam = await User.findByPk(req.params.id);
+  if (req.params.username) {
+    const userParam = await User.findOne({
+      where: { username: req.params.username },
+    });
     if (!userParam) {
       return res
         .status(404)
-        .json({ error: [{ field: "id", message: "Profile not found" }] });
+        .json({ error: [{ field: "username", message: "Profile not found" }] });
     }
-  } else {
-    if (req.user.id) {
-      const user = await User.findByPk(req.user.id);
-      if (!user) {
-        return res
-          .status(404)
-          .json({ error: [{ field: "id", message: "Profile not found" }] });
-      }
+  }
+
+  if (req.user) {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ error: [{ field: "id", message: "Profile not found" }] });
     }
   }
 

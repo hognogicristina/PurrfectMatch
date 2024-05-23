@@ -1,28 +1,14 @@
 const bcrypt = require("bcrypt");
-const { Address, User, PasswordHistory } = require("../../models");
-const userValidator = require("../validators/userValidator");
-const passwordValidator = require("../validators/passwordValidator");
-const catUserValidator = require("../validators/catUserValidator");
-const fileHelper = require("../helpers/fileHelper");
-const catUserHelper = require("../helpers/catUserHelper");
-const userHelper = require("../helpers/userHelper");
-const userDTO = require("../dto/userDTO");
-const catUserDTO = require("../dto/catUserDTO");
-const logger = require("../../logger/logger");
-
-const getOneUser = async (req, res) => {
-  try {
-    if (await userValidator.userExistValidator(req, res)) return;
-    const user = await User.findByPk(req.params.id);
-    const userDetails = await userDTO.userToDTO(user);
-    return res.json({ data: userDetails });
-  } catch (error) {
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
-  }
-};
+const { Address, User, PasswordHistory } = require("../../../models");
+const userValidator = require("../../validators/userValidator");
+const passwordValidator = require("../../validators/passwordValidator");
+const catUserValidator = require("../../validators/catUserValidator");
+const fileHelper = require("../../helpers/fileHelper");
+const catUserHelper = require("../../helpers/catUserHelper");
+const userHelper = require("../../helpers/userHelper");
+const userDTO = require("../../dto/userDTO");
+const catUserDTO = require("../../dto/catUserDTO");
+const logger = require("../../../logger/logger");
 
 const getUser = async (req, res) => {
   try {
@@ -42,7 +28,8 @@ const getOwnedCats = async (req, res) => {
     const page = req.query.page || 1;
     const pageSize = 12;
     if (await catUserValidator.getCatsValidator(req, res, "owned")) return;
-    const cats = await catUserHelper.getCats(req, "owned");
+    const user = await User.findByPk(req.user.id);
+    const cats = await catUserHelper.getCats(user, "owned");
 
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
@@ -76,7 +63,8 @@ const getSentToAdoptionCats = async (req, res) => {
     const pageSize = 12;
     if (await catUserValidator.getCatsValidator(req, res, "sentToAdoption"))
       return;
-    const cats = await catUserHelper.getCats(req, "sentToAdoption");
+    const user = await User.findByPk(req.user.id);
+    const cats = await catUserHelper.getCats(user, "sentToAdoption");
 
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
@@ -123,7 +111,8 @@ const editUser = async (req, res) => {
     await user.save();
     if (req.body.uri && req.body.uri.length > 0) {
       for (let uri of req.body.uri) {
-        const newImage = await fileHelper.moveImage(user, null, uri);
+        await fileHelper.eliminateImageUser(user, uri);
+        const newImage = await fileHelper.moveImage(uri);
         if (newImage) {
           newImage.userId = user.id;
           await newImage.save();
@@ -132,7 +121,6 @@ const editUser = async (req, res) => {
     }
     return res.json({ status: "Your changes has been saved" });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -242,7 +230,6 @@ const deleteUser = async (req, res) => {
 };
 
 module.exports = {
-  getOneUser,
   getUser,
   getOwnedCats,
   getSentToAdoptionCats,

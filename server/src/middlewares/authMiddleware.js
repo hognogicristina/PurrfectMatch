@@ -132,4 +132,8 @@ const validateRefreshToken = async (req, res, next) => {
   }
 };
 
-module.exports = { authenticateToken, authenticateLogin, validateRefreshToken };
+module.exports = {
+  authenticateToken,
+  authenticateLogin,
+  validateRefreshToken,
+};

@@ -20,6 +20,7 @@ export default function ForgotPasswordForm() {
   const { notifyError } = useToast();
   const [submitted, setSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     setIsLoading(false);
@@ -28,9 +29,15 @@ export default function ForgotPasswordForm() {
   useEffect(() => {
     if (data) {
       if (data.error) {
+        const newErrors = {};
         data.error.forEach((error) => {
-          notifyError(error.message);
+          if (error.field === "server") {
+            notifyError(error.message);
+          }
+
+          newErrors[error.field] = error.message;
         });
+        setErrors(newErrors);
       } else if (data.status) {
         setSubmitted(true);
       }
@@ -60,12 +67,8 @@ export default function ForgotPasswordForm() {
               Please provide your email address to reset your password.
             </p>
             <label>
-              <input
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                required
-              />
+              <input name="email" type="email" placeholder="Enter your email" />
+              {errors.email && <p className="errorText">{errors.email}</p>}
             </label>
             <div className="buttonContainer">
               <motion.button

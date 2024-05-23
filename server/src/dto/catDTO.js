@@ -11,7 +11,11 @@ async function catToDTO(cat) {
   const catUser = await CatUser.findOne({ where: { catId: cat.id } });
   const guardian = await User.findOne({ where: { id: catUser.userId } });
   const owner = await User.findOne({ where: { id: catUser.ownerId } });
-  const address = await Address.findOne({ where: { userId: guardian.id } });
+  let imageUser, address;
+  if (guardian) {
+    imageUser = await Image.findAll({ where: { userId: guardian.id } });
+    address = await Address.findOne({ where: { userId: guardian.id } });
+  }
   const ageInYears = cat.age ? calculateAgeInYears(cat.age) : null;
 
   return {
@@ -26,11 +30,11 @@ async function catToDTO(cat) {
     color: cat.color ? cat.color : null,
     healthProblem: cat.healthProblem ? cat.healthProblem : null,
     description: cat.description ? cat.description : null,
-    userId: guardian ? guardian.id : null,
     user: guardian ? guardian.username : null,
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
     ownerUsername: owner ? owner.username : null,
+    imageUser: imageUser ? imageUser[0].url : null,
     address: address ? `${address.city}, ${address.country}` : null,
   };
 }
@@ -67,4 +71,9 @@ async function catsRecentListToDTO(cat) {
   };
 }
 
-module.exports = { catToDTO, catsListToDTO, catsRecentListToDTO };
+module.exports = {
+  calculateAgeInYears,
+  catToDTO,
+  catsListToDTO,
+  catsRecentListToDTO,
+};

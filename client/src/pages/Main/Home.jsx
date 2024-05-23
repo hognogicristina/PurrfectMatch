@@ -55,7 +55,7 @@ async function loadAllBreeds() {
   return data.data;
 }
 
-export async function loader({ request }) {
+export async function loader() {
   return defer({
     cats: loadRecentCats(),
     breeds: loadAllBreeds(),

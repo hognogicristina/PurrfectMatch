@@ -10,9 +10,9 @@ import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import UploadImages from "../Util/Features/UploadImages.jsx";
 import "../../styles/PurrfectMatch/CatAddForm.css";
-import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
+import CatSelectFields from "../Util/Pages/CatProfile/CatSelectFields.jsx";
 
 export default function AddCatForm() {
   const data = useActionData();
@@ -20,18 +20,12 @@ export default function AddCatForm() {
   const navigate = useNavigate();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError, notifySuccess } = useToast();
-  const [breeds, setBreeds] = useState([]);
-  const [colors, setColors] = useState([]);
   const [errors, setErrors] = useState({});
   const [imageUris, setImageUris] = useState([]);
   const [selectedBreed, setSelectedBreed] = useState(null);
   const [selectedGender, setSelectedGender] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [genders] = useState([
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ]);
 
   useEffect(() => {
     setIsLoading(false);
@@ -51,43 +45,10 @@ export default function AddCatForm() {
       }
       if (data.status) {
         notifySuccess(data.status);
-        navigate("/cats");
+        navigate("/user/felines-records");
       }
     }
   }, [data]);
-
-  useEffect(() => {
-    async function fetchBreeds() {
-      const response = await fetch("http://localhost:3000/breeds");
-      const data = await response.json();
-      if (response.ok) {
-        setBreeds(
-          data.data.map((breed) => ({ value: breed.name, label: breed.name })),
-        );
-      } else {
-        data.error.forEach((error) => {
-          notifyError(error.message);
-        });
-        return null;
-      }
-    }
-
-    async function fetchColors() {
-      const response = await fetch("http://localhost:3000/colors");
-      const data = await response.json();
-      if (response.ok) {
-        setColors(data.data.map((color) => ({ value: color, label: color })));
-      } else {
-        data.error.forEach((error) => {
-          notifyError(error.message);
-        });
-        return null;
-      }
-    }
-
-    fetchColors();
-    fetchBreeds();
-  }, []);
 
   const handleImageUpload = (uris) => {
     setImageUris(uris);
@@ -140,51 +101,15 @@ export default function AddCatForm() {
           />
           <input type="hidden" name="uris" value={imageUris.join(",")} />
           <div className="orderAddContainer">
-            <label>
-              Breed
-              <label className="selectAddCat">
-                <CustomSelect
-                  name="breed"
-                  options={breeds}
-                  placeholder="Select a breed"
-                  className="selectControl"
-                  isClearable={true}
-                  onChange={handleBreedChange}
-                />
-                {errors.breed && <ErrorMessage message={errors.breed} />}
-              </label>
-              <input type="hidden" name="breed" value={selectedBreed || ""} />
-            </label>
-            <label>
-              Gender
-              <label className="selectAddCat">
-                <CustomSelect
-                  name="gender"
-                  options={genders}
-                  placeholder="Select a Gender"
-                  className="selectControl"
-                  isClearable={true}
-                  onChange={handleGenderChange}
-                />
-                {errors.gender && <ErrorMessage message={errors.message} />}
-              </label>
-              <input type="hidden" name="gender" value={selectedGender || ""} />
-            </label>
-            <label>
-              Color
-              <label className="selectAddCat">
-                <CustomSelect
-                  name="color"
-                  options={colors}
-                  placeholder="Select a color"
-                  className="selectControl"
-                  isClearable={true}
-                  onChange={handleColorChange}
-                />
-                {errors.color && <ErrorMessage message={errors.color} />}
-              </label>
-              <input type="hidden" name="color" value={selectedColor || ""} />
-            </label>
+            <CatSelectFields
+              errors={errors}
+              selectedBreed={selectedBreed}
+              selectedGender={selectedGender}
+              selectedColor={selectedColor}
+              handleBreedChange={handleBreedChange}
+              handleGenderChange={handleGenderChange}
+              handleColorChange={handleColorChange}
+            />
           </div>
           <div className="orderAddContainer">
             <label>

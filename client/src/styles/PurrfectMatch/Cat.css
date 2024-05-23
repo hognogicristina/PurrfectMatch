@@ -151,6 +151,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin-top: 7px;
 }
 
 .sortDropdown {
@@ -194,7 +195,7 @@
   border-radius: var(--border-radius);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: block;
-  margin: 70px auto;
+  margin: 70px auto auto;
 }
 
 .catImagesContainer .imageCarousel {
@@ -327,6 +328,14 @@
 
 .ownerGuardian .guardian {
   color: #ff69b4;
+}
+
+.regardsContainer {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
 }
 
 .otherCatsContainer {

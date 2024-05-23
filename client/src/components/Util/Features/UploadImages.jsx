@@ -5,13 +5,13 @@ import { AiOutlineCamera, AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
 import { getAuthToken } from "../../../util/auth.js";
 
-function UploadImages({ initialImages, onImageUpload }) {
+function UploadImages({ initialImages, initialUris, onImageUpload }) {
   const data = useLoaderData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
   const { notifyError } = useToast();
   const [images, setImages] = useState(initialImages);
-  const [uris, setUris] = useState([]);
+  const [uris, setUris] = useState(initialUris);
   const [imageToReplace, setImageToReplace] = useState(null);
   const fileInputRef = useRef(null);
 

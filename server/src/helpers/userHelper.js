@@ -44,7 +44,8 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
         user[field] = body[field];
         emailChanged = true;
       } else if (field === "birthday") {
-        user[field] = new Date(body[field]).getTime();
+        const birthdayTimestamp = new Date(body[field]).getTime();
+        user[field] = new Date(birthdayTimestamp);
       } else {
         if (field === "hobbies" && Array.isArray(body[field])) {
           user[field] = body[field].join(", ");
@@ -59,8 +60,6 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
     user.status = "active_pending";
     await emailServ.sendResetEmail(user);
   }
-
-  console.log(typeof user.birthday);
 
   if (user.description === "") {
     user.description = null;
@@ -78,6 +77,12 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
   userInfo.description = user.description;
   userInfo.hobbies = user.hobbies;
   userInfo.experienceLevel = user.experienceLevel;
+
+  if (body.birthday !== undefined) {
+    const birthdayTimestamp = new Date(body.birthday).getTime();
+    userInfo.birthday = new Date(birthdayTimestamp);
+  }
+
   await userInfo.save();
 };
 

@@ -1,254 +1,254 @@
 {
-	"info": {
-		"_postman_id": "bf477170-d94d-4f18-bba9-b95e298dfaff",
-		"name": "Cats",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26090355"
-	},
-	"item": [
-		{
-			"name": "Get All Cats",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": []
-				},
-				"url": {
-					"raw": "{{base_url}}/cats",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"cats"
-					],
-					"query": [
-						{
-							"key": "search",
-							"value": "",
-							"disabled": true
-						},
-						{
-							"key": "selectedBreed",
-							"value": "Maine Coon",
-							"disabled": true
-						},
-						{
-							"key": "selectedAgeType",
-							"value": "Kitten",
-							"disabled": true
-						},
-						{
-							"key": "selectedGender",
-							"value": "Male",
-							"disabled": true
-						},
-						{
-							"key": "selectedNoHealthProblem",
-							"value": "",
-							"disabled": true
-						},
-						{
-							"key": "sortBy",
-							"value": "age",
-							"disabled": true
-						},
-						{
-							"key": "sortOrder",
-							"value": "DESC",
-							"disabled": true
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get A Cat",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/cat/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"cat",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Cat",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{admin}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "Whiskers",
-							"type": "text"
-						},
-						{
-							"key": "uri",
-							"value": "public://temporary-uploads/1711993846802-351256051.jpeg",
-							"contentType": "",
-							"type": "text"
-						},
-						{
-							"key": "breed",
-							"value": "Maine Coon",
-							"type": "text"
-						},
-						{
-							"key": "gender",
-							"value": "Male",
-							"type": "text"
-						},
-						{
-							"key": "age",
-							"value": "8",
-							"type": "text"
-						},
-						{
-							"key": "healthProblem",
-							"value": "Epilepsy",
-							"type": "text"
-						},
-						{
-							"key": "description",
-							"value": "Whiskers is a friendly and playful Maine Coon.",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/cat",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"cat"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Edit A Cat",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{john}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "name",
-							"value": "Moxie",
-							"type": "text"
-						},
-						{
-							"key": "uri",
-							"value": "public://temporary-uploads/1711980943674-181363522.jpeg",
-							"contentType": "",
-							"type": "text"
-						},
-						{
-							"key": "breed",
-							"value": "Bombay",
-							"type": "text"
-						},
-						{
-							"key": "gender",
-							"value": "Female",
-							"type": "text"
-						},
-						{
-							"key": "age",
-							"value": "6",
-							"type": "text"
-						},
-						{
-							"key": "healthProblem",
-							"value": "Epilepsy",
-							"type": "text"
-						},
-						{
-							"key": "description",
-							"value": "Moxie is a friendly cat.",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "{{base_url}}/cat/1",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"cat",
-						"1"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Delete A Cat",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "{{john}}",
-							"type": "string"
-						}
-					]
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "{{base_url}}/cat/2",
-					"host": [
-						"{{base_url}}"
-					],
-					"path": [
-						"cat",
-						"2"
-					]
-				}
-			},
-			"response": []
-		}
-	]
+  "info": {
+    "_postman_id": "bf477170-d94d-4f18-bba9-b95e298dfaff",
+    "name": "Cats",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "26090355"
+  },
+  "item": [
+    {
+      "name": "Get All Cats",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": []
+        },
+        "url": {
+          "raw": "{{base_url}}/cats",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "cats"
+          ],
+          "query": [
+            {
+              "key": "search",
+              "value": "",
+              "disabled": true
+            },
+            {
+              "key": "selectedBreed",
+              "value": "Maine Coon",
+              "disabled": true
+            },
+            {
+              "key": "selectedLifeStage",
+              "value": "Kitten",
+              "disabled": true
+            },
+            {
+              "key": "selectedGender",
+              "value": "Male",
+              "disabled": true
+            },
+            {
+              "key": "selectedNoHealthProblem",
+              "value": "",
+              "disabled": true
+            },
+            {
+              "key": "sortBy",
+              "value": "age",
+              "disabled": true
+            },
+            {
+              "key": "sortOrder",
+              "value": "DESC",
+              "disabled": true
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get A Cat",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cat/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "cat",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Cat",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{admin}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Whiskers",
+              "type": "text"
+            },
+            {
+              "key": "uri",
+              "value": "public://temporary-uploads/1711993846802-351256051.jpeg",
+              "contentType": "",
+              "type": "text"
+            },
+            {
+              "key": "breed",
+              "value": "Maine Coon",
+              "type": "text"
+            },
+            {
+              "key": "gender",
+              "value": "Male",
+              "type": "text"
+            },
+            {
+              "key": "age",
+              "value": "8",
+              "type": "text"
+            },
+            {
+              "key": "healthProblem",
+              "value": "Epilepsy",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Whiskers is a friendly and playful Maine Coon.",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/cat",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "cat"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Edit A Cat",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{john}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Moxie",
+              "type": "text"
+            },
+            {
+              "key": "uri",
+              "value": "public://temporary-uploads/1711980943674-181363522.jpeg",
+              "contentType": "",
+              "type": "text"
+            },
+            {
+              "key": "breed",
+              "value": "Bombay",
+              "type": "text"
+            },
+            {
+              "key": "gender",
+              "value": "Female",
+              "type": "text"
+            },
+            {
+              "key": "age",
+              "value": "6",
+              "type": "text"
+            },
+            {
+              "key": "healthProblem",
+              "value": "Epilepsy",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Moxie is a friendly cat.",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/cat/1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "cat",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete A Cat",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{john}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/cat/2",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "cat",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
 }

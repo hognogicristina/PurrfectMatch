@@ -1,4 +1,4 @@
-import { Form } from "react-router-dom";
+import { Form, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
@@ -8,7 +8,9 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function DeleteCatDialog({ onClose, cat }) {
-  const { notifyError } = useToast();
+  const { notifyError, notifySuccess } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(true);
@@ -39,12 +41,17 @@ export default function DeleteCatDialog({ onClose, cat }) {
       },
     );
 
+    const data = await response.json();
     if (response.ok) {
-      onClose();
+      notifySuccess(data.status);
+      if (location.pathname === `/cats/cat/${cat.id}`) {
+        navigate(-1);
+      } else {
+        onClose();
+      }
     } else {
-      const errorData = await response.json();
       const newErrors = {};
-      errorData.error.forEach((error) => {
+      data.error.forEach((error) => {
         if (error.field === "invalid" || error.message === "server") {
           notifyError(error.message);
         }

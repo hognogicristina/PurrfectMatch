@@ -19,6 +19,10 @@
   box-shadow: 0 8px 16px var(--dark-shade);
 }
 
+.formContainer {
+  min-width: 510px;
+}
+
 .reset {
   margin-left: 50px;
 }
@@ -84,13 +88,22 @@
   align-items: flex-start;
 }
 
+.passwordInput input {
+  flex: 1;
+  padding-right: 2.5rem;
+}
+
 .togglePassword {
   position: absolute;
   top: 55%;
   transform: translateY(-50%);
   right: 20px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   user-select: none;
+  height: 100%;
 }
 
 .togglePassword.show {

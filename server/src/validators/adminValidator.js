@@ -1,5 +1,6 @@
 const { User } = require("../../models");
 const { Op } = require("sequelize");
+
 const userExistValidator = async (req, res) => {
   const user = await User.findByPk(req.user.id);
   const users = await User.findAll({ where: { role: { [Op.ne]: "admin" } } });

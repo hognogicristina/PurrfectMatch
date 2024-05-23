@@ -8,12 +8,43 @@ const {
 } = require("../../models");
 const fileHelper = require("./fileHelper");
 
-const getCats = async (req, listType) => {
+const getCats = async (user, listType) => {
   let cats = [];
 
   if (listType === "sentToAdoption") {
     const addedCatsUser = await CatUser.findAll({
-      where: { userId: req.user.id },
+      where: { userId: user.id },
+    });
+    if (addedCatsUser.length > 0) {
+      for (let addedCat of addedCatsUser) {
+        const cat = await Cat.findByPk(addedCat.catId);
+        cats.push(cat);
+      }
+    }
+  } else if (listType === "owned") {
+    const ownedCatsUser = await CatUser.findAll({
+      where: { ownerId: user.id },
+    });
+    if (ownedCatsUser.length > 0) {
+      for (let ownedCat of ownedCatsUser) {
+        const cat = await Cat.findByPk(ownedCat.catId);
+        cats.push(cat);
+      }
+    }
+  }
+
+  return cats.map((cat) => {
+    return cat;
+  });
+};
+
+const getCatsLimit = async (user, listType) => {
+  let cats = [];
+
+  if (listType === "sentToAdoption") {
+    const addedCatsUser = await CatUser.findAll({
+      where: { userId: user.id },
+      limit: 4,
     });
     for (let addedCat of addedCatsUser) {
       const cat = await Cat.findByPk(addedCat.catId);
@@ -21,7 +52,8 @@ const getCats = async (req, listType) => {
     }
   } else if (listType === "owned") {
     const ownedCatsUser = await CatUser.findAll({
-      where: { ownerId: req.user.id },
+      where: { ownerId: user.id },
+      limit: 4,
     });
     for (let ownedCat of ownedCatsUser) {
       const cat = await Cat.findByPk(ownedCat.catId);
@@ -158,4 +190,4 @@ const deleteCat = async (user, transaction) => {
   }
 };
 
-module.exports = { getCats, deleteCat };
+module.exports = { getCats, getCatsLimit, deleteCat };

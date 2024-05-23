@@ -2,6 +2,7 @@ const {
   Image,
   Address,
   Cat,
+  Favorites,
   CatUser,
   AdoptionRequest,
   UserRole,
@@ -15,7 +16,6 @@ const catUserHelper = require("./catUserHelper");
 
 const deleteUser = async (user, transaction) => {
   await Token.destroy({ where: { userId: user.id }, transaction });
-  await Favorites.destroy({ where: { userId: user.id }, transaction });
   await UserInfo.destroy({ where: { userId: user.id }, transaction });
   await RefreshToken.destroy({ where: { userId: user.id }, transaction });
   await PasswordHistory.destroy({ where: { userId: user.id }, transaction });
@@ -23,12 +23,26 @@ const deleteUser = async (user, transaction) => {
     where: { userId: user.id },
     transaction,
   });
-  for (let userAdoptionRequest of userAdoptionRequests) {
-    const adoptionRequest = await AdoptionRequest.findByPk(
-      userAdoptionRequest.adoptionRequestId,
-    );
-    await userAdoptionRequest.destroy({ transaction });
-    await adoptionRequest.destroy({ transaction });
+
+  if (userAdoptionRequests.length > 0) {
+    for (let userAdoptionRequest of userAdoptionRequests) {
+      const adoptionRequest = await AdoptionRequest.findOne({
+        where: { id: userAdoptionRequest.adoptionRequestId },
+      });
+
+      const userAllAdoptionRequests = await UserRole.findAll({
+        where: { adoptionRequestId: adoptionRequest.id },
+      });
+
+      if (userAllAdoptionRequests.length > 1) {
+        for (let userAllAdoptionRequest of userAllAdoptionRequests) {
+          await userAllAdoptionRequest.destroy({ transaction });
+        }
+      }
+
+      await userAdoptionRequest.destroy({ transaction });
+      await adoptionRequest.destroy({ transaction });
+    }
   }
   await catUserHelper.deleteCat(user, transaction);
   const address = await Address.findOne({

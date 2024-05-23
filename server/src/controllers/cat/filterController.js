@@ -1,7 +1,7 @@
-const { Breed, Cat, AgeType, CatUser } = require("../../models");
-const logger = require("../../logger/logger");
-const filterValidator = require("../validators/filterValidator");
-const catDTO = require("../dto/catDTO");
+const { Breed, Cat, AgeType, CatUser } = require("../../../models");
+const logger = require("../../../logger/logger");
+const filterValidator = require("../../validators/filterValidator");
+const catDTO = require("../../dto/catDTO");
 const fs = require("fs");
 const path = require("path");
 
@@ -68,7 +68,7 @@ const getHealthProblems = async (req, res) => {
 const getColors = async (req, res) => {
   try {
     const colorData = fs.readFileSync(
-      path.join(__dirname, "../../constants/colors.json"),
+      path.join(__dirname, "../../../constants/colors.json"),
       "utf8",
     );
     const colors = JSON.parse(colorData);
@@ -156,16 +156,24 @@ const getCatsOfUser = async (req, res) => {
     const catsUser = [];
     if (catUsers.length > 0) {
       for (let catUser of catUsers) {
-        const cat = await Cat.findByPk(catUser.catId);
-        catsUser.push(cat);
+        const cat = await Cat.findOne({
+          where: { id: catUser.catId, status: "active" },
+        });
+        if (cat) {
+          catsUser.push(cat);
+        }
       }
     }
 
     const catsOwner = [];
     if (catOwners.length > 0) {
       for (let catOwner of catOwners) {
-        const cat = await Cat.findByPk(catOwner.catId);
-        catsOwner.push(cat);
+        const cat = await Cat.findOne({
+          where: { id: catOwner.catId, status: "active" },
+        });
+        if (cat) {
+          catsOwner.push(cat);
+        }
       }
     }
 

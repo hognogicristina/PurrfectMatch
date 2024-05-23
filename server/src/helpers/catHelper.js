@@ -1,4 +1,4 @@
-const { Cat, CatUser } = require("../../models");
+const { Cat, CatUser, User, Address } = require("../../models");
 const { Op } = require("sequelize");
 const { AgeTypes } = require("../../constants/ageTypes");
 
@@ -46,13 +46,29 @@ const updateCatData = async (cat, body) => {
   return cat;
 };
 
+const getDistance = (address1, address2) => {
+  // Mock implementation: calculate distance based on some dummy logic.
+  // Replace this with actual geolocation logic as needed.
+  const lat1 = address1.latitude;
+  const lon1 = address1.longitude;
+  const lat2 = address2.latitude;
+  const lon2 = address2.longitude;
+
+  // Using a simple Pythagorean theorem for demo purposes
+  return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
+};
+
+const calculateDistance = (address1, address2) => {
+  return getDistance(address1, address2);
+};
+
 const filterCats = async (req) => {
   const searchQuery = req.query.search ? req.query.search.toLowerCase() : null;
   const selectedBreed = req.query.selectedBreed
     ? req.query.selectedBreed
     : null;
-  const selectedAgeType = req.query.selectedAgeType
-    ? req.query.selectedAgeType
+  const selectedLifeStage = req.query.selectedLifeStage
+    ? req.query.selectedLifeStage
     : null;
   const selectedGender = req.query.selectedGender
     ? req.query.selectedGender
@@ -60,14 +76,13 @@ const filterCats = async (req) => {
   const selectedHealthProblem = req.query.selectedHealthProblem
     ? req.query.selectedHealthProblem
     : null;
-  const selectedUserId = req.query.selectedUserId
-    ? req.query.selectedUserId
-    : null;
+  const selectedUser = req.query.selectedUser ? req.query.selectedUser : null;
   const selectedColor = req.query.selectedColor
     ? req.query.selectedColor
     : null;
   const sortBy = req.query.sortBy ? req.query.sortBy : "breed";
   const sortOrder = req.query.sortOrder ? req.query.sortOrder : "asc";
+
   let cats;
   let queryOptions = {
     where: {
@@ -88,10 +103,10 @@ const filterCats = async (req) => {
   if (selectedBreed) {
     queryOptions.where = { ...queryOptions.where, breed: selectedBreed };
   }
-  if (selectedAgeType) {
+  if (selectedLifeStage) {
     queryOptions.where = {
       ...queryOptions.where,
-      ageType: { [Op.like]: `%${selectedAgeType}%` },
+      ageType: { [Op.like]: `%${selectedLifeStage}%` },
     };
   }
   if (selectedGender) {
@@ -110,9 +125,10 @@ const filterCats = async (req) => {
       };
     }
   }
-  if (selectedUserId) {
+  if (selectedUser) {
+    const user = await User.findOne({ where: { username: selectedUser } });
     const catUser = await CatUser.findAll({
-      where: { userId: selectedUserId },
+      where: { userId: user.id },
     });
     const catIds = catUser.map((cat) => cat.catId);
     queryOptions.where = { ...queryOptions.where, id: catIds };
@@ -122,15 +138,40 @@ const filterCats = async (req) => {
   }
 
   cats = await Cat.findAll(queryOptions);
-  cats.sort((cat1, cat2) => {
-    let comparison = 0;
-    if (sortBy === "breed") {
-      comparison = cat1.breed.localeCompare(cat2.breed);
-    } else if (sortBy === "age") {
-      comparison = String(cat1.age).localeCompare(String(cat2.age));
-    }
-    return sortOrder === "asc" ? comparison : -comparison;
-  });
+
+  if (sortBy === "location") {
+    const loggedUserAddress = await Address.findOne({
+      where: { userId: req.user.id },
+    });
+
+    cats = await Promise.all(
+      cats.map(async (cat) => {
+        const catUser = await CatUser.findByPk(cat.id);
+        const guardian = await User.findByPk(catUser.userId);
+        const address = await Address.findOne({
+          where: { userId: guardian.id },
+        });
+        const distance = calculateDistance(loggedUserAddress, address);
+        return { ...cat, distance };
+      }),
+    );
+
+    cats.sort((cat1, cat2) => {
+      return sortOrder === "asc"
+        ? cat1.distance - cat2.distance
+        : cat2.distance - cat1.distance;
+    });
+  } else {
+    cats.sort((cat1, cat2) => {
+      let comparison = 0;
+      if (sortBy === "breed") {
+        comparison = cat1.breed.localeCompare(cat2.breed);
+      } else if (sortBy === "age") {
+        comparison = String(cat1.age).localeCompare(String(cat2.age));
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  }
 
   return cats;
 };

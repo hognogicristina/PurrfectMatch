@@ -26,19 +26,25 @@ async function userToDTO(user) {
     floor: address ? address.floor : null,
     apartment: address ? address.apartment : null,
     postalCode: address ? address.postalCode : null,
+    role: user.role ? user.role : null,
+    status: user.status ? user.status : null,
   };
 }
 
 async function userListToDTO(user) {
-  const address = await Address.findOne({ where: { id: user.addressId } });
+  const address = await Address.findOne({ where: { userId: user.id } });
+  const images = await Image.findAll({ where: { userId: user.id } });
+
   return {
+    id: user.id ? user.id : null,
+    image: images.length > 0 ? images[0].url : null,
     username: user.username ? user.username : null,
     displayName:
       user.firstName && user.lastName
         ? `${user.firstName} ${user.lastName}`
         : null,
     email: user.email ? user.email : null,
-    address: address ? `${address.city} ${address.country}` : null,
+    address: address ? `${address.city}, ${address.country}` : null,
   };
 }
 

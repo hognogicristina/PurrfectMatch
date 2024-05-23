@@ -1,10 +1,8 @@
 import { getAuthToken } from "../../util/auth.js";
 import ChangeUsernameProfile from "../../components/Profile/ChangePasswordForm.jsx";
-import { useRouteLoaderData } from "react-router-dom";
 
 function ChangePasswordPage() {
-  const data = useRouteLoaderData("user-details");
-  return <ChangeUsernameProfile userDetail={data.userDetail} />;
+  return <ChangeUsernameProfile />;
 }
 
 export default ChangePasswordPage;
