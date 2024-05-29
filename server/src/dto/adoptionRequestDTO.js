@@ -39,10 +39,12 @@ async function adoptionRequestToDTO(adoptionRequest, user) {
     subject: "Adoption Process Request",
     imageFrom: imageFrom ? imageFrom.url : null,
     from: `${sender.firstName} ${sender.lastName}`,
+    username: sender.username,
     to: `${receiver.firstName} ${receiver.lastName}`,
     message: adoptionRequest.message ? adoptionRequest.message : null,
     cat: cat.name ? cat.name : null,
     image: image ? image.url : null,
+    initials: `${sender.firstName[0]}${sender.lastName[0]}`,
     status: adoptionRequest.status ? adoptionRequest.status : null,
     address: address ? `${address.city}, ${address.country}` : null,
     date: formattedDate ? formattedDate : null,
@@ -109,7 +111,7 @@ async function transformAdoptionRequestsToDTO(user) {
       id: adoptionRequest.id,
       from: { id: fromId, name: from },
       to: { id: toId, name: to },
-      subject: "AdoptionProcess request",
+      subject: "Adoption Process request",
       cat: cat.name ? cat.name : null,
       status: adoptionRequest.status ? adoptionRequest.status : null,
       date: formattedDate ? formattedDate : null,
@@ -130,7 +132,24 @@ async function transformAdoptionRequestsToDTO(user) {
   return { sentRequests, receivedRequests };
 }
 
+const requestDTO = (adoptionRequest, userAdoptionRequest, from, to, cat) => {
+  return {
+    id: adoptionRequest.id,
+    from: { id: from.id, name: from.name },
+    to: { id: to.id, name: to.name },
+    subject: "Adoption Process request",
+    cat: cat.name ? cat.name : null,
+    status: adoptionRequest.status ? adoptionRequest.status : null,
+    date: adoptionRequest.createdAt
+      ? adoptionRequest.createdAt.toDateString()
+      : null,
+    dateTime: adoptionRequest.createdAt,
+    isRead: userAdoptionRequest.isRead,
+  };
+};
+
 module.exports = {
   adoptionRequestToDTO,
   transformAdoptionRequestsToDTO,
+  requestDTO,
 };

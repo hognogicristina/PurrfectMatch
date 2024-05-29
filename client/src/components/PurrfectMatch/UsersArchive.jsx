@@ -9,45 +9,17 @@ import { getAuthToken } from "../../util/auth.js";
 import { IoTrashBin } from "react-icons/io5";
 import ConfirmDialog from "../Util/Custom/Reuse/ConfirmDialog.jsx";
 
-export default function UsersArchive({
-  initialUsers,
-  currentPage,
-  onPageChange,
-}) {
-  const { error, totalPages, totalItems } = initialUsers;
-  const [users, setUsers] = useState(initialUsers);
+export default function UsersArchive({ users, currentPage, onPageChange }) {
+  const { data, error, totalPages, totalItems } = users;
   const { notifyError, notifySuccess } = useToast();
   const navigate = useNavigate();
   const [searchParamsKey, setSearchParamsKey] = useState(0);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
-  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, users]);
-
-  useEffect(() => {
-    if (reload) {
-      const fetchUsers = async () => {
-        const token = getAuthToken();
-        const response = await fetch(
-          `http://localhost:3000/users?page=${currentPage}&pageSize=9`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-        const data = await response.json();
-        setUsers(data);
-        setReload(false);
-      };
-
-      fetchUsers();
-    }
-  }, [reload, currentPage]);
 
   const handleUserClick = (username) => {
     navigate(`/user-profile/${username}`);
@@ -65,7 +37,6 @@ export default function UsersArchive({
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
-      setReload(true);
     } else {
       data.error.forEach((err) => {
         notifyError(err.message);
@@ -84,7 +55,6 @@ export default function UsersArchive({
   };
 
   const renderUsers = () => {
-    const { data, error } = users;
     if (users && Array.isArray(data) && data.length > 0) {
       return data.map((user, index) => (
         <motion.li

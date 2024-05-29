@@ -47,14 +47,11 @@ const updateCatData = async (cat, body) => {
 };
 
 const getDistance = (address1, address2) => {
-  // Mock implementation: calculate distance based on some dummy logic.
-  // Replace this with actual geolocation logic as needed.
   const lat1 = address1.latitude;
   const lon1 = address1.longitude;
   const lat2 = address2.latitude;
   const lon2 = address2.longitude;
 
-  // Using a simple Pythagorean theorem for demo purposes
   return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
 };
 

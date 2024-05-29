@@ -1,3 +1,5 @@
+// CatItem.jsx
+
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
@@ -5,6 +7,7 @@ import CatImageSection from "../Util/Pages/CatProfile/CatImageSection.jsx";
 import CatDetailsSection from "../Util/Pages/CatProfile/CatDetailsSection.jsx";
 import MoreCatsSection from "../Util/Pages/CatProfile/MoreCatsSection.jsx";
 import { useUserDetails } from "../../util/useUserDetails.js";
+import ModifyCatForm from "./ModifyCatForm.jsx";
 
 export default function CatItem({ catDetail }) {
   const { notifyError } = useToast();
@@ -13,11 +16,10 @@ export default function CatItem({ catDetail }) {
   const [catsGuardian, setCatsGuardian] = useState([]);
   const [catsOwner, setCatsOwner] = useState([]);
   const [mainImage, setMainImage] = useState(catDetail.images[0]);
-  const [carouselImages, setCarouselImages] = useState(
-    catDetail.images.slice(1),
-  );
+  const [carouselImages, setCarouselImages] = useState(catDetail.images);
   const [userEditCat, setUserEditCat] = useState("");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [currentCatDetail, setCurrentCatDetail] = useState(catDetail);
 
   useEffect(() => {
     if (!catDetail.owner) {
@@ -59,6 +61,9 @@ export default function CatItem({ catDetail }) {
       }
     }
 
+    setMainImage(catDetail.images[0]);
+    setCarouselImages(catDetail.images);
+
     fetchCatsByBreed();
     fetchCatsOfGuardian();
   }, [catDetail.id, catDetail, notifyError]);
@@ -71,17 +76,20 @@ export default function CatItem({ catDetail }) {
     setIsEditDialogOpen(false);
   };
 
+  const handleUpdateCatDetail = (updatedCatDetail) => {
+    setCurrentCatDetail(updatedCatDetail);
+  };
+
   return (
     <>
       <CatImageSection
-        catDetail={catDetail}
+        catDetail={currentCatDetail}
         mainImage={mainImage}
         setMainImage={setMainImage}
         carouselImages={carouselImages}
-        setCarouselImages={setCarouselImages}
       />
       <CatDetailsSection
-        catDetail={catDetail}
+        catDetail={currentCatDetail}
         userDetails={userDetails}
         userEditCat={userEditCat}
         handleEditClick={handleEditClick}
@@ -91,18 +99,18 @@ export default function CatItem({ catDetail }) {
 
       {catsGuardian.length > 1 && (
         <MoreCatsSection
-          title={`More Cats from ${catDetail.guardian}`}
+          title={`More Cats from ${currentCatDetail.guardian}`}
           cats={catsGuardian}
           type="guardian"
-          catDetail={catDetail}
+          catDetail={currentCatDetail}
         />
       )}
       {catsOwner.length > 1 && (
         <MoreCatsSection
-          title={`More Cats from ${catDetail.owner}`}
+          title={`More Cats from ${currentCatDetail.owner}`}
           cats={catsOwner}
           type="owner"
-          catDetail={catDetail}
+          catDetail={currentCatDetail}
         />
       )}
       {catsBreed.length > 1 && (
@@ -110,7 +118,14 @@ export default function CatItem({ catDetail }) {
           title="Other Cats You May Like"
           cats={catsBreed}
           type="breed"
-          catDetail={catDetail}
+          catDetail={currentCatDetail}
+        />
+      )}
+      {isEditDialogOpen && (
+        <ModifyCatForm
+          catDetail={currentCatDetail}
+          onClose={handleCloseEditDialog}
+          onSubmit={handleUpdateCatDetail}
         />
       )}
     </>

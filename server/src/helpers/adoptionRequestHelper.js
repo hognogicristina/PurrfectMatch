@@ -48,10 +48,7 @@ const sendAdoptionRequest = async (
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
     }
 
-    await Cat.update(
-      { status: "adopted" },
-      { where: { id: adoptionRequest.catId }, transaction: t },
-    );
+    cat.update({ status: "adopted" }, { transaction: t });
     const catUser = await CatUser.findOne(
       { where: { catId: adoptionRequest.catId } },
       { transaction: t },

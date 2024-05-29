@@ -19,7 +19,7 @@ function ArchiveOfUsersPage() {
         {(loadedUsers) => (
           <div>
             <UsersArchive
-              initialUsers={loadedUsers}
+              users={loadedUsers}
               currentPage={currentPage}
               onPageChange={handlePageChange}
             />

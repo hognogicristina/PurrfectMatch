@@ -39,7 +39,7 @@ const userValidator = async (req, res) => {
   }
 
   if (req.method === "DELETE") {
-    if (!req.body.name || validator.isEmpty(req.body.name || "")) {
+    if (!req.body.name || validator.isEmpty(validator.trim(req.body.name))) {
       return res.status(403).json({
         error: [
           {

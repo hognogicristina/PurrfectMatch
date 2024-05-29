@@ -116,11 +116,16 @@ const handleAdoptionRequest = async (req, res) => {
         cat,
         userAddress,
       );
-      return res.status(200).json({ status: "Adoption request was accepted" });
+      adoptionRequest.update({ status });
+      return res
+        .status(200)
+        .json({ status: "Adoption request was accepted", adoptionRequest });
     } else {
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
       await adoptionRequest.update({ status });
-      return res.status(200).json({ status: "Adoption request was declined" });
+      return res
+        .status(200)
+        .json({ status: "Adoption request was declined", adoptionRequest });
     }
   } catch (error) {
     logger.error(error);

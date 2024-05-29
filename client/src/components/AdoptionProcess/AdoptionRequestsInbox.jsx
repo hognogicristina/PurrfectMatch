@@ -1,6 +1,6 @@
 import "../../styles/PurrfectMatch/Adoption.css";
 import { getAuthToken } from "../../util/auth.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import MailSection from "../Util/Pages/Inbox/MailSection.jsx";
 import MailDetailsSection from "../Util/Pages/Inbox/MailDetailsSection.jsx";
@@ -15,8 +15,8 @@ function AdoptionRequestsInbox({ mails }) {
   const [isReceivedExpanded, setIsReceivedExpanded] = useState(true);
   const [isSentExpanded, setIsSentExpanded] = useState(true);
 
-  const openMail = async (id) => {
-    if (selectedMailId === id) {
+  const openMail = async (id, exception) => {
+    if (selectedMailId === id && exception !== "update") {
       setSelectedMailId(null);
       setMailDetails({});
       return;
@@ -51,6 +51,23 @@ function AdoptionRequestsInbox({ mails }) {
     }
   };
 
+  const updateMailInList = (updatedMail, id) => {
+    if (data) {
+      if (Array.isArray(data.receivedRequests)) {
+        data.receivedRequests = data.receivedRequests.map((mail) =>
+          mail.id === id ? { ...mail, status: updatedMail.status } : mail,
+        );
+      }
+      if (Array.isArray(data.sentRequests)) {
+        data.sentRequests = data.sentRequests.map((mail) =>
+          mail.id === id ? { ...mail, status: updatedMail.status } : mail,
+        );
+      }
+    }
+    setSelectedMailId(id);
+    setMailDetails((prev) => ({ ...prev, status: updatedMail.status }));
+  };
+
   const removeMailFromList = (id) => {
     if (data) {
       if (Array.isArray(data.receivedRequests)) {
@@ -64,6 +81,12 @@ function AdoptionRequestsInbox({ mails }) {
       setSelectedMailId(null);
     }
   };
+
+  useEffect(() => {
+    if (data && data.sentRequests.length === 0) {
+      return <p className="errorMessageCats">{data.sentRequests.message}</p>;
+    }
+  }, []);
 
   return (
     <div className="adoptionRequests">
@@ -84,7 +107,6 @@ function AdoptionRequestsInbox({ mails }) {
                 isExpanded={isReceivedExpanded}
                 setIsExpanded={setIsReceivedExpanded}
                 setMailDetails={setMailDetails}
-                removeMailFromList={removeMailFromList}
               />
               {userDetails.role === "user" && (
                 <MailSection
@@ -97,7 +119,6 @@ function AdoptionRequestsInbox({ mails }) {
                   isExpanded={isSentExpanded}
                   setIsExpanded={setIsSentExpanded}
                   setMailDetails={setMailDetails}
-                  removeMailFromList={removeMailFromList}
                   isSent="true"
                 />
               )}
@@ -111,6 +132,8 @@ function AdoptionRequestsInbox({ mails }) {
             setMailDetails={setMailDetails}
             selectedMailId={selectedMailId}
             removeMailFromList={removeMailFromList}
+            updateMailInList={updateMailInList}
+            openMail={openMail}
           />
         )}
       </div>

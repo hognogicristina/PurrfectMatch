@@ -80,7 +80,11 @@ const adoptValidator = async (req, res) => {
     }
   }
 
-  if (!req.body.message || validator.isEmpty(req.body.message) || "") {
+  if (
+    !req.body.message ||
+    validator.isEmpty(validator.trim(req.body.message)) ||
+    ""
+  ) {
     return res
       .status(400)
       .json({ error: [{ field: "message", message: "Message is required" }] });
@@ -148,7 +152,7 @@ const handleAdoptionRequestValidator = async (req, res) => {
     });
   }
 
-  if (!status || validator.isEmpty(status) || "") {
+  if (!status || validator.isEmpty(validator.trim(status))) {
     error.push({ field: "status", message: "Status is required" });
   } else if (status !== "accepted" && status !== "declined") {
     error.push({ field: "statusInvalid", message: "Invalid status" });

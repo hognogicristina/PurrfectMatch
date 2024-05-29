@@ -36,7 +36,7 @@ export default function SubmitDialog({
       response.status === 500
     ) {
       const data = await response.json();
-      data.error.forEach((err) => {
+      data.error.forEach((error) => {
         if (error.field === "server") {
           notifyError(error.message);
         } else {

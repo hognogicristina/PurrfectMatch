@@ -7,11 +7,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import DeleteCatDialog from "./DeleteCatDialog";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
-import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 import { getAuthToken } from "../../util/auth.js";
 import CatSelectFields from "../Util/Pages/CatProfile/CatSelectFields.jsx";
+import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 
-export default function ModifyCatForm({ catDetail, onClose }) {
+export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
   const data = useActionData();
   const navigation = useNavigation();
   const isSubmitting = navigation.state === "submitting";
@@ -20,7 +20,6 @@ export default function ModifyCatForm({ catDetail, onClose }) {
   const [imageUris, setImageUris] = useState(catDetail.uris || []);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedBreed, setSelectedBreed] = useState(catDetail.breed);
   const [selectedGender, setSelectedGender] = useState(catDetail.gender);
   const [selectedColor, setSelectedColor] = useState(catDetail.color);
@@ -53,7 +52,6 @@ export default function ModifyCatForm({ catDetail, onClose }) {
       }
       if (data.status) {
         notifySuccess(data.status);
-        closeDeleteDialog();
       }
     }
   }, [data]);
@@ -85,7 +83,20 @@ export default function ModifyCatForm({ catDetail, onClose }) {
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
-      handleClose();
+      const updatedCatDetail = {
+        ...catDetail,
+        name: e.target.name.value,
+        breed: selectedBreed,
+        gender: selectedGender,
+        color: selectedColor,
+        age: e.target.age.value,
+        healthProblem: e.target.healthProblem.value,
+        description: e.target.description.value,
+        uris: imageUris,
+        image: imageUris[0],
+      };
+      onClose();
+      onSubmit(updatedCatDetail);
     } else {
       data.error.forEach((error) => {
         if (error.field === "server" || error.field === "uris") {
@@ -101,14 +112,6 @@ export default function ModifyCatForm({ catDetail, onClose }) {
 
   const handleImageUpload = (uris) => {
     setImageUris(uris);
-  };
-
-  const openDeleteDialog = () => {
-    setIsDeleteDialogOpen(true);
-  };
-
-  const closeDeleteDialog = () => {
-    setIsDeleteDialogOpen(false);
   };
 
   if (isLoading) {
@@ -215,19 +218,8 @@ export default function ModifyCatForm({ catDetail, onClose }) {
             >
               {isSubmitting ? "Submitting..." : "Submit"}
             </motion.button>
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              type="button"
-              className="simpleButton delete edit"
-              onClick={openDeleteDialog}
-            >
-              Delete
-            </motion.button>
           </div>
         </Form>
-        {isDeleteDialogOpen && (
-          <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
-        )}
       </motion.div>
     </div>
   );

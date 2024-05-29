@@ -164,6 +164,17 @@
   padding: 10px;
 }
 
+.catItemImages {
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(20px);
+  width: 100%;
+  height: 400px;
+  position: absolute;
+  transition: filter 0.3s ease-in-out;
+}
+
 .catItemContainer {
   display: flex;
   flex-direction: column;
@@ -175,17 +186,7 @@
   position: relative;
 }
 
-.catItemImages {
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
-  filter: blur(20px);
-  width: 100%;
-  height: 400px;
-  position: absolute;
-}
-
-.catImagesContainer img.mainImage {
+.mainImage {
   position: relative;
   z-index: 1;
   width: auto;
@@ -198,12 +199,42 @@
   margin: 70px auto auto;
 }
 
-.catImagesContainer .imageCarousel {
+.mainImageContainer {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.navigationButton {
+  font-size: 35px;
+  color: var(--button-submit);
+  cursor: pointer;
+  margin: 0 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 2px var(--dark-shade);
+  transition: color 0.3s ease;
+}
+
+.navigationButton:hover {
+  color: #ff8ec5;
+}
+
+.imageCarousel {
   display: flex;
   overflow-x: auto;
   padding: 10px;
-  gap: 10px;
   justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.catImagesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   position: relative;
 }
 
@@ -213,6 +244,11 @@
   object-fit: cover;
   cursor: pointer;
   border-radius: 5px;
+  border: 2px solid transparent;
+}
+
+.catImagesContainer .imageCarousel img.selectedCarouselImage {
+  border: 2px solid #ff69b4;
 }
 
 .catItemDetails {
@@ -316,6 +352,11 @@
   color: #ff69b4 !important;
 }
 
+.userLink:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .ownerGuardian {
   margin-top: 15px;
 }
@@ -323,12 +364,17 @@
 .ownerGuardian .guardian {
   font-size: 14px;
   font-weight: bold;
-  color: #555;
-}
-
-.ownerGuardian .guardian {
   color: #ff69b4;
 }
+
+.ownerGuardian .guardian.linkUser {
+  text-decoration: none;
+}
+
+.regardsContainer:hover .linkUser {
+  text-decoration: underline;
+}
+
 
 .regardsContainer {
   cursor: pointer;

@@ -29,12 +29,38 @@ const userExistValidator = async (req, res) => {
 const editUserValidation = async (req, res) => {
   const error = [];
 
-  if (!req.body.firstName || validator.isEmpty(req.body.firstName)) {
+  if (
+    !req.body.firstName ||
+    validator.isEmpty(validator.trim(req.body.firstName))
+  ) {
     error.push({ field: "firstName", message: "First name is required" });
+  } else if (!validator.isLength(req.body.firstName, { max: 50 })) {
+    error.push({
+      field: "firstName",
+      message: "First name must be at most 50 characters long",
+    });
+  } else if (!validator.isAlpha(req.body.firstName.replace(/\s/g, ""))) {
+    error.push({
+      field: "firstName",
+      message: "First name must contain only letters and spaces",
+    });
   }
 
-  if (!req.body.lastName || validator.isEmpty(req.body.lastName)) {
+  if (
+    !req.body.lastName ||
+    validator.isEmpty(validator.trim(req.body.lastName))
+  ) {
     error.push({ field: "lastName", message: "Last name is required" });
+  } else if (!validator.isLength(req.body.lastName, { max: 50 })) {
+    error.push({
+      field: "lastName",
+      message: "Last name must be at most 50 characters long",
+    });
+  } else if (!validator.isAlpha(req.body.lastName.replace(/\s/g, ""))) {
+    error.push({
+      field: "lastName",
+      message: "Last name must contain only letters and spaces",
+    });
   }
 
   if (!req.body.email || validator.isEmpty(req.body.email)) {
@@ -73,6 +99,16 @@ const editUserValidation = async (req, res) => {
     }
   }
 
+  if (
+    req.body.description &&
+    !validator.isLength(req.body.description, { min: 5, max: 500 })
+  ) {
+    error.push({
+      field: "description",
+      message: "Description must be between 5 and 500 characters long",
+    });
+  }
+
   if (!req.body.uri || req.body.uri.length === 0) {
     return res
       .status(400)
@@ -102,12 +138,15 @@ const editUsernameValidation = async (req, res) => {
     }
   }
 
-  if (!req.body.username || validator.isEmpty(req.body.username)) {
+  if (
+    !req.body.username ||
+    validator.isEmpty(validator.trim(req.body.username))
+  ) {
     error.push({ field: "username", message: "Username is required" });
-  } else if (!validator.isLength(req.body.username, { min: 3 })) {
+  } else if (!validator.isLength(req.body.username, { min: 3, max: 40 })) {
     error.push({
       field: "username",
-      message: "Username must be at least 3 characters long",
+      message: "Username must be between 3 and 40 characters long",
     });
   } else {
     const user = await User.findOne({
@@ -136,24 +175,52 @@ const editUsernameValidation = async (req, res) => {
 const editAddressValidation = async (req, res) => {
   const error = [];
 
-  if (!req.body.country || validator.isEmpty(req.body.country)) {
+  if (
+    !req.body.country ||
+    validator.isEmpty(validator.trim(req.body.country))
+  ) {
     error.push({ field: "country", message: "Country is required" });
   }
 
-  if (!req.body.city || validator.isEmpty(req.body.city)) {
+  if (!req.body.city || validator.isEmpty(validator.trim(req.body.city))) {
     error.push({ field: "city", message: "City is required" });
   }
 
-  if (!req.body.street || validator.isEmpty(req.body.street)) {
+  if (req.body.county && !validator.isLength(req.body.county, { max: 100 })) {
+    error.push({
+      field: "county",
+      message: "County must be at most 100 characters long",
+    });
+  }
+
+  if (!req.body.street || validator.isEmpty(validator.trim(req.body.street))) {
     error.push({ field: "street", message: "Street is required" });
+  } else if (!validator.isLength(req.body.street, { max: 100 })) {
+    error.push({
+      field: "street",
+      message: "Street must be at most 100 characters long",
+    });
   }
 
   if (!req.body.number || validator.isEmpty(req.body.number)) {
     error.push({ field: "number", message: "Number is required" });
+  } else if (!validator.isLength(req.body.number, { max: 10 })) {
+    error.push({
+      field: "number",
+      message: "Number must be at most 10 characters long",
+    });
   }
 
   if (req.body.floor && !validator.isNumeric(req.body.floor)) {
     error.push({ field: "floor", message: "Floor must be a number" });
+  } else if (
+    req.body.floor &&
+    !validator.isLength(req.body.floor, { max: 10 })
+  ) {
+    error.push({
+      field: "floor",
+      message: "Floor must be at most 10 characters long",
+    });
   }
 
   if (!req.body.postalCode || validator.isEmpty(req.body.postalCode)) {
@@ -174,7 +241,10 @@ const deleteUserValidation = async (req, res) => {
       .json({ error: [{ field: "id", message: "Profile not found" }] });
   }
 
-  if (!req.body.username || validator.isEmpty(req.body.username)) {
+  if (
+    !req.body.username ||
+    validator.isEmpty(validator.trim(req.body.username))
+  ) {
     error.push({ field: "username", message: "Please enter your username" });
   } else {
     const user = await User.findByPk(req.user.id);
@@ -185,7 +255,7 @@ const deleteUserValidation = async (req, res) => {
 
   if (
     !req.body.messageConfirm ||
-    validator.isEmpty(req.body.messageConfirm || "")
+    validator.isEmpty(validator.trim(req.body.messageConfirm))
   ) {
     error.push({
       field: "messageConfirm",
@@ -198,7 +268,7 @@ const deleteUserValidation = async (req, res) => {
     });
   }
 
-  if (!req.body.password || validator.isEmpty(req.body.password || "")) {
+  if (!req.body.password || validator.isEmpty(req.body.password)) {
     error.push({ field: "password", message: "Password is required" });
   } else {
     const user = await User.findByPk(req.user.id);

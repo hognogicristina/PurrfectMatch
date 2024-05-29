@@ -69,7 +69,8 @@ import UserProfilePage, {
 } from "./pages/Profile/UserProfile.jsx";
 import ArchiveOfUsersPage, {
   loader as loadArchiveOfUsers,
-} from "./pages/PurrfectMatch/Users.jsx";
+} from "./pages/PurrfectMatch/ArchiveOfUsers.jsx";
+import { useState } from "react";
 
 const router = createBrowserRouter([
   {
@@ -238,6 +239,13 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [users, setUsers] = useState({
+    data: [],
+    totalItems: 0,
+    totalPages: 0,
+  });
+  const value = { users, setUsers };
+
   return (
     <ToastProvider>
       <RouterProvider router={router} />

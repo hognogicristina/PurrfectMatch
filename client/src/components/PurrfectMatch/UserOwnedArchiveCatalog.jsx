@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
-import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import { useNavigate } from "react-router-dom";
 
 function UserOwnedArchiveCatalog({ username }) {
   const [cats, setCats] = useState([]);
+  const [error, setError] = useState({});
   const { notifyError } = useToast();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
 
   useEffect(() => {
     const fetchCats = async () => {
@@ -23,48 +18,44 @@ function UserOwnedArchiveCatalog({ username }) {
       if (response.ok) {
         setCats(data.data);
       } else {
+        const newError = {};
         data.error.forEach((err) => {
-          notifyError(err.message);
+          if (err.field === "server") {
+            notifyError(err.message);
+          }
+          newError[err.field] = err.message;
         });
+        setError(newError);
       }
     };
 
     fetchCats();
-  }, []);
+  }, [username, notifyError]);
 
   const handleCatClick = (id) => {
     navigate(`/cats/cat/${id}`);
   };
 
-  const handleExploreMore = () => {
-    navigate(`/cats?selectedUser=${username}&page=1`);
-  };
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
   return (
     <div className="catList">
       <h2>Purrfect Matches Archive</h2>
-      <div className="catGrid">
-        {cats.map((cat) => (
-          <div
-            key={cat.id}
-            className="catItemList"
-            onClick={() => handleCatClick(cat.id)}
-            style={{ backgroundImage: `url(${cat.image})` }}
-          >
-            <div className="catDetails">
-              <h2>{cat.name}</h2>
+      {error && error.cats ? (
+        <div className="errorMessageCats">{error.cats}</div>
+      ) : (
+        <div className="catRow">
+          {cats.map((cat) => (
+            <div
+              key={cat.id}
+              className="catItemList"
+              onClick={() => handleCatClick(cat.id)}
+              style={{ backgroundImage: `url(${cat.image})` }}
+            >
+              <div className="catDetails">
+                <h2>{cat.name}</h2>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      {cats.length > 0 && (
-        <button className="submitButton submit" onClick={handleExploreMore}>
-          Explore More
-        </button>
+          ))}
+        </div>
       )}
     </div>
   );

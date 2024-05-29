@@ -29,9 +29,18 @@ export default function OwnedArchiveCatalog({
     setIsEditDialogOpen(true);
   };
 
-  const handleCloseEditDialog = () => {
+  const handleCloseEditDialog = (updatedCat) => {
     setIsEditDialogOpen(false);
-    setCurrentCat(null);
+    if (updatedCat) {
+      // Update the currentCat with new details
+      setCurrentCat(updatedCat);
+      // Update the list of cats with the updated cat details
+      const updatedData = data.map((cat) =>
+        cat.id === updatedCat.id ? updatedCat : cat,
+      );
+      // Replace the data in the cats object
+      cats.data = updatedData;
+    }
   };
 
   const handleCatClick = (id) => {

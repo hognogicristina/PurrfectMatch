@@ -2,23 +2,24 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import AdoptCat from "./AdoptCat.jsx";
 import FavoriteHeart from "../../Features/FavoriteHeart.jsx";
-import ModifyCatForm from "../../../Cat/ModifyCatForm.jsx";
 import { FaEdit } from "react-icons/fa";
 import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { getAuthToken } from "../../../../util/auth.js";
 import { IoTrashBin } from "react-icons/io5";
+import ConfirmDialog from "../../Custom/Reuse/ConfirmDialog.jsx";
+import { useState } from "react";
 
 export default function CatDetailsSection({
   catDetail,
   userDetails,
   userEditCat,
   handleEditClick,
-  isEditDialogOpen,
-  handleCloseEditDialog,
 }) {
   const navigate = useNavigate();
   const { notifyError } = useToast();
   const token = getAuthToken();
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [catIdToDelete, setCatIdToDelete] = useState(null);
 
   const handleBreedClick = () => {
     navigate(`/cats?selectedBreed=${catDetail.breed}&page=1`);
@@ -49,6 +50,20 @@ export default function CatDetailsSection({
     }
   };
 
+  const handleTrashClick = (catId) => {
+    setCatIdToDelete(catId);
+    setShowConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = () => {
+    handleDeleteCat(catIdToDelete);
+    setShowConfirmDialog(false);
+  };
+
+  const handleOwnerClick = (username) => {
+    navigate(`/user-profile/${username}`);
+  };
+
   return (
     <motion.div
       key={catDetail.id}
@@ -66,9 +81,14 @@ export default function CatDetailsSection({
             </p>
             <div className="dotSeparator"></div>
             <p className="addressGuardian">
-              {catDetail.owner
-                ? `${catDetail.name} is already adopted`
-                : catDetail.address}
+              {catDetail.owner ? (
+                <span onClick={() => handleOwnerClick(catDetail.ownerUsername)}>
+                  {catDetail.name} is already adopted by
+                  <span className="userLink"> {catDetail.owner}</span>
+                </span>
+              ) : (
+                catDetail.address
+              )}
             </p>
           </div>
           <p className="aboutCat">{catDetail.description}</p>
@@ -150,7 +170,16 @@ export default function CatDetailsSection({
                           <p>
                             If you need further assistance, please contact the
                             owner
-                            <strong> {catDetail.owner}</strong>.
+                            <strong
+                              className="userLink"
+                              onClick={() =>
+                                handleOwnerClick(catDetail.ownerUsername)
+                              }
+                            >
+                              {" "}
+                              {catDetail.owner}
+                            </strong>
+                            .
                           </p>
                         </>
                       )}
@@ -159,21 +188,44 @@ export default function CatDetailsSection({
                 </>
               ) : (
                 <>
-                  <div className="trashIcon" onClick={handleDeleteCat}>
+                  <motion.div
+                    className="trashIcon"
+                    initial={{ scale: 1 }}
+                    whileTap={{ scale: 1.3, rotate: 180 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleTrashClick(catDetail.id);
+                    }}
+                  >
                     <IoTrashBin className="deleteIcon" />
-                  </div>
+                  </motion.div>
                   {catDetail.owner ? (
                     <>
                       <h3>{catDetail.name} has already found a loving home</h3>
                       <p>
-                        <strong> {catDetail.owner}</strong> is the owner
+                        <strong
+                          className="userLink"
+                          onClick={() =>
+                            handleOwnerClick(catDetail.ownerUsername)
+                          }
+                        >
+                          {" "}
+                          {catDetail.owner}
+                        </strong>{" "}
+                        is the owner
                       </p>
                     </>
                   ) : (
                     <>
                       <h3>{catDetail.name} is waiting for a loving home</h3>
                       <p>
-                        <strong>{catDetail.guardian}</strong> is the guardian
+                        <strong
+                          className="userLink"
+                          onClick={() => handleOwnerClick(catDetail.user)}
+                        >
+                          {catDetail.guardian}
+                        </strong>{" "}
+                        is the guardian
                       </p>
                     </>
                   )}
@@ -187,10 +239,12 @@ export default function CatDetailsSection({
             </>
           )}
         </div>
-        {isEditDialogOpen && (
-          <ModifyCatForm
-            catDetail={catDetail}
-            onClose={handleCloseEditDialog}
+        {showConfirmDialog && (
+          <ConfirmDialog
+            title="Confirm Delete"
+            message="Are you sure you want to delete this cat?"
+            onClose={() => setShowConfirmDialog(false)}
+            onConfirm={handleConfirmDelete}
           />
         )}
       </div>

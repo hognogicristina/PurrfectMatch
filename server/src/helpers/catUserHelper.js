@@ -44,7 +44,6 @@ const getCatsLimit = async (user, listType) => {
   if (listType === "sentToAdoption") {
     const addedCatsUser = await CatUser.findAll({
       where: { userId: user.id },
-      limit: 4,
     });
     for (let addedCat of addedCatsUser) {
       const cat = await Cat.findByPk(addedCat.catId);
@@ -53,7 +52,6 @@ const getCatsLimit = async (user, listType) => {
   } else if (listType === "owned") {
     const ownedCatsUser = await CatUser.findAll({
       where: { ownerId: user.id },
-      limit: 4,
     });
     for (let ownedCat of ownedCatsUser) {
       const cat = await Cat.findByPk(ownedCat.catId);

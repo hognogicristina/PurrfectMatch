@@ -59,25 +59,49 @@ const validateUser = async (req, res, type) => {
 const registerValidation = async (req, res) => {
   const error = [];
 
-  if (!req.body.firstName || validator.isEmpty(req.body.firstName)) {
+  if (
+    !req.body.firstName ||
+    validator.isEmpty(validator.trim(req.body.firstName))
+  ) {
     error.push({ field: "firstName", message: "First name is required" });
-  }
-
-  if (!req.body.lastName || validator.isEmpty(req.body.lastName)) {
-    error.push({ field: "lastName", message: "Last name is required" });
-  }
-
-  if (!req.body.username || validator.isEmpty(req.body.username)) {
-    error.push({ field: "username", message: "Username is required" });
-  } else if (!validator.isLength(req.body.username, { min: 3 })) {
+  } else if (!validator.isLength(req.body.firstName, { max: 50 })) {
     error.push({
-      field: "username",
-      message: "Username must be at least 3 characters long",
+      field: "firstName",
+      message: "First name must be at most 50 characters long",
     });
-  } else if (!validator.isAlphanumeric(req.body.username)) {
+  } else if (!validator.isAlpha(req.body.firstName.replace(/\s/g, ""))) {
+    error.push({
+      field: "name",
+      message: "First name can only contain letters and spaces",
+    });
+
+    if (
+      !req.body.lastName ||
+      validator.isEmpty(validator.trim(req.body.lastName))
+    ) {
+      error.push({ field: "lastName", message: "Last name is required" });
+    } else if (!validator.isLength(req.body.lastName, { max: 50 })) {
+      error.push({
+        field: "lastName",
+        message: "Last name must be at most 50 characters long",
+      });
+    } else if (!validator.isAlpha(req.body.lastName.replace(/\s/g, ""))) {
+      error.push({
+        field: "name",
+        message: "Last name can only contain letters and spaces",
+      });
+    }
+  }
+
+  if (
+    !req.body.username ||
+    validator.isEmpty(validator.trim(req.body.username))
+  ) {
+    error.push({ field: "username", message: "Username is required" });
+  } else if (!validator.isLength(req.body.username, { min: 3, max: 40 })) {
     error.push({
       field: "username",
-      message: "Username must contain only letters and numbers",
+      message: "Username must be between 3 and 40 characters long",
     });
   } else {
     const user = await User.findOne({ where: { username: req.body.username } });

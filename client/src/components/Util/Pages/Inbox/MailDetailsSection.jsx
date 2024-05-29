@@ -3,6 +3,7 @@ import { FaRegCheckCircle, FaBan, FaAngleDoubleRight } from "react-icons/fa";
 import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { getAuthToken } from "../../../../util/auth.js";
 import { IoTrashBin } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 export const getStatusIcon = (status) => {
   switch (status) {
@@ -37,8 +38,11 @@ function MailDetailsSection({
   setMailDetails,
   selectedMailId,
   removeMailFromList,
+  updateMailInList,
+  openMail,
 }) {
   const { notifyError } = useToast();
+  const navigate = useNavigate();
 
   const handleResponse = async (status) => {
     const token = getAuthToken();
@@ -56,7 +60,8 @@ function MailDetailsSection({
 
     if (response.ok) {
       const mailData = await response.json();
-      setMailDetails(mailData.data);
+      await openMail(selectedMailId, "update");
+      updateMailInList(mailData.adoptionRequest, selectedMailId);
     } else {
       const mailError = await response.json();
       mailError.error.forEach((error) => notifyError(error.message));
@@ -88,6 +93,10 @@ function MailDetailsSection({
     }
   };
 
+  const handleOwnerClick = (username) => {
+    navigate(`/user-profile/${username}`);
+  };
+
   return (
     <motion.div
       className="mailDetails"
@@ -116,7 +125,14 @@ function MailDetailsSection({
             <div className="initials">{mailDetails.from.slice(0, 2)}</div>
           )}
           <div className="info">
-            <h2>{mailDetails.from}</h2>
+            <h2
+              className="userLink"
+              onClick={() => {
+                handleOwnerClick(mailDetails.username);
+              }}
+            >
+              {mailDetails.from}
+            </h2>
             <span className="from">{mailDetails.subject}</span>
             <span className="to">To: {mailDetails.to}</span>
           </div>

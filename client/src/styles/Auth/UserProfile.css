@@ -119,6 +119,14 @@
   margin-bottom: 20px;
 }
 
+.catRow {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px;
+}
+
+
 .catGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -126,7 +134,7 @@
 }
 
 .catItemList {
-  width: 100%;
+  min-width: 130px;
   height: 120px;
   display: flex;
   border-radius: 8px;

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 function UserFelinesRecordsCatalog({ username }) {
   const [cats, setCats] = useState([]);
+  const [error, setError] = useState({});
+  const [totalItems, setTotalItems] = useState(0);
   const { notifyError } = useToast();
   const navigate = useNavigate();
 
@@ -16,10 +18,16 @@ function UserFelinesRecordsCatalog({ username }) {
 
       if (response.ok) {
         setCats(data.data);
+        setTotalItems(data.totalItems);
       } else {
+        const newError = {};
         data.error.forEach((err) => {
-          notifyError(err.message);
+          if (err.field === "server") {
+            notifyError(err.message);
+          }
+          newError[err.field] = err.message;
         });
+        setError(newError);
       }
     };
 
@@ -37,24 +45,34 @@ function UserFelinesRecordsCatalog({ username }) {
   return (
     <div className="catList">
       <h2>Rehomed Felines Records</h2>
-      <div className="catGrid">
-        {cats.map((cat) => (
-          <div
-            key={cat.id}
-            className="catItemList"
-            onClick={() => handleCatClick(cat.id)}
-            style={{ backgroundImage: `url(${cat.image})` }}
-          >
-            <div className="catDetails">
-              <h2>{cat.name}</h2>
-            </div>
+      {error && error.cats ? (
+        <div className="errorMessageCats">{error.cats}</div>
+      ) : (
+        <>
+          <div className="catGrid">
+            {cats.slice(0, 4).map((cat) => (
+              <div
+                key={cat.id}
+                className="catItemList"
+                onClick={() => handleCatClick(cat.id)}
+                style={{ backgroundImage: `url(${cat.image})` }}
+              >
+                <div className="catDetails">
+                  <h2>{cat.name}</h2>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      {cats.length > 0 && (
-        <button className="submitButton submit" onClick={handleExploreMore}>
-          Explore More
-        </button>
+          {cats.length > 0 && (
+            <button
+              className={`submitButton submit ${totalItems <= 4 ? "disabled" : ""}`}
+              onClick={handleExploreMore}
+              disabled={totalItems <= 4}
+            >
+              Explore More
+            </button>
+          )}
+        </>
       )}
     </div>
   );

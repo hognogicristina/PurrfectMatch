@@ -58,31 +58,31 @@ const generateImages = async (i, folder) => {
 };
 
 const generateRandomHealthProblem = async () => {
-  try {
-    const response = await axios.get(
-      "https://clinicaltables.nlm.nih.gov/api/conditions/v3/search?terms=gastroenteri&df=term_icd9_code,maxList,primary_name",
-    );
-    const conditions = response.data[3].map((condition) => {
-      return {
-        term_icd9_code: condition[0],
-        maxList: condition[1],
-        primary_name: condition[2],
-      };
-    });
+  const conditions = [
+    {
+      term_icd9_code: "1",
+      maxList: "1",
+      primary_name: "Feline Lower Urinary Tract Disease (FLUTD)",
+    },
+    {
+      term_icd9_code: "2",
+      maxList: "1",
+      primary_name: "Chronic Kidney Disease",
+    },
+    { term_icd9_code: "3", maxList: "1", primary_name: "Hyperthyroidism" },
+    { term_icd9_code: "4", maxList: "1", primary_name: "Diabetes Mellitus" },
+    { term_icd9_code: "5", maxList: "1", primary_name: "Dental Disease" },
+  ];
 
-    const numberOfNullsToAdd = Math.ceil(conditions.length * 0.1);
-    for (let i = 0; i < numberOfNullsToAdd; i++) {
-      const randomIndex = randomInt(0, conditions.length);
-      conditions.splice(randomIndex, 0, null);
-    }
-
-    const randomIndex = randomInt(0, conditions.length);
-    const selectedCondition = conditions[randomIndex];
-    return selectedCondition ? selectedCondition.primary_name : null;
-  } catch (error) {
-    logger.error(error);
-    return null;
+  const numberOfNullsToAdd = Math.ceil(conditions.length * 0.1);
+  for (let i = 0; i < numberOfNullsToAdd; i++) {
+    const randomIndex = Math.floor(Math.random() * (conditions.length + 1));
+    conditions.splice(randomIndex, 0, null);
   }
+
+  const randomIndex = Math.floor(Math.random() * conditions.length);
+  const selectedCondition = conditions[randomIndex];
+  return selectedCondition ? selectedCondition.primary_name : null;
 };
 
 const generateCatData = async (cat) => {

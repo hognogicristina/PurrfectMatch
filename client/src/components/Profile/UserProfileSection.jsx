@@ -1,11 +1,12 @@
 import "../../styles/Auth/UserProfile.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { useNavigate } from "react-router-dom";
 import UserFelinesRecordsCatalog from "../PurrfectMatch/UserFelinesRecordsCatalog.jsx";
 import UserOwnedArchiveCatalog from "../PurrfectMatch/UserOwnedArchiveCatalog.jsx";
+import { motion } from "framer-motion";
 
 function UserProfileSection({ userProfile }) {
   const { notifyError } = useToast();
@@ -13,7 +14,9 @@ function UserProfileSection({ userProfile }) {
 
   useEffect(() => {
     if (userProfile.error) {
-      notifyError(userProfile.error[0].message);
+      userProfile.error.forEach((err) => {
+        notifyError(err.message);
+      });
     }
   }, [userProfile]);
 
@@ -51,10 +54,25 @@ function UserProfileSection({ userProfile }) {
   };
 
   return (
-    <div className="profileContainer">
-      <div className="profileForUser">
+    <motion.div
+      className="profileContainer"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div
+        className="profileForUser"
+        initial={{ y: -50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <div className="profileContentForUser">
-          <div className="userSlideDetailsLeft">
+          <motion.div
+            className="userSlideDetailsLeft"
+            initial={{ x: -50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <div>{renderUserImage()}</div>
             <div className="contanctInfoUser">
               <span className="titleFontUser">
@@ -73,8 +91,13 @@ function UserProfileSection({ userProfile }) {
             <p className="linkButton cancel" onClick={() => navigate(-1)}>
               Cancel
             </p>
-          </div>
-          <div className="contanctInfoUser">
+          </motion.div>
+          <motion.div
+            className="contanctInfoUser"
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
             <span className="titleFontUser">About {userProfile.firstName}</span>
             <span className="textFontUser">
               {userProfile.description || "No description provided."}
@@ -89,14 +112,19 @@ function UserProfileSection({ userProfile }) {
               <strong>Experience level:</strong>
               {renderExperienceLevel(userProfile.experienceLevel)}
             </span>
-          </div>
+          </motion.div>
         </div>
-      </div>
-      <div className="listsContainer">
+      </motion.div>
+      <motion.div
+        className="listsContainer"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
         <UserOwnedArchiveCatalog username={userProfile.username} />
         <UserFelinesRecordsCatalog username={userProfile.username} />
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

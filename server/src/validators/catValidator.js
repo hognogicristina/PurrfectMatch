@@ -72,12 +72,17 @@ const catsFilterValidator = async (catsFilter, res) => {
 const catValidator = async (req, res) => {
   const error = [];
 
-  if (!req.body.name || validator.isEmpty(req.body.name)) {
+  if (!req.body.name || validator.isEmpty(validator.trim(req.body.name))) {
     error.push({ field: "name", message: "Name is required" });
   } else if (!validator.isAlpha(req.body.name.replace(/\s/g, ""))) {
     error.push({
       field: "name",
       message: "Name can only contain letters and spaces",
+    });
+  } else if (!validator.isLength(req.body.name, { max: 50 })) {
+    error.push({
+      field: "name",
+      message: "Name must be at most 50 characters long",
     });
   }
 
@@ -119,7 +124,7 @@ const catValidator = async (req, res) => {
     }
   }
 
-  if (!req.body.color || validator.isEmpty(req.body.color)) {
+  if (!req.body.color || validator.isEmpty(validator.trim(req.body.color))) {
     error.push({ field: "color", message: "Color is required" });
   }
 
@@ -142,15 +147,18 @@ const catValidator = async (req, res) => {
     error.push({ field: "age", message: "A cat lives up to 40 years" });
   }
 
-  if (!req.body.description || validator.isEmpty(req.body.description)) {
+  if (
+    !req.body.description ||
+    validator.isEmpty(validator.trim(req.body.description))
+  ) {
     error.push({ field: "description", message: "Description is required" });
   } else if (
     req.body.description &&
-    !validator.isLength(req.body.description, { min: 5 })
+    !validator.isLength(req.body.description, { min: 5, max: 1000 })
   ) {
     error.push({
       field: "description",
-      message: "Description must be at least 5 characters long",
+      message: "Description must be between 5 and 1000 characters long",
     });
   }
 
