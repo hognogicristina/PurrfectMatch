@@ -1,5 +1,3 @@
-// CatItem.jsx
-
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import "../../styles/PurrfectMatch/Cat.css";
@@ -78,6 +76,8 @@ export default function CatItem({ catDetail }) {
 
   const handleUpdateCatDetail = (updatedCatDetail) => {
     setCurrentCatDetail(updatedCatDetail);
+    setMainImage(updatedCatDetail.images[0]);
+    setCarouselImages(updatedCatDetail.images);
   };
 
   return (

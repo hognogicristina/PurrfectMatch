@@ -8,7 +8,7 @@ import {
 } from "react-router-dom";
 import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaRegUser } from "react-icons/fa";
 import ConfirmDialog from "../Util/Custom/Reuse/ConfirmDialog.jsx";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { Spinner } from "../Util/Custom/PageResponse/Spinner.jsx";
@@ -72,22 +72,30 @@ export default function LoginForm() {
       >
         <Form method="post" className="formContainer">
           <h2>Log In</h2>
-          <input
-            name="usernameOrEmail"
-            type="text"
-            placeholder="Enter your username or email"
-          />
-          {errors.usernameOrEmail && (
-            <p className="errorText">{errors.usernameOrEmail}</p>
-          )}
-          <label className="passwordInput">
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaRegUser />
+            </div>
+            <input
+              name="usernameOrEmail"
+              type="text"
+              placeholder="Enter your username or email"
+            />
+            {errors.usernameOrEmail && (
+              <p className="errorText">{errors.usernameOrEmail}</p>
+            )}
+          </label>
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaLock />
+            </div>
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
             />
             <span
-              className={`togglePassword ${errors.currentPassword ? "show" : ""}`}
+              className="iconContainer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}

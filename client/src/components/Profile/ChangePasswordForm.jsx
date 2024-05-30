@@ -1,5 +1,5 @@
 import { Form, Link, useActionData, useNavigation } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaKey, FaLock } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
@@ -39,14 +39,17 @@ export default function ChangeUsernameProfile() {
       >
         <Form method="post" className="passwordForm">
           <h1 className="titleFont">Change Password</h1>
-          <label className="passwordInput">
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaLock />
+            </div>
             <input
               name="currentPassword"
               type={showCurrentPassword ? "text" : "password"}
               placeholder="Enter your current password"
             />
             <span
-              className={`togglePassword ${errors.currentPassword ? "show" : ""}`}
+              className="iconContainer"
               onClick={() => setShowCurrentPassword(!showCurrentPassword)}
             >
               {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
@@ -55,14 +58,17 @@ export default function ChangeUsernameProfile() {
               <p className="errorText">{errors.currentPassword}</p>
             )}
           </label>
-          <label className="passwordInput">
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaKey />
+            </div>
             <input
               name="newPassword"
               type={showNewPassword ? "text" : "password"}
               placeholder="Enter your new password"
             />
             <span
-              className={`togglePassword ${errors.newPassword ? "show" : ""}`}
+              className="iconContainer"
               onClick={() => setShowNewPassword(!showNewPassword)}
             >
               {showNewPassword ? <FaEyeSlash /> : <FaEye />}
@@ -71,14 +77,17 @@ export default function ChangeUsernameProfile() {
               <p className="errorText">{errors.newPassword}</p>
             )}
           </label>
-          <label className="passwordInput">
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaKey />
+            </div>
             <input
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your new password"
             />
             <span
-              className={`togglePassword ${errors.confirmPassword ? "show" : ""}`}
+              className="iconContainer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

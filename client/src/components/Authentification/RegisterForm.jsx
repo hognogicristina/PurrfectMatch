@@ -148,7 +148,7 @@ export default function RegisterForm() {
                 </label>
               </div>
               <div className="formRow">
-                <label className="passwordInput">
+                <label className="authInput">
                   Password
                   <input
                     name="password"
@@ -165,7 +165,7 @@ export default function RegisterForm() {
                     <p className="errorText">{errors.password}</p>
                   )}
                 </label>
-                <label className="passwordInput">
+                <label className="authInput">
                   Confirm Password
                   <input
                     name="confirmPassword"

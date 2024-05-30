@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import UploadImages from "../Util/Features/UploadImages.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import DeleteCatDialog from "./DeleteCatDialog";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
 import { getAuthToken } from "../../util/auth.js";
 import CatSelectFields from "../Util/Pages/CatProfile/CatSelectFields.jsx";
@@ -17,6 +16,7 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
   const isSubmitting = navigation.state === "submitting";
   const { notifyError, notifySuccess } = useToast();
   const [errors, setErrors] = useState({});
+  const [imagesCat, setImagesCat] = useState(catDetail.images || []);
   const [imageUris, setImageUris] = useState(catDetail.uris || []);
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(true);
@@ -80,6 +80,7 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
         }),
       },
     );
+
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
@@ -93,7 +94,7 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
         healthProblem: e.target.healthProblem.value,
         description: e.target.description.value,
         uris: imageUris,
-        image: imageUris[0],
+        images: data.images,
       };
       onClose();
       onSubmit(updatedCatDetail);
@@ -117,8 +118,6 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
   if (isLoading) {
     return <LoadingSpinner />;
   }
-
-  const imagesCat = catDetail.images;
 
   return (
     <div className="dialogOverlay">

@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
 import { useNavigate } from "react-router-dom";
+import { IoTrashBin } from "react-icons/io5";
+import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 
 export default function FelinesRecordsCatalog({
   cats,
@@ -19,10 +21,16 @@ export default function FelinesRecordsCatalog({
   const [currentCat, setCurrentCat] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [searchParamsKey, setSearchParamsKey] = useState(0);
+  const [catList, setCatList] = useState(data || []);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, cats]);
+
+  useEffect(() => {
+    setCatList(data);
+  }, [data]);
 
   const handleEditClick = (cat) => {
     setCurrentCat(cat);
@@ -38,9 +46,25 @@ export default function FelinesRecordsCatalog({
     navigate(`/cats/cat/${id}`);
   };
 
+  const handleUpdateCatDetail = (updatedCatDetail) => {
+    setCatList((prevCatList) =>
+      prevCatList.map((cat) =>
+        cat.id === updatedCatDetail.id ? updatedCatDetail : cat,
+      ),
+    );
+  };
+
+  const openDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
   const renderCats = () => {
-    if (cats && Array.isArray(data) && data.length > 0) {
-      return data.map((cat, index) => (
+    if (cats && Array.isArray(catList) && catList.length > 0) {
+      return catList.map((cat, index) => (
         <motion.li
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -53,19 +77,31 @@ export default function FelinesRecordsCatalog({
           viewport={{ once: true }}
           key={`${cat.id}-${searchParamsKey}-${index}`}
           className="catListItem"
-          style={{ backgroundImage: `url(${cat.image})` }}
+          style={{ backgroundImage: `url(${cat.images[0]})` }}
           onClick={() => handleCatClick(cat.id)}
         >
           {cat.status === "active" && (
-            <div
-              className="editIconContainer"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleEditClick(cat);
-              }}
-            >
-              <FaEdit className="editIcon" />
-            </div>
+            <>
+              <div
+                className="editIconContainer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditClick(cat);
+                }}
+              >
+                <FaEdit />
+              </div>
+              <motion.div
+                className="trashIcon listTrashIcon"
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openDeleteDialog();
+                }}
+              >
+                <IoTrashBin />
+              </motion.div>
+            </>
           )}
           <div className="catDetails">
             <h2>{cat.name}</h2>
@@ -128,7 +164,14 @@ export default function FelinesRecordsCatalog({
         <ul className="catsList list">{renderCats()}</ul>
       </motion.div>
       {isEditDialogOpen && (
-        <ModifyCatForm catDetail={currentCat} onClose={handleCloseEditDialog} />
+        <ModifyCatForm
+          catDetail={currentCat}
+          onClose={handleCloseEditDialog}
+          onSubmit={handleUpdateCatDetail}
+        />
+      )}
+      {isDeleteDialogOpen && (
+        <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
       )}
     </div>
   );

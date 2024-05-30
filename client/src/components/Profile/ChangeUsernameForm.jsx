@@ -1,5 +1,5 @@
 import { Form, useActionData, useNavigation } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaLock, FaRegUser } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
@@ -47,24 +47,32 @@ export default function ChangeUsernameForm({ userDetail }) {
       >
         <Form method="post" className="usernameForm">
           <h1 className="titleFont">Change Username</h1>
-          <input
-            name="username"
-            type="text"
-            placeholder="Enter your username"
-            defaultValue={user ? user.username : ""}
-            onKeyPress={(e) => {
-              if (e.key === "Enter") e.preventDefault();
-            }}
-          />
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaRegUser />
+            </div>
+            <input
+              name="username"
+              type="text"
+              placeholder="Enter your username"
+              defaultValue={user ? user.username : ""}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+            />
+          </label>
           {errors.username && <p className="errorText">{errors.username}</p>}
-          <label className="passwordInput">
+          <label className="authInput">
+            <div className="iconContainer">
+              <FaLock />
+            </div>
             <input
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
             />
             <span
-              className={`togglePassword ${errors.password ? "show" : ""}`}
+              className="iconContainer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}

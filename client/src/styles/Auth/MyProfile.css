@@ -235,7 +235,7 @@
 }
 
 .userPersonalInput {
-  width: 302px !important;
+  width: 100%;
 }
 
 .controlProfileContainer .submitButton {
@@ -362,7 +362,6 @@
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 10px;
 }
 

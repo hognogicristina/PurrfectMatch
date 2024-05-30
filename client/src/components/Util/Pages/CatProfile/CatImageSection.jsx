@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaArrowCircleRight, FaArrowCircleLeft } from "react-icons/fa";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 export default function CatImageSection({
   catDetail,
@@ -56,11 +56,12 @@ export default function CatImageSection({
           transition={{ duration: 0.3 }}
         >
           {carouselImages.length > 1 && (
-            <motion.div whileTap={{ scale: 0.9 }}>
-              <FaArrowCircleLeft
-                className="navigationButton"
-                onClick={handlePreviousImage}
-              />
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="navigationButtonContainer"
+              onClick={handlePreviousImage}
+            >
+              <FaArrowLeft />
             </motion.div>
           )}
           {carouselImages.map((image, index) => (
@@ -74,11 +75,12 @@ export default function CatImageSection({
             />
           ))}
           {carouselImages.length > 1 && (
-            <motion.div whileTap={{ scale: 0.9 }}>
-              <FaArrowCircleRight
-                className="navigationButton"
-                onClick={handleNextImage}
-              />
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="navigationButtonContainer"
+              onClick={handleNextImage}
+            >
+              <FaArrowRight />
             </motion.div>
           )}
         </motion.div>

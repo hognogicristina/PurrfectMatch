@@ -35,7 +35,7 @@ export default function ResetPasswordForm() {
       >
         <Form method="post">
           <h1>Enter your new password</h1>
-          <label className="passwordInput">
+          <label className="authInput">
             <input
               name="password"
               type={showPassword ? "text" : "password"}
@@ -48,7 +48,7 @@ export default function ResetPasswordForm() {
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
-          <label className="passwordInput">
+          <label className="authInput">
             <input
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}

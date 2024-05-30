@@ -58,6 +58,7 @@
 .trashIcon:hover {
   background: red;
   color: #ffffff;
+  border: 1px solid transparent;
 }
 
 .mailDetails .details {

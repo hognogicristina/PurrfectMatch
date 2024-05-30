@@ -40,10 +40,15 @@ function UploadImages({ initialImages, initialUris, onImageUpload }) {
         },
       );
 
+      const data = response.data;
       if (response.status === 201) {
-        newUris.push(response.data.data[0].uri);
+        data.data.forEach((image) => {
+          newUris.push(image.uri);
+        });
       } else {
-        notifyError(response.data.data.error[0].message);
+        data.error.forEach((error) => {
+          notifyError(error.message);
+        });
       }
     }
 

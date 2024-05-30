@@ -7,6 +7,8 @@ import { FaEdit } from "react-icons/fa";
 import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
 import { useEffect, useState } from "react";
 import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
+import { IoTrashBin } from "react-icons/io5";
+import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 
 export default function OwnedArchiveCatalog({
   cats,
@@ -19,37 +21,50 @@ export default function OwnedArchiveCatalog({
   const [currentCat, setCurrentCat] = useState(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [searchParamsKey, setSearchParamsKey] = useState(0);
+  const [catList, setCatList] = useState(data || []);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, cats]);
+
+  useEffect(() => {
+    setCatList(data);
+  }, [data]);
 
   const handleEditClick = (cat) => {
     setCurrentCat(cat);
     setIsEditDialogOpen(true);
   };
 
-  const handleCloseEditDialog = (updatedCat) => {
+  const handleCloseEditDialog = () => {
     setIsEditDialogOpen(false);
-    if (updatedCat) {
-      // Update the currentCat with new details
-      setCurrentCat(updatedCat);
-      // Update the list of cats with the updated cat details
-      const updatedData = data.map((cat) =>
-        cat.id === updatedCat.id ? updatedCat : cat,
-      );
-      // Replace the data in the cats object
-      cats.data = updatedData;
-    }
+    setCurrentCat(null);
   };
 
   const handleCatClick = (id) => {
     navigate(`/cats/cat/${id}`);
   };
 
+  const handleUpdateCatDetail = (updatedCatDetail) => {
+    setCatList((prevCatList) =>
+      prevCatList.map((cat) =>
+        cat.id === updatedCatDetail.id ? updatedCatDetail : cat,
+      ),
+    );
+  };
+
+  const openDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+  };
+
   const renderCats = () => {
-    if (cats && Array.isArray(data) && data.length > 0) {
-      return data.map((cat, index) => (
+    if (cats && Array.isArray(catList) && catList.length > 0) {
+      return catList.map((cat, index) => (
         <motion.li
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -62,7 +77,7 @@ export default function OwnedArchiveCatalog({
           viewport={{ once: true }}
           key={`${cat.id}-${searchParamsKey}-${index}`}
           className="catListItem"
-          style={{ backgroundImage: `url(${cat.image})` }}
+          style={{ backgroundImage: `url(${cat.images[0]})` }}
           onClick={() => handleCatClick(cat.id)}
         >
           <div
@@ -72,8 +87,18 @@ export default function OwnedArchiveCatalog({
               handleEditClick(cat);
             }}
           >
-            <FaEdit className="editIcon" />
+            <FaEdit />
           </div>
+          <motion.div
+            className="trashIcon listTrashIcon"
+            whileTap={{ scale: 0.9 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              openDeleteDialog();
+            }}
+          >
+            <IoTrashBin />
+          </motion.div>
           <div className="catDetails">
             <h2>{cat.name}</h2>
             <p>{cat.breed}</p>
@@ -135,7 +160,14 @@ export default function OwnedArchiveCatalog({
         <ul className="catsList list">{renderCats()}</ul>
       </motion.div>
       {isEditDialogOpen && (
-        <ModifyCatForm catDetail={currentCat} onClose={handleCloseEditDialog} />
+        <ModifyCatForm
+          catDetail={currentCat}
+          onClose={handleCloseEditDialog}
+          onSubmit={handleUpdateCatDetail}
+        />
+      )}
+      {isDeleteDialogOpen && (
+        <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
       )}
     </div>
   );

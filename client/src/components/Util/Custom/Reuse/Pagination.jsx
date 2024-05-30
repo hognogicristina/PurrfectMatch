@@ -1,7 +1,7 @@
 import React from "react";
-import { FaArrowCircleLeft, FaArrowCircleRight } from "react-icons/fa";
 import { motion } from "framer-motion";
 import CustomSelect from "./CustomSelect.jsx";
+import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
 
 function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
   const handlePrevClick = () => {
@@ -83,15 +83,23 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
     <div className="pagination">
       <div className="paginationButtons">
         {currentPage > 1 && (
-          <motion.button whileTap={{ scale: 0.9 }} onClick={handlePrevClick}>
-            <FaArrowCircleLeft />
-          </motion.button>
+          <motion.div
+            whileTap={{ scale: 0.9 }}
+            onClick={handlePrevClick}
+            className="paginationButton"
+          >
+            <FaArrowLeftLong />
+          </motion.div>
         )}
         {displayPages && totalPages > 1 && renderPageSelectDropdown()}
         {currentPage < totalPages && (
-          <motion.button whileTap={{ scale: 0.9 }} onClick={handleNextClick}>
-            <FaArrowCircleRight />
-          </motion.button>
+          <motion.div
+            whileTap={{ scale: 0.9 }}
+            onClick={handleNextClick}
+            className="paginationButton"
+          >
+            <FaArrowRightLong />
+          </motion.div>
         )}
       </div>
     </div>

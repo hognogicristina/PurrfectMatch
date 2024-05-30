@@ -8,6 +8,7 @@ import { getAuthToken } from "../../../../util/auth.js";
 import { IoTrashBin } from "react-icons/io5";
 import ConfirmDialog from "../../Custom/Reuse/ConfirmDialog.jsx";
 import { useState } from "react";
+import DeleteCatDialog from "../../../Cat/DeleteCatDialog.jsx";
 
 export default function CatDetailsSection({
   catDetail,
@@ -20,6 +21,7 @@ export default function CatDetailsSection({
   const token = getAuthToken();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [catIdToDelete, setCatIdToDelete] = useState(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const handleBreedClick = () => {
     navigate(`/cats?selectedBreed=${catDetail.breed}&page=1`);
@@ -62,6 +64,14 @@ export default function CatDetailsSection({
 
   const handleOwnerClick = (username) => {
     navigate(`/user-profile/${username}`);
+  };
+
+  const openDeleteDialog = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
   };
 
   return (
@@ -125,12 +135,23 @@ export default function CatDetailsSection({
                             you may edit the details or remove the cat from your
                             profile until it finds a loving home.
                           </p>
-                          <div
+                          <motion.div
                             className="editIconContainer"
+                            whileTap={{ scale: 0.9 }}
                             onClick={handleEditClick}
                           >
-                            <FaEdit className="editIcon" />
-                          </div>
+                            <FaEdit />
+                          </motion.div>
+                          <motion.div
+                            className="trashIcon ownerTrashIcon"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteDialog();
+                            }}
+                          >
+                            <IoTrashBin />
+                          </motion.div>
                         </>
                       ) : (
                         <>
@@ -155,12 +176,23 @@ export default function CatDetailsSection({
                             You may edit the details or remove the cat from your
                             profile.
                           </p>
-                          <div
+                          <motion.div
                             className="editIconContainer"
+                            whileTap={{ scale: 0.9 }}
                             onClick={handleEditClick}
                           >
-                            <FaEdit className="editIcon" />
-                          </div>
+                            <FaEdit />
+                          </motion.div>
+                          <motion.div
+                            className="trashIcon ownerTrashIcon"
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDeleteDialog();
+                            }}
+                          >
+                            <IoTrashBin />
+                          </motion.div>
                         </>
                       ) : (
                         <>
@@ -189,15 +221,14 @@ export default function CatDetailsSection({
               ) : (
                 <>
                   <motion.div
-                    className="trashIcon"
-                    initial={{ scale: 1 }}
-                    whileTap={{ scale: 1.3, rotate: 180 }}
+                    className="trashIcon adminTrashIcon"
+                    whileTap={{ scale: 0.9 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleTrashClick(catDetail.id);
                     }}
                   >
-                    <IoTrashBin className="deleteIcon" />
+                    <IoTrashBin />
                   </motion.div>
                   {catDetail.owner ? (
                     <>
@@ -246,6 +277,9 @@ export default function CatDetailsSection({
             onClose={() => setShowConfirmDialog(false)}
             onConfirm={handleConfirmDelete}
           />
+        )}
+        {isDeleteDialogOpen && (
+          <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
         )}
       </div>
     </motion.div>

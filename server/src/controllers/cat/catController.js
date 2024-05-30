@@ -110,7 +110,13 @@ const editCat = async (req, res) => {
       }
     }
 
-    return res.json({ status: `Changes to ${cat.name} have been saved` });
+    const images = await Image.findAll({ where: { catId: cat.id } });
+    const imageUrls = images.map((image) => image.url);
+
+    return res.json({
+      status: `Changes to ${cat.name} have been saved`,
+      images: imageUrls,
+    });
   } catch (error) {
     logger.error(error);
     return res
