@@ -34,7 +34,7 @@ async function catToDTO(cat) {
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
     ownerUsername: owner ? owner.username : null,
-    imageUser: imageUser ? imageUser[0].url : null,
+    imageUser: imageUser && imageUser.length > 0 ? imageUser[0].url : null,
     address: address ? `${address.city}, ${address.country}` : null,
   };
 }

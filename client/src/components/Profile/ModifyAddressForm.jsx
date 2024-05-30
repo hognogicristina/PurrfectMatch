@@ -1,7 +1,8 @@
 import { Form, useActionData, useNavigation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
+import CustomSelect from "../Util/Custom/Reuse/CustomSelect.jsx";
 
 export default function ModifyAddressForm({ userDetail }) {
   const data = useActionData();
@@ -10,15 +11,79 @@ export default function ModifyAddressForm({ userDetail }) {
   const { notifyError, notifySuccess } = useToast();
   const [user, setUser] = useState();
   const [errors, setErrors] = useState({});
+  const [countries, setCountries] = useState([]);
+  const [cities, setCities] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const initialValuesSet = useRef(false);
 
   useEffect(() => {
     async function getUser() {
       const userInfo = await userDetail;
       setUser(userInfo);
+
+      if (!initialValuesSet.current && userInfo.country) {
+        setSelectedCountry({
+          value: userInfo.countryId,
+          label: userInfo.country,
+        });
+      }
+
+      if (!initialValuesSet.current && userInfo.city) {
+        setSelectedCity({
+          value: userInfo.cityId,
+          label: userInfo.city,
+        });
+      }
+
+      initialValuesSet.current = true;
     }
 
     getUser();
   }, [userDetail]);
+
+  useEffect(() => {
+    async function fetchCountries() {
+      const response = await fetch("http://localhost:3000/countries");
+      const data = await response.json();
+      if (response.ok) {
+        setCountries(
+          data.data.map((country) => ({
+            value: country.id,
+            label: country.name,
+          })),
+        );
+      } else {
+        data.error.forEach((error) => {
+          notifyError(error.message);
+        });
+      }
+    }
+
+    fetchCountries();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCities() {
+      if (selectedCountry) {
+        const response = await fetch(
+          `http://localhost:3000/cities/${selectedCountry.value}`,
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setCities(
+            data.data.map((city) => ({ value: city.id, label: city.name })),
+          );
+        } else {
+          data.error.forEach((error) => {
+            notifyError(error.message);
+          });
+        }
+      }
+    }
+
+    fetchCities();
+  }, [selectedCountry]);
 
   useEffect(() => {
     if (data && data.error) {
@@ -32,6 +97,7 @@ export default function ModifyAddressForm({ userDetail }) {
       setErrors(newErrors);
     } else if (data && data.status) {
       notifySuccess(data.status);
+      setErrors({});
     }
   }, [data]);
 
@@ -45,16 +111,51 @@ export default function ModifyAddressForm({ userDetail }) {
       >
         <Form method="post" className="addressForm">
           <h1 className="titleFont">Modify Address</h1>
-          <label>
-            Country
-            <input
-              name="country"
-              type="text"
-              placeholder="Enter your country"
-              defaultValue={user ? user.country : ""}
-            />
-            {errors.country && <p className="errorText">{errors.country}</p>}
-          </label>
+          <div className="address">
+            <label className="orderAddContainer modify">
+              Country
+              <CustomSelect
+                options={countries}
+                value={selectedCountry}
+                onChange={(value) => {
+                  setSelectedCountry(value);
+                  setSelectedCity(null);
+                  if (!value) setCities([]);
+                }}
+                placeholder="Select your country"
+                isClearable={true}
+              />
+              {errors.country && <p className="errorText">{errors.country}</p>}
+              <input
+                type="hidden"
+                name="country"
+                value={
+                  selectedCountry
+                    ? selectedCountry.label
+                    : userDetail.country || ""
+                }
+              />
+            </label>
+            <label className="orderAddContainer modify">
+              City
+              <CustomSelect
+                options={cities}
+                value={selectedCity}
+                onChange={setSelectedCity}
+                placeholder="Select your city"
+                isClearable={true}
+                isDisabled={!selectedCountry}
+              />
+              {errors.city && <p className="errorText">{errors.city}</p>}
+              <input
+                type="hidden"
+                name="city"
+                value={
+                  selectedCity ? selectedCity.label : userDetail.city || ""
+                }
+              />
+            </label>
+          </div>
           <div className="address">
             <label>
               County
@@ -68,19 +169,6 @@ export default function ModifyAddressForm({ userDetail }) {
                 }}
               />
               {errors.county && <p className="errorText">{errors.county}</p>}
-            </label>
-            <label>
-              City
-              <input
-                name="city"
-                type="text"
-                placeholder="Enter your city"
-                defaultValue={user ? user.city : ""}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") e.preventDefault();
-                }}
-              />
-              {errors.city && <p className="errorText">{errors.city}</p>}
             </label>
           </div>
           <div className="address">

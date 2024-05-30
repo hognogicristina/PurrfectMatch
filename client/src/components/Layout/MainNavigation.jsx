@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { NavLink, useLocation, useRouteLoaderData } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import CatsNavigation from "./CatsNavigation.jsx";
-import { useUserDetails } from "../../util/useUserDetails.js";
+import { extractJwt } from "../../util/auth.js";
 
 function MainNavigation() {
   const token = useRouteLoaderData("root");
@@ -19,7 +19,7 @@ function MainNavigation() {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
   const isUserPage = location.pathname === "/user";
-  const { userDetails } = useUserDetails();
+  const tokenExtract = token ? extractJwt(token) : null;
 
   const userMenuButtonStyle = {
     border: isUserPage ? "3px solid #AE3D72FF" : "3px solid #e37fb6",
@@ -106,7 +106,7 @@ function MainNavigation() {
             <h1 className="logo">purrfectMatch</h1>
           </motion.div>
         </NavLink>
-        {!token || userDetails.role === "admin" ? (
+        {!token || tokenExtract.role === "admin" ? (
           <NavLink to="/cats" className="linkButton catalog">
             <motion.p whileTap={{ scale: 0.9 }}>Find a Friend</motion.p>
           </NavLink>
@@ -154,7 +154,7 @@ function MainNavigation() {
       <div className="controlContainer">
         {token ? (
           <>
-            {userDetails.role !== "admin" && (
+            {tokenExtract.role !== "admin" && (
               <>
                 <NavLink
                   to="/adopts"

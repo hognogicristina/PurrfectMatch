@@ -46,17 +46,17 @@ const updateCatData = async (cat, body) => {
   return cat;
 };
 
-const getDistance = (address1, address2) => {
-  const lat1 = address1.latitude;
-  const lon1 = address1.longitude;
-  const lat2 = address2.latitude;
-  const lon2 = address2.longitude;
-
-  return Math.sqrt(Math.pow(lat2 - lat1, 2) + Math.pow(lon2 - lon1, 2));
-};
-
 const calculateDistance = (address1, address2) => {
-  return getDistance(address1, address2);
+  if (
+    address1.city === address2.city &&
+    address1.country === address2.country
+  ) {
+    return 0;
+  } else if (address1.country === address2.country) {
+    return 1;
+  } else {
+    return 2;
+  }
 };
 
 const filterCats = async (req) => {
@@ -80,7 +80,6 @@ const filterCats = async (req) => {
   const sortBy = req.query.sortBy ? req.query.sortBy : "breed";
   const sortOrder = req.query.sortOrder ? req.query.sortOrder : "asc";
 
-  let cats;
   let queryOptions = {
     where: {
       status: "active",
@@ -110,46 +109,51 @@ const filterCats = async (req) => {
     queryOptions.where = { ...queryOptions.where, gender: selectedGender };
   }
   if (selectedHealthProblem) {
-    if (selectedHealthProblem === "Healthy") {
-      queryOptions.where = {
-        ...queryOptions.where,
-        healthProblem: null,
-      };
-    } else {
-      queryOptions.where = {
-        ...queryOptions.where,
-        healthProblem: selectedHealthProblem,
-      };
-    }
+    queryOptions.where = {
+      ...queryOptions.where,
+      healthProblem:
+        selectedHealthProblem === "Healthy" ? null : selectedHealthProblem,
+    };
   }
   if (selectedUser) {
     const user = await User.findOne({ where: { username: selectedUser } });
-    const catUser = await CatUser.findAll({
-      where: { userId: user.id },
-    });
-    const catIds = catUser.map((cat) => cat.catId);
-    queryOptions.where = { ...queryOptions.where, id: catIds };
+    if (user) {
+      const catUser = await CatUser.findAll({ where: { userId: user.id } });
+      const catIds = catUser.map((cat) => cat.catId);
+      queryOptions.where.id = { [Op.in]: catIds };
+    }
   }
   if (selectedColor) {
     queryOptions.where = { ...queryOptions.where, color: selectedColor };
   }
 
-  cats = await Cat.findAll(queryOptions);
+  let cats = await Cat.findAll(queryOptions);
 
   if (sortBy === "location") {
     const loggedUserAddress = await Address.findOne({
       where: { userId: req.user.id },
     });
+    if (!loggedUserAddress) {
+      return cats;
+    }
 
     cats = await Promise.all(
       cats.map(async (cat) => {
-        const catUser = await CatUser.findByPk(cat.id);
-        const guardian = await User.findByPk(catUser.userId);
-        const address = await Address.findOne({
-          where: { userId: guardian.id },
-        });
-        const distance = calculateDistance(loggedUserAddress, address);
-        return { ...cat, distance };
+        const plainCat = cat.get({ plain: true });
+        const catUser = await CatUser.findByPk(plainCat.id);
+        if (catUser) {
+          const guardian = await User.findByPk(catUser.userId);
+          if (guardian) {
+            const address = await Address.findOne({
+              where: { userId: guardian.id },
+            });
+            if (address) {
+              const distance = calculateDistance(loggedUserAddress, address);
+              return { ...plainCat, distance };
+            }
+          }
+        }
+        return { ...plainCat, distance: Infinity };
       }),
     );
 
@@ -159,12 +163,17 @@ const filterCats = async (req) => {
         : cat2.distance - cat1.distance;
     });
   } else {
+    cats = cats.map((cat) => cat.get({ plain: true }));
     cats.sort((cat1, cat2) => {
       let comparison = 0;
       if (sortBy === "breed") {
         comparison = cat1.breed.localeCompare(cat2.breed);
       } else if (sortBy === "age") {
         comparison = String(cat1.age).localeCompare(String(cat2.age));
+      } else if (sortBy === "createdAt") {
+        comparison = String(cat1.createdAt).localeCompare(
+          String(cat2.createdAt),
+        );
       }
       return sortOrder === "asc" ? comparison : -comparison;
     });

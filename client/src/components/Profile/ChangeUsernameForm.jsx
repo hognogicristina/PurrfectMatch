@@ -34,6 +34,7 @@ export default function ChangeUsernameForm({ userDetail }) {
       setErrors(newErrors);
     } else if (data && data.status) {
       notifySuccess(data.status);
+      setErrors({});
     }
   }, [data]);
 

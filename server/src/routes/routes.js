@@ -5,6 +5,7 @@ const adminController = require("../controllers/user/adminController");
 const authController = require("../controllers/user/authController");
 const imageController = require("../controllers/image/imageController");
 const userController = require("../controllers/user/userController");
+const populateController = require("../controllers/user/populateController");
 const profileUserController = require("../controllers/user/profileUserController");
 const filterController = require("../controllers/cat/filterController");
 const catController = require("../controllers/cat/catController");
@@ -75,6 +76,8 @@ router.patch(
   authMiddleware.authenticateToken,
   userController.editUser,
 );
+router.get("/countries", populateController.getAllCountries);
+router.get("/cities/:countryId", populateController.getCitiesByCountry);
 router.patch(
   "/user/address",
   authMiddleware.authenticateToken,

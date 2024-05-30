@@ -16,10 +16,15 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
   const [searchParamsKey, setSearchParamsKey] = useState(0);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState(null);
+  const [userList, setUserList] = useState(data || []);
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, users]);
+
+  useEffect(() => {
+    setUserList(data);
+  }, [data]);
 
   const handleUserClick = (username) => {
     navigate(`/user-profile/${username}`);
@@ -37,6 +42,9 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
+      setUserList((prevUserList) =>
+        prevUserList.filter((user) => user.id !== id),
+      );
     } else {
       data.error.forEach((err) => {
         notifyError(err.message);
@@ -55,8 +63,8 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
   };
 
   const renderUsers = () => {
-    if (users && Array.isArray(data) && data.length > 0) {
-      return data.map((user, index) => (
+    if (userList && Array.isArray(userList) && userList.length > 0) {
+      return userList.map((user, index) => (
         <motion.li
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -73,8 +81,7 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
         >
           <motion.div
             className="trashIcon user"
-            initial={{ scale: 1 }}
-            whileTap={{ scale: 1.3, rotate: 180 }}
+            whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation();
               handleTrashClick(user.id);

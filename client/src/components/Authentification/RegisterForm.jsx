@@ -8,9 +8,12 @@ import {
 } from "react-router-dom";
 import "../../styles/Auth/Authentification.css";
 import { AnimatePresence, motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaKey, FaLock, FaRegUser } from "react-icons/fa";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import LoadingSpinner from "../Util/Custom/PageResponse/LoadingSpinner.jsx";
+import { MdOutlineMail } from "react-icons/md";
+import Datetime from "react-datetime";
+import ErrorMessage from "../Util/Custom/Reuse/ErrorMessage.jsx";
 
 export default function RegisterForm() {
   const data = useActionData();
@@ -23,6 +26,7 @@ export default function RegisterForm() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [birthday, setBirthday] = useState("");
 
   useEffect(() => {
     setIsLoading(false);
@@ -54,6 +58,14 @@ export default function RegisterForm() {
   if (isLoading) {
     return <LoadingSpinner />;
   }
+
+  const handleBirthdayChange = (date) => {
+    if (date && date._isAMomentObject && date.isValid()) {
+      setBirthday(date.format("YYYY-MM-DD"));
+    } else {
+      setBirthday("");
+    }
+  };
 
   return (
     <div className="authContainer">
@@ -117,71 +129,101 @@ export default function RegisterForm() {
                 </label>
               </div>
               <div className="formRow">
-                <label>
-                  Birthday
-                  <input name="birthday" type="date" />
+                <label className="userPersonalInput">
+                  <span>Birthday</span>
+                  <Datetime
+                    className="reactDatetimePicker"
+                    inputProps={{ placeholder: "MM/DD/YYYY" }}
+                    timeFormat={false}
+                    onChange={handleBirthdayChange}
+                  />
+                  <input type="hidden" name="birthday" value={birthday} />
                   {errors.birthday && (
-                    <p className="errorText">{errors.birthday}</p>
+                    <ErrorMessage message={errors.birthday} />
                   )}
                 </label>
               </div>
               <div className="formRow">
-                <label>
-                  Username
-                  <input
-                    name="username"
-                    type="text"
-                    placeholder="Choose a username"
-                  />
+                <div className="registerInput">
+                  <label>Username</label>
+                  <label className="authInput">
+                    <div className="iconContainer">
+                      <FaRegUser />
+                    </div>
+                    <input
+                      name="username"
+                      type="text"
+                      placeholder="Choose a username"
+                    />
+                  </label>
                   {errors.username && (
                     <p className="errorText">{errors.username}</p>
                   )}
-                </label>
-                <label>
-                  Email
-                  <input
-                    name="email"
-                    type="text"
-                    placeholder="Enter your email"
-                  />
+                </div>
+                <div className="registerInput">
+                  <label>Email</label>
+                  <label className="authInput">
+                    <div className="iconContainer">
+                      <MdOutlineMail />
+                    </div>
+                    <input
+                      name="email"
+                      type="text"
+                      placeholder="Enter your email"
+                    />
+                  </label>
                   {errors.email && <p className="errorText">{errors.email}</p>}
-                </label>
+                </div>
               </div>
               <div className="formRow">
-                <label className="authInput">
-                  Password
-                  <input
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                  />
-                  <span
-                    className={`togglePassword ${errors.password ? "show" : ""}`}
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
+                <div className="registerInput">
+                  <label>Password</label>
+                  <label className="authInput">
+                    <div className="iconContainer">
+                      <FaKey />
+                    </div>
+                    <input
+                      className="passwordInput"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                    />
+                    <span
+                      className="iconContainer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </span>
+                  </label>
                   {errors.password && (
                     <p className="errorText">{errors.password}</p>
                   )}
-                </label>
-                <label className="authInput">
-                  Confirm Password
-                  <input
-                    name="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your password"
-                  />
-                  <span
-                    className={`togglePassword ${errors.confirmPassword ? "show" : ""}`}
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                  </span>
+                </div>
+                <div className="registerInput">
+                  <label>Confirm Password</label>
+                  <label className="authInput">
+                    <div className="iconContainer">
+                      <FaKey />
+                    </div>
+                    <input
+                      className="passwordInput"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Confirm your password"
+                    />
+                    <span
+                      className="iconContainer"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </span>
+                  </label>
                   {errors.confirmPassword && (
                     <p className="errorText">{errors.confirmPassword}</p>
                   )}
-                </label>
+                </div>
               </div>
               <div>
                 <motion.button

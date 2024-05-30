@@ -26,6 +26,7 @@ export default function ChangeUsernameProfile() {
       setErrors(newErrors);
     } else if (data && data.status) {
       notifySuccess(data.status);
+      setErrors({});
     }
   }, [data]);
 

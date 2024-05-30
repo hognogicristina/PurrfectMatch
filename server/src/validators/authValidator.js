@@ -118,7 +118,7 @@ const registerValidation = async (req, res) => {
   } else if (!validator.isEmail(req.body.email)) {
     error.push({
       field: "email",
-      message: User.rawAttributes.email.validate.isEmail.msg,
+      message: "Please use a valid email address",
     });
   } else {
     const user = await User.findOne({ where: { email: req.body.email } });

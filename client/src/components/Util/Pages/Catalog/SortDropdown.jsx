@@ -11,6 +11,7 @@ function SortDropdown() {
     const baseOptions = [
       { value: "breed", label: "Breed" },
       { value: "age", label: "Age" },
+      { value: "createdAt", label: "Recently Added" },
     ];
 
     if (token) {

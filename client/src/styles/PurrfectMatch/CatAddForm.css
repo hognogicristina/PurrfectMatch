@@ -39,6 +39,11 @@
   margin-bottom: 16px;
 }
 
+.orderAddContainer.modify {
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
 .orderAddContainer label,
 .orderAddContainer input {
   flex: 1;

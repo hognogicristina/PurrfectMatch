@@ -20,6 +20,7 @@ export default function ModifyMyProfileForm({ userDetail }) {
   const [user, setUser] = useState(null);
   const [experienceLevel, setExperienceLevel] = useState(0);
   const [errors, setErrors] = useState({});
+  const initialImage = user ? user.image : null;
 
   useEffect(() => {
     async function getUser() {
@@ -83,8 +84,6 @@ export default function ModifyMyProfileForm({ userDetail }) {
     }
     return <div className="experienceCircles">{circles}</div>;
   };
-
-  const initialImage = user ? user.image : null;
 
   const handleImageUpload = (uris) => {
     const newImage = { ...user, uri: uris };
@@ -180,7 +179,6 @@ export default function ModifyMyProfileForm({ userDetail }) {
             )}
             {errors.birthday && <ErrorMessage message={errors.birthday} />}
           </label>
-
           <div className="controlProfileContainer">
             <motion.button
               whileTap={{ scale: 0.9 }}

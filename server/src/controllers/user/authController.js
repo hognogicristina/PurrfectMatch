@@ -92,6 +92,7 @@ const login = async (req, res) => {
         id: req.user.id,
         username: req.user.username,
         email: req.user.email,
+        role: req.user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -184,7 +185,12 @@ const logout = async (req, res) => {
 const refresh = async (req, res) => {
   try {
     const newToken = jwt.sign(
-      { id: req.user.id, username: req.user.username },
+      {
+        id: req.user.id,
+        username: req.user.username,
+        email: req.user.email,
+        role: req.user.role,
+      },
       process.env.JWT_SECRET,
       {
         expiresIn: process.env.JWT_TTL,

@@ -1,5 +1,10 @@
 const bcrypt = require("bcrypt");
-const { Address, User, PasswordHistory } = require("../../../models");
+const {
+  Address,
+  User,
+  PasswordHistory,
+  RefreshToken,
+} = require("../../../models");
 const userValidator = require("../../validators/userValidator");
 const passwordValidator = require("../../validators/passwordValidator");
 const catUserValidator = require("../../validators/catUserValidator");
@@ -9,6 +14,7 @@ const userHelper = require("../../helpers/userHelper");
 const userDTO = require("../../dto/userDTO");
 const catUserDTO = require("../../dto/catUserDTO");
 const logger = require("../../../logger/logger");
+const jwt = require("jsonwebtoken");
 
 const getUser = async (req, res) => {
   try {
@@ -204,6 +210,8 @@ const editPassword = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   const transaction = await User.sequelize.transaction();
   try {
     if (await userValidator.validateActiveAccount(req, res)) return;
@@ -211,6 +219,20 @@ const deleteUser = async (req, res) => {
       await transaction.rollback();
       return;
     }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findByPk(decoded.id);
+    const refreshToken = await RefreshToken.findAll({
+      where: { userId: user.id },
+      transaction,
+    });
+    for (const token1 of refreshToken) {
+      await token1.destroy({ transaction });
+    }
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
     await userHelper.deleteUser(req.user, transaction);
     await transaction.commit();
     return res.status(200).json({ status: "We are sorry to see you go" });

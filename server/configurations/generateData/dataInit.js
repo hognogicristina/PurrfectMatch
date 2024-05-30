@@ -16,10 +16,13 @@ const {
   UserRole,
   UserInfo,
   Token,
+  Country,
+  City,
   sequelize,
 } = require("../../models");
 const breedInit = require("../breedConfig/breedInit");
 const adminInit = require("../adminConfig/adminInit");
+const populateInit = require("../populateConfig/populateInit");
 const fileHelper = require("../../src/helpers/fileHelper");
 const helperData = require("./helperData");
 const logger = require("../../logger/logger");
@@ -240,6 +243,8 @@ const emptyDatabase = () => {
   Address.destroy({ truncate: true });
   User.destroy({ truncate: true });
   AgeType.destroy({ truncate: true });
+  City.destroy({ truncate: true });
+  Country.destroy({ truncate: true });
   Breed.findAll().then((breeds) => {
     for (const breed of breeds) {
       fileHelper.deleteImage(breed, "breeds", null);
@@ -256,6 +261,7 @@ const generateData = async () => {
     await breedInit.fetchCatBreeds();
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();
+    await populateInit.populateDatabase();
     const users = await generateUsers(25);
     await generateCats(300, users);
     await generateFavorite(150, users);

@@ -71,6 +71,9 @@ import ArchiveOfUsersPage, {
   loader as loadArchiveOfUsers,
 } from "./pages/PurrfectMatch/ArchiveOfUsers.jsx";
 import { useState } from "react";
+import DeleteProfilePage, {
+  action as actionDeleteUser,
+} from "./pages/Profile/DeleteProfile.jsx";
 
 const router = createBrowserRouter([
   {
@@ -204,6 +207,12 @@ const router = createBrowserRouter([
             path: "password",
             element: <ChangePasswordPage />,
             action: actionChangePassword,
+            loader: checkAuthLoader,
+          },
+          {
+            path: "delete",
+            element: <DeleteProfilePage />,
+            action: actionDeleteUser,
             loader: checkAuthLoader,
           },
           {

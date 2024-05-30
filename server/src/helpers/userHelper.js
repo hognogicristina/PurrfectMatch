@@ -19,7 +19,6 @@ const deleteUser = async (user, transaction) => {
   await Token.destroy({ where: { userId: user.id }, transaction });
   await UserInfo.destroy({ where: { userId: user.id }, transaction });
   await PasswordHistory.destroy({ where: { userId: user.id }, transaction });
-  await RefreshToken.destroy({ where: { userId: user.id }, transaction });
   const image = await Image.findOne({
     where: { userId: user.id },
     transaction,

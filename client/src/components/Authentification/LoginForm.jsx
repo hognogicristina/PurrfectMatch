@@ -39,7 +39,7 @@ export default function LoginForm() {
       } else {
         const newErrors = {};
         data.error.forEach((error) => {
-          if (error.field === "server") {
+          if (error.field !== "usernameOrEmail" || error.field !== "password") {
             notifyError(error.message);
           }
 
@@ -90,6 +90,7 @@ export default function LoginForm() {
               <FaLock />
             </div>
             <input
+              className="passwordInput"
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"

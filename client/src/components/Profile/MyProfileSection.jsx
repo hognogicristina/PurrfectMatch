@@ -1,6 +1,6 @@
 import "../../styles/Auth/MyProfile.css";
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { motion } from "framer-motion";
@@ -11,7 +11,7 @@ function MyProfileSection({ userDetail }) {
   const [tempExperienceLevel, setTempExperienceLevel] = useState(
     userDetail.experienceLevel || 0,
   );
-
+  const navigate = useNavigate();
   const { notifyError } = useToast();
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
@@ -58,7 +58,7 @@ function MyProfileSection({ userDetail }) {
   };
 
   const handleDeleteAccountOpen = () => {
-    setShowDeleteAccount(true);
+    navigate("/user/delete");
   };
 
   return (
@@ -101,14 +101,16 @@ function MyProfileSection({ userDetail }) {
               </motion.button>
             </NavLink>
 
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              type="button"
-              onClick={handleDeleteAccountOpen}
-              className="simpleButton delete"
-            >
-              Delete Account
-            </motion.button>
+            {userDetail.role === "user" && (
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                type="button"
+                onClick={handleDeleteAccountOpen}
+                className="simpleButton delete"
+              >
+                Delete Account
+              </motion.button>
+            )}
           </div>
         </div>
         <div className="userSlideBarRight">

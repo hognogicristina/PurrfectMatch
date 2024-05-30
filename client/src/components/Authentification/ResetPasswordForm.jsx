@@ -2,7 +2,7 @@ import { Form, useActionData, useNavigation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "../../styles/Auth/Authentification.css";
 import { motion } from "framer-motion";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaKey } from "react-icons/fa";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 
 export default function ResetPasswordForm() {
@@ -36,26 +36,34 @@ export default function ResetPasswordForm() {
         <Form method="post">
           <h1>Enter your new password</h1>
           <label className="authInput">
+            <div className="iconContainer">
+              <FaKey />
+            </div>
             <input
+              className="passwordInput"
               name="password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
             />
             <span
-              className="togglePassword"
+              className="iconContainer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
           </label>
           <label className="authInput">
+            <div className="iconContainer">
+              <FaKey />
+            </div>
             <input
+              className="passwordInput"
               name="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               placeholder="Confirm your password"
             />
             <span
-              className="togglePassword"
+              className="iconContainer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

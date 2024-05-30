@@ -16,6 +16,12 @@ const getAllCats = async (req, res) => {
     const cats = await catHelper.filterCats(req);
     if (await catValidator.catsFilterValidator(cats, res)) return;
 
+    if (!Array.isArray(cats)) {
+      return res.status(404).json({
+        error: [{ field: "cats", message: "No Cats Available" }],
+      });
+    }
+
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
     const totalItems = cats.length;
