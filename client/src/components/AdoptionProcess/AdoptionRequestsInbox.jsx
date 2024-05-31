@@ -74,19 +74,19 @@ function AdoptionRequestsInbox({ mails }) {
         data.receivedRequests = data.receivedRequests.filter(
           (mail) => mail.id !== id,
         );
+        if (data.receivedRequests.length === 0) {
+          data.receivedRequests = { message: "No Mail" };
+        }
       }
       if (Array.isArray(data.sentRequests)) {
         data.sentRequests = data.sentRequests.filter((mail) => mail.id !== id);
+        if (data.sentRequests.length === 0) {
+          data.sentRequests = { message: "No Mail" };
+        }
       }
       setSelectedMailId(null);
     }
   };
-
-  useEffect(() => {
-    if (data && data.sentRequests.length === 0) {
-      return <p className="errorMessageCats">{data.sentRequests.message}</p>;
-    }
-  }, []);
 
   return (
     <div className="adoptionRequests">

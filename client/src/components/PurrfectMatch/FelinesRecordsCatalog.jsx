@@ -54,12 +54,14 @@ export default function FelinesRecordsCatalog({
     );
   };
 
-  const openDeleteDialog = () => {
+  const openDeleteDialog = (cat) => {
+    setCurrentCat(cat);
     setIsDeleteDialogOpen(true);
   };
 
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
+    setCurrentCat(null);
   };
 
   const renderCats = () => {
@@ -96,7 +98,7 @@ export default function FelinesRecordsCatalog({
                 whileTap={{ scale: 0.9 }}
                 onClick={(e) => {
                   e.stopPropagation();
-                  openDeleteDialog();
+                  openDeleteDialog(cat);
                 }}
               >
                 <IoTrashBin />
@@ -118,7 +120,7 @@ export default function FelinesRecordsCatalog({
         ));
         return (
           <div className="noResultContainer">
-            <NoResultMessage message={errorMessage} />
+            <p className="errorMessageCats">{errorMessage}</p>
           </div>
         );
       } else {
@@ -128,6 +130,8 @@ export default function FelinesRecordsCatalog({
       }
     }
   };
+
+  console.log(currentCat);
 
   return (
     <div className="userDetailContainer list">
@@ -171,7 +175,7 @@ export default function FelinesRecordsCatalog({
         />
       )}
       {isDeleteDialogOpen && (
-        <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
+        <DeleteCatDialog onClose={closeDeleteDialog} cat={currentCat} />
       )}
     </div>
   );

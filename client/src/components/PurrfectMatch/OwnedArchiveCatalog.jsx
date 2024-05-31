@@ -54,12 +54,14 @@ export default function OwnedArchiveCatalog({
     );
   };
 
-  const openDeleteDialog = () => {
+  const openDeleteDialog = (cat) => {
+    setCurrentCat(cat);
     setIsDeleteDialogOpen(true);
   };
 
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
+    setCurrentCat(null);
   };
 
   const renderCats = () => {
@@ -94,7 +96,7 @@ export default function OwnedArchiveCatalog({
             whileTap={{ scale: 0.9 }}
             onClick={(e) => {
               e.stopPropagation();
-              openDeleteDialog();
+              openDeleteDialog(cat);
             }}
           >
             <IoTrashBin />
@@ -114,7 +116,7 @@ export default function OwnedArchiveCatalog({
         ));
         return (
           <div className="noResultContainer">
-            <NoResultMessage message={errorMessage} />
+            <p className="errorMessageCats">{errorMessage}</p>
           </div>
         );
       } else {
@@ -167,7 +169,7 @@ export default function OwnedArchiveCatalog({
         />
       )}
       {isDeleteDialogOpen && (
-        <DeleteCatDialog onClose={closeDeleteDialog} cat={catDetail} />
+        <DeleteCatDialog onClose={closeDeleteDialog} cat={currentCat} />
       )}
     </div>
   );
