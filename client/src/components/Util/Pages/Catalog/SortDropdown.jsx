@@ -8,18 +8,12 @@ function SortDropdown() {
   const token = getAuthToken();
 
   const options = useMemo(() => {
-    const baseOptions = [
+    return [
       { value: "breed", label: "Breed" },
       { value: "age", label: "Age" },
       { value: "createdAt", label: "Recently Added" },
     ];
-
-    if (token) {
-      baseOptions.push({ value: "location", label: "Location" });
-    }
-
-    return baseOptions;
-  }, []);
+  }, [token]);
 
   let currentSortBy = searchParams.get("sortBy");
 

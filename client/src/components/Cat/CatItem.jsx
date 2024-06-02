@@ -61,10 +61,11 @@ export default function CatItem({ catDetail }) {
 
     setMainImage(catDetail.images[0]);
     setCarouselImages(catDetail.images);
+    setCurrentCatDetail(catDetail);
 
     fetchCatsByBreed();
     fetchCatsOfGuardian();
-  }, [catDetail.id, catDetail, notifyError]);
+  }, [catDetail, notifyError]);
 
   const handleEditClick = () => {
     setIsEditDialogOpen(true);
@@ -103,6 +104,7 @@ export default function CatItem({ catDetail }) {
           cats={catsGuardian}
           type="guardian"
           catDetail={currentCatDetail}
+          onSelectCat={setCurrentCatDetail}
         />
       )}
       {catsOwner.length > 1 && (
@@ -111,6 +113,7 @@ export default function CatItem({ catDetail }) {
           cats={catsOwner}
           type="owner"
           catDetail={currentCatDetail}
+          onSelectCat={setCurrentCatDetail}
         />
       )}
       {catsBreed.length > 1 && (
@@ -119,6 +122,7 @@ export default function CatItem({ catDetail }) {
           cats={catsBreed}
           type="breed"
           catDetail={currentCatDetail}
+          onSelectCat={setCurrentCatDetail}
         />
       )}
       {isEditDialogOpen && (

@@ -106,6 +106,7 @@ function FilterBar({ searchParams, setSearchParams }) {
     searchParams.delete("selectedHealthProblem");
     searchParams.delete("selectedGender");
     searchParams.delete("selectedColor");
+    searchParams.set("sortBy", "breed");
     searchParams.set("page", 1);
     setSearchParams(searchParams, { replace: true });
   };

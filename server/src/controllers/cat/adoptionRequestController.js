@@ -13,6 +13,7 @@ const adoptionRequestHelper = require("../../helpers/adoptionRequestHelper");
 const adoptionRequestDTO = require("../../dto/adoptionRequestDTO");
 const userDTO = require("../../dto/userDTO");
 const logger = require("../../../logger/logger");
+const websocket = require("../../../websocket");
 
 const adoptCat = async (req, res) => {
   try {
@@ -37,9 +38,36 @@ const adoptCat = async (req, res) => {
       role: "receiver",
       isRead: false,
     });
-    return res
-      .status(200)
-      .json({ status: "Your request has been sent to the guardian" });
+
+    const sender = await User.findByPk(req.user.id);
+    const receiver = await User.findByPk(catUser.userId);
+
+    const senderDTO =
+      await adoptionRequestDTO.transformAdoptionRequestsToDTO(sender);
+    const receiverDTO =
+      await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
+
+    websocket.notifyClients({
+      type: "NEW_ADOPTION_REQUEST",
+      userId: receiver.id,
+      payload: {
+        ...receiverDTO,
+        customMessage: `${sender.username} sent an adoption request`,
+        role: "receiver",
+      },
+    });
+
+    websocket.notifyClients({
+      type: "NEW_ADOPTION_REQUEST",
+      userId: sender.id,
+      payload: {
+        ...senderDTO,
+        customMessage: "Your request was sent",
+        role: "sender",
+      },
+    });
+
+    return res.status(200).json({ status: "Your request has been sent" });
   } catch (error) {
     logger.error(error);
     return res
@@ -101,6 +129,7 @@ const handleAdoptionRequest = async (req, res) => {
         role: "receiver",
       },
     });
+    senderUserRole.update({ isRead: true });
     const sender = await User.findByPk(senderUserRole.userId);
     const receiver = await User.findByPk(receiverUserRole.userId);
     const userAddress = await Address.findOne({
@@ -117,12 +146,30 @@ const handleAdoptionRequest = async (req, res) => {
         userAddress,
       );
       adoptionRequest.update({ status });
+
+      websocket.notifyClients({
+        type: "ADOPTION_REQUEST_STATUS",
+        userId: sender.id,
+        payload: {
+          status: "accepted",
+          message: `${receiver.username} accepted your adoption request`,
+        },
+      });
+
       return res
         .status(200)
         .json({ status: "Adoption request was accepted", adoptionRequest });
     } else {
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
       await adoptionRequest.update({ status });
+      websocket.notifyClients({
+        type: "ADOPTION_REQUEST_STATUS",
+        userId: sender.id,
+        payload: {
+          status: "declined",
+          message: `${receiver.username} declined your adoption request`,
+        },
+      });
       return res
         .status(200)
         .json({ status: "Adoption request was declined", adoptionRequest });
@@ -195,6 +242,7 @@ const deleteAdoptionRequest = async (req, res) => {
       await transaction.rollback();
       return;
     }
+
     const userAdoptionRequest = await UserRole.findOne({
       where: {
         adoptionRequestId: req.params.id,
@@ -204,26 +252,67 @@ const deleteAdoptionRequest = async (req, res) => {
     const userAdoptionRequests = await UserRole.findAll({
       where: { adoptionRequestId: req.params.id },
     });
+
+    const adoptionRequest = await AdoptionRequest.findOne({
+      where: { id: req.params.id },
+    });
+
     await adoptionRequestHelper.deleteAdoptionRequest(
       userAdoptionRequest,
       userAdoptionRequests,
       req.params.id,
       res,
     );
+
+    if (
+      userAdoptionRequest.role === "sender" &&
+      adoptionRequest.status === "pending"
+    ) {
+      const senderId = userAdoptionRequest.userId;
+      const receiverId = userAdoptionRequests.find(
+        (request) => request.role === "receiver",
+      ).userId;
+
+      const sender = await User.findByPk(senderId);
+      const receiver = await User.findByPk(receiverId);
+
+      const senderDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(sender);
+      const receiverDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
+
+      websocket.notifyClients({
+        type: "DELETE_ADOPTION_REQUEST",
+        userId: sender.id,
+        payload: {
+          ...senderDTO,
+          role: "sender",
+        },
+      });
+
+      websocket.notifyClients({
+        type: "DELETE_ADOPTION_REQUEST",
+        userId: receiver.id,
+        payload: {
+          ...receiverDTO,
+          role: "receiver",
+        },
+      });
+    }
+
     await transaction.commit();
     return res.status(200).json({ status: "Mail deleted successfully" });
   } catch (error) {
     if (!transaction.finished) {
       await transaction.rollback();
     }
-
     if (!res.headersSent) {
       logger.error(error);
       return res.status(500).json({
         error: [{ field: "server", message: "Internal server error" }],
       });
     } else {
-      logger.error("Response already sent:", error);
+      logger.error(error);
     }
   }
 };

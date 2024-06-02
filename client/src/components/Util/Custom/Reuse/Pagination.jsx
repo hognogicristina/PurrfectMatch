@@ -2,17 +2,22 @@ import React from "react";
 import { motion } from "framer-motion";
 import CustomSelect from "./CustomSelect.jsx";
 import { FaArrowLeftLong, FaArrowRightLong } from "react-icons/fa6";
+import { useSearchParams } from "react-router-dom";
 
 function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
+  const [searchParams] = useSearchParams();
+
   const handlePrevClick = () => {
     if (currentPage > 1) {
-      onPageChange(currentPage - 1);
+      searchParams.set("page", currentPage - 1);
+      onPageChange(searchParams.toString());
     }
   };
 
   const handleNextClick = () => {
     if (currentPage < totalPages) {
-      onPageChange(currentPage + 1);
+      searchParams.set("page", currentPage + 1);
+      onPageChange(searchParams.toString());
     }
   };
 
@@ -71,7 +76,10 @@ function Pagination({ currentPage, totalPages, onPageChange, displayPages }) {
     return (
       <CustomSelect
         value={selectedOption}
-        onChange={(selectedOption) => onPageChange(selectedOption.value)}
+        onChange={(selectedOption) => {
+          searchParams.set("page", selectedOption.value);
+          onPageChange(searchParams.toString());
+        }}
         options={options}
         placeholder="Select a page..."
         isOptionDisabled={(option) => option.isDisabled}

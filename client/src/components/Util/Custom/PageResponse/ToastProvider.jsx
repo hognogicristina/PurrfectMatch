@@ -14,18 +14,14 @@ export const ToastProvider = ({ children }) => {
     toast.success(message);
   }, []);
 
-  const notifyLoading = useCallback((promise, messages) => {
-    toast.promise(promise, {
-      loading: messages.loading,
-      success: messages.success,
-      error: messages.error,
+  const notifyUser = useCallback((message) => {
+    toast(message, {
+      icon: "📨",
     });
   }, []);
 
   return (
-    <ToastContext.Provider
-      value={{ notifyError, notifySuccess, notifyLoading }}
-    >
+    <ToastContext.Provider value={{ notifyError, notifySuccess, notifyUser }}>
       {children}
       <Toaster />
     </ToastContext.Provider>

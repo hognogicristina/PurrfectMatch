@@ -46,19 +46,6 @@ const updateCatData = async (cat, body) => {
   return cat;
 };
 
-const calculateDistance = (address1, address2) => {
-  if (
-    address1.city === address2.city &&
-    address1.country === address2.country
-  ) {
-    return 0;
-  } else if (address1.country === address2.country) {
-    return 1;
-  } else {
-    return 2;
-  }
-};
-
 const filterCats = async (req) => {
   const searchQuery = req.query.search ? req.query.search.toLowerCase() : null;
   const selectedBreed = req.query.selectedBreed
@@ -129,55 +116,18 @@ const filterCats = async (req) => {
 
   let cats = await Cat.findAll(queryOptions);
 
-  if (sortBy === "location") {
-    const loggedUserAddress = await Address.findOne({
-      where: { userId: req.user.id },
-    });
-    if (!loggedUserAddress) {
-      return cats;
+  cats = cats.map((cat) => cat.get({ plain: true }));
+  cats.sort((cat1, cat2) => {
+    let comparison = 0;
+    if (sortBy === "breed") {
+      comparison = cat1.breed.localeCompare(cat2.breed);
+    } else if (sortBy === "age") {
+      comparison = cat1.age - cat2.age;
+    } else if (sortBy === "createdAt") {
+      comparison = cat1.createdAt - cat2.createdAt;
     }
-
-    cats = await Promise.all(
-      cats.map(async (cat) => {
-        const plainCat = cat.get({ plain: true });
-        const catUser = await CatUser.findByPk(plainCat.id);
-        if (catUser) {
-          const guardian = await User.findByPk(catUser.userId);
-          if (guardian) {
-            const address = await Address.findOne({
-              where: { userId: guardian.id },
-            });
-            if (address) {
-              const distance = calculateDistance(loggedUserAddress, address);
-              return { ...plainCat, distance };
-            }
-          }
-        }
-        return { ...plainCat, distance: Infinity };
-      }),
-    );
-
-    cats.sort((cat1, cat2) => {
-      return sortOrder === "asc"
-        ? cat1.distance - cat2.distance
-        : cat2.distance - cat1.distance;
-    });
-  } else {
-    cats = cats.map((cat) => cat.get({ plain: true }));
-    cats.sort((cat1, cat2) => {
-      let comparison = 0;
-      if (sortBy === "breed") {
-        comparison = cat1.breed.localeCompare(cat2.breed);
-      } else if (sortBy === "age") {
-        comparison = String(cat1.age).localeCompare(String(cat2.age));
-      } else if (sortBy === "createdAt") {
-        comparison = String(cat1.createdAt).localeCompare(
-          String(cat2.createdAt),
-        );
-      }
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-  }
+    return sortOrder === "asc" ? comparison : -comparison;
+  });
 
   return cats;
 };

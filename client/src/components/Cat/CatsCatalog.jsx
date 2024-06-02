@@ -11,7 +11,7 @@ import FavoriteHeart from "../Util/Features/FavoriteHeart.jsx";
 import { getAuthToken } from "../../util/auth.js";
 import { useUserDetails } from "../../util/useUserDetails.js";
 
-function CatsCatalog({ cats, currentPage, onPageChange }) {
+function CatsCatalog({ cats, currentPage }) {
   const { data, error, totalPages } = cats;
   const navigate = useNavigate();
   const token = getAuthToken();
@@ -26,6 +26,10 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
 
   const handleClickCatItem = (id) => {
     navigate(`/cats/cat/${id}`);
+  };
+
+  const handlePageChange = (newSearchParams) => {
+    setSearchParams(new URLSearchParams(newSearchParams), { replace: true });
   };
 
   const renderCats = () => {
@@ -91,7 +95,7 @@ function CatsCatalog({ cats, currentPage, onPageChange }) {
                 displayPages="true"
                 currentPage={currentPage}
                 totalPages={totalPages}
-                onPageChange={onPageChange}
+                onPageChange={handlePageChange}
               />
             </>
           )}

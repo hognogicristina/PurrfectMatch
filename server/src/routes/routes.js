@@ -127,7 +127,7 @@ const applyMiddlewareIfSortByLocation = (req, res, next) => {
 };
 
 // Cat routes
-router.get("/cats", applyMiddlewareIfSortByLocation, catController.getAllCats);
+router.get("/cats", catController.getAllCats);
 router.get("/cats/cat/:id", catController.getOneCat);
 router.post(
   "/cats/add",

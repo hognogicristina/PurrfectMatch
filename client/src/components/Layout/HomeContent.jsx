@@ -87,7 +87,7 @@ export default function HomeContent({ cats, breeds }) {
               alt: "cat litter",
               title: "Litter Box Maintenance",
               description:
-                "PurrfectMatch are meticulous about their bathroom habits. Provide a clean litter box in a quiet, accessible location. Scoop waste daily and replace litter regularly to prevent odor and maintain hygiene.",
+                "Cats are meticulous about their bathroom habits. Provide a clean litter box in a quiet, accessible location. Scoop waste daily and replace litter regularly to prevent odor and maintain hygiene.",
             },
             {
               src: "catToy.jpg",
@@ -108,7 +108,7 @@ export default function HomeContent({ cats, breeds }) {
               alt: "cat tree",
               title: "Creating a Safe Environment",
               description:
-                "PurrfectMatch are curious creatures and may explore every nook and cranny of your home. Remove hazards such as toxic plants, small objects that could be swallowed, and accessible cords or wires.",
+                "Cats are curious creatures and may explore every nook and cranny of your home. Remove hazards such as toxic plants, small objects that could be swallowed, and accessible cords or wires.",
             },
             {
               src: "catStray.jpg",
@@ -122,7 +122,8 @@ export default function HomeContent({ cats, breeds }) {
               alt: "cat sleep",
               title: " Rest and Readiness",
               description:
-                "PurrfectMatch are masterful sleepers, spending up to 16 hours a day in slumber. This isn't laziness but rather a strategic conservation of energy. Their sleep cycles alternate between deep relaxation and light dozing, allowing them to stay alert to potential threats while still getting the rest they need. This unique sleep pattern reflects their evolutionary adaptation as skilled predators, ensuring they're always ready for action.",
+                "Cats are masterful sleepers, spending up to 16 hours a day in slumber. This isn't laziness but" +
+                " rather a strategic conservation of energy. Their sleep cycles alternate between deep relaxation and light dozing, allowing them to stay alert to potential threats while still getting the rest they need. This unique sleep pattern reflects their evolutionary adaptation as skilled predators, ensuring they're always ready for action.",
             },
           ].map((item, index) => (
             <motion.div

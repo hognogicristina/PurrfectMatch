@@ -74,6 +74,7 @@ import { useState } from "react";
 import DeleteProfilePage, {
   action as actionDeleteUser,
 } from "./pages/Profile/DeleteProfile.jsx";
+import { WebSocketProvider } from "./context/WebSocketContext.jsx";
 
 const router = createBrowserRouter([
   {
@@ -248,16 +249,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [users, setUsers] = useState({
-    data: [],
-    totalItems: 0,
-    totalPages: 0,
-  });
-  const value = { users, setUsers };
-
   return (
     <ToastProvider>
-      <RouterProvider router={router} />
+      <WebSocketProvider>
+        <RouterProvider router={router} />
+      </WebSocketProvider>
     </ToastProvider>
   );
 }

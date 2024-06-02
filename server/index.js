@@ -1,17 +1,16 @@
 const express = require("express");
-const socket = require("./socket");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const websocket = require("./websocket");
 
 dotenv.config({
   path: path.resolve(__dirname, "./.env"),
   override: true,
 });
 
-// Comment the lines below if you want to use the .env file and not the .env.local file
 dotenv.config({
   path: path.resolve(__dirname, "./.env.local"),
   override: true,
@@ -53,7 +52,7 @@ const startApp = () => {
       logger(`Server is running at http://localhost:${PORT}`);
     });
 
-    socket.init(server);
+    websocket.setupWebSocket(server);
   } catch (error) {
     logger.error(error);
   }

@@ -17,7 +17,11 @@ function UploadImages({ initialImages, initialUris, onImageUpload }) {
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files);
-    if (files.length + images.length > 5) {
+    if (
+      files.length +
+        (imageToReplace !== null ? images.length - 1 : images.length) >
+      5
+    ) {
       notifyError("You can only upload up to 5 images.");
       return;
     }
@@ -52,23 +56,27 @@ function UploadImages({ initialImages, initialUris, onImageUpload }) {
       }
     }
 
-    const updatedUris = [...uris, ...newUris];
-    setUris(updatedUris);
-    onImageUpload(updatedUris);
+    let updatedUris;
+    let updatedImages;
 
     if (imageToReplace !== null) {
-      setImages((prev) =>
-        prev.map((img, index) =>
-          index === imageToReplace ? URL.createObjectURL(files[0]) : img,
-        ),
+      updatedUris = [...uris];
+      updatedUris[imageToReplace] = newUris[0];
+      updatedImages = images.map((img, index) =>
+        index === imageToReplace ? URL.createObjectURL(files[0]) : img,
       );
       setImageToReplace(null);
     } else {
-      setImages((prev) => [
-        ...prev,
+      updatedUris = [...uris, ...newUris];
+      updatedImages = [
+        ...images,
         ...files.map((file) => URL.createObjectURL(file)),
-      ]);
+      ];
     }
+
+    setUris(updatedUris);
+    setImages(updatedImages);
+    onImageUpload(updatedUris);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
@@ -78,9 +86,11 @@ function UploadImages({ initialImages, initialUris, onImageUpload }) {
   const handleImageDelete = (index, e) => {
     e.stopPropagation();
     e.preventDefault();
-    setImages((prev) => prev.filter((_, i) => i !== index));
-    setUris((prev) => prev.filter((_, i) => i !== index));
-    onImageUpload(uris.filter((_, i) => i !== index));
+    const updatedImages = images.filter((_, i) => i !== index);
+    const updatedUris = uris.filter((_, i) => i !== index);
+    setImages(updatedImages);
+    setUris(updatedUris);
+    onImageUpload(updatedUris);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = null;
@@ -98,7 +108,7 @@ function UploadImages({ initialImages, initialUris, onImageUpload }) {
 
   useEffect(() => {
     if (data && data.error) {
-      data.forEach((error) => {
+      data.error.forEach((error) => {
         notifyError(error.message);
       });
     }

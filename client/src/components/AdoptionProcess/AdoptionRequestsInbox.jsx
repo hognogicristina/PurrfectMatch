@@ -4,16 +4,71 @@ import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import MailSection from "../Util/Pages/Inbox/MailSection.jsx";
 import MailDetailsSection from "../Util/Pages/Inbox/MailDetailsSection.jsx";
+import { useWebSocket } from "../../context/WebSocketContext";
 
 function AdoptionRequestsInbox({ mails }) {
   const { data, error, userDetails } = mails;
   const [selectedMailId, setSelectedMailId] = useState(null);
   const [mailDetails, setMailDetails] = useState({});
-  const { notifyError } = useToast();
+  const { notifyError, notifySuccess } = useToast();
   const [receivedItemsToShow, setReceivedItemsToShow] = useState(1);
   const [sentItemsToShow, setSentItemsToShow] = useState(1);
   const [isReceivedExpanded, setIsReceivedExpanded] = useState(true);
   const [isSentExpanded, setIsSentExpanded] = useState(true);
+  const { messages } = useWebSocket();
+
+  useEffect(() => {
+    const handleNewMessage = (message) => {
+      if (
+        (message.type === "NEW_ADOPTION_REQUEST" ||
+          message.type === "DELETE_ADOPTION_REQUEST") &&
+        message.userId === userDetails.id
+      ) {
+        const { sentRequests, receivedRequests } = message.payload;
+
+        if (data) {
+          data.receivedRequests = receivedRequests;
+          data.sentRequests = sentRequests;
+          setMailDetails((prev) => ({
+            ...prev,
+            receivedRequests: data.receivedRequests,
+            sentRequests: data.sentRequests,
+          }));
+        } else {
+          data.receivedRequests = receivedRequests;
+          data.sentRequests = sentRequests;
+          setMailDetails({
+            receivedRequests: receivedRequests,
+            sentRequests: sentRequests,
+          });
+        }
+      } else if (
+        message.type === "ADOPTION_REQUEST_STATUS" &&
+        message.userId === userDetails.id
+      ) {
+        const { adoptionRequestId, status } = message.payload;
+
+        if (data) {
+          if (Array.isArray(data.receivedRequests)) {
+            data.receivedRequests = data.receivedRequests.map((mail) =>
+              mail.id === adoptionRequestId ? { ...mail, status } : mail,
+            );
+          }
+          if (Array.isArray(data.sentRequests)) {
+            data.sentRequests = data.sentRequests.map((mail) =>
+              mail.id === adoptionRequestId ? { ...mail, status } : mail,
+            );
+          }
+        }
+        setMailDetails((prev) => ({
+          ...prev,
+          status,
+        }));
+      }
+    };
+
+    messages.forEach(handleNewMessage);
+  }, [messages, data, userDetails.id, notifySuccess]);
 
   const openMail = async (id, exception) => {
     if (selectedMailId === id && exception !== "update") {

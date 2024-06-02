@@ -5,6 +5,7 @@ import { getAuthToken } from "./auth.js";
 export function useUserDetails() {
   const { notifyError } = useToast();
   const [userDetails, setUserDetails] = useState({
+    id: "",
     username: "",
     image: "",
     role: "",
@@ -22,6 +23,7 @@ export function useUserDetails() {
 
       if (response.ok) {
         setUserDetails({
+          id: data.data.id,
           username: data.data.username,
           image: data.data.image,
           role: data.data.role,

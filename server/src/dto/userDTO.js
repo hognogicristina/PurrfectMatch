@@ -8,6 +8,7 @@ async function userToDTO(user) {
   const birthday = new Date(birthdayTimestamp).toISOString().split("T")[0];
 
   return {
+    id: user.id ? user.id : null,
     firstName: user.firstName ? user.firstName : null,
     lastName: user.lastName ? user.lastName : null,
     image: images.length > 0 ? images[0].url : null,

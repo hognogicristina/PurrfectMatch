@@ -42,6 +42,7 @@ const sendAdoptionRequest = async (
         },
         { transaction: t },
       );
+      otherUserRole.update({ isRead: true }, { transaction: t });
       const sender = await User.findOne({
         where: { id: otherUserRole.userId },
       });

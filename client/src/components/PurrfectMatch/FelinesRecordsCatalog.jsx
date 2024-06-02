@@ -131,8 +131,6 @@ export default function FelinesRecordsCatalog({
     }
   };
 
-  console.log(currentCat);
-
   return (
     <div className="userDetailContainer list">
       <motion.div

@@ -44,8 +44,6 @@ export default function SubmitDialog({
         }
       });
     } else {
-      const data = await response.json();
-      notifySuccess(data.status);
       onRequestSuccess();
       onClose();
     }

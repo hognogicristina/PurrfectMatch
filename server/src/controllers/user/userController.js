@@ -246,7 +246,7 @@ const deleteUser = async (req, res) => {
         error: [{ field: "server", message: "Internal server error" }],
       });
     } else {
-      logger.error("Response already sent:", error);
+      logger.error(error);
     }
   }
 };

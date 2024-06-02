@@ -1,38 +1,46 @@
-import { useRef, useEffect } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React from "react";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import "../../../../styles/PurrfectMatch/HomeContent.css";
+import { useNavigate } from "react-router-dom";
 
 export default function BreedsGrid({ breeds }) {
-  const ref = useRef(null);
-  const controls = useAnimation();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const totalWidth = breeds.length * 300 * 2;
-    controls.start({ x: [`0px`, `-${totalWidth / 2}px`] });
-  }, [breeds, controls]);
+  const chunkedBreeds = [];
+  for (let i = 0; i < breeds.length; i += 4) {
+    chunkedBreeds.push(breeds.slice(i, i + 4));
+  }
+
+  const handleExploreMore = (breedName) => {
+    navigate(`/cats?selectedBreed=${breedName}&page=1`);
+  };
 
   return (
-    <>
-      <motion.div className="breeds" ref={ref}>
-        <motion.ul
-          className="breedsGrid"
-          animate={controls}
-          transition={{
-            duration: 300,
-            ease: "linear",
-            repeat: Infinity,
-            repeatType: "reverse",
-          }}
-          style={{ display: "flex", width: `${breeds.length * 300 * 2}px` }}
-          initial={{ x: 0 }}
-        >
-          {[...breeds, ...breeds].map((breed, index) => (
-            <motion.li className="element" key={index}>
-              <img src={breed.url} alt={breed.name} className="breedImg" />
-            </motion.li>
-          ))}
-        </motion.ul>
-      </motion.div>
-    </>
+    <div className="breeds">
+      <Carousel
+        showThumbs={false}
+        infiniteLoop={true}
+        autoPlay={true}
+        interval={3000}
+        showStatus={false}
+        showArrows={true}
+        dynamicHeight={false}
+      >
+        {chunkedBreeds.map((breedGroup, index) => (
+          <div key={index} className="breedGroup">
+            {breedGroup.map((breed, i) => (
+              <div
+                key={i}
+                className="breedItem"
+                onClick={() => handleExploreMore(breed.name)}
+              >
+                <img src={breed.url} alt={breed.name} className="breedImg" />
+              </div>
+            ))}
+          </div>
+        ))}
+      </Carousel>
+    </div>
   );
 }

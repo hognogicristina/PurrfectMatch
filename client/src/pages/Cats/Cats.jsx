@@ -9,19 +9,11 @@ function CatsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
-  const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage.toString() });
-  };
-
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={cats}>
         {(loadedCats) => (
-          <CatsCatalog
-            cats={loadedCats}
-            currentPage={currentPage}
-            onPageChange={handlePageChange}
-          />
+          <CatsCatalog cats={loadedCats} currentPage={currentPage} />
         )}
       </Await>
     </Suspense>

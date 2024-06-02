@@ -41,40 +41,75 @@
   padding: 20px;
 }
 
-.breedsGrid {
-  position: relative;
+.carousel .control-arrow {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
-  list-style: none;
-  overflow-x: scroll;
-  padding: 15px 15px 15px;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel .control-arrow, .carousel.carousel-slider .control-arrow {
+  background: #FF90C9;
+  border: 1px solid #FF90C9;
+}
+
+.carousel.carousel-slider .control-arrow {
+  background: #FF90C9 !important;
+  border: 1px solid #FF90C9 !important;
+}
+
+.carousel.carousel-slider .control-arrow {
+  top: 40% !important;
+}
+
+.carousel .control-dots .dot {
+  background: #FF90C9 !important;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4) !important;
+  padding: 5px !important;
+}
+
+.carousel .control-dots {
+  bottom: -11px !important;
+}
+
+.breeds {
+  position: relative;
+  padding: 15px;
   margin: -60px 0 0 0;
-  white-space: nowrap;
-  scroll-snap-type: x mandatory;
 }
 
-.element {
-  flex: 0 0 350px;
-  scroll-snap-align: start;
-  min-width: 200px;
-  margin: 0 15px;
-  z-index: 10;
+.breedGroup {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 240px;
 }
 
-.element:last-child {
-  margin-right: 0;
+.breedGroup:hover {
+  box-shadow: 0 8px 16px var(--dark-shade);
+}
+
+.breedItem {
+  cursor: pointer;
+  flex: 1;
+  margin: 0 10px;
+  transition: transform 0.3s;
+}
+
+.breedItem:hover {
+  transform: scale(1.05);
 }
 
 .breedImg {
-  width: 320px;
-  height: 180px;
+  width: 100%;
+  height: auto;
+  max-width: 320px;
+  max-height: 180px;
   object-fit: cover;
   border-radius: var(--border-radius);
   box-shadow: 0 8px 16px var(--dark-shade);
-  transition: all 0.3s ease;
-}
-
-.breedImg:hover {
-  transform: scale(1.05);
 }
 
 .cats {

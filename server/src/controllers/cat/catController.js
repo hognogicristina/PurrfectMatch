@@ -66,8 +66,8 @@ const getOneCat = async (req, res) => {
 const addCat = async (req, res) => {
   try {
     if (await userValidator.validateActiveAccount(req, res)) return;
-    if (await catValidator.catValidator(req, res)) return;
     if (await catUserValidator.userValidator(req, res)) return;
+    if (await catValidator.catValidator(req, res)) return;
 
     let catData = {};
     catData = await catHelper.updateCatData(catData, req.body);
@@ -142,10 +142,6 @@ const deleteCat = async (req, res) => {
 
     const cat = await Cat.findOne({
       where: { id: req.params.id },
-      transaction,
-    });
-    const image = await Image.findOne({
-      where: { catId: cat.id },
       transaction,
     });
 

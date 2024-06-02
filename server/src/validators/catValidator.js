@@ -20,7 +20,7 @@ const catExistValidator = async (req, res) => {
     }
 
     if (req.query.sortBy) {
-      const sortBy = ["breed", "age", "location", "createdAt"];
+      const sortBy = ["breed", "age", "createdAt"];
       if (!sortBy.includes(req.query.sortBy)) {
         error.push({ field: "sortBy", message: "Invalid Sort By" });
       }

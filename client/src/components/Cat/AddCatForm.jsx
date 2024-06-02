@@ -36,7 +36,13 @@ export default function AddCatForm() {
       if (data.error) {
         const newErrors = {};
         data.error.forEach((error) => {
-          if (error.field === "server" || error.field === "uris") {
+          if (
+            error.field === "server" ||
+            error.field === "uris" ||
+            error.field === "token" ||
+            error.field === "user" ||
+            error.field === "address"
+          ) {
             notifyError(error.message);
           }
           newErrors[error.field] = error.message;
