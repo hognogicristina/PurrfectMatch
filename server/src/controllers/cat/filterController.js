@@ -85,7 +85,7 @@ const getRecentCats = async (req, res) => {
   try {
     const cats = await Cat.findAll({
       where: {
-        status: "adopted",
+        status: "active",
       },
       limit: 4,
       order: [["createdAt", "DESC"]],

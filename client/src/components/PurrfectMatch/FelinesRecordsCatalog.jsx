@@ -1,20 +1,15 @@
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/CatsArchive.css";
-import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { IoTrashBin } from "react-icons/io5";
 import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 
-export default function FelinesRecordsCatalog({
-  cats,
-  currentPage,
-  onPageChange,
-}) {
+export default function FelinesRecordsCatalog({ cats, currentPage }) {
   const { data, error, totalPages, totalItems } = cats;
   const { notifyError } = useToast();
   const navigate = useNavigate();
@@ -23,14 +18,12 @@ export default function FelinesRecordsCatalog({
   const [searchParamsKey, setSearchParamsKey] = useState(0);
   const [catList, setCatList] = useState(data || []);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);
-  }, [currentPage, cats]);
-
-  useEffect(() => {
     setCatList(data);
-  }, [data]);
+  }, [currentPage, cats, data]);
 
   const handleEditClick = (cat) => {
     setCurrentCat(cat);
@@ -62,6 +55,12 @@ export default function FelinesRecordsCatalog({
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
     setCurrentCat(null);
+  };
+
+  const handlePageChange = (newSearchParams) => {
+    setSearchParams(new URLSearchParams(newSearchParams.toString()), {
+      replace: true,
+    });
   };
 
   const renderCats = () => {
@@ -160,7 +159,7 @@ export default function FelinesRecordsCatalog({
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            onPageChange={handlePageChange}
           />
         </div>
         <ul className="catsList list">{renderCats()}</ul>

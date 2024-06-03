@@ -9,6 +9,53 @@ const {
 const emailService = require("../services/emailService");
 const emailServ = require("../services/emailService");
 
+const checkAdoptionRequestExists = async (userId, catId) => {
+  const cat = await Cat.findByPk(catId);
+  if (cat) {
+    let adoptionRequests;
+    adoptionRequests = await AdoptionRequest.findAll({
+      where: { catId: cat.id, status: "pending" },
+    });
+    if (adoptionRequests.length > 0) {
+      for (const adoptionRequest of adoptionRequests) {
+        const userRole = await UserRole.findOne({
+          where: {
+            userId,
+            adoptionRequestId: adoptionRequest.id,
+            role: "sender",
+          },
+        });
+        if (userRole) {
+          return true;
+        }
+      }
+    } else {
+      adoptionRequests = await AdoptionRequest.findAll({
+        where: { catId: cat.id, status: "accepted" },
+      });
+
+      if (adoptionRequests.length > 0) {
+        for (const adoptionRequest of adoptionRequests) {
+          const userRole = await UserRole.findOne({
+            where: {
+              userId,
+              adoptionRequestId: adoptionRequest.id,
+              role: "receiver",
+            },
+          });
+          if (userRole) {
+            return true;
+          }
+        }
+      } else {
+        return false;
+      }
+    }
+  }
+
+  return false;
+};
+
 const sendAdoptionRequest = async (
   status,
   adoptionRequest,
@@ -17,11 +64,14 @@ const sendAdoptionRequest = async (
   cat,
   userAddress,
 ) => {
+  const otherSenders = [];
+
   await User.sequelize.transaction(async (t) => {
     const otherAdoptionRequests = await AdoptionRequest.findAll(
       {
         where: {
           catId: adoptionRequest.catId,
+          status: "pending",
           id: { [Op.ne]: adoptionRequest.id },
         },
       },
@@ -42,14 +92,27 @@ const sendAdoptionRequest = async (
         },
         { transaction: t },
       );
-      otherUserRole.update({ isRead: true }, { transaction: t });
-      const sender = await User.findOne({
+      await otherUserRole.update({ isRead: false }, { transaction: t });
+      const otherSender = await User.findOne({
         where: { id: otherUserRole.userId },
       });
-      await emailServ.sendDeclineAdoption(sender, receiver, cat);
+      otherSenders.push(otherSender);
+
+      const receiverRoles = await UserRole.findAll({
+        where: {
+          adoptionRequestId: otherAdoptionRequest.id,
+          role: "receiver",
+        },
+      });
+
+      for (const receiverRole of receiverRoles) {
+        await receiverRole.update({ isRead: true }, { transaction: t });
+      }
+
+      await emailServ.sendDeclineAdoption(otherSender, receiver, cat);
     }
 
-    cat.update({ status: "adopted" }, { transaction: t });
+    await cat.update({ status: "adopted" }, { transaction: t });
     const catUser = await CatUser.findOne(
       { where: { catId: adoptionRequest.catId } },
       { transaction: t },
@@ -69,6 +132,8 @@ const sendAdoptionRequest = async (
     );
     await emailServ.sendAdoptionEmail(sender, receiver, cat, userAddress);
   });
+
+  return otherSenders;
 };
 
 const deleteAdoptionRequestCat = async (cat, receiver, transaction) => {
@@ -194,6 +259,7 @@ const deleteAdoptionRequestUser = async (user, transaction) => {
 };
 
 module.exports = {
+  checkAdoptionRequestExists,
   sendAdoptionRequest,
   deleteAdoptionRequestCat,
   deleteAdoptionRequest,

@@ -36,7 +36,7 @@ async function loadCats({
   pageSize = 24,
 } = {}) {
   const token = getAuthToken();
-  let query = `search=${search}&selectedBreed=${selectedBreed}&selectedLifeStage=${selectedLifeStage}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUser=${selectedUser}&selectedColor=${selectedColor}&sortBy=${sortBy}&sortOrder=${sortOrder}&page=${page}&pageSize=${pageSize}`;
+  let query = `page=${page}&pageSize=${pageSize}&search=${search}&selectedBreed=${selectedBreed}&selectedLifeStage=${selectedLifeStage}&selectedGender=${selectedGender}&selectedHealthProblem=${selectedHealthProblem}&selectedUser=${selectedUser}&selectedColor=${selectedColor}&sortBy=${sortBy}&sortOrder=${sortOrder}`;
   query = query.replace(/&[^=]+=(?=&|$)/g, "");
 
   const response = await fetch(`http://localhost:3000/cats?${query}`, {
@@ -53,6 +53,8 @@ export function loader({ request }) {
 
   return defer({
     cats: loadCats({
+      page: parseInt(params.page || "1"),
+      pageSize: parseInt(params.pageSize || "24"),
       search: params.search || "",
       selectedBreed: params.selectedBreed || "",
       selectedLifeStage: params.selectedLifeStage || "",
@@ -62,8 +64,6 @@ export function loader({ request }) {
       selectedColor: params.selectedColor || "",
       sortBy: params.sortBy || "age",
       sortOrder: params.sortOrder || "asc",
-      page: parseInt(params.page || "1"),
-      pageSize: parseInt(params.pageSize || "24"),
     }),
   });
 }

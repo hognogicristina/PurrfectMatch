@@ -21,14 +21,26 @@ function AdoptionRequestsInbox({ mails }) {
     const handleNewMessage = (message) => {
       if (
         (message.type === "NEW_ADOPTION_REQUEST" ||
-          message.type === "DELETE_ADOPTION_REQUEST") &&
+          message.type === "DELETE_ADOPTION_REQUEST" ||
+          message.type === "ADOPTION_REQUEST_RESPONSE") &&
         message.userId === userDetails.id
       ) {
         const { sentRequests, receivedRequests } = message.payload;
 
+        if (setSelectedMailId) {
+          setSelectedMailId(null);
+          setMailDetails({});
+        }
+
         if (data) {
           data.receivedRequests = receivedRequests;
           data.sentRequests = sentRequests;
+          if (receivedRequests.length === 0) {
+            data.receivedRequests = { message: "No Mail" };
+          }
+          if (sentRequests.length === 0) {
+            data.sentRequests = { message: "No Mail" };
+          }
           setMailDetails((prev) => ({
             ...prev,
             receivedRequests: data.receivedRequests,
@@ -37,33 +49,17 @@ function AdoptionRequestsInbox({ mails }) {
         } else {
           data.receivedRequests = receivedRequests;
           data.sentRequests = sentRequests;
+          if (receivedRequests.length === 0) {
+            data.receivedRequests = { message: "No Mail" };
+          }
+          if (sentRequests.length === 0) {
+            data.sentRequests = { message: "No Mail" };
+          }
           setMailDetails({
             receivedRequests: receivedRequests,
             sentRequests: sentRequests,
           });
         }
-      } else if (
-        message.type === "ADOPTION_REQUEST_STATUS" &&
-        message.userId === userDetails.id
-      ) {
-        const { adoptionRequestId, status } = message.payload;
-
-        if (data) {
-          if (Array.isArray(data.receivedRequests)) {
-            data.receivedRequests = data.receivedRequests.map((mail) =>
-              mail.id === adoptionRequestId ? { ...mail, status } : mail,
-            );
-          }
-          if (Array.isArray(data.sentRequests)) {
-            data.sentRequests = data.sentRequests.map((mail) =>
-              mail.id === adoptionRequestId ? { ...mail, status } : mail,
-            );
-          }
-        }
-        setMailDetails((prev) => ({
-          ...prev,
-          status,
-        }));
       }
     };
 
@@ -101,6 +97,12 @@ function AdoptionRequestsInbox({ mails }) {
   const markMailAsRead = (id) => {
     if (data && Array.isArray(data.receivedRequests)) {
       data.receivedRequests = data.receivedRequests.map((mail) =>
+        mail.id === id ? { ...mail, isRead: true } : mail,
+      );
+    }
+
+    if (data && Array.isArray(data.sentRequests)) {
+      data.sentRequests = data.sentRequests.map((mail) =>
         mail.id === id ? { ...mail, isRead: true } : mail,
       );
     }

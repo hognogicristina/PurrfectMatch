@@ -9,10 +9,6 @@ function FelinesRecordsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
-  const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage.toString() });
-  };
-
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={cats}>
@@ -21,7 +17,6 @@ function FelinesRecordsPage() {
             <FelinesRecordsCatalog
               cats={loadedCats}
               currentPage={currentPage}
-              onPageChange={handlePageChange}
             />
           </div>
         )}

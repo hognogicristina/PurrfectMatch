@@ -265,8 +265,8 @@ const generateData = async () => {
     const users = await generateUsers(25);
     await generateCats(300, users);
     await generateFavorite(150, users);
-    await generateAdoptionRequests(200, users);
-    await processAdoptionRequests(120);
+    // await generateAdoptionRequests(200, users);
+    // await processAdoptionRequests(120);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);

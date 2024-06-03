@@ -9,8 +9,12 @@ export const WebSocketProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const { notifyUser, notifySuccess, notifyError } = useToast();
   const token = getAuthToken();
-  const userDetails = extractJwt(token);
-  const userId = userDetails.id;
+  let userDetails, userId;
+
+  if (token) {
+    userDetails = extractJwt(token);
+    userId = userDetails.id;
+  }
 
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:3000");
@@ -22,6 +26,7 @@ export const WebSocketProvider = ({ children }) => {
     ws.onmessage = (event) => {
       const message = JSON.parse(event.data);
       setMessages((prevMessages) => [...prevMessages, message]);
+
       if (message.type === "NEW_ADOPTION_REQUEST") {
         if (message.payload?.role === "receiver") {
           const customMessage = message.payload?.customMessage;
@@ -30,15 +35,10 @@ export const WebSocketProvider = ({ children }) => {
           const customMessage = message.payload?.customMessage;
           notifySuccess(customMessage);
         }
-      }
-
-      if (message.type === "ADOPTION_REQUEST_STATUS") {
-        if (message.payload?.status === "accepted") {
+      } else if (message.type === "ADOPTION_REQUEST_RESPONSE") {
+        if (message.payload?.role === "sender") {
           const customMessage = message.payload?.customMessage;
-          notifySuccess(customMessage);
-        } else {
-          const customMessage = message.payload?.customMessage;
-          notifyError(customMessage);
+          notifyUser(customMessage);
         }
       }
     };

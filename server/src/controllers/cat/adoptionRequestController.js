@@ -79,27 +79,11 @@ const adoptCat = async (req, res) => {
 const validateAdoptionRequest = async (req, res) => {
   try {
     if (req.user) {
-      const cat = await Cat.findByPk(req.params.catId);
-      if (cat) {
-        const adoptionRequest = await AdoptionRequest.findOne({
-          where: { catId: cat.id },
-        });
-        if (adoptionRequest) {
-          const userRole = await UserRole.findOne({
-            where: {
-              adoptionRequestId: adoptionRequest.id,
-              userId: req.user.id,
-            },
-          });
-          if (userRole) {
-            return res.json({ exists: true });
-          } else {
-            return res.json({ exists: false });
-          }
-        } else {
-          return res.json({ exists: false });
-        }
-      }
+      const exists = await adoptionRequestHelper.checkAdoptionRequestExists(
+        req.user.id,
+        req.params.catId,
+      );
+      return res.json({ exists });
     } else {
       return res.json({ exists: false });
     }
@@ -129,7 +113,7 @@ const handleAdoptionRequest = async (req, res) => {
         role: "receiver",
       },
     });
-    senderUserRole.update({ isRead: true });
+    await senderUserRole.update({ isRead: false });
     const sender = await User.findByPk(senderUserRole.userId);
     const receiver = await User.findByPk(receiverUserRole.userId);
     const userAddress = await Address.findOne({
@@ -137,7 +121,7 @@ const handleAdoptionRequest = async (req, res) => {
     });
 
     if (status === "accepted") {
-      await adoptionRequestHelper.sendAdoptionRequest(
+      const otherUsers = await adoptionRequestHelper.sendAdoptionRequest(
         status,
         adoptionRequest,
         sender,
@@ -145,14 +129,47 @@ const handleAdoptionRequest = async (req, res) => {
         cat,
         userAddress,
       );
-      adoptionRequest.update({ status });
+      await adoptionRequest.update({ status });
+
+      for (let otherUser of otherUsers) {
+        const otherUserDTO =
+          await adoptionRequestDTO.transformAdoptionRequestsToDTO(otherUser);
+
+        websocket.notifyClients({
+          type: "ADOPTION_REQUEST_RESPONSE",
+          userId: otherUser.id,
+          payload: {
+            ...otherUserDTO,
+            customMessage: `${receiver.username} declined the request`,
+            role: "sender",
+            status: "declined",
+          },
+        });
+      }
+
+      const senderDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(sender);
+      const receiverDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
 
       websocket.notifyClients({
-        type: "ADOPTION_REQUEST_STATUS",
+        type: "ADOPTION_REQUEST_RESPONSE",
         userId: sender.id,
         payload: {
+          ...senderDTO,
+          customMessage: `${receiver.username} accepted your request`,
+          role: "sender",
           status: "accepted",
-          message: `${receiver.username} accepted your adoption request`,
+        },
+      });
+
+      websocket.notifyClients({
+        type: "ADOPTION_REQUEST_RESPONSE",
+        userId: receiver.id,
+        payload: {
+          ...receiverDTO,
+          role: "receiver",
+          status: "accepted",
         },
       });
 
@@ -162,14 +179,33 @@ const handleAdoptionRequest = async (req, res) => {
     } else {
       await emailServ.sendDeclineAdoption(sender, receiver, cat);
       await adoptionRequest.update({ status });
+
+      const senderDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(sender);
+      const receiverDTO =
+        await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
+
       websocket.notifyClients({
-        type: "ADOPTION_REQUEST_STATUS",
+        type: "ADOPTION_REQUEST_RESPONSE",
         userId: sender.id,
         payload: {
+          ...senderDTO,
+          customMessage: `${receiver.username} declined your request`,
+          role: "sender",
           status: "declined",
-          message: `${receiver.username} declined your adoption request`,
         },
       });
+
+      websocket.notifyClients({
+        type: "ADOPTION_REQUEST_RESPONSE",
+        userId: receiver.id,
+        payload: {
+          ...receiverDTO,
+          role: "receiver",
+          status: "declined",
+        },
+      });
+
       return res
         .status(200)
         .json({ status: "Adoption request was declined", adoptionRequest });
