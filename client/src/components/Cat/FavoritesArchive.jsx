@@ -48,7 +48,7 @@ export default function FavoritesArchive({ favorites }) {
             transition: { duration: 0.3, delay: index * 0.001 },
           }}
           viewport={{ once: true }}
-          key={favorite.id}
+          key={favorite.id + index}
           className="favoriteItem"
         >
           <img

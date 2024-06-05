@@ -3,42 +3,28 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Chats", {
+    await queryInterface.createTable("ChatSessions", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      senderId: {
-        type: Sequelize.INTEGER,
+      userId1: {
         allowNull: false,
+        type: Sequelize.INTEGER,
         references: {
           model: "Users",
           key: "id",
         },
       },
-      receiverId: {
-        type: Sequelize.INTEGER,
+      userId2: {
         allowNull: false,
+        type: Sequelize.INTEGER,
         references: {
           model: "Users",
           key: "id",
         },
-      },
-      message: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      isRead: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
-      isVisible: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
       },
       createdAt: {
         allowNull: false,
@@ -52,6 +38,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Chats");
+    await queryInterface.dropTable("ChatSessions");
   },
 };

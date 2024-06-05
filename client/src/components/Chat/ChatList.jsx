@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "../../styles/Auth/Inbox.css";
 import { motion } from "framer-motion";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import ChatWindow from "../Util/Pages/Inbox/ChatWindow.jsx";
 import SearchBar from "../Util/Pages/Inbox/SearchBar.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { useWebSocket } from "../../context/WebSocketContext.jsx";
+import { faUserCircle, faCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatsList({ chats }) {
   const { data, error, userDetails } = chats;
@@ -14,137 +13,119 @@ export default function ChatsList({ chats }) {
   const [selectedUserName, setSelectedUserName] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [resetOnOpen, setResetOnOpen] = useState(false);
-  const { messages } = useWebSocket();
   const [chatData, setChatData] = useState(data || []);
-
-  useEffect(() => {
-    if (data) {
-      setChatData(data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const handleNewMessage = (message) => {
-      if (!userDetails) return;
-
-      if (
-        message.type === "NEW_CHAT_MESSAGE" &&
-        (message.userId === userDetails.id ||
-          message.payload.otherUser.id === userDetails.id)
-      ) {
-        setChatData((prevChatData) => {
-          if (!prevChatData) prevChatData = [];
-
-          const updatedChats = prevChatData.map((chat) => {
-            if (
-              chat &&
-              (chat.otherUserId === message.payload.otherUser.id ||
-                chat.otherUserId === userDetails.id)
-            ) {
-              return {
-                ...chat,
-                message: message.payload.message,
-                formattedDate: message.payload.formattedDate,
-              };
-            }
-            return chat;
-          });
-
-          if (
-            !updatedChats.find(
-              (chat) =>
-                chat && chat.otherUserId === message.payload.otherUser.id,
-            )
-          ) {
-            updatedChats.push({
-              id: message.payload.id,
-              message: message.payload.message,
-              formattedDate: message.payload.formattedDate,
-              otherUserId: message.payload.otherUser.id,
-              fullName: `${message.payload.otherUser.firstName} ${message.payload.otherUser.lastName}`,
-              image: message.payload.otherUser.imageUrl,
-            });
-          }
-
-          const updatedChat = updatedChats.find(
-            (chat) => chat && chat.otherUserId === message.payload.otherUser.id,
-          );
-          const remainingChats = updatedChats.filter(
-            (chat) => chat && chat.otherUserId !== message.payload.otherUser.id,
-          );
-          return [updatedChat, ...remainingChats];
-        });
-      }
-    };
-
-    if (messages && userDetails) {
-      messages.forEach(handleNewMessage);
-    }
-  }, [messages, userDetails]);
 
   useEffect(() => {
     if (data && data.length > 0 && !selectedUserId) {
       const firstChat = data[0];
       setSelectedUserId(firstChat.otherUserId);
-      setSelectedUserName(firstChat.fullName);
+      setSelectedUserName(firstChat.otherUserName);
     }
   }, [data, selectedUserId]);
 
   const handleChatSelect = (chat) => {
+    setChatData((prevChatData) =>
+      prevChatData.map((item) =>
+        item.otherUserId === chat.otherUserId
+          ? { ...item, isRead: true }
+          : item,
+      ),
+    );
     setSelectedUserId(chat.otherUserId);
-    setSelectedUserName(chat.fullName);
+    setSelectedUserName(chat.otherUserName);
     setResetOnOpen(true);
   };
 
-  const renderUserImage = (chat) => {
-    if (chat.image) {
-      return (
-        <img
-          className="userImageLogout catAdopt"
-          src={chat.image}
-          alt={chat.otherUserId}
-        />
-      );
+  const handleUserSearchSelect = (userId, userName, image) => {
+    const existingChat = chatData.find((chat) => chat.otherUserId === userId);
+    if (!existingChat) {
+      setChatData((prevChatData) => [
+        ...prevChatData,
+        {
+          otherUserId: userId,
+          otherUserName: userName,
+          otherUserImage: image,
+          messages: [],
+          isRead: true,
+        },
+      ]);
     } else {
-      return <FontAwesomeIcon icon={faUserCircle} className="userIcon" />;
+      setChatData((prevChatData) =>
+        prevChatData.map((item) =>
+          item.otherUserId === userId ? { ...item, isRead: true } : item,
+        ),
+      );
     }
+    setSelectedUserId(userId);
+    setSelectedUserName(userName);
+    setResetOnOpen(true);
   };
 
+  const handleNewChatSession = (newChatSession) => {
+    setChatData((prevChatData) => {
+      const existingSessionIndex = prevChatData.findIndex(
+        (chat) => chat.otherUserId === newChatSession.otherUserId,
+      );
+
+      if (existingSessionIndex !== -1) {
+        const updatedChatData = [...prevChatData];
+        updatedChatData[existingSessionIndex] = newChatSession;
+        return updatedChatData;
+      } else {
+        return [newChatSession, ...prevChatData];
+      }
+    });
+  };
+
+  const renderUserImage = (chat) => (
+    <div className="userImageWrapper">
+      {chat.otherUserImage ? (
+        <img
+          className="userImageLogout catAdopt"
+          src={chat.otherUserImage}
+          alt={chat.otherUserId}
+        />
+      ) : (
+        <FontAwesomeIcon icon={faUserCircle} className="userIconChat" />
+      )}
+      {!chat.isRead && (
+        <FontAwesomeIcon icon={faCircle} className="unreadIconChat" />
+      )}
+    </div>
+  );
+
   const renderChat = () => {
-    if (chatData && Array.isArray(chatData) && chatData.length > 0) {
-      return chatData.map((chat, index) => {
-        if (!chat) return null;
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            viewport={{ once: true }}
-            key={chat.id}
-            className={`chat ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
-            onClick={() => handleChatSelect(chat)}
-          >
-            <div className="userImageContainer">{renderUserImage(chat)}</div>
-            <div className="chatItemContainer">
-              <div className="chatItemHeader">
-                <span className="chatItemName">{chat.fullName}</span>
-                <span
-                  className={`chatItemDate ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
-                >
-                  {chat.formattedDate}
-                </span>
-              </div>
+    if (Array.isArray(chatData) && chatData.length > 0) {
+      return chatData.map((chat, index) => (
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: index * 0.05 }}
+          viewport={{ once: true }}
+          key={chat.otherUserId}
+          className={`chat ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+          onClick={() => handleChatSelect(chat)}
+        >
+          <div className="userImageContainer">{renderUserImage(chat)}</div>
+          <div className="chatItemContainer">
+            <div className="chatItemHeader">
+              <span className="chatItemName">{chat.otherUserName}</span>
               <span
-                className={`chatItemMessage ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+                className={`chatItemDate ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
               >
-                {chat.message}
+                {chat.lastMessageDate}
               </span>
             </div>
-          </motion.div>
-        );
-      });
-    } else if (chats && error) {
-      if (error.some((err) => err.field === "inbox")) {
+            <span
+              className={`chatItemMessage ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+            >
+              {chat.lastMessage}
+            </span>
+          </div>
+        </motion.div>
+      ));
+    } else if (error) {
+      if (error.some((err) => err.field === "chat")) {
         const errorMessage = error.map((err, index) => (
           <p key={index} className="errorMessageCats">
             {err.message}
@@ -163,50 +144,11 @@ export default function ChatsList({ chats }) {
     }
   };
 
-  const handleSendMessageSuccess = (chatId, newMessage, formattedDate) => {
-    setChatData((prevChatData) => {
-      if (!prevChatData) prevChatData = [];
-
-      const updatedChats = prevChatData.map((chat) => {
-        if (chat && chat.otherUserId === chatId) {
-          return {
-            ...chat,
-            message: newMessage,
-            formattedDate: formattedDate,
-          };
-        }
-        return chat;
-      });
-
-      if (!updatedChats.find((chat) => chat && chat.otherUserId === chatId)) {
-        updatedChats.push({
-          id: chatId,
-          message: newMessage,
-          formattedDate: formattedDate,
-          otherUserId: chatId,
-          fullName: selectedUserName,
-          image: null,
-        });
-      }
-
-      const updatedChat = updatedChats.find(
-        (chat) => chat && chat.otherUserId === chatId,
-      );
-      const remainingChats = updatedChats.filter(
-        (chat) => chat && chat.otherUserId !== chatId,
-      );
-      return [updatedChat, ...remainingChats];
-    });
-  };
-
   return (
     <div className="container">
       <div className="chatForm">
         <div className="sidebar">
-          <SearchBar
-            onUserSelect={setSelectedUserId}
-            onUserName={setSelectedUserName}
-          />
+          <SearchBar onUserSelect={handleUserSearchSelect} />
           <div className="messagesContainer">{renderChat()}</div>
         </div>
         <ChatWindow
@@ -214,8 +156,13 @@ export default function ChatsList({ chats }) {
           selectedUserName={selectedUserName}
           resetOnOpen={resetOnOpen}
           setResetOnOpen={setResetOnOpen}
-          chatMessages={chatData}
-          onSendMessageSuccess={handleSendMessageSuccess}
+          chatMessages={
+            chatData && Array.isArray(chatData) && chatData.length > 0
+              ? chatData.find((chat) => chat.otherUserId === selectedUserId)
+                  ?.messages || []
+              : []
+          }
+          onNewChatSession={handleNewChatSession}
         />
       </div>
     </div>

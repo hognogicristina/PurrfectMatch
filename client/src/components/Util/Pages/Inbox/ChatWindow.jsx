@@ -3,6 +3,8 @@ import { Form } from "react-router-dom";
 import { getAuthToken } from "../../../../util/auth.js";
 import { useToast } from "../../Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
 export default function ChatWindow({
   selectedUserId,
@@ -10,7 +12,7 @@ export default function ChatWindow({
   resetOnOpen = false,
   setResetOnOpen,
   chatMessages,
-  onSendMessageSuccess,
+  onNewChatSession,
 }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -40,12 +42,15 @@ export default function ChatWindow({
 
   const fetchMessages = async (id) => {
     const token = getAuthToken();
-    const response = await fetch(`http://localhost:3000/inbox/${id}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await fetch(
+      `http://localhost:3000/inbox/${id}/chat-session`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
     const result = await response.json();
     if (response.ok) {
       setMessages(result.data);
@@ -58,6 +63,20 @@ export default function ChatWindow({
       setMessages([]);
     }
   };
+
+  const renderUserImage = (message) => (
+    <div className="userImageWrapper">
+      {message.otherUserImage ? (
+        <img
+          className="messageUserImage"
+          src={message.otherUserImage}
+          alt={message.otherUserId}
+        />
+      ) : (
+        <FontAwesomeIcon icon={faUserCircle} className="userIconChat imgMsg" />
+      )}
+    </div>
+  );
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -75,10 +94,36 @@ export default function ChatWindow({
     );
     const result = await response.json();
     if (response.ok) {
+      if (messages.length === 0) {
+        onNewChatSession({
+          id: result.session.id,
+          currentUserId: result.session.userId,
+          otherUserId: result.session.otherUserId,
+          otherUserName: result.session.otherUserName,
+          otherUserImage: result.session.otherUserImage,
+          lastMessage: result.message.messageText,
+          lastMessageDate: result.message.messageDate,
+          lastMessageRole: result.message.messageRole,
+          isRead: result.message.isRead,
+          unreadMessagesCount: result.session.unreadMessagesCount,
+        });
+      } else {
+        onNewChatSession({
+          id: result.session.id,
+          currentUserId: result.session.userId,
+          otherUserId: result.session.otherUserId,
+          otherUserName: result.session.otherUserName,
+          otherUserImage: result.session.otherUserImage,
+          lastMessage: result.session.lastMessage,
+          lastMessageDate: result.session.lastMessageDate,
+          lastMessageRole: result.session.lastMessageRole,
+          isRead: result.session.isRead,
+          unreadMessagesCount: result.session.unreadMessagesCount,
+        });
+      }
       setNewMessage("");
       await fetchMessages(selectedUserId);
       setResetOnOpen(false);
-      onSendMessageSuccess(selectedUserId, newMessage, result.formattedDate);
     } else {
       result.error.forEach((err) => {
         if (err.field === "server") {
@@ -103,18 +148,14 @@ export default function ChatWindow({
           transition={{ duration: 0.3, delay: index * 0.05 }}
           viewport={{ once: true }}
           key={index}
-          className={`message ${message.currentUser.sender ? "sentMessage" : "receivedMessage"}`}
+          className={`message ${message.messageRole === "sender" ? "sentMessage" : "receivedMessage"}`}
         >
-          {!message.currentUser.sender && (
-            <img
-              src={message.otherUser.imageUrl}
-              alt={message.otherUser.username}
-              className="messageUserImage"
-            />
+          {message.messageRole === "receiver" && (
+            <>{renderUserImage(message)}</>
           )}
           <div className="messageContentContainer">
-            <span className="messageContent">{message.message}</span>
-            <span className="timestamp">{message.formattedDate}</span>
+            <span className="messageContent">{message.messageText}</span>
+            <span className="timestamp">{message.messageDate}</span>
           </div>
         </motion.div>
       ))}

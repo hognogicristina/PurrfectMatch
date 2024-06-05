@@ -201,30 +201,21 @@ router.delete(
 );
 
 // Chat routes
+router.get("/inbox", authMiddleware.authenticateToken, chatController.getInbox);
 router.get(
-  "/inbox",
+  "/inbox/:id/chat-session",
   authMiddleware.authenticateToken,
-  chatController.getAllMessages,
+  chatController.getChatSession,
 );
 router.get(
   "/inbox/search",
   authMiddleware.authenticateToken,
-  chatController.searchUsers,
-);
-router.get(
-  "/inbox/:id",
-  authMiddleware.authenticateToken,
-  chatController.getMessagesWithUser,
+  chatController.searchUser,
 );
 router.post(
   "/inbox/:id/send",
   authMiddleware.authenticateToken,
   chatController.sendMessage,
-);
-router.delete(
-  "/inbox/:id/delete",
-  authMiddleware.authenticateToken,
-  chatController.deleteMessage,
 );
 
 module.exports = router;

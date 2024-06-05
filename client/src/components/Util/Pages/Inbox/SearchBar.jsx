@@ -6,7 +6,7 @@ import { IoSearch } from "react-icons/io5";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 
-export default function SearchBar({ onUserSelect, onUserName }) {
+export default function SearchBar({ onUserSelect }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -30,6 +30,7 @@ export default function SearchBar({ onUserSelect, onUserName }) {
           },
         },
       );
+
       const result = await response.json();
       if (response.ok) {
         setResults(result.data);
@@ -51,8 +52,7 @@ export default function SearchBar({ onUserSelect, onUserName }) {
   }, [query, notifyError]);
 
   const handleUserSelect = (user) => {
-    onUserSelect(user.id);
-    onUserName(user.firstName + " " + user.lastName);
+    onUserSelect(user.id, user.displayName, user.image);
     setShowResults(false);
     setQuery("");
   };
@@ -73,18 +73,17 @@ export default function SearchBar({ onUserSelect, onUserName }) {
     }
   };
 
-  const renderResults = () => {
-    return results.map((user) => (
+  const renderResults = () =>
+    results.map((user) => (
       <div
         key={user.id}
         className="userSearch"
         onClick={() => handleUserSelect(user)}
       >
         {renderUserImage(user)}
-        <p>{user.firstName + " " + user.lastName}</p>
+        <p>{user.displayName}</p>
       </div>
     ));
-  };
 
   const clearInput = () => {
     setQuery("");

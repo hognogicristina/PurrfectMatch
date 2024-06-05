@@ -8,11 +8,12 @@ const {
   Breed,
   Cat,
   CatUser,
-  Chat,
+  ChatSession,
   City,
   Country,
   Favorite,
   Image,
+  Message,
   PasswordHistory,
   RefreshToken,
   Token,
@@ -233,7 +234,8 @@ const emptyDatabase = () => {
   PasswordHistory.destroy({ truncate: true });
   RefreshToken.destroy({ truncate: true });
   UserInfo.destroy({ truncate: true });
-  Chat.destroy({ truncate: true });
+  Message.destroy({ truncate: true });
+  ChatSession.destroy({ truncate: true });
   Address.destroy({ truncate: true });
   Favorite.destroy({ truncate: true });
   CatUser.destroy({ truncate: true });

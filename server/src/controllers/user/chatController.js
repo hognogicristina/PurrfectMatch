@@ -1,198 +1,217 @@
-const { Chat, User, Image } = require("../../../models");
+const { ChatSession, Message, User, Image } = require("../../../models");
 const chatValidator = require("../../validators/chatValidator");
 const chatDTO = require("../../dto/chatDTO");
-const logger = require("../../../logger/logger");
-const { Op } = require("sequelize");
-const webSocket = require("../../../websocket");
 const userDTO = require("../../dto/userDTO");
+const logger = require("../../../logger/logger");
+const { Op, Sequelize } = require("sequelize");
 
-const getAllMessages = async (req, res) => {
+const getInbox = async (req, res) => {
   try {
-    if (await chatValidator.allMessagesExistValidator(req, res)) return;
+    if (await chatValidator.checkSessionExists(req, res)) return;
     const userId = req.user.id;
-    const user = await User.findOne({ where: { id: userId } });
-    const userDetails = await userDTO.userToDTO(user);
-
-    const messages = await Chat.findAll({
+    const sessions = await ChatSession.findAll({
       where: {
-        [Op.or]: [{ receiverId: userId }, { senderId: userId }],
+        [Op.or]: [{ userId1: userId }, { userId2: userId }],
       },
-      order: [["createdAt", "DESC"]],
     });
 
-    const messageMap = new Map();
-    for (const message of messages) {
-      const pairKey = [message.senderId, message.receiverId].sort().join("-");
-      if (!messageMap.has(pairKey)) {
-        messageMap.set(pairKey, message);
-      }
-    }
+    const chatSessions = [];
+    for (const session of sessions) {
+      const chatSessionDTO = await chatDTO.transformChatSessionsToDTO(
+        session,
+        userId,
+      );
 
-    const lastMessages = Array.from(messageMap.values());
-    const formattedMessages = await Promise.all(
-      lastMessages.map((message) => chatDTO.chatToDTO(message, req.user)),
-    );
-    return res.status(200).json({ data: formattedMessages, userDetails });
+      chatSessions.push(chatSessionDTO);
+    }
+    chatSessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const user = await User.findByPk(req.user.id);
+    const userDetails = await userDTO.userToDTO(user);
+    return res
+      .status(200)
+      .json({ data: chatSessions, userDetails: userDetails });
   } catch (error) {
     logger.error(error);
     return res
       .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
-const getMessagesWithUser = async (req, res) => {
+const getChatSession = async (req, res) => {
   try {
-    if (await chatValidator.messagesWithUserExistValidator(req, res)) return;
+    if (await chatValidator.checkChatSessionExists(req, res)) return;
+    const userId = req.user.id;
+    const receiverId = req.params.id;
 
-    const messages = await Chat.findAll({
+    const session = await ChatSession.findOne({
       where: {
         [Op.or]: [
-          {
-            [Op.and]: [
-              { senderId: req.user.id },
-              { receiverId: req.params.id },
-            ],
-          },
-          {
-            [Op.and]: [
-              { senderId: req.params.id },
-              { receiverId: req.user.id },
-            ],
-          },
+          { userId1: userId, userId2: receiverId },
+          { userId1: receiverId, userId2: userId },
         ],
       },
+    });
+
+    const messages = await Message.findAll({
+      where: { chatSessionId: session.id, userId: userId },
       order: [["createdAt", "DESC"]],
     });
 
-    const formattedMessages = [];
     for (const message of messages) {
-      formattedMessages.push(await chatDTO.chatSessionToDTO(message, req.user));
+      message.isRead = true;
+      await message.save();
     }
 
-    return res.status(200).json({ data: formattedMessages });
+    const chatMessages = [];
+    for (const message of messages) {
+      const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
+        session,
+        message,
+        userId,
+      );
+      chatMessages.push(chatMessageDTO);
+    }
+    return res.status(200).json({ data: chatMessages });
   } catch (error) {
     logger.error(error);
     return res
       .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
-const searchUsers = async (req, res) => {
+const searchUser = async (req, res) => {
   try {
-    if (await chatValidator.searchUserValidator(req, res)) return;
+    if (await chatValidator.checkSearchUsersExist(req, res)) return;
     const { user } = req.query;
     const users = await User.findAll({
       where: {
         [Op.or]: [
-          { firstName: { [Op.like]: `%${user}%` } },
-          { lastName: { [Op.like]: `%${user}%` } },
-          {
-            [Op.and]: [
-              { firstName: { [Op.like]: `%${user.split(" ")[0]}%` } },
-              { lastName: { [Op.like]: `%${user.split(" ")[1]}%` } },
-            ],
-          },
+          Sequelize.where(
+            Sequelize.fn("LOWER", Sequelize.col("firstName")),
+            "LIKE",
+            `%${user.toLowerCase()}%`,
+          ),
+          Sequelize.where(
+            Sequelize.fn("LOWER", Sequelize.col("lastName")),
+            "LIKE",
+            `%${user.toLowerCase()}%`,
+          ),
         ],
       },
     });
 
-    let formattedUsers = [];
+    const usersDTO = [];
     for (const user of users) {
-      formattedUsers.push(await chatDTO.searchUserToDTO(user));
+      usersDTO.push(await userDTO.userListToDTO(user));
     }
 
-    return res.status(200).json({ data: formattedUsers });
+    return res.status(200).json({ data: usersDTO });
   } catch (error) {
     logger.error(error);
-    return res.status(500).json({
-      error: [{ field: "server", message: "Internal Server Error" }],
-    });
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
 const sendMessage = async (req, res) => {
   try {
-    if (await chatValidator.messageValidator(req, res)) return;
-    const { message } = req.body;
+    if (await chatValidator.checkChatSessionExists(req, res)) return;
+    const message = req.body.message;
+    const userId = req.user.id;
     const receiverId = req.params.id;
-    const senderId = req.user.id;
 
-    const chatMessage = await Chat.create({
-      message: message,
-      senderId: senderId,
-      receiverId: receiverId,
-      isRead: false,
-    });
-
-    const sender = await User.findByPk(senderId);
-    const receiver = await User.findByPk(receiverId);
-
-    const senderDTO = await chatDTO.chatSessionToDTO(chatMessage, sender);
-    const receiverDTO = await chatDTO.chatSessionToDTO(chatMessage, receiver);
-
-    webSocket.notifyClients({
-      type: "NEW_CHAT_MESSAGE",
-      userId: receiver.id,
-      payload: {
-        ...receiverDTO,
-        customMessage: `${sender.username} sent you a message`,
-        role: "receiver",
-        message: chatMessage.message,
+    const session = await ChatSession.findOne({
+      where: {
+        [Op.or]: [
+          { userId1: userId, userId2: receiverId },
+          { userId1: receiverId, userId2: userId },
+        ],
       },
     });
 
-    webSocket.notifyClients({
-      type: "NEW_CHAT_MESSAGE",
-      userId: sender.id,
-      payload: {
-        ...senderDTO,
+    let chatSession, chatMessage, newMessage;
+    if (!session) {
+      const newSession = await ChatSession.create({
+        userId1: userId,
+        userId2: receiverId,
+      });
+      chatSession = await chatDTO.transformChatSessionsToDTO(
+        newSession,
+        userId,
+      );
+      newMessage = await Message.create({
+        chatSessionId: newSession.id,
+        userId: userId,
+        message: message,
         role: "sender",
-        message: chatMessage.message,
-      },
-    });
+        isRead: true,
+      });
+      await Message.create({
+        chatSessionId: newSession.id,
+        userId: receiverId,
+        message: message,
+        role: "receiver",
+        isRead: false,
+      });
 
-    return res.status(201).json({
-      status: "Message sent successfully",
-      formattedDate: senderDTO.formattedDate,
-    });
-  } catch (error) {
-    console.log(error);
-    logger.error(error);
-    return res
-      .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
-  }
-};
+      chatMessage = await chatDTO.transformChatMessagesToDTO(
+        newSession,
+        newMessage,
+        userId,
+      );
 
-const deleteMessage = async (req, res) => {
-  try {
-    if (await chatValidator.messageExistValidator(req, res)) return;
-    const { messageId } = req.params.id;
-
-    const chat = await Chat.findOne({ where: { id: messageId } });
-    if (chat.isVisible === true) {
-      chat.update({ isVisible: false });
-      return res.status(200).json({ status: "Message deleted successfully" });
+      return res
+        .status(201)
+        .json({ message: chatMessage, session: chatSession });
     } else {
-      await Chat.destroy({ where: { id: messageId } });
-    }
+      newMessage = await Message.create({
+        chatSessionId: session.id,
+        userId: userId,
+        message: message,
+        role: "sender",
+        isRead: true,
+      });
+      await Message.create({
+        chatSessionId: session.id,
+        userId: receiverId,
+        message: message,
+        role: "receiver",
+        isRead: false,
+      });
 
-    return res.status(200).json({ status: "Message deleted successfully" });
+      const newSession = await ChatSession.findOne({
+        where: {
+          [Op.or]: [
+            { userId1: userId, userId2: receiverId },
+            { userId1: receiverId, userId2: userId },
+          ],
+        },
+      });
+      chatSession = await chatDTO.transformChatSessionsToDTO(
+        newSession,
+        userId,
+      );
+
+      return res
+        .status(201)
+        .json({ message: newMessage, session: chatSession });
+    }
   } catch (error) {
     console.log(error);
     logger.error(error);
     return res
       .status(500)
-      .json({ error: [{ field: "server", message: "Internal Server Error" }] });
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
   }
 };
 
 module.exports = {
-  getAllMessages,
-  getMessagesWithUser,
-  searchUsers,
+  getInbox,
+  getChatSession,
+  searchUser,
   sendMessage,
-  deleteMessage,
 };
