@@ -11,6 +11,7 @@ const filterController = require("../controllers/cat/filterController");
 const catController = require("../controllers/cat/catController");
 const adoptionRequestController = require("../controllers/cat/adoptionRequestController");
 const favoriteController = require("../controllers/cat/favoriteController");
+const chatController = require("../controllers/user/chatController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -197,6 +198,33 @@ router.delete(
   "/favorite/:id/delete",
   authMiddleware.authenticateToken,
   favoriteController.deleteFavorite,
+);
+
+// Chat routes
+router.get(
+  "/inbox",
+  authMiddleware.authenticateToken,
+  chatController.getAllMessages,
+);
+router.get(
+  "/inbox/search",
+  authMiddleware.authenticateToken,
+  chatController.searchUsers,
+);
+router.get(
+  "/inbox/:id",
+  authMiddleware.authenticateToken,
+  chatController.getMessagesWithUser,
+);
+router.post(
+  "/inbox/:id/send",
+  authMiddleware.authenticateToken,
+  chatController.sendMessage,
+);
+router.delete(
+  "/inbox/:id/delete",
+  authMiddleware.authenticateToken,
+  chatController.deleteMessage,
 );
 
 module.exports = router;

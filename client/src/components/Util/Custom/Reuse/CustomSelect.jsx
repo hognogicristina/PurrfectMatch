@@ -12,6 +12,7 @@ const customStyles = {
     borderRadius: "8px",
     cursor: "pointer",
     fontSize: "14px",
+    minWidth: "125px",
   }),
   option: (styles, { isFocused, isSelected }) => ({
     ...styles,

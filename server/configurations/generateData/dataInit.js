@@ -4,20 +4,21 @@ const { faker, he } = require("@faker-js/faker");
 const {
   Address,
   AdoptionRequest,
-  Breed,
   AgeType,
+  Breed,
   Cat,
   CatUser,
+  Chat,
+  City,
+  Country,
   Favorite,
   Image,
   PasswordHistory,
   RefreshToken,
-  User,
-  UserRole,
-  UserInfo,
   Token,
-  Country,
-  City,
+  User,
+  UserInfo,
+  UserRole,
   sequelize,
 } = require("../../models");
 const breedInit = require("../breedConfig/breedInit");
@@ -226,10 +227,14 @@ const processAdoptionRequests = async (numRequests) => {
 };
 
 const emptyDatabase = () => {
-  Token.destroy({ truncate: true });
-  UserInfo.destroy({ truncate: true });
   UserRole.destroy({ truncate: true });
   AdoptionRequest.destroy({ truncate: true });
+  Token.destroy({ truncate: true });
+  PasswordHistory.destroy({ truncate: true });
+  RefreshToken.destroy({ truncate: true });
+  UserInfo.destroy({ truncate: true });
+  Chat.destroy({ truncate: true });
+  Address.destroy({ truncate: true });
   Favorite.destroy({ truncate: true });
   CatUser.destroy({ truncate: true });
   Image.findAll().then((images) => {
@@ -238,9 +243,6 @@ const emptyDatabase = () => {
     }
   });
   Cat.destroy({ truncate: true });
-  PasswordHistory.destroy({ truncate: true });
-  RefreshToken.destroy({ truncate: true });
-  Address.destroy({ truncate: true });
   User.destroy({ truncate: true });
   AgeType.destroy({ truncate: true });
   City.destroy({ truncate: true });

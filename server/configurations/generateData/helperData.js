@@ -1,7 +1,6 @@
 const path = require("path");
 const fs = require("fs");
 const { faker } = require("@faker-js/faker");
-const axios = require("axios");
 const catHelper = require("../../src/helpers/catHelper");
 const fileHelper = require("../../src/helpers/fileHelper");
 const logger = require("../../logger/logger");
@@ -104,7 +103,7 @@ const generateCatData = async (cat) => {
   cat.age = currentTimestamp - ageInSeconds;
   cat.ageType = catHelper.processAgeRange(ageInYears);
   cat.healthProblem = await generateRandomHealthProblem();
-  cat.description = `A lovely ${cat.gender.toLowerCase()} ${cat.breed.toLowerCase()} cat.`;
+  cat.description = faker.lorem.paragraphs(3);
   cat.status = "active";
 
   return cat;
@@ -112,7 +111,7 @@ const generateCatData = async (cat) => {
 
 const generateRandomUserInfo = async () => {
   let birthday = faker.date.past({ years: 20 }).getTime();
-  const description = "I love cats!";
+  const description = faker.lorem.paragraphs(3);
   const experienceLevel = randomInt(1, 5);
 
   const hobbiesList = ["playing with cats", "games", "reading"];

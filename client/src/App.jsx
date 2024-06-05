@@ -70,11 +70,11 @@ import UserProfilePage, {
 import ArchiveOfUsersPage, {
   loader as loadArchiveOfUsers,
 } from "./pages/PurrfectMatch/ArchiveOfUsers.jsx";
-import { useState } from "react";
 import DeleteProfilePage, {
   action as actionDeleteUser,
 } from "./pages/Profile/DeleteProfile.jsx";
 import { WebSocketProvider } from "./context/WebSocketContext.jsx";
+import ChatsPage, { loader as loadChats } from "./pages/Chat/Chats.jsx";
 
 const router = createBrowserRouter([
   {
@@ -230,6 +230,16 @@ const router = createBrowserRouter([
                 loader: loadOwnedCats,
               },
             ],
+          },
+        ],
+      },
+      {
+        loader: checkAuthLoader,
+        children: [
+          {
+            path: "inbox",
+            element: <ChatsPage />,
+            loader: loadChats,
           },
         ],
       },

@@ -122,9 +122,9 @@ const filterCats = async (req) => {
     if (sortBy === "breed") {
       comparison = cat1.breed.localeCompare(cat2.breed);
     } else if (sortBy === "age") {
-      comparison = cat1.age - cat2.age;
+      comparison = cat2.age - cat1.age;
     } else if (sortBy === "createdAt") {
-      comparison = cat1.createdAt - cat2.createdAt;
+      comparison = cat2.createdAt - cat1.createdAt;
     }
     return sortOrder === "asc" ? comparison : -comparison;
   });

@@ -6,7 +6,6 @@ import { getAuthToken } from "../../../../util/auth.js";
 function SortDropdown() {
   let [searchParams, setSearchParams] = useSearchParams();
   const token = getAuthToken();
-
   const options = useMemo(() => {
     return [
       { value: "breed", label: "Breed" },
@@ -14,7 +13,6 @@ function SortDropdown() {
       { value: "createdAt", label: "Recently Added" },
     ];
   }, [token]);
-
   let currentSortBy = searchParams.get("sortBy");
 
   useEffect(() => {

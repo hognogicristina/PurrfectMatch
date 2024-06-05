@@ -448,7 +448,7 @@
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 220px;
+  width: 15%;
   cursor: pointer;
 }
 
@@ -456,10 +456,6 @@
   background: rgba(227, 127, 182, 0.51);
   color: #fff;
   justify-content: space-evenly;
-}
-
-.otherCatCard button {
-  width: 60% !important;
 }
 
 .otherCatImage {
@@ -471,6 +467,10 @@
 
 .otherCatInfo {
   padding: 10px;
+  text-align: center;
+}
+
+.moreCats {
   text-align: center;
 }
 

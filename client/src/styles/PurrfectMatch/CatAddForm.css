@@ -11,7 +11,7 @@
 .authForm.catEditForm {
   margin-top: 0;
   background: white;
-  max-height: 100vh;
+  max-height: 85%;
   overflow-y: auto;
   padding: 5px 40px 50px;
 }

@@ -183,11 +183,21 @@
   overflow: hidden;
   box-shadow: 0 10px 15px -3px var(--dark-shade), 0 4px 6px -2px var(--dark-shade);
   transition: box-shadow 0.3s, transform 0.3s;
+  min-height: 335px;
 }
 
 .gridCat:hover {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   transform: scale(1.05);
+}
+
+.catDescription {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
 .imgCat {

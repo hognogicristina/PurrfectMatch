@@ -16,6 +16,11 @@ const fetchCountriesAndCities = async () => {
 const populateDatabase = async () => {
   const countriesAndCities = await fetchCountriesAndCities();
 
+  countriesAndCities.sort((a, b) => a.country.localeCompare(b.country));
+  for (const countryData of countriesAndCities) {
+    countryData.cities.sort((a, b) => a.localeCompare(b));
+  }
+
   for (const countryData of countriesAndCities) {
     const country = await Country.create({ name: countryData.country });
 

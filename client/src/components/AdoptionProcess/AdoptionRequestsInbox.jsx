@@ -2,8 +2,8 @@ import "../../styles/PurrfectMatch/Adoption.css";
 import { getAuthToken } from "../../util/auth.js";
 import { useEffect, useState } from "react";
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
-import MailSection from "../Util/Pages/Inbox/MailSection.jsx";
-import MailDetailsSection from "../Util/Pages/Inbox/MailDetailsSection.jsx";
+import MailSection from "../Util/Pages/Mails/MailSection.jsx";
+import MailDetailsSection from "../Util/Pages/Mails/MailDetailsSection.jsx";
 import { useWebSocket } from "../../context/WebSocketContext";
 
 function AdoptionRequestsInbox({ mails }) {

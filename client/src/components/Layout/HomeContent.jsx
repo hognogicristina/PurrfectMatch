@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Intro from "../Util/Pages/HomePage/Intro.jsx";
 import { useEffect, useState } from "react";
+import CatsGrid from "../Util/Pages/HomePage/CatsGrid.jsx";
 
 export default function HomeContent({ cats, breeds }) {
-  const [catData, setCatData] = useState(cats);
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (cats.length === 0) {
-      setErrorMessage(
-        "No recent cats available at the moment. Please check back later.",
-      );
+    if (cats && cats.error) {
+      cats.error.then((error) => {
+        setErrorMessage(error.message);
+      });
     }
   }, [cats]);
 
@@ -185,42 +185,7 @@ export default function HomeContent({ cats, breeds }) {
           </div>
         </div>
       </div>
-      <div className="cats">
-        <h1 className="title">Recent Cats</h1>
-        {catData.length > 0 ? (
-          <div className="gridCats">
-            {catData.map((cat, index) => (
-              <motion.div
-                key={index}
-                className={`cat ${index % 2 === 0 ? "left" : "right"}`}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <div className="gridCat">
-                  <img src={cat.image} alt={cat.name} className="imgCat" />
-                  <div className="infoCat">
-                    <h2>{cat.name}</h2>
-                    <h3>Life stage: {cat.lifeStage}</h3>
-                    <p>{cat.description}</p>
-                    <motion.div
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 200 }}
-                    >
-                      <Link to={`/cats/cat/${cat.id}`} className="btnCat">
-                        Learn More &gt;
-                      </Link>
-                    </motion.div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        ) : (
-          <p className="errorMessage">{errorMessage}</p>
-        )}
-      </div>
+      <CatsGrid cats={cats} errorMessage={errorMessage} />
       <footer>
         <div className="footer-content">
           <p>Ready to explore more?</p>

@@ -57,14 +57,9 @@ export default function MoreCatsSection({ title, cats, type, catDetail }) {
             transition={{ duration: 0.3 }}
             animate={{ scale: 1 }}
             whileHover={{ scale: 1.05 }}
+            onClick={() => handleExploreMore(type)}
           >
-            <p>{cats.length - 4} more cats available</p>
-            <button
-              className="submitButton save"
-              onClick={() => handleExploreMore(type)}
-            >
-              Explore More
-            </button>
+            <p className="moreCats">{cats.length - 4} more cats available</p>
           </motion.li>
         )}
       </ul>

@@ -145,3 +145,21 @@
   flex-direction: row;
   width: 100%;
 }
+
+@media (max-width: 1200px) {
+  .userContent.list {
+    width: 80%;
+  }
+}
+
+@media (max-width: 768px) {
+  .userContent.list {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .userContent.list {
+    width: 100%;
+  }
+}

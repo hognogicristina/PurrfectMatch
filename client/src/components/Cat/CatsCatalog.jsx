@@ -21,6 +21,10 @@ function CatsCatalog({ cats, currentPage }) {
   const { userDetails } = useUserDetails();
 
   useEffect(() => {
+    if (!searchParams.get("sortOrder")) {
+      searchParams.set("sortOrder", "asc");
+      setSearchParams(searchParams, { replace: true });
+    }
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, cats]);
 
