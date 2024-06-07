@@ -1,19 +1,34 @@
 import { redirect } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
+export async function refreshAuthToken() {
+  try {
+    const response = await fetch("http://localhost:3000/refresh/token", {
+      method: "POST",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(data);
+    }
+
+    return data.newToken;
+  } catch (error) {
+    console.error("Error refreshing token:", error);
+    return null;
+  }
+}
 
 export function extractJwt(jwt) {
-  const jwtParts = jwt.split(".");
-  return JSON.parse(atob(jwtParts[1]));
+  return jwtDecode(jwt);
 }
 
-export function extractExpiration(jwt) {
+export function getTokenDuration(jwt) {
   const payload = extractJwt(jwt);
   const expirationTimestamp = payload.exp * 1000;
-  const expirationDate = new Date(expirationTimestamp);
-  return expirationDate.toISOString();
-}
-
-export function getTokenDuration() {
-  const storedExpirationDate = localStorage.getItem("expiration");
+  const expirationDateString = new Date(expirationTimestamp);
+  const storedExpirationDate = expirationDateString.toISOString();
   const expirationDate = new Date(storedExpirationDate);
   const now = new Date();
   return expirationDate.getTime() - now.getTime();
@@ -23,11 +38,6 @@ export function getAuthToken() {
   const token = localStorage.getItem("token");
   if (!token) {
     return null;
-  }
-
-  const tokenDuration = getTokenDuration();
-  if (tokenDuration < 0) {
-    return "EXPIRED";
   }
 
   return token;

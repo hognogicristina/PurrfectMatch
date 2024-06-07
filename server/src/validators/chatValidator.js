@@ -1,12 +1,21 @@
 const { ChatSession, User, Message } = require("../../models");
 const validator = require("validator");
 const { Op, Sequelize } = require("sequelize");
+const chatHelper = require("../helpers/chatHelper");
 
 const checkSessionExists = async (req, res) => {
   const userId = req.user.id;
+  const messages = await Message.findAll({
+    where: {
+      userId: userId,
+    },
+    group: ["chatSessionId"],
+  });
+  const chatSessionIds = messages.map((message) => message.chatSessionId);
+
   const sessions = await ChatSession.findAll({
     where: {
-      [Op.or]: [{ userId1: userId }, { userId2: userId }],
+      id: chatSessionIds,
     },
   });
 
@@ -21,29 +30,44 @@ const checkSessionExists = async (req, res) => {
 
 const checkChatSessionExists = async (req, res) => {
   const userId = req.user.id;
-  const receiverId = req.params.id;
-  const receiver = await User.findByPk(receiverId);
+  const otherUserId = req.params.id;
+  const currentUser = await User.findByPk(userId);
+  const otherUser = await User.findByPk(otherUserId);
 
-  if (!receiver) {
+  if (!otherUser) {
     return res
       .status(404)
-      .json({ error: [{ field: "receiver", message: "User not found" }] });
+      .json({ error: [{ field: "otherUser", message: "User not found" }] });
   }
 
   if (req.method === "GET") {
-    const session = await ChatSession.findOne({
-      where: {
-        [Op.or]: [
-          { userId1: userId, userId2: receiverId },
-          { userId1: receiverId, userId2: userId },
-        ],
-      },
-    });
+    const session = await chatHelper.chatSessionExist(currentUser, otherUser);
 
     if (!session) {
-      return res
-        .status(404)
-        .json({ error: [{ field: "chat", message: "No Chat Found" }] });
+      return res.status(404).json({
+        error: [{ field: "chatSession", message: "Chat session not found" }],
+      });
+    } else {
+      const userMessages = await Message.findAll({
+        where: { userId: currentUser.id },
+        order: [["createdAt", "DESC"]],
+      });
+
+      let chatSessionId = null;
+      for (const message of userMessages) {
+        const matchingMessages = await Message.findAll({
+          where: {
+            chatSessionId: message.chatSessionId,
+            userId: otherUser.id,
+          },
+        });
+
+        if (matchingMessages.length > 0) {
+          chatSessionId = matchingMessages[0].chatSessionId;
+        } else {
+          chatSessionId = message.chatSessionId;
+        }
+      }
     }
   }
 

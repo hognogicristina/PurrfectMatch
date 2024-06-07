@@ -1,7 +1,7 @@
 import MyProfileSection from "../../components/Profile/MyProfileSection.jsx";
 import { Await, defer, useRouteLoaderData } from "react-router-dom";
 import { Suspense } from "react";
-import { getAuthToken } from "../../util/auth.js";
+import { getAuthToken, refreshAuthToken } from "../../util/auth.js";
 import LoadingSpinner from "../../components/Util/Custom/PageResponse/LoadingSpinner.jsx";
 
 function MyProfilePage() {
@@ -34,7 +34,6 @@ async function loadUserDetail() {
 
   if (
     response.status === 400 ||
-    response.status === 401 ||
     response.status === 403 ||
     response.status === 404 ||
     response.status === 500

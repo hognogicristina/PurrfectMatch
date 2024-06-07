@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
         key: "id",
       },
     },
-    message: {
+    textMsg: {
       type: DataTypes.TEXT,
       allowNull: false,
     },

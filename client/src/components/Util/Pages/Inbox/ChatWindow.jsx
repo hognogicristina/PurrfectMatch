@@ -13,6 +13,8 @@ export default function ChatWindow({
   setResetOnOpen,
   chatMessages,
   onNewChatSession,
+  inputRef,
+  onInputFocus,
 }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -33,12 +35,6 @@ export default function ChatWindow({
       fetchMessages(selectedUserId);
     }
   }, [selectedUserId, resetOnOpen]);
-
-  useEffect(() => {
-    if (selectedUserId) {
-      fetchMessages(selectedUserId);
-    }
-  }, [selectedUserId]);
 
   const fetchMessages = async (id) => {
     const token = getAuthToken();
@@ -61,6 +57,18 @@ export default function ChatWindow({
         }
       });
       setMessages([]);
+    }
+  };
+
+  useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [inputRef]);
+
+  const handleInputFocus = () => {
+    if (onInputFocus) {
+      onInputFocus();
     }
   };
 
@@ -94,11 +102,25 @@ export default function ChatWindow({
     );
     const result = await response.json();
     if (response.ok) {
+      const newMessageDTO = {
+        id: result.message.id,
+        userId: result.message.userId,
+        otherUserId: result.session.otherUserId,
+        otherUserFullName: result.session.otherUserFullName,
+        otherUserName: result.session.otherUserName,
+        otherUserImage: result.session.otherUserImage,
+        messageText: result.message.messageText,
+        messageDate: result.message.messageDate,
+        messageRole: result.message.messageRole,
+        isRead: result.message.isRead,
+      };
+
       if (messages.length === 0) {
         onNewChatSession({
           id: result.session.id,
           currentUserId: result.session.userId,
           otherUserId: result.session.otherUserId,
+          otherUserFullName: result.session.otherUserFullName,
           otherUserName: result.session.otherUserName,
           otherUserImage: result.session.otherUserImage,
           lastMessage: result.message.messageText,
@@ -107,22 +129,10 @@ export default function ChatWindow({
           isRead: result.message.isRead,
           unreadMessagesCount: result.session.unreadMessagesCount,
         });
-      } else {
-        onNewChatSession({
-          id: result.session.id,
-          currentUserId: result.session.userId,
-          otherUserId: result.session.otherUserId,
-          otherUserName: result.session.otherUserName,
-          otherUserImage: result.session.otherUserImage,
-          lastMessage: result.session.lastMessage,
-          lastMessageDate: result.session.lastMessageDate,
-          lastMessageRole: result.session.lastMessageRole,
-          isRead: result.session.isRead,
-          unreadMessagesCount: result.session.unreadMessagesCount,
-        });
       }
+
+      setMessages((prevMessages) => [newMessageDTO, ...prevMessages]);
       setNewMessage("");
-      await fetchMessages(selectedUserId);
       setResetOnOpen(false);
     } else {
       result.error.forEach((err) => {
@@ -176,6 +186,8 @@ export default function ChatWindow({
                 value={newMessage}
                 className="messageInput"
                 onChange={(e) => setNewMessage(e.target.value)}
+                ref={inputRef}
+                onFocus={handleInputFocus}
               />
               <motion.button
                 whileTap={{ scale: 0.9 }}

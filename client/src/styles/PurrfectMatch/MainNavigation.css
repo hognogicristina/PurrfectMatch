@@ -1,4 +1,4 @@
-.mainNavigatiom {
+.mainNavigation {
   position: fixed;
   top: 0;
   left: 0;
@@ -22,6 +22,22 @@
   display: flex;
   align-items: center;
   margin-right: 45px;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  width: 800px;
+}
+
+.authInput.search {
+  margin-top: 0;
+  width: 100%;
+  border-radius: 50px;
+}
+
+.authInput.search.loggedIn {
+  width: 100%;
 }
 
 .logo {

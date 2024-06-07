@@ -2,36 +2,23 @@ const { ChatSession, Message, User, Image } = require("../../../models");
 const chatValidator = require("../../validators/chatValidator");
 const chatDTO = require("../../dto/chatDTO");
 const userDTO = require("../../dto/userDTO");
+const chatHelper = require("../../helpers/chatHelper");
 const logger = require("../../../logger/logger");
 const { Op, Sequelize } = require("sequelize");
+const websocket = require("../../../websocket");
 
 const getInbox = async (req, res) => {
   try {
     if (await chatValidator.checkSessionExists(req, res)) return;
     const userId = req.user.id;
-    const sessions = await ChatSession.findAll({
-      where: {
-        [Op.or]: [{ userId1: userId }, { userId2: userId }],
-      },
-    });
-
-    const chatSessions = [];
-    for (const session of sessions) {
-      const chatSessionDTO = await chatDTO.transformChatSessionsToDTO(
-        session,
-        userId,
-      );
-
-      chatSessions.push(chatSessionDTO);
-    }
-    chatSessions.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    const user = await User.findByPk(req.user.id);
-    const userDetails = await userDTO.userToDTO(user);
+    const currentUser = await User.findByPk(userId);
+    const chatSessions = await chatHelper.chatSessionsForUser(currentUser);
+    const userDetails = await userDTO.userToDTO(currentUser);
     return res
       .status(200)
       .json({ data: chatSessions, userDetails: userDetails });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -43,16 +30,11 @@ const getChatSession = async (req, res) => {
   try {
     if (await chatValidator.checkChatSessionExists(req, res)) return;
     const userId = req.user.id;
-    const receiverId = req.params.id;
+    const otherUserId = req.params.id;
 
-    const session = await ChatSession.findOne({
-      where: {
-        [Op.or]: [
-          { userId1: userId, userId2: receiverId },
-          { userId1: receiverId, userId2: userId },
-        ],
-      },
-    });
+    const currentUser = await User.findByPk(userId);
+    const otherUser = await User.findByPk(otherUserId);
+    const session = await chatHelper.chatSessionExist(currentUser, otherUser);
 
     const messages = await Message.findAll({
       where: { chatSessionId: session.id, userId: userId },
@@ -60,19 +42,22 @@ const getChatSession = async (req, res) => {
     });
 
     for (const message of messages) {
-      message.isRead = true;
-      await message.save();
+      if (message.userId === currentUser.id) {
+        message.isRead = true;
+        await message.save();
+      }
     }
 
     const chatMessages = [];
     for (const message of messages) {
       const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
-        session,
         message,
-        userId,
+        currentUser,
+        otherUser,
       );
       chatMessages.push(chatMessageDTO);
     }
+
     return res.status(200).json({ data: chatMessages });
   } catch (error) {
     logger.error(error);
@@ -124,81 +109,162 @@ const sendMessage = async (req, res) => {
     const userId = req.user.id;
     const receiverId = req.params.id;
 
-    const session = await ChatSession.findOne({
-      where: {
-        [Op.or]: [
-          { userId1: userId, userId2: receiverId },
-          { userId1: receiverId, userId2: userId },
-        ],
-      },
-    });
+    const sender = await User.findByPk(userId);
+    const receiver = await User.findByPk(receiverId);
+    const session = await chatHelper.chatSessionExist(sender, receiver);
 
-    let chatSession, chatMessage, newMessage;
-    if (!session) {
-      const newSession = await ChatSession.create({
-        userId1: userId,
-        userId2: receiverId,
-      });
-      chatSession = await chatDTO.transformChatSessionsToDTO(
-        newSession,
-        userId,
-      );
-      newMessage = await Message.create({
-        chatSessionId: newSession.id,
-        userId: userId,
-        message: message,
+    if (session) {
+      const chatMessageSender = await Message.create({
+        chatSessionId: session.id,
+        userId: sender.id,
+        textMsg: message,
         role: "sender",
         isRead: true,
       });
-      await Message.create({
-        chatSessionId: newSession.id,
-        userId: receiverId,
-        message: message,
-        role: "receiver",
-        isRead: false,
-      });
 
-      chatMessage = await chatDTO.transformChatMessagesToDTO(
-        newSession,
-        newMessage,
-        userId,
+      const chatSessionSender = await chatDTO.transformChatSessionsToDTO(
+        session,
+        sender,
+        receiver,
       );
 
-      return res
-        .status(201)
-        .json({ message: chatMessage, session: chatSession });
-    } else {
-      newMessage = await Message.create({
-        chatSessionId: session.id,
-        userId: userId,
-        message: message,
-        role: "sender",
-        isRead: true,
-      });
-      await Message.create({
-        chatSessionId: session.id,
-        userId: receiverId,
-        message: message,
-        role: "receiver",
-        isRead: false,
-      });
+      const chatMessageSenderDTO = await chatDTO.transformChatMessagesToDTO(
+        chatMessageSender,
+        sender,
+        receiver,
+      );
 
-      const newSession = await ChatSession.findOne({
-        where: {
-          [Op.or]: [
-            { userId1: userId, userId2: receiverId },
-            { userId1: receiverId, userId2: userId },
-          ],
+      const chaSessionsForSender = await chatHelper.chatSessionsForUser(sender);
+
+      websocket.notifyClients({
+        type: "NEW_CHAT_MESSAGE",
+        userId: sender.id,
+        payload: {
+          session: chatSessionSender,
+          message: chatMessageSenderDTO,
+          allSession: chaSessionsForSender,
+          role: "sender",
+          customMessage: "Message sent",
         },
       });
-      chatSession = await chatDTO.transformChatSessionsToDTO(
-        newSession,
-        userId,
+
+      const chatMessageReceiver = await Message.create({
+        chatSessionId: session.id,
+        userId: receiver.id,
+        textMsg: message,
+        role: "receiver",
+        isRead: false,
+      });
+
+      const chatSessionReceiver = await chatDTO.transformChatSessionsToDTO(
+        session,
+        receiver,
+        sender,
       );
 
-      return res
-        .status(201)
-        .json({ message: newMessage, session: chatSession });
+      const chatMessageReceiverDTO = await chatDTO.transformChatMessagesToDTO(
+        chatMessageReceiver,
+        receiver,
+        sender,
+      );
+
+      const chaSessionsForReceiver =
+        await chatHelper.chatSessionsForUser(receiver);
+
+      websocket.notifyClients({
+        type: "NEW_CHAT_MESSAGE",
+        userId: receiver.id,
+        payload: {
+          session: chatSessionReceiver,
+          message: chatMessageReceiverDTO,
+          allSession: chaSessionsForReceiver,
+          role: "receiver",
+          customMessage: `${sender.username} sent you a message`,
+        },
+      });
+
+      return res.status(201).json({
+        message: chatMessageSenderDTO,
+        session: chatSessionSender,
+        updatedSessions: chaSessionsForSender,
+      });
+    } else {
+      const uniqueCode = await chatHelper.generateUniqueChatSessionCode();
+      const newSession = await ChatSession.create({ code: uniqueCode });
+
+      const chatMessageSender = await Message.create({
+        chatSessionId: newSession.id,
+        userId: userId,
+        textMsg: message,
+        role: "sender",
+        isRead: true,
+      });
+
+      const chatMessageReceiver = await Message.create({
+        chatSessionId: newSession.id,
+        userId: receiver.id,
+        textMsg: message,
+        role: "receiver",
+        isRead: false,
+      });
+
+      const chatSessionSender = await chatDTO.transformChatSessionsToDTO(
+        newSession,
+        sender,
+        receiver,
+      );
+
+      const chatSessionReceiver = await chatDTO.transformChatSessionsToDTO(
+        newSession,
+        receiver,
+        sender,
+      );
+
+      const chatMessageSenderDTO = await chatDTO.transformChatMessagesToDTO(
+        chatMessageSender,
+        sender,
+        receiver,
+      );
+
+      const chatMessageReceiverDTO = await chatDTO.transformChatMessagesToDTO(
+        chatMessageReceiver,
+        receiver,
+        sender,
+      );
+
+      const chaSessionsForSender = await chatHelper.chatSessionsForUser(sender);
+      const chaSessionsForReceiver =
+        await chatHelper.chatSessionsForUser(receiver);
+
+      websocket.notifyClients({
+        type: "NEW_CHAT_MESSAGE",
+        userId: sender.id,
+        payload: {
+          session: chatSessionSender,
+          message: chatMessageSenderDTO,
+          allSession: chaSessionsForSender,
+          role: "sender",
+          customMessage: "Message sent",
+        },
+      });
+
+      websocket.notifyClients({
+        type: "NEW_CHAT_MESSAGE",
+        userId: receiver.id,
+        payload: {
+          session: chatSessionReceiver,
+          message: chatMessageReceiverDTO,
+          allSession: chaSessionsForReceiver,
+          role: "receiver",
+          customMessage: `${sender.username} sent you a message`,
+        },
+      });
+
+      return res.status(201).json({
+        message: chatMessageSenderDTO,
+        session: chatSessionSender,
+        updatedSessions: chaSessionsForSender,
+      });
     }
   } catch (error) {
     console.log(error);

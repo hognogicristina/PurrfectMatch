@@ -46,11 +46,7 @@ router.post("/login", authMiddleware.authenticateLogin, authController.login);
 router.post("/reset", authController.resetPasswordRequest);
 router.post("/reset/:id", authController.resetPassword);
 router.post("/logout", authMiddleware.authenticateToken, authController.logout);
-router.post(
-  "/refresh/token",
-  authMiddleware.validateRefreshToken,
-  authController.refresh,
-);
+router.post("/refresh/token", authController.refresh);
 
 // Image routes
 router.post(

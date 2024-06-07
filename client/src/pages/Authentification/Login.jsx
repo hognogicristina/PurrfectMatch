@@ -1,6 +1,5 @@
 import LoginForm from "../../components/Authentification/LoginForm.jsx";
 import { redirect } from "react-router-dom";
-import { extractExpiration } from "../../util/auth.js";
 
 function LoginPage() {
   return <LoginForm />;
@@ -28,6 +27,7 @@ export async function action({ request }) {
     response.status === 401 ||
     response.status === 403 ||
     response.status === 404 ||
+    response.status === 408 ||
     response.status === 500
   ) {
     return response;
@@ -35,7 +35,5 @@ export async function action({ request }) {
 
   const dataRes = await response.json();
   localStorage.setItem("token", dataRes.token);
-  const tokenDuration = extractExpiration(dataRes.token);
-  localStorage.setItem("expiration", tokenDuration);
   return redirect("/");
 }

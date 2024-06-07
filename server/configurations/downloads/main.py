@@ -35,7 +35,7 @@ def download_cat_images(url, download_path, num_images=200):
 
     write_to_file("Download completed.", 'output.log')
 
-def download_user_pictures(download_path, num_users=25):
+def download_user_pictures(download_path, num_users=50):
     if not os.path.exists(download_path):
         os.makedirs(download_path)
 
@@ -104,7 +104,7 @@ cat_images = 'cat_images'
 download_cat_images(url_api, cat_images, num_images=200)
 
 user_pictures_path = 'user_pictures'
-download_user_pictures(user_pictures_path, num_users=25)
+download_user_pictures(user_pictures_path, num_users=50)
 
 download_path_breeds = 'cat_breeds'
 download_cat_breed_images(download_path_breeds)

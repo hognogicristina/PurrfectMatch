@@ -7,8 +7,6 @@ import { HiSortAscending, HiSortDescending } from "react-icons/hi";
 import { GrPowerReset } from "react-icons/gr";
 import CustomSelect from "../../Custom/Reuse/CustomSelect.jsx";
 import { useUserDetails } from "../../../../util/useUserDetails.js";
-import { IoSearch } from "react-icons/io5";
-import { FaXmark } from "react-icons/fa6";
 
 function FilterBar({ searchParams, setSearchParams }) {
   const { notifyError } = useToast();
@@ -18,7 +16,6 @@ function FilterBar({ searchParams, setSearchParams }) {
   const [healthProblem, setHealthProblem] = useState([]);
   const token = getAuthToken();
   const { userDetails } = useUserDetails();
-  const [searchInput, setSearchInput] = useState("");
   const [genders] = useState([
     { value: "Male", label: "Male" },
     { value: "Female", label: "Female" },
@@ -93,10 +90,6 @@ function FilterBar({ searchParams, setSearchParams }) {
   }, []);
 
   const handleChange = (name, selectedOption) => {
-    if (name === "search") {
-      setSearchInput(selectedOption.value);
-    }
-
     if (selectedOption) {
       searchParams.set(name, selectedOption.value);
     } else {
@@ -107,7 +100,7 @@ function FilterBar({ searchParams, setSearchParams }) {
   };
 
   const handleClearAll = () => {
-    searchParams.delete("search");
+    // searchParams.delete("search");
     searchParams.delete("selectedBreed");
     searchParams.delete("selectedLifeStage");
     searchParams.delete("selectedHealthProblem");
@@ -117,18 +110,11 @@ function FilterBar({ searchParams, setSearchParams }) {
     searchParams.set("sortOrder", "asc");
     searchParams.set("page", 1);
     setSearchParams(searchParams, { replace: true });
-    setSearchInput("");
   };
 
   const handleSortOrder = (order) => {
     searchParams.set("sortOrder", order);
     setSearchParams(searchParams);
-  };
-
-  const clearInput = () => {
-    searchParams.delete("search");
-    setSearchParams(searchParams, { replace: true });
-    setSearchInput("");
   };
 
   return (
@@ -170,23 +156,6 @@ function FilterBar({ searchParams, setSearchParams }) {
           />
         </motion.div>
       </div>
-      <label className="authInput">
-        <div className="iconContainer">
-          <IoSearch />
-        </div>
-        <input
-          type="text"
-          name="search"
-          value={searchInput}
-          onChange={(e) =>
-            handleChange(e.target.name, { value: e.target.value })
-          }
-          placeholder="Search cats..."
-        />
-        <span className="clearInput" onClick={clearInput}>
-          <FaXmark />
-        </span>
-      </label>
       <label>Breed</label>
       <CustomSelect
         value={

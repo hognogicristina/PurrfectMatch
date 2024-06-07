@@ -17,7 +17,9 @@ function MyProfileSection({ userDetail }) {
 
   useEffect(() => {
     if (userDetail.error) {
-      notifyError(userDetail.error[0].message);
+      userDetail.error.forEach((error) => {
+        notifyError(error.message);
+      });
     }
   }, [userDetail]);
 

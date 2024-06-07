@@ -1,11 +1,8 @@
 const { User, Message, Image } = require("../../models");
 const moment = require("moment");
+const { Op } = require("sequelize");
 
-const transformChatSessionsToDTO = async (session, userId) => {
-  const user1 = await User.findByPk(session.userId1);
-  const user2 = await User.findByPk(session.userId2);
-
-  const otherUser = session.userId1 !== userId ? user1 : user2;
+const transformChatSessionsToDTO = async (session, currentUser, otherUser) => {
   const lastMessage = await Message.findOne({
     where: { chatSessionId: session.id },
     order: [["createdAt", "DESC"]],
@@ -14,7 +11,7 @@ const transformChatSessionsToDTO = async (session, userId) => {
   const unreadMessagesCount = await Message.count({
     where: {
       chatSessionId: session.id,
-      userId: userId,
+      userId: currentUser.id,
       isRead: false,
     },
   });
@@ -33,13 +30,14 @@ const transformChatSessionsToDTO = async (session, userId) => {
 
   return {
     id: session ? session.id : null,
-    currentUserId: userId ? userId : null,
+    currentUserId: currentUser ? currentUser.id : null,
     otherUserId: otherUser ? otherUser.id : null,
-    otherUserName: otherUser
+    otherUserFullName: otherUser
       ? `${otherUser.firstName} ${otherUser.lastName}`
       : null,
+    otherUserName: otherUser ? otherUser.username : null,
     otherUserImage: image ? image.url : null,
-    lastMessage: lastMessage ? lastMessage.message : null,
+    lastMessage: lastMessage ? lastMessage.textMsg : null,
     lastMessageDate: formattedDate ? formattedDate : null,
     lastMessageRole: lastMessage ? (isSender ? "sender" : "receiver") : null,
     isRead: lastMessage && !isSender ? lastMessage.isRead : true,
@@ -48,12 +46,7 @@ const transformChatSessionsToDTO = async (session, userId) => {
   };
 };
 
-const transformChatMessagesToDTO = async (session, message, userId) => {
-  const otherUser =
-    session.userId1 !== userId
-      ? await User.findByPk(session.userId1)
-      : await User.findByPk(session.userId2);
-
+const transformChatMessagesToDTO = async (message, currentUser, otherUser) => {
   const dateSent = moment(message.createdAt);
   const diffWeeks = moment().diff(dateSent, "weeks");
   const formattedDate =
@@ -61,15 +54,18 @@ const transformChatMessagesToDTO = async (session, message, userId) => {
   const image = await Image.findOne({ where: { userId: otherUser.id } });
 
   return {
-    id: message.id,
-    userId: userId,
-    otherUserId: otherUser.id,
-    otherUserFullName: `${otherUser.firstName} ${otherUser.lastName}`,
+    id: message ? message.id : null,
+    userId: currentUser ? currentUser.id : null,
+    otherUserId: otherUser ? otherUser.id : null,
+    otherUserFullName: otherUser
+      ? `${otherUser.firstName} ${otherUser.lastName}`
+      : null,
+    otherUserName: otherUser ? otherUser.username : null,
     otherUserImage: image ? image.url : null,
-    messageText: message.message,
+    messageText: message ? message.textMsg : null,
     messageDate: formattedDate,
-    messageRole: message.role,
-    isRead: message.isRead,
+    messageRole: message ? message.role : null,
+    isRead: message ? message.isRead : true,
   };
 };
 

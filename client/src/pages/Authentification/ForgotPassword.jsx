@@ -24,6 +24,7 @@ export async function action({ request }) {
     response.status === 401 ||
     response.status === 403 ||
     response.status === 404 ||
+    response.status === 408 ||
     response.status === 500
   ) {
     return response;

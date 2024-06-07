@@ -104,9 +104,8 @@ const login = async (req, res) => {
     await RefreshToken.create({ userId: req.user.id, token: refreshToken });
 
     res.cookie("refreshToken", refreshToken, {
-      maxAge: expiresIn * 1000,
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
 
@@ -170,7 +169,7 @@ const logout = async (req, res) => {
     }
     res.clearCookie("refreshToken", {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: true,
       sameSite: "none",
     });
     res.status(200).json({ status: "Logged out" });
@@ -184,16 +183,24 @@ const logout = async (req, res) => {
 
 const refresh = async (req, res) => {
   try {
+    if (await authValidator.validateRefreshToken(req, res)) return;
+    const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    const token = await RefreshToken.findOne({
+      where: { token: refreshToken },
+    });
+    const user = await User.findByPk(token.userId);
+    const expiresIn = process.env.JWT_TTL;
+
     const newToken = jwt.sign(
       {
-        id: req.user.id,
-        username: req.user.username,
-        email: req.user.email,
-        role: req.user.role,
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_TTL,
+        expiresIn: expiresIn + "s",
       },
     );
     res.status(200).json({ newToken });

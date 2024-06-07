@@ -24,7 +24,7 @@ module.exports = {
           key: "id",
         },
       },
-      message: {
+      textMsg: {
         type: Sequelize.TEXT,
         allowNull: false,
       },

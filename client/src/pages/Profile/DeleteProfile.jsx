@@ -37,6 +37,5 @@ export async function action({ request }) {
   }
 
   localStorage.removeItem("token");
-  localStorage.removeItem("expiration");
   return redirect("/");
 }

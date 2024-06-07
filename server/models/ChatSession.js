@@ -6,21 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    userId1: {
-      type: DataTypes.INTEGER,
+    code: {
+      type: DataTypes.STRING,
       allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
-    },
-    userId2: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+      unique: true,
     },
   });
 };

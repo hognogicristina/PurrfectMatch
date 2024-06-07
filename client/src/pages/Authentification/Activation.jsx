@@ -28,6 +28,7 @@ async function loadActivate(id, token, signature) {
     response.status === 401 ||
     response.status === 403 ||
     response.status === 404 ||
+    response.status === 408 ||
     response.status === 500
   ) {
     return data;

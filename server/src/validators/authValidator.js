@@ -1,5 +1,5 @@
 const validator = require("validator");
-const { User, Token } = require("../../models");
+const { User, Token, RefreshToken } = require("../../models");
 
 const validateUser = async (req, res, type) => {
   const user = await User.findOne({ where: { id: req.params.id } });
@@ -193,7 +193,7 @@ const loginValidation = async (req, res) => {
         where: { userId: user.id, type: "activation" },
       });
       if (tokenUser && new Date() < new Date(tokenUser.expires)) {
-        return res.status(401).json({
+        return res.status(403).json({
           error: [
             {
               field: "activate",
@@ -204,7 +204,7 @@ const loginValidation = async (req, res) => {
         });
       }
     } else if (user.status === "blocked") {
-      return res.status(401).json({
+      return res.status(403).json({
         error: [
           {
             field: "block",
@@ -280,9 +280,37 @@ const resetValidationEmail = async (req, res, type) => {
   return error.length > 0 ? res.status(400).json({ error }) : null;
 };
 
+const validateRefreshToken = async (req, res) => {
+  const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+  if (!refreshToken) {
+    return res.status(400).json({
+      error: [{ field: "refreshToken", message: "Refresh token is required" }],
+    });
+  }
+
+  const token = await RefreshToken.findOne({
+    where: { token: refreshToken },
+  });
+  if (!token) {
+    return res.status(400).json({
+      error: [{ field: "refreshToken", message: "Invalid refresh token" }],
+    });
+  }
+
+  const user = await User.findByPk(token.userId);
+  if (!user) {
+    return res
+      .status(404)
+      .json({ error: [{ field: "user", message: "Profile not found" }] });
+  }
+
+  return null;
+};
+
 module.exports = {
   validateUser,
   registerValidation,
   loginValidation,
   resetValidationEmail,
+  validateRefreshToken,
 };

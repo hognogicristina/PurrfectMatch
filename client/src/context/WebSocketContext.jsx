@@ -47,11 +47,6 @@ export const WebSocketProvider = ({ children }) => {
             const customMessage = message.payload?.customMessage;
             notifyUser(customMessage);
           }
-        } else if (message.type === "NEW_CHAT_MESSAGE") {
-          if (message.payload?.role === "receiver") {
-            const customMessage = message.payload?.customMessage;
-            notifyUser(customMessage);
-          }
         }
       };
 

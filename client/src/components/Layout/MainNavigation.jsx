@@ -8,18 +8,29 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "framer-motion";
-import { NavLink, useLocation, useRouteLoaderData } from "react-router-dom";
+import {
+  NavLink,
+  useLocation,
+  useNavigate,
+  useRouteLoaderData,
+  useSearchParams,
+} from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import CatsNavigation from "./CatsNavigation.jsx";
 import { extractJwt } from "../../util/auth.js";
+import { IoSearch } from "react-icons/io5";
+import { FaXmark } from "react-icons/fa6";
 
 function MainNavigation() {
   const token = useRouteLoaderData("root");
   const [isOpen, setIsOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const isUserPage = location.pathname === "/user";
   const tokenExtract = token ? extractJwt(token) : null;
+  const [searchInput, setSearchInput] = useState("");
 
   const userMenuButtonStyle = {
     border: isUserPage ? "3px solid #AE3D72FF" : "3px solid #e37fb6",
@@ -98,8 +109,24 @@ function MainNavigation() {
     };
   }, [isOpen, isUserMenuOpen]);
 
+  const handleSearchChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key === "Enter") {
+      navigate(`/cats?search=${searchInput}`);
+    }
+  };
+
+  const clearInput = () => {
+    setSearchInput("");
+    searchParams.delete("search");
+    setSearchParams(searchParams);
+  };
+
   return (
-    <header className="mainNavigatiom">
+    <header className="mainNavigation">
       <div className="mainContainer">
         <NavLink to="/">
           <motion.div whileHover={{ scale: 1.1 }}>
@@ -150,6 +177,24 @@ function MainNavigation() {
             </AnimatePresence>
           </div>
         )}
+      </div>
+      <div className="searchContainer">
+        <label className={`authInput search ${token ? "loggedIn" : ""}`}>
+          <div className="iconContainer">
+            <IoSearch />
+          </div>
+          <input
+            type="text"
+            name="search"
+            placeholder="Search cats..."
+            value={searchInput}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
+          />
+          <span className="clearInput" onClick={clearInput}>
+            <FaXmark />
+          </span>
+        </label>
       </div>
       <div className="controlContainer">
         {token ? (

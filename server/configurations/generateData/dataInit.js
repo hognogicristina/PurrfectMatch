@@ -31,6 +31,7 @@ const logger = require("../../logger/logger");
 const dotenv = require("dotenv");
 const path = require("path");
 const { AgeTypes } = require("../../constants/ageTypes");
+const chatHelper = require("../../src/helpers/chatHelper");
 
 dotenv.config({
   path: path.resolve(__dirname, "../../.env"),
@@ -163,7 +164,7 @@ const generateAdoptionRequests = async (numRequests, users) => {
 
     const adoptionRequest = await AdoptionRequest.create({
       catId: randomCat.id,
-      message: "I would like to adopt this cat.",
+      message: faker.lorem.sentence(),
       status: "pending",
     });
 
@@ -227,6 +228,45 @@ const processAdoptionRequests = async (numRequests) => {
   }
 };
 
+const generateRandomChatSessions = async (numRequests, users) => {
+  const userCount = users.length;
+
+  for (let i = 0; i < numRequests; i++) {
+    let user1 = users[Math.floor(Math.random() * userCount)];
+    let user2;
+
+    do {
+      user2 = users[Math.floor(Math.random() * userCount)];
+    } while (user2.id === user1.id);
+
+    const uniqueCode = await chatHelper.generateUniqueChatSessionCode();
+    const chatSession = await ChatSession.create({ code: uniqueCode });
+
+    for (let j = 0; j < 30; j++) {
+      const textMsg = faker.lorem.sentence();
+
+      await Message.create({
+        chatSessionId: chatSession.id,
+        userId: user1.id,
+        textMsg,
+        role: "sender",
+        isRead: true,
+      });
+
+      await Message.create({
+        chatSessionId: chatSession.id,
+        userId: user2.id,
+        textMsg,
+        role: "receiver",
+        isRead: false,
+      });
+
+      let temp = user1;
+      user1 = user2;
+      user2 = temp;
+    }
+  }
+};
 const emptyDatabase = () => {
   UserRole.destroy({ truncate: true });
   AdoptionRequest.destroy({ truncate: true });
@@ -266,11 +306,12 @@ const generateData = async () => {
     await adminInit.initializeAdmin();
     await breedInit.addBreedsToDatabase();
     await populateInit.populateDatabase();
-    const users = await generateUsers(25);
+    const users = await generateUsers(50);
     await generateCats(300, users);
     await generateFavorite(150, users);
     await generateAdoptionRequests(200, users);
     await processAdoptionRequests(120);
+    await generateRandomChatSessions(20, users);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);
