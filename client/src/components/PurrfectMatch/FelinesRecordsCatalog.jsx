@@ -122,7 +122,7 @@ export default function FelinesRecordsCatalog({
         ));
         return (
           <div className="noResultContainer">
-            <p className="errorMessageCats">{errorMessage}</p>
+            <div className="errorMessageCats">{errorMessage}</div>
           </div>
         );
       } else {

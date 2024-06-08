@@ -121,7 +121,7 @@ export default function OwnedArchiveCatalog({
         ));
         return (
           <div className="noResultContainer">
-            <p className="errorMessageCats">{errorMessage}</p>
+            <div className="errorMessageCats">{errorMessage}</div>
           </div>
         );
       } else {
