@@ -102,7 +102,7 @@ const deleteImage = async (image, folder, transaction) => {
   if (!image) return;
   const imagePath = path.join("public", folder, image.filename);
   if (fs.existsSync(imagePath)) await fs.unlinkSync(imagePath);
-  await image.destroy({ transaction });
+  if (transaction) await image.destroy({ transaction });
 };
 
 module.exports = {

@@ -1,7 +1,8 @@
 const {
   Image,
   Address,
-  RefreshToken,
+  ChatSession,
+  Message,
   Token,
   UserInfo,
   PasswordHistory,
@@ -19,6 +20,7 @@ const deleteUser = async (user, transaction) => {
   await Token.destroy({ where: { userId: user.id }, transaction });
   await UserInfo.destroy({ where: { userId: user.id }, transaction });
   await PasswordHistory.destroy({ where: { userId: user.id }, transaction });
+  await deleteChatSession(user, transaction);
   const image = await Image.findOne({
     where: { userId: user.id },
     transaction,
@@ -83,6 +85,39 @@ const updateEmail = async (user, fieldsToUpdate, body) => {
   }
 
   await userInfo.save();
+};
+
+const deleteChatSession = async (user, transaction) => {
+  const messages = await Message.findAll({
+    where: { userId: user.id },
+    transaction,
+  });
+
+  let chatSessionsId = [];
+  for (let message of messages) {
+    chatSessionsId.push(message.chatSessionId);
+  }
+
+  for (let chatSessionId of chatSessionsId) {
+    const chatSession = await ChatSession.findByPk(chatSessionId, {
+      transaction,
+    });
+
+    if (chatSession) {
+      const messagesOfChatSession = await Message.findAll({
+        where: { chatSessionId: chatSession.id },
+        transaction,
+      });
+
+      if (messagesOfChatSession.length > 0) {
+        for (let message of messagesOfChatSession) {
+          await message.destroy({ transaction });
+        }
+      }
+
+      await chatSession.destroy({ transaction });
+    }
+  }
 };
 
 module.exports = { deleteUser, updateEmail };

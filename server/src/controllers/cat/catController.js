@@ -1,4 +1,4 @@
-const { Image, Cat, CatUser } = require("../../../models");
+const { Image, Cat, CatUser, Favorite } = require("../../../models");
 const catValidator = require("../../validators/catValidator");
 const catUserValidator = require("../../validators/catUserValidator");
 const userValidator = require("../../validators/userValidator");
@@ -130,10 +130,12 @@ const editCat = async (req, res) => {
 
     const images = await Image.findAll({ where: { catId: cat.id } });
     const imageUrls = images.map((image) => image.url);
+    const imageUris = images.map((image) => image.uri);
 
     return res.json({
       status: `Changes to ${cat.name} have been saved`,
       images: imageUrls,
+      uris: imageUris,
     });
   } catch (error) {
     logger.error(error);
@@ -157,6 +159,7 @@ const deleteCat = async (req, res) => {
       transaction,
     });
 
+    await Favorite.destroy({ where: { catId: cat.id }, transaction });
     await mailHelper.deleteAdoptionRequestCat(cat, req.user, transaction);
     await CatUser.destroy({ where: { catId: cat.id }, transaction });
     const images = await Image.findAll({

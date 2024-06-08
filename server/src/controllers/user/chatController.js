@@ -18,7 +18,6 @@ const getInbox = async (req, res) => {
       .status(200)
       .json({ data: chatSessions, userDetails: userDetails });
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -267,7 +266,6 @@ const sendMessage = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error);
     logger.error(error);
     return res
       .status(500)
