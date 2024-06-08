@@ -6,6 +6,14 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
     country: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -29,13 +37,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userId: {
-      type: DataTypes.INTEGER,
+    lat: {
+      type: DataTypes.FLOAT,
       allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+    },
+    long: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
     },
   });
 };

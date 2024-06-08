@@ -114,7 +114,7 @@
 }
 
 .catItemImg {
-  width: 100%;
+  width: 346px;
   height: 250px;
   border-radius: var(--border-radius);
   object-fit: cover;
@@ -404,13 +404,25 @@
   text-decoration: underline;
 }
 
-
 .regardsContainer {
   cursor: pointer;
   display: flex;
   flex-direction: row;
   gap: 10px;
   align-items: center;
+}
+
+.adoptMeContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.adoptMeContainer .simpleButton {
+  margin-bottom: 0;
+  margin-top: 0;
 }
 
 .otherCatsContainer {

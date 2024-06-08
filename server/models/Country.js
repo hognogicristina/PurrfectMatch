@@ -10,5 +10,13 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
+    lat: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    long: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
   });
 };

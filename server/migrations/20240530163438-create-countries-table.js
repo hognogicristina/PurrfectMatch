@@ -14,6 +14,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      lat: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
+      long: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

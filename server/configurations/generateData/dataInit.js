@@ -197,6 +197,9 @@ const processAdoptionRequests = async (numRequests) => {
       where: { adoptionRequestId: adoptionRequest.id, role: "sender" },
     });
 
+    sender.isRead = false;
+    await sender.save();
+
     const receiverRole = await UserRole.findOne({
       where: { adoptionRequestId: adoptionRequest.id, role: "receiver" },
     });
@@ -212,6 +215,12 @@ const processAdoptionRequests = async (numRequests) => {
         for (const request of otherRequests) {
           request.status = "declined";
           await request.save();
+
+          const otherReceiverRole = await UserRole.findOne({
+            where: { adoptionRequestId: request.id, role: "receiver" },
+          });
+          otherReceiverRole.isRead = true;
+          await otherReceiverRole.save();
         }
       }
       const user = await User.findByPk(sender.userId);
@@ -303,15 +312,15 @@ const generateData = async () => {
     emptyDatabase();
     await addAgeTypesToDatabase();
     await breedInit.fetchCatBreeds();
-    await adminInit.initializeAdmin();
-    await breedInit.addBreedsToDatabase();
     await populateInit.populateDatabase();
+    await breedInit.addBreedsToDatabase();
+    await adminInit.initializeAdmin();
     const users = await generateUsers(50);
-    await generateCats(300, users);
-    await generateFavorite(150, users);
-    await generateAdoptionRequests(200, users);
-    await processAdoptionRequests(120);
-    await generateRandomChatSessions(20, users);
+    await generateCats(500, users);
+    await generateFavorite(250, users);
+    await generateAdoptionRequests(300, users);
+    await processAdoptionRequests(220);
+    await generateRandomChatSessions(70, users);
     await logger("Data was configured");
   } catch (error) {
     logger.error(error);

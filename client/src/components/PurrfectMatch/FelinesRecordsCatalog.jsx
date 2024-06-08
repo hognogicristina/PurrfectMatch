@@ -9,7 +9,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { IoTrashBin } from "react-icons/io5";
 import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 
-export default function FelinesRecordsCatalog({ cats, currentPage }) {
+export default function FelinesRecordsCatalog({
+  cats,
+  currentPage,
+  setSearchParams,
+}) {
   const { data, error, totalPages, totalItems } = cats;
   const { notifyError } = useToast();
   const navigate = useNavigate();
@@ -18,7 +22,6 @@ export default function FelinesRecordsCatalog({ cats, currentPage }) {
   const [searchParamsKey, setSearchParamsKey] = useState(0);
   const [catList, setCatList] = useState(data || []);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     setSearchParamsKey((prevKey) => prevKey + 1);

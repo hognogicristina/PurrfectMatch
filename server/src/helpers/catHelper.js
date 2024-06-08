@@ -1,6 +1,7 @@
 const { Cat, CatUser, User, Address } = require("../../models");
 const { Op } = require("sequelize");
 const { AgeTypes } = require("../../constants/ageTypes");
+const { catsListToDTO } = require("../dto/catDTO");
 
 const processAgeRange = (age) => {
   if (!age) return null;
@@ -46,7 +47,7 @@ const updateCatData = async (cat, body) => {
   return cat;
 };
 
-const filterCats = async (req) => {
+const filterCats = async (req, userLat, userLong) => {
   const searchQuery = req.query.search ? req.query.search.toLowerCase() : null;
   const selectedBreed = req.query.selectedBreed
     ? req.query.selectedBreed
@@ -64,7 +65,7 @@ const filterCats = async (req) => {
   const selectedColor = req.query.selectedColor
     ? req.query.selectedColor
     : null;
-  const sortBy = req.query.sortBy ? req.query.sortBy : "breed";
+  const sortBy = req.query.sortBy ? req.query.sortBy : "location";
   const sortOrder = req.query.sortOrder ? req.query.sortOrder : "asc";
 
   let queryOptions = {
@@ -115,19 +116,39 @@ const filterCats = async (req) => {
   }
 
   let cats = await Cat.findAll(queryOptions);
-
   cats = cats.map((cat) => cat.get({ plain: true }));
-  cats.sort((cat1, cat2) => {
-    let comparison = 0;
-    if (sortBy === "breed") {
-      comparison = cat1.breed.localeCompare(cat2.breed);
-    } else if (sortBy === "age") {
-      comparison = cat2.age - cat1.age;
-    } else if (sortBy === "createdAt") {
-      comparison = cat2.createdAt - cat1.createdAt;
-    }
-    return sortOrder === "asc" ? comparison : -comparison;
-  });
+
+  if (sortBy === "location" && userLat && userLong) {
+    const catsWithDistance = await Promise.all(
+      cats.map(async (catDTO) => {
+        const cat = await catsListToDTO(catDTO);
+        const distance = Math.sqrt(
+          Math.pow(cat.lat - userLat, 2) + Math.pow(cat.long - userLong, 2),
+        );
+        return { ...cat, distance };
+      }),
+    );
+
+    catsWithDistance.sort((cat1, cat2) => {
+      return sortOrder === "asc"
+        ? cat1.distance - cat2.distance
+        : cat2.distance - cat1.distance;
+    });
+
+    cats = catsWithDistance;
+  } else {
+    cats.sort((cat1, cat2) => {
+      let comparison = 0;
+      if (sortBy === "breed") {
+        comparison = cat1.breed.localeCompare(cat2.breed);
+      } else if (sortBy === "age") {
+        comparison = cat2.age - cat1.age;
+      } else if (sortBy === "createdAt") {
+        comparison = cat2.createdAt - cat1.createdAt;
+      }
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  }
 
   return cats;
 };

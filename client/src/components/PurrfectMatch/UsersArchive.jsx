@@ -9,7 +9,7 @@ import { getAuthToken } from "../../util/auth.js";
 import { IoTrashBin } from "react-icons/io5";
 import ConfirmDialog from "../Util/Custom/Reuse/ConfirmDialog.jsx";
 
-export default function UsersArchive({ users, currentPage, onPageChange }) {
+export default function UsersArchive({ users, currentPage, setSearchParams }) {
   const { data, error, totalPages, totalItems } = users;
   const { notifyError, notifySuccess } = useToast();
   const navigate = useNavigate();
@@ -60,6 +60,12 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
   const handleConfirmDelete = () => {
     handleDeleteAccount(userIdToDelete);
     setShowConfirmDialog(false);
+  };
+
+  const handlePageChange = (newSearchParams) => {
+    setSearchParams(new URLSearchParams(newSearchParams.toString()), {
+      replace: true,
+    });
   };
 
   const renderUsers = () => {
@@ -150,7 +156,7 @@ export default function UsersArchive({ users, currentPage, onPageChange }) {
             displayPages="true"
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            onPageChange={handlePageChange}
           />
         </div>
         <ul className="catsList user">{renderUsers()}</ul>

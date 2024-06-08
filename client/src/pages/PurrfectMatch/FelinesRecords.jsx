@@ -17,6 +17,7 @@ function FelinesRecordsPage() {
             <FelinesRecordsCatalog
               cats={loadedCats}
               currentPage={currentPage}
+              setSearchParams={setSearchParams}
             />
           </div>
         )}

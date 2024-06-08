@@ -14,6 +14,10 @@ async function userToDTO(user) {
     image: images.length > 0 ? images[0].url : null,
     uri: images.map((image) => image.uri),
     username: user.username ? user.username : null,
+    fullName:
+      user.firstName && user.lastName
+        ? `${user.firstName} ${user.lastName}`
+        : null,
     email: user.email ? user.email : null,
     birthday: userInfo ? birthday : null,
     description: userInfo ? userInfo.description : null,
@@ -27,6 +31,8 @@ async function userToDTO(user) {
     floor: address ? address.floor : null,
     apartment: address ? address.apartment : null,
     postalCode: address ? address.postalCode : null,
+    lat: address ? address.lat : null,
+    long: address ? address.long : null,
     role: user.role ? user.role : null,
     status: user.status ? user.status : null,
   };

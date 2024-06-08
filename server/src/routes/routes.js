@@ -116,13 +116,6 @@ router.get("/cats-by-breed/:catId", filterController.getCatsByBreed);
 router.get("/cats-by-user/:catId", filterController.getCatsOfUser);
 router.get("/colors", filterController.getColors);
 
-const applyMiddlewareIfSortByLocation = (req, res, next) => {
-  if (req.query.sortBy === "location") {
-    return authMiddleware.authenticateToken(req, res, next);
-  }
-  next();
-};
-
 // Cat routes
 router.get("/cats", catController.getAllCats);
 router.get("/cats/cat/:id", catController.getOneCat);

@@ -9,6 +9,8 @@ export function useUserDetails() {
     username: "",
     image: "",
     role: "",
+    lat: "",
+    long: "",
   });
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export function useUserDetails() {
           username: data.data.username,
           image: data.data.image,
           role: data.data.role,
+          lat: data.data.lat,
+          long: data.data.long,
         });
       } else {
         data.error.forEach((err) => {

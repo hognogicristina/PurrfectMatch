@@ -83,13 +83,15 @@ export default function AdoptCat({ catDetail, userDetails }) {
         !requestExists &&
         catDetail.user !== userDetails.username &&
         userDetails.role === "user" && (
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            className="simpleButton submit"
-            onClick={handleAdoptMeClick}
-          >
-            Adopt Me
-          </motion.button>
+          <div className="adoptMeContainer">
+            <motion.button
+              whileTap={{ scale: 0.9 }}
+              className="simpleButton submit"
+              onClick={handleAdoptMeClick}
+            >
+              Adopt Me
+            </motion.button>
+          </div>
         )}
       <SubmitDialog
         isOpen={isDialogOpen}

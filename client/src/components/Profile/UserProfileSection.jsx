@@ -53,6 +53,12 @@ function UserProfileSection({ userProfile }) {
     }
   };
 
+  const handleContactClick = () => {
+    navigate(
+      `/inbox?userId=${userProfile.id}&userName=${userProfile.username}&image=${userProfile.image}`,
+    );
+  };
+
   return (
     <motion.div
       className="profileContainer"
@@ -86,6 +92,18 @@ function UserProfileSection({ userProfile }) {
               <span className="userPersonalInfo">
                 <strong>Birthday: </strong>
                 {userProfile.birthday}
+              </span>
+              <span className="userPersonalInfo">
+                <strong>Location: </strong>
+                {userProfile.country}, {userProfile.city}
+              </span>
+              <span className="userPersonalInfo">
+                <span
+                  className="hobbyTagUser contact"
+                  onClick={handleContactClick}
+                >
+                  Contact
+                </span>
               </span>
             </div>
             <p className="linkButton cancel" onClick={() => navigate(-1)}>

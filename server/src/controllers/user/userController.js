@@ -4,6 +4,7 @@ const {
   User,
   PasswordHistory,
   RefreshToken,
+  Country,
 } = require("../../../models");
 const userValidator = require("../../validators/userValidator");
 const passwordValidator = require("../../validators/passwordValidator");
@@ -178,6 +179,19 @@ const editAddressUser = async (req, res) => {
           ? null
           : req.body[field];
     });
+
+    if (req.body.country) {
+      const country = await Country.findOne({
+        where: { name: req.body.country },
+      });
+      if (country) {
+        address.lat = country.lat;
+        address.long = country.long;
+      } else {
+        address.lat = null;
+        address.long = null;
+      }
+    }
 
     await address.save();
 

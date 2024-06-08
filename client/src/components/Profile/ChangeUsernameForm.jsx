@@ -78,8 +78,8 @@ export default function ChangeUsernameForm({ userDetail }) {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {errors.password && <p className="errorText">{errors.password}</p>}
           </label>
+          {errors.password && <p className="errorText">{errors.password}</p>}
           <motion.button
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}

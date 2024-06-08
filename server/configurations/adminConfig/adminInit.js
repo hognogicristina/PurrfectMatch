@@ -2,14 +2,41 @@ const fs = require("fs");
 const path = require("path");
 const bcrypt = require("bcrypt");
 const { faker } = require("@faker-js/faker");
-const { User, PasswordHistory, Address, UserInfo } = require("../../models");
+const {
+  User,
+  PasswordHistory,
+  Address,
+  UserInfo,
+  Country,
+  City,
+} = require("../../models");
 const logger = require("../../logger/logger");
 const helperData = require("../generateData/helperData");
 
 const generateAddress = async (userId) => {
-  const country = faker.location.country();
+  const countries = await Country.findAll();
+  let randomCountry;
+  randomCountry = countries[Math.floor(Math.random() * countries.length)];
+
+  const cities = await City.findAll({
+    where: {
+      countryId: randomCountry.id,
+    },
+  });
+  let randomCity;
+  randomCity = cities[Math.floor(Math.random() * cities.length)];
+
+  do {
+    randomCountry = countries[Math.floor(Math.random() * countries.length)];
+    const cities = await City.findAll({
+      where: {
+        countryId: randomCountry.id,
+      },
+    });
+    randomCity = cities[Math.floor(Math.random() * cities.length)];
+  } while (randomCity === undefined);
+
   const county = faker.location.county();
-  const city = faker.location.city();
   const street = faker.location.street();
   const number = faker.location.buildingNumber();
   const floor = faker.number.int({ max: 20 });
@@ -17,15 +44,17 @@ const generateAddress = async (userId) => {
   const postalCode = faker.location.zipCode();
 
   return await Address.create({
-    country: country,
+    userId: userId,
+    country: randomCountry.name,
     county: county,
-    city: city,
+    city: randomCity.name,
     street: street,
     number: number,
     floor: floor,
     apartment: apartment,
     postalCode: postalCode,
-    userId: userId,
+    lat: randomCountry.lat,
+    long: randomCountry.long,
   });
 };
 

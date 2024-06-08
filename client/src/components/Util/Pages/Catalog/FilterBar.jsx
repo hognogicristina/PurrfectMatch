@@ -100,13 +100,12 @@ function FilterBar({ searchParams, setSearchParams }) {
   };
 
   const handleClearAll = () => {
-    // searchParams.delete("search");
     searchParams.delete("selectedBreed");
     searchParams.delete("selectedLifeStage");
     searchParams.delete("selectedHealthProblem");
     searchParams.delete("selectedGender");
     searchParams.delete("selectedColor");
-    searchParams.set("sortBy", "breed");
+    searchParams.set("sortBy", "location");
     searchParams.set("sortOrder", "asc");
     searchParams.set("page", 1);
     setSearchParams(searchParams, { replace: true });

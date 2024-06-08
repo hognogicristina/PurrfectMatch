@@ -81,10 +81,10 @@ export default function LoginForm() {
               type="text"
               placeholder="Enter your username or email"
             />
-            {errors.usernameOrEmail && (
-              <p className="errorText">{errors.usernameOrEmail}</p>
-            )}
           </label>
+          {errors.usernameOrEmail && (
+            <p className="errorText">{errors.usernameOrEmail}</p>
+          )}
           <label className="authInput">
             <div className="iconContainer">
               <FaLock />
@@ -101,8 +101,8 @@ export default function LoginForm() {
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {errors.password && <p className="errorText">{errors.password}</p>}
           </label>
+          {errors.password && <p className="errorText">{errors.password}</p>}
           <motion.button
             whileTap={{ scale: 0.9 }}
             disabled={isSubmitting}

@@ -55,10 +55,10 @@ export default function ChangeUsernameProfile() {
             >
               {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {errors.currentPassword && (
-              <p className="errorText">{errors.currentPassword}</p>
-            )}
           </label>
+          {errors.currentPassword && (
+            <p className="errorText">{errors.currentPassword}</p>
+          )}
           <label className="authInput">
             <div className="iconContainer">
               <FaKey />
@@ -74,10 +74,10 @@ export default function ChangeUsernameProfile() {
             >
               {showNewPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {errors.newPassword && (
-              <p className="errorText">{errors.newPassword}</p>
-            )}
           </label>
+          {errors.newPassword && (
+            <p className="errorText">{errors.newPassword}</p>
+          )}
           <label className="authInput">
             <div className="iconContainer">
               <FaKey />
@@ -93,10 +93,10 @@ export default function ChangeUsernameProfile() {
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
             </span>
-            {errors.confirmPassword && (
-              <p className="errorText">{errors.confirmPassword}</p>
-            )}
           </label>
+          {errors.confirmPassword && (
+            <p className="errorText">{errors.confirmPassword}</p>
+          )}
           <div className="linksContainer">
             <motion.button
               whileTap={{ scale: 0.9 }}

@@ -21,6 +21,17 @@ export default function ChatsList({ chats }) {
   const { messages } = useWebSocket();
 
   useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const userId = query.get("userId");
+    const userName = query.get("userName");
+    const userImage = query.get("image");
+
+    if (userId && userName) {
+      handleUserSearchSelect(userId, userName, userImage);
+    }
+  }, [location.search]);
+
+  useEffect(() => {
     const handleNewMessage = (message) => {
       if (
         message.type === "NEW_CHAT_MESSAGE" &&
@@ -141,16 +152,12 @@ export default function ChatsList({ chats }) {
         },
         ...prevChatData,
       ]);
+      setSelectedUserId(userId);
+      setSelectedUserName(userName);
+      setResetOnOpen(true);
     } else {
-      setChatData((prevChatData) =>
-        prevChatData.map((item) =>
-          item.otherUserId === userId ? { ...item, isRead: true } : item,
-        ),
-      );
+      handleChatSelect(existingChat);
     }
-    setSelectedUserId(userId);
-    setSelectedUserName(userName);
-    setResetOnOpen(true);
   };
 
   const handleNewChatSession = (newChatSession) => {
@@ -195,36 +202,33 @@ export default function ChatsList({ chats }) {
   const renderChat = () => {
     if (Array.isArray(chatData) && chatData.length > 0) {
       return chatData.map((chat, index) => (
-        <>
-          <AnimatePresence>
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              viewport={{ once: true }}
-              key={chat.otherUserId}
-              className={`chat ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
-              onClick={() => handleChatSelect(chat)}
-            >
-              <div className="userImageContainer">{renderUserImage(chat)}</div>
-              <div className="chatItemContainer">
-                <div className="chatItemHeader">
-                  <span className="chatItemName">{chat.otherUserFullName}</span>
-                  <span
-                    className={`chatItemDate ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
-                  >
-                    {chat.lastMessageDate}
-                  </span>
-                </div>
+        <AnimatePresence key={chat.otherUserId}>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: index * 0.05 }}
+            viewport={{ once: true }}
+            className={`chat ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+            onClick={() => handleChatSelect(chat)}
+          >
+            <div className="userImageContainer">{renderUserImage(chat)}</div>
+            <div className="chatItemContainer">
+              <div className="chatItemHeader">
+                <span className="chatItemName">{chat.otherUserFullName}</span>
                 <span
-                  className={`chatItemMessage ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+                  className={`chatItemDate ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
                 >
-                  {chat.lastMessage}
+                  {chat.lastMessageDate}
                 </span>
               </div>
-            </motion.div>
-          </AnimatePresence>
-        </>
+              <span
+                className={`chatItemMessage ${selectedUserId === chat.otherUserId ? "selectedChat" : ""}`}
+              >
+                {chat.lastMessage}
+              </span>
+            </div>
+          </motion.div>
+        </AnimatePresence>
       ));
     } else if (error) {
       if (error.some((err) => err.field === "chat")) {

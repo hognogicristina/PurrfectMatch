@@ -1,7 +1,6 @@
 import { useToast } from "../Util/Custom/PageResponse/ToastProvider.jsx";
 import { motion } from "framer-motion";
 import "../../styles/PurrfectMatch/CatsArchive.css";
-import NoResultMessage from "../Util/Custom/PageResponse/NoResultMessage.jsx";
 import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa";
 import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
@@ -13,7 +12,7 @@ import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 export default function OwnedArchiveCatalog({
   cats,
   currentPage,
-  onPageChange,
+  setSearchParams,
 }) {
   const { data, error, totalPages, totalItems } = cats;
   const { notifyError } = useToast();
@@ -62,6 +61,12 @@ export default function OwnedArchiveCatalog({
   const closeDeleteDialog = () => {
     setIsDeleteDialogOpen(false);
     setCurrentCat(null);
+  };
+
+  const handlePageChange = (newSearchParams) => {
+    setSearchParams(new URLSearchParams(newSearchParams.toString()), {
+      replace: true,
+    });
   };
 
   const renderCats = () => {
@@ -156,7 +161,7 @@ export default function OwnedArchiveCatalog({
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            onPageChange={handlePageChange}
           />
         </div>
         <ul className="catsList list">{renderCats()}</ul>

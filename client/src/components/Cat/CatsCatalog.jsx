@@ -25,6 +25,10 @@ function CatsCatalog({ cats, currentPage }) {
       searchParams.set("sortOrder", "asc");
       setSearchParams(searchParams, { replace: true });
     }
+    if (!searchParams.get("sortBy")) {
+      searchParams.set("sortBy", "location");
+      setSearchParams(searchParams, { replace: true });
+    }
     setSearchParamsKey((prevKey) => prevKey + 1);
   }, [currentPage, cats]);
 
@@ -65,6 +69,7 @@ function CatsCatalog({ cats, currentPage }) {
             <li>Breed: {cat.breed}</li>
             <li>Gender: {cat.gender}</li>
             <li>Life Stage: {cat.lifeStage}</li>
+            <li>Location: {cat.location}</li>
           </ul>
         </motion.div>
       ));

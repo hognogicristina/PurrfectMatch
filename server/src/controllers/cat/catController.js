@@ -12,8 +12,11 @@ const getAllCats = async (req, res) => {
   try {
     const page = req.query.page || 1;
     const pageSize = 24;
+    const userLat = req.query.lat;
+    const userLong = req.query.long;
+
     if (await catValidator.catExistValidator(req, res)) return;
-    const cats = await catHelper.filterCats(req);
+    const cats = await catHelper.filterCats(req, userLat, userLong);
     if (await catValidator.catsFilterValidator(cats, res)) return;
 
     if (!Array.isArray(cats)) {
@@ -25,8 +28,17 @@ const getAllCats = async (req, res) => {
     const startIndex = (page - 1) * pageSize;
     const endIndex = page * pageSize;
     const totalItems = cats.length;
-
     const catsForPage = cats.slice(startIndex, endIndex);
+
+    if (req.query.sortBy === "location") {
+      return res.status(200).json({
+        page: page,
+        pageSize: pageSize,
+        totalPages: Math.ceil(totalItems / pageSize),
+        totalItems: totalItems,
+        data: catsForPage,
+      });
+    }
 
     const catsDetails = [];
     for (let cat of catsForPage) {

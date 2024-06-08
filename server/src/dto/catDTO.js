@@ -36,6 +36,8 @@ async function catToDTO(cat) {
     ownerUsername: owner ? owner.username : null,
     imageUser: imageUser && imageUser.length > 0 ? imageUser[0].url : null,
     address: address ? `${address.city}, ${address.country}` : null,
+    lat: address ? address.lat : null,
+    long: address ? address.long : null,
   };
 }
 
@@ -43,6 +45,7 @@ async function catsListToDTO(cat) {
   const images = await Image.findAll({ where: { catId: cat.id } });
   const catUser = await CatUser.findByPk(cat.id);
   const guardian = await User.findByPk(catUser.userId);
+  const address = await Address.findOne({ where: { userId: guardian.id } });
   const owner = await User.findByPk(catUser.ownerId);
   const image = images[0];
 
@@ -55,6 +58,9 @@ async function catsListToDTO(cat) {
     lifeStage: cat.ageType ? cat.ageType : null,
     guardian: guardian ? `${guardian.firstName} ${guardian.lastName}` : null,
     owner: owner ? `${owner.firstName} ${owner.lastName}` : null,
+    location: address ? `${address.city}, ${address.country}` : null,
+    lat: address ? address.lat : null,
+    long: address ? address.long : null,
   };
 }
 

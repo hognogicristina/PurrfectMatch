@@ -8,6 +8,7 @@ function SortDropdown() {
   const token = getAuthToken();
   const options = useMemo(() => {
     return [
+      { value: "location", label: "Location" },
       { value: "breed", label: "Breed" },
       { value: "age", label: "Age" },
       { value: "createdAt", label: "Recently Added" },
@@ -17,7 +18,7 @@ function SortDropdown() {
 
   useEffect(() => {
     if (!currentSortBy) {
-      searchParams.set("sortBy", "breed");
+      searchParams.set("sortBy", "location");
       setSearchParams(searchParams, { replace: true });
     }
   }, [currentSortBy, searchParams, setSearchParams]);

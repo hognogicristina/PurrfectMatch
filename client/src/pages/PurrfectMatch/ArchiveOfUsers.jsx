@@ -9,10 +9,6 @@ function ArchiveOfUsersPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
-  const handlePageChange = (newPage) => {
-    setSearchParams({ page: newPage.toString() });
-  };
-
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Await resolve={users}>
@@ -21,7 +17,7 @@ function ArchiveOfUsersPage() {
             <UsersArchive
               users={loadedUsers}
               currentPage={currentPage}
-              onPageChange={handlePageChange}
+              setSearchParams={setSearchParams}
             />
           </div>
         )}
