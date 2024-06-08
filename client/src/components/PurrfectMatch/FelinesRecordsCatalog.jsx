@@ -5,7 +5,7 @@ import Pagination from "../Util/Custom/Reuse/Pagination.jsx";
 import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import ModifyCatForm from "../Cat/ModifyCatForm.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { IoTrashBin } from "react-icons/io5";
 import DeleteCatDialog from "../Cat/DeleteCatDialog.jsx";
 

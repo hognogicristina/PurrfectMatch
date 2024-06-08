@@ -112,6 +112,44 @@
   box-shadow: 0 8px 16px var(--dark-shade);
 }
 
+.lifeStagesCats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(227, 127, 182, 0.11);
+  color: #ae3d72;
+  font-size: 20px;
+  padding: 20px;
+  gap: 20px;
+  position: relative;
+}
+
+.lifeStagesImage {
+  position: relative;
+  width: 80%;
+  text-align: center;
+}
+
+.stageLabel {
+  position: absolute;
+  top: 30px;
+  transform: translateX(-50%);
+  background: rgb(255, 243, 249);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #ae3d72;
+  box-shadow: 0 4px 6px var(--dark-shade);
+}
+
+.imgLifeStages {
+  width: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 6px var(--dark-shade);
+  border: 3px solid rgba(151, 151, 151, 0.1);
+}
+
 .cats {
   padding: 4rem 0;
   text-align: center;
@@ -201,7 +239,7 @@
 }
 
 .imgCat {
-  width: 100%;
+  width: 324px;
   height: 150px;
   object-fit: cover;
 }

@@ -45,7 +45,7 @@ export default function ChatsList({ chats }) {
           message.payload?.role === "receiver" &&
           location.pathname !== "/inbox"
         ) {
-          const customMessage = message.payload?.customMessage;
+          const customMessage = message.payload.customMessage;
           notifyUser(customMessage);
         }
 

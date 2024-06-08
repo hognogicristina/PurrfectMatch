@@ -18,7 +18,6 @@ function CatsPage() {
     } else {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition((position) => {
-          console.log(position);
           searchParams.set("lat", position.coords.latitude);
           searchParams.set("long", position.coords.longitude);
           setSearchParams(searchParams, { replace: true });

@@ -70,6 +70,29 @@ export default function HomeContent({ cats, breeds }) {
           </div>
         </div>
 
+        <h2 className="title">Life Stage of Cats</h2>
+        <div className="lifeStagesCats">
+          <div className="lifeStagesImage">
+            <div className="stageLabel" style={{ left: "6%" }}>
+              Kitten
+            </div>
+            <div className="stageLabel" style={{ left: "24%" }}>
+              Junior
+            </div>
+            <div className="stageLabel" style={{ left: "45%" }}>
+              Mature
+            </div>
+            <div className="stageLabel" style={{ left: "75%" }}>
+              Senior
+            </div>
+            <img
+              src="lifeStagesCats.jpg"
+              alt="life stages of cats"
+              className="imgLifeStages"
+            />
+          </div>
+        </div>
+
         <h2 className="title">Essentials of Cat Care</h2>
         <div className="gridEssentials">
           {[

@@ -158,11 +158,11 @@ export default function ModifyAddressForm({ userDetail }) {
           </div>
           <div className="address">
             <label>
-              County
+              County/State
               <input
                 name="county"
                 type="text"
-                placeholder="Enter your county"
+                placeholder="Enter your county/state"
                 defaultValue={user ? user.county : ""}
                 onKeyPress={(e) => {
                   if (e.key === "Enter") e.preventDefault();

@@ -84,6 +84,7 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
+      console.log(imageUris);
       const updatedCatDetail = {
         ...catDetail,
         name: e.target.name.value,
@@ -93,7 +94,7 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
         age: e.target.age.value,
         healthProblem: e.target.healthProblem.value,
         description: e.target.description.value,
-        uris: imageUris,
+        uris: data.uris,
         images: data.images,
       };
       onClose();
