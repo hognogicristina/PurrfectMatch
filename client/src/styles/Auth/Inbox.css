@@ -338,3 +338,48 @@
   gap: 5px;
 }
 
+@media (max-width: 1200px) {
+  .chat {
+    gap: 10px;
+  }
+
+  .userImageLogout.catAdopt {
+    width: 20px;
+    height: 20px;
+  }
+
+  .unreadMessagesCount {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .chatItemName {
+    font-size: 10px;
+  }
+
+  .chatItemMessage.selectedChat {
+    font-size: 10px;
+  }
+
+  .chatItemDate {
+    font-size: 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chatForm {
+    margin-top: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatForm {
+    margin-top: 250px;
+  }
+}
+
+@media (max-width: 375px) {
+  .chatForm {
+    margin-top: 280px;
+  }
+}

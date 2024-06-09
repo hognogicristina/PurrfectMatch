@@ -67,3 +67,36 @@
   position: relative;
   top: 0;
 }
+
+@media (max-width: 1024px) {
+  .favoritesContainer {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .favoritesContainer {
+    margin-top: 150px;
+  }
+
+  .favoritesList {
+    padding: 10px;
+  }
+
+  .favoriteItem {
+    padding: 5px;
+  }
+
+  .catImage {
+    width: 80px;
+    height: 80px;
+  }
+
+  .catName {
+    font-size: 1em;
+  }
+
+  .catBreed {
+    font-size: 0.8em;
+  }
+}

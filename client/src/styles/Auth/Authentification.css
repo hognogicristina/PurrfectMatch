@@ -135,3 +135,32 @@
   flex-direction: column;
   width: 300px;
 }
+
+@media (max-width: 768px) {
+  .authContainer {
+    margin-top: 90px;
+  }
+
+  .authForm {
+    align-items: center;
+    width: 200px;
+  }
+
+  .authForm h2 {
+    font-size: 22px;
+  }
+
+  .authForm p {
+    margin-left: 0;
+    font-size: 12px;
+  }
+
+  .formContainer {
+    min-width: 280px;
+  }
+
+  .registerInput,
+  .linkButton {
+    font-size: 12px;
+  }
+}

@@ -406,3 +406,228 @@ footer {
 .footerSignature {
   font-size: 12px;
 }
+
+@media (max-width: 1200px) {
+  .introText {
+    font-size: 1.5rem;
+  }
+
+  .titleHome {
+    font-size: 45px;
+  }
+
+  .stageLabel {
+    top: 20px;
+    margin-left: 16px;
+    font-size: 0.875rem;
+  }
+
+  .imgContent {
+    width: 500px;
+    right: 40px;
+  }
+
+  .gridEssentials {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  .gridCats {
+    gap: 20px;
+    grid-template-columns: repeat(2, minmax(350px, 1fr));
+  }
+
+  .imgCat {
+    width: 100%;
+    height: 200px;
+  }
+
+  .gridCat {
+    width: 100%;
+    height: 400px;
+  }
+
+  .breedImg {
+    width: 100%;
+    height: 280px;
+  }
+
+  .breedItem {
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 992px) {
+  .titleHome {
+    font-size: 40px;
+  }
+
+  .imgContent {
+    width: 400px;
+    right: 50px;
+  }
+
+  .gridEssentials {
+    grid-template-columns: repeat(2, minmax(180px, 1fr));
+  }
+
+  .cardEssential {
+    max-width: 100%;
+  }
+
+  .imgCardEssential {
+    height: 100px;
+    width: 100%;
+  }
+
+  .gridCats {
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  .breedImg {
+    width: 100%;
+    height: 180px;
+  }
+
+  .breedItem {
+    height: 180px;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 768px) {
+  .introText {
+    font-size: 1.25rem;
+  }
+
+  .titleHome {
+    font-size: 35px;
+  }
+
+  .breedGroup {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .lifeStagesCats {
+    font-size: 18px;
+  }
+
+  .stageLabel {
+    top: 15px;
+    padding: 2px;
+    font-size: 10px;
+  }
+
+  .imgContent {
+    position: static;
+    width: 100%;
+  }
+
+  .textContent {
+    max-width: 100%;
+    padding: 30px;
+    margin-right: 0;
+  }
+
+  .gridEssentials {
+    grid-template-columns: 1fr;
+  }
+
+  .niceList li {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .alternateContent {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    padding: 10px;
+  }
+
+  .content {
+    margin-right: 0;
+    margin-bottom: 20px;
+  }
+
+  .niceList li {
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .understandingContent {
+    flex-direction: column;
+  }
+
+  .understandingContent .textContent, .understandingContent .imgContent {
+    max-width: 700px;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    position: static;
+  }
+
+  .gridCats {
+    gap: 20px;
+    grid-template-columns: repeat(2, minmax(200px, 1fr));
+  }
+
+  .breedImg {
+    width: 100%;
+    height: 140px;
+  }
+
+  .breedItem {
+    height: 140px;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 576px) {
+  .titleHome {
+    font-size: 30px;
+  }
+
+  .textContent p {
+    width: 100%;
+  }
+
+  .buttonExplore {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  .footer-content p {
+    font-size: 13px;
+  }
+
+  .cats {
+    flex-direction: column;
+  }
+
+  .understandingContent {
+    flex-direction: column;
+  }
+
+  .understandingContent .textContent, .understandingContent .imgContent {
+    max-width: 300px;
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    position: static;
+  }
+
+  .gridCats {
+    grid-template-columns: repeat(1, minmax(150px, 1fr));
+  }
+
+  .breedImg {
+    width: 100%;
+    height: 80px;
+  }
+
+  .breedItem {
+    height: 80px;
+    margin: 0 5px;
+  }
+}

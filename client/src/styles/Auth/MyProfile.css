@@ -400,7 +400,22 @@
 }
 
 @media (max-width: 768px) {
+  .userRootContainer {
+    margin-top: 110px;
+    flex-direction: column;
+  }
+
   .userContent.myProfile {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .userSlideBarRight {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+
+  .deleteAccountContainer {
     width: 100%;
   }
 }

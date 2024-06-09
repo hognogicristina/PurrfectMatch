@@ -558,3 +558,271 @@
 .simpleButton.delete.edit {
   width: 100%;
 }
+
+@media (max-width: 1024px) {
+  .catsList {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+
+  .catItemImg {
+    width: 100%;
+    height: 200px
+  }
+}
+
+@media (max-width: 768px) {
+  .catsPageContainer {
+    flex-direction: column;
+  }
+
+  .filterBar {
+    position: relative;
+    width: 100%;
+    top: 150px;
+    bottom: auto;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 20px;
+    padding: 1px;
+  }
+
+  .catsListContainer {
+    margin-left: -20px;
+    width: 100%;
+    margin-top: 120px;
+  }
+
+  .catsList {
+    grid-template-columns: repeat(2, minmax(150px, 1fr));
+  }
+
+  .catItemImg {
+    width: 100%;
+    height: 200px
+  }
+
+  .topControls {
+    flex-direction: row;
+  }
+
+  .paginationButtons {
+    gap: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .catsList {
+    grid-template-columns: repeat(1, minmax(150px, 1fr));
+  }
+
+  .catItem {
+    width: 360px;
+  }
+
+  .filterBarButtonsContainer {
+    flex-direction: row;
+  }
+
+  .filterBarButtons {
+    width: auto;
+    height: auto;
+  }
+
+  .addCatButton {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .catItemDetails {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .catImagesContainer {
+    margin-top: 120px;
+  }
+
+  .catItemDetails .leftSection,
+  .catItemDetails .rightSection,
+  .catItemDetails .addFavoriteSection {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .catItemDetails .delimiter {
+    width: 80%;
+    height: 2px;
+    margin: 20px 0;
+  }
+
+  .catImagesContainer .imageCarousel img {
+    height: 70px;
+    width: 100px;
+  }
+
+  .navigationButtonContainer {
+    width: 20px;
+    height: 20px;
+  }
+
+  .mainImage {
+    height: auto;
+    width: 200px;
+  }
+
+  .catItemDetails h1 {
+    font-size: 32px;
+    text-align: center;
+  }
+
+  .catItemDetails p {
+    text-align: center;
+  }
+
+  .topControls {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .catsList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .moreCats,
+  .otherCatsContainer {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .otherCatCard {
+    width: 45%;
+  }
+
+  .otherCatsContainer,
+  .otherCatsList {
+    padding: 0;
+  }
+
+  .otherCatsList {
+    margin-right: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .catItemDetails .delimiter {
+    width: 90%;
+  }
+
+  .otherCatsContainer,
+  .otherCatsList {
+    padding: 0;
+  }
+
+  .catImagesContainer .imageCarousel img {
+    height: 50px;
+    width: 80px;
+  }
+
+  .mainImage {
+    height: auto;
+    width: 200px;
+  }
+
+  .topControls {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .catsList {
+    grid-template-columns: 1fr;
+  }
+
+  .moreCats,
+  .otherCatsContainer {
+    padding: 5px;
+  }
+
+  .otherCatCard {
+    width: 100%;
+  }
+
+  .otherCatsContainer,
+  .otherCatsList {
+    padding: 0;
+  }
+
+  .otherCatsList {
+    margin-right: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .authForm.catEditForm {
+    padding: 10px;
+  }
+
+  .authForm.catEditForm h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .addCatContainer {
+    flex-direction: column;
+  }
+
+  .catAddContainer {
+    width: 100%;
+  }
+
+  .selectedImage.catAdd {
+    width: 10px;
+    height: 10px;
+  }
+
+  .addCatContainer label {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .addCatContainer input[type="text"],
+  .addCatContainer input[type="hidden"],
+  .addCatContainer textarea {
+    width: 100%;
+    font-size: 14px;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .orderAddContainer {
+    flex-direction: column;
+  }
+
+  .orderAddContainer label {
+    width: 100%;
+  }
+
+  .UploadImages {
+    width: 100%;
+  }
+
+  .catSelectFields {
+    flex-direction: column;
+  }
+
+  .catSelectFields div {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+
+  .buttonEditContainer {
+    display: flex;
+    justify-content: center;
+  }
+
+  .buttonEditContainer button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+  }
+}

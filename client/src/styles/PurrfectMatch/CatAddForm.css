@@ -101,3 +101,16 @@
   margin-bottom: 20px;
   margin-top: 20px;
 }
+
+@media (max-width: 1024px) {
+  .closeButton.catEditForm {
+    left: 280px;
+    top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .addCatContainer {
+    margin-top: 280px;
+  }
+}

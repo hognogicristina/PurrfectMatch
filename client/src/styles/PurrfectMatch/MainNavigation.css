@@ -61,8 +61,19 @@
   font-weight: 500;
 }
 
+.loginLink a,
+.registerLink a {
+  display: inline-block;
+  width: 50px;
+  text-align: center;
+}
+
 .registerLink a:hover {
   background-color: #FF1493;
+}
+
+.loginLink {
+  margin-left: 3px;
 }
 
 .loginLink a {
@@ -202,4 +213,125 @@
 .dropdownContent a:hover:first-child {
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
+}
+
+@media (max-width: 768px) {
+  .mainNavigation {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .mainContainer, .controlContainer {
+    margin-right: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .searchContainer {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .logo {
+    font-size: 22px;
+  }
+
+  .linkButton.catalog {
+    font-size: 14px;
+    margin-left: 10px;
+  }
+
+  .authInput.search {
+    margin-top: 0;
+    width: 100%;
+    border-radius: 50px;
+  }
+
+  .links {
+    font-size: 16px;
+    margin-left: 10px;
+  }
+
+  .dropbtn {
+    padding: 6px 8px;
+    margin-right: 20px;
+    font-size: 14px;
+  }
+
+  .controlContainer {
+    margin-top: 20px;
+  }
+
+  .loginLink, .registerLink {
+    margin-right: 15px;
+  }
+
+  .loginLink a, .registerLink a {
+    width: 80px;
+    font-size: 12px;
+  }
+
+  .vertical-line {
+    height: 30px;
+    margin-left: 5px;
+    margin-right: -5px;
+  }
+
+  .dropdownContent {
+    width: 200px;
+  }
+
+  .dropdownContent.userMenu {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainNavigation {
+    padding: 3px 5px;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .linkButton.catalog {
+    font-size: 12px;
+    margin-right: 15px;
+  }
+
+  .authInput.search {
+    width: 90%;
+  }
+
+  .links {
+    font-size: 14px;
+    margin-left: 5px;
+  }
+
+  .dropbtn {
+    padding: 5px 6px;
+    font-size: 12px;
+  }
+
+  .loginLink a, .registerLink a {
+    width: 50px;
+    margin-top: 10px;
+    font-size: 10px;
+    margin-right: 15px;
+  }
+
+  .vertical-line {
+    height: 20px;
+    margin-left: 3px;
+    margin-right: -3px;
+  }
+
+  .dropdownContent {
+    width: 170px;
+  }
+
+  .dropdownContent.userMenu {
+    width: 70px;
+  }
 }

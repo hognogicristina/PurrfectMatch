@@ -81,3 +81,34 @@
 .formLogout button:hover {
   background-color: rgba(213, 213, 213, 0.78);
 }
+
+@media (max-width: 1200px) {
+  .titleLogout {
+    font-size: 20px;
+  }
+
+  .formLogout {
+    width: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .containerLogout {
+    margin-top: 160px;
+  }
+}
+
+@media (max-width: 375px) {
+  .formLogout {
+    width: 300px;
+  }
+
+  .userImageLogout {
+    width: 40px;
+    height: 40px;
+  }
+
+  .subtitleLogout {
+    font-size: 15px;
+  }
+}
