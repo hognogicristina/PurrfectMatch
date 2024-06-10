@@ -76,8 +76,8 @@ export default function ChatsList({ chats }) {
               isRead: session.isRead,
               unreadMessagesCount: session.unreadMessagesCount,
               messages: [
-                ...(updatedChatData[existingChatIndex].messages || []),
                 newMessageDTO,
+                ...(updatedChatData[existingChatIndex].messages || []),
               ],
             };
 

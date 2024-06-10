@@ -297,3 +297,72 @@ button:hover {
   display: flex;
   gap: 20px;
 }
+
+@media (max-width: 768px) {
+  .mailDetails {
+    width: 100%;
+  }
+
+  .mailDetails .catImage {
+    width: 100%;
+  }
+
+  .mailDetails .headerMail img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .mailDetails .headerMail .info h2 {
+    font-size: 1em;
+  }
+
+  .mailDetails .headerMail .info .from {
+    font-weight: normal;
+  }
+
+  .mailDetails .headerMail .date {
+    right: 20px;
+  }
+
+  .mailDetails .details span {
+    font-size: 12px;
+  }
+
+  .mailDetails .message {
+    font-size: 14px;
+  }
+
+  .mailDetails .catImageMail {
+    width: 100%;
+  }
+
+  .mailDetails .trashIcon {
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .mailSection h2 {
+    font-size: 1.5em;
+  }
+
+  .adoptionRequestItem .header .subject {
+    font-size: 15px;
+  }
+
+  .adoptionRequestItem .header .date {
+    font-size: 12px;
+  }
+
+  .adoptionRequestItem .details span {
+    font-size: 12px;
+  }
+
+  .mailButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .responseButtons {
+    flex-direction: column;
+  }
+}

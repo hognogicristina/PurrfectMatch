@@ -105,6 +105,11 @@ const checkSearchUsersExist = async (req, res) => {
             "LIKE",
             `%${user.toLowerCase()}%`,
           ),
+          Sequelize.where(
+            Sequelize.fn("LOWER", Sequelize.col("username")),
+            "LIKE",
+            `%${user.toLowerCase()}%`,
+          ),
         ],
       },
     });

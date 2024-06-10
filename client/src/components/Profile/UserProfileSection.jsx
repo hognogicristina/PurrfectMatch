@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import UserFelinesRecordsCatalog from "../PurrfectMatch/UserFelinesRecordsCatalog.jsx";
 import UserOwnedArchiveCatalog from "../PurrfectMatch/UserOwnedArchiveCatalog.jsx";
 import { motion } from "framer-motion";
+import { getAuthToken } from "../../util/auth.js";
 
 function UserProfileSection({ userProfile }) {
   const { notifyError } = useToast();
@@ -53,10 +54,30 @@ function UserProfileSection({ userProfile }) {
     }
   };
 
-  const handleContactClick = () => {
-    navigate(
-      `/inbox?userId=${userProfile.id}&userName=${userProfile.username}&image=${userProfile.image}`,
+  const handleContactClick = async () => {
+    const token = getAuthToken();
+    const response = await fetch(
+      `http://localhost:3000/inbox/search?user=${userProfile.username}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
+
+    const result = await response.json();
+    if (response.ok) {
+      console.log(result);
+      const user = result.data[0];
+      navigate(
+        `/inbox?userId=${user.id}&userName=${user.displayName}&image=${user.image}`,
+      );
+    } else {
+      result.error.forEach((err) => {
+        notifyError(err.message);
+      });
+    }
   };
 
   return (
