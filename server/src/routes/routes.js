@@ -157,6 +157,11 @@ router.get(
   adoptionRequestController.getAdoptionRequests,
 );
 router.get(
+  "/adopts/unread-count",
+  authMiddleware.authenticateToken,
+  adoptionRequestController.getUnreadCount,
+);
+router.get(
   "/adopt/:id",
   authMiddleware.authenticateToken,
   adoptionRequestController.getAdoptionRequest,
@@ -191,6 +196,11 @@ router.delete(
 
 // Chat routes
 router.get("/inbox", authMiddleware.authenticateToken, chatController.getInbox);
+router.get(
+  "/inbox/unread-count",
+  authMiddleware.authenticateToken,
+  chatController.getUnreadCount,
+);
 router.get(
   "/inbox/:id/chat-session",
   authMiddleware.authenticateToken,

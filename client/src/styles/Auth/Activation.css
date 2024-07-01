@@ -63,6 +63,14 @@
   gap: 10px;
 }
 
+.simpleButton.delete.tryAgain {
+  width: 200px;
+  text-align: center;
+  color: var(--white-color);
+  background-color: var(--button-delete);
+  border: none;
+}
+
 .errorContainer img {
   width: 100px;
   height: auto;

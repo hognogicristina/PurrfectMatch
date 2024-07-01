@@ -25,6 +25,32 @@ const getInbox = async (req, res) => {
   }
 };
 
+const getUnreadCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const currentUser = await User.findByPk(userId);
+    const chatSessions = await chatHelper.chatSessionsForUser(currentUser);
+    let unreadCount = 0;
+    for (const session of chatSessions) {
+      const messages = await Message.findAll({
+        where: { chatSessionId: session.id, userId: currentUser.id },
+      });
+      for (const message of messages) {
+        if (message.role === "receiver" && !message.isRead) {
+          unreadCount++;
+        }
+      }
+    }
+
+    return res.status(200).json({ unreadCount });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
+  }
+};
+
 const getChatSession = async (req, res) => {
   try {
     if (await chatValidator.checkChatSessionExists(req, res)) return;
@@ -37,7 +63,7 @@ const getChatSession = async (req, res) => {
 
     const messages = await Message.findAll({
       where: { chatSessionId: session.id, userId: userId },
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "ASC"]],
     });
 
     for (const message of messages) {
@@ -140,6 +166,28 @@ const sendMessage = async (req, res) => {
 
       const chaSessionsForSender = await chatHelper.chatSessionsForUser(sender);
 
+      const messagesForSender = await Message.findAll({
+        where: { chatSessionId: session.id, userId: sender.id },
+        order: [["createdAt", "ASC"]],
+      });
+
+      const chatMessagesForSender = [];
+      for (const message of messagesForSender) {
+        const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
+          message,
+          sender,
+          receiver,
+        );
+        chatMessagesForSender.push(chatMessageDTO);
+      }
+
+      for (const message of messagesForSender) {
+        if (message.userId === sender.id) {
+          message.isRead = true;
+          await message.save();
+        }
+      }
+
       websocket.notifyClients({
         type: "NEW_CHAT_MESSAGE",
         userId: sender.id,
@@ -147,6 +195,7 @@ const sendMessage = async (req, res) => {
           session: chatSessionSender,
           message: chatMessageSenderDTO,
           allSession: chaSessionsForSender,
+          allMessages: chatMessagesForSender,
           role: "sender",
           customMessage: "Message sent",
         },
@@ -175,6 +224,34 @@ const sendMessage = async (req, res) => {
       const chaSessionsForReceiver =
         await chatHelper.chatSessionsForUser(receiver);
 
+      const messagesForReceiver = await Message.findAll({
+        where: { chatSessionId: session.id, userId: receiver.id },
+        order: [["createdAt", "ASC"]],
+      });
+
+      const chatMessagesForReceiver = [];
+      for (const message of messagesForReceiver) {
+        const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
+          message,
+          receiver,
+          sender,
+        );
+        chatMessagesForReceiver.push(chatMessageDTO);
+      }
+
+      const chatSessions = await chatHelper.chatSessionsForUser(receiver);
+      let unreadCount = 0;
+      for (const session of chatSessions) {
+        const messages = await Message.findAll({
+          where: { chatSessionId: session.id, userId: receiver.id },
+        });
+        for (const message of messages) {
+          if (message.role === "receiver" && !message.isRead) {
+            unreadCount++;
+          }
+        }
+      }
+
       websocket.notifyClients({
         type: "NEW_CHAT_MESSAGE",
         userId: receiver.id,
@@ -182,6 +259,8 @@ const sendMessage = async (req, res) => {
           session: chatSessionReceiver,
           message: chatMessageReceiverDTO,
           allSession: chaSessionsForReceiver,
+          allMessages: chatMessagesForReceiver,
+          unreadCount: unreadCount,
           role: "receiver",
           customMessage: `${sender.username} sent you a message`,
         },
@@ -240,6 +319,21 @@ const sendMessage = async (req, res) => {
       const chaSessionsForReceiver =
         await chatHelper.chatSessionsForUser(receiver);
 
+      const messagesForSender = await Message.findAll({
+        where: { chatSessionId: newSession.id, userId: sender.id },
+        order: [["createdAt", "ASC"]],
+      });
+
+      const chatMessagesForSender = [];
+      for (const message of messagesForSender) {
+        const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
+          message,
+          sender,
+          receiver,
+        );
+        chatMessagesForSender.push(chatMessageDTO);
+      }
+
       websocket.notifyClients({
         type: "NEW_CHAT_MESSAGE",
         userId: sender.id,
@@ -247,10 +341,39 @@ const sendMessage = async (req, res) => {
           session: chatSessionSender,
           message: chatMessageSenderDTO,
           allSession: chaSessionsForSender,
+          allMessages: chatMessagesForSender,
           role: "sender",
           customMessage: "Message sent",
         },
       });
+
+      const messages = await Message.findAll({
+        where: { chatSessionId: newSession.id, userId: receiver.id },
+        order: [["createdAt", "ASC"]],
+      });
+
+      const chatMessagesForReceiver = [];
+      for (const message of messages) {
+        const chatMessageDTO = await chatDTO.transformChatMessagesToDTO(
+          message,
+          sender,
+          receiver,
+        );
+        chatMessagesForReceiver.push(chatMessageDTO);
+      }
+
+      const chatSessions = await chatHelper.chatSessionsForUser(receiver);
+      let unreadCount = 0;
+      for (const session of chatSessions) {
+        const messages = await Message.findAll({
+          where: { chatSessionId: session.id, userId: receiver.id },
+        });
+        for (const message of messages) {
+          if (message.role === "receiver" && !message.isRead) {
+            unreadCount++;
+          }
+        }
+      }
 
       websocket.notifyClients({
         type: "NEW_CHAT_MESSAGE",
@@ -259,6 +382,8 @@ const sendMessage = async (req, res) => {
           session: chatSessionReceiver,
           message: chatMessageReceiverDTO,
           allSession: chaSessionsForReceiver,
+          allMessages: chatMessagesForReceiver,
+          unreadCount: unreadCount,
           role: "receiver",
           customMessage: `${sender.username} sent you a message`,
         },
@@ -271,6 +396,7 @@ const sendMessage = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res
       .status(500)
@@ -280,6 +406,7 @@ const sendMessage = async (req, res) => {
 
 module.exports = {
   getInbox,
+  getUnreadCount,
   getChatSession,
   searchUser,
   sendMessage,

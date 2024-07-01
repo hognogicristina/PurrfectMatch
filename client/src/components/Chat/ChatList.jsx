@@ -39,15 +39,7 @@ export default function ChatsList({ chats }) {
         userDetails.id &&
         message.userId === userDetails.id
       ) {
-        const { session, message: newMessage } = message.payload;
-
-        if (
-          message.payload?.role === "receiver" &&
-          location.pathname !== "/inbox"
-        ) {
-          const customMessage = message.payload.customMessage;
-          notifyUser(customMessage);
-        }
+        const { session, message: newMessage, allMessages } = message.payload;
 
         const newMessageDTO = {
           id: newMessage.id,
@@ -75,10 +67,7 @@ export default function ChatsList({ chats }) {
               lastMessageDate: newMessage.messageDate,
               isRead: session.isRead,
               unreadMessagesCount: session.unreadMessagesCount,
-              messages: [
-                newMessageDTO,
-                ...(updatedChatData[existingChatIndex].messages || []),
-              ],
+              messages: allMessages || [],
             };
 
             return [
@@ -119,6 +108,12 @@ export default function ChatsList({ chats }) {
     }
   }, [data, selectedUserId]);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [selectedUserId]);
+
   const handleChatSelect = (chat) => {
     setChatData((prevChatData) =>
       prevChatData.map((item) =>
@@ -158,22 +153,6 @@ export default function ChatsList({ chats }) {
     } else {
       handleChatSelect(existingChat);
     }
-  };
-
-  const handleNewChatSession = (newChatSession) => {
-    setChatData((prevChatData) => {
-      const existingSessionIndex = prevChatData.findIndex(
-        (chat) => chat.otherUserId === newChatSession.otherUserId,
-      );
-
-      let updatedChatData = [...prevChatData];
-      if (existingSessionIndex !== -1) {
-        updatedChatData.splice(existingSessionIndex, 1);
-      }
-      updatedChatData = [newChatSession, ...updatedChatData];
-
-      return updatedChatData;
-    });
   };
 
   const renderUserImage = (chat) => (
@@ -268,7 +247,6 @@ export default function ChatsList({ chats }) {
                   ?.messages || []
               : []
           }
-          onNewChatSession={handleNewChatSession}
           inputRef={inputRef}
           onInputFocus={() =>
             setChatData((prevChatData) =>

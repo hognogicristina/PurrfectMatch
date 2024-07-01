@@ -47,11 +47,19 @@ const adoptCat = async (req, res) => {
     const receiverDTO =
       await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
 
+    const receivedUnreadCount = await UserRole.count({
+      where: {
+        userId: receiver.id,
+        isRead: false,
+      },
+    });
+
     websocket.notifyClients({
       type: "NEW_ADOPTION_REQUEST",
       userId: receiver.id,
       payload: {
         ...receiverDTO,
+        unreadCount: receivedUnreadCount,
         customMessage: `${sender.username} sent an adoption request`,
         role: "receiver",
       },
@@ -135,11 +143,19 @@ const handleAdoptionRequest = async (req, res) => {
         const otherUserDTO =
           await adoptionRequestDTO.transformAdoptionRequestsToDTO(otherUser);
 
+        const receivedUnreadCount = await UserRole.count({
+          where: {
+            userId: otherUser.id,
+            isRead: false,
+          },
+        });
+
         websocket.notifyClients({
           type: "ADOPTION_REQUEST_RESPONSE",
           userId: otherUser.id,
           payload: {
             ...otherUserDTO,
+            unreadCount: receivedUnreadCount,
             customMessage: `${receiver.username} declined the request`,
             role: "sender",
             status: "declined",
@@ -152,11 +168,19 @@ const handleAdoptionRequest = async (req, res) => {
       const receiverDTO =
         await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
 
+      const receivedUnreadCount = await UserRole.count({
+        where: {
+          userId: sender.id,
+          isRead: false,
+        },
+      });
+
       websocket.notifyClients({
         type: "ADOPTION_REQUEST_RESPONSE",
         userId: sender.id,
         payload: {
           ...senderDTO,
+          unreadCount: receivedUnreadCount,
           customMessage: `${receiver.username} accepted your request`,
           role: "sender",
           status: "accepted",
@@ -185,11 +209,19 @@ const handleAdoptionRequest = async (req, res) => {
       const receiverDTO =
         await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
 
+      const receivedUnreadCount = await UserRole.count({
+        where: {
+          userId: sender.id,
+          isRead: false,
+        },
+      });
+
       websocket.notifyClients({
         type: "ADOPTION_REQUEST_RESPONSE",
         userId: sender.id,
         payload: {
           ...senderDTO,
+          unreadCount: receivedUnreadCount,
           customMessage: `${receiver.username} declined your request`,
           role: "sender",
           status: "declined",
@@ -238,6 +270,25 @@ const getAdoptionRequests = async (req, res) => {
     return res
       .status(200)
       .json({ data: responseData, userDetails: userDetails });
+  } catch (error) {
+    logger.error(error);
+    return res
+      .status(500)
+      .json({ error: [{ field: "server", message: "Internal server error" }] });
+  }
+};
+
+const getUnreadCount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const receivedUnreadCount = await UserRole.count({
+      where: {
+        userId: userId,
+        isRead: false,
+      },
+    });
+
+    return res.status(200).json({ unreadCount: receivedUnreadCount });
   } catch (error) {
     logger.error(error);
     return res
@@ -317,6 +368,13 @@ const deleteAdoptionRequest = async (req, res) => {
       const receiverDTO =
         await adoptionRequestDTO.transformAdoptionRequestsToDTO(receiver);
 
+      const receivedUnreadCount = await UserRole.count({
+        where: {
+          userId: receiver.id,
+          isRead: false,
+        },
+      });
+
       websocket.notifyClients({
         type: "DELETE_ADOPTION_REQUEST",
         userId: sender.id,
@@ -331,6 +389,7 @@ const deleteAdoptionRequest = async (req, res) => {
         userId: receiver.id,
         payload: {
           ...receiverDTO,
+          unreadCount: receivedUnreadCount,
           role: "receiver",
         },
       });
@@ -358,6 +417,7 @@ module.exports = {
   validateAdoptionRequest,
   handleAdoptionRequest,
   getAdoptionRequests,
+  getUnreadCount,
   getAdoptionRequest,
   deleteAdoptionRequest,
 };

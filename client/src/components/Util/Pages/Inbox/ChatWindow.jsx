@@ -12,20 +12,19 @@ export default function ChatWindow({
   resetOnOpen = false,
   setResetOnOpen,
   chatMessages,
-  onNewChatSession,
   inputRef,
   onInputFocus,
 }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { notifyError } = useToast();
 
   useEffect(() => {
     if (resetOnOpen) {
-      setMessages(chatMessages);
       setResetOnOpen(false);
     }
-  }, [resetOnOpen, chatMessages, setResetOnOpen]);
+  }, [resetOnOpen, setResetOnOpen]);
 
   useEffect(() => {
     if (selectedUserId && resetOnOpen) {
@@ -35,6 +34,10 @@ export default function ChatWindow({
       fetchMessages(selectedUserId);
     }
   }, [selectedUserId, resetOnOpen]);
+
+  useEffect(() => {
+    setMessages(chatMessages);
+  }, [chatMessages]);
 
   const fetchMessages = async (id) => {
     const token = getAuthToken();
@@ -88,6 +91,7 @@ export default function ChatWindow({
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const token = getAuthToken();
     const response = await fetch(
       `http://localhost:3000/inbox/${selectedUserId}/send`,
@@ -101,37 +105,8 @@ export default function ChatWindow({
       },
     );
     const result = await response.json();
+    setIsSubmitting(false);
     if (response.ok) {
-      const newMessageDTO = {
-        id: result.message.id,
-        userId: result.message.userId,
-        otherUserId: result.session.otherUserId,
-        otherUserFullName: result.session.otherUserFullName,
-        otherUserName: result.session.otherUserName,
-        otherUserImage: result.session.otherUserImage,
-        messageText: result.message.messageText,
-        messageDate: result.message.messageDate,
-        messageRole: result.message.messageRole,
-        isRead: result.message.isRead,
-      };
-
-      if (messages.length === 0) {
-        onNewChatSession({
-          id: result.session.id,
-          currentUserId: result.session.userId,
-          otherUserId: result.session.otherUserId,
-          otherUserFullName: result.session.otherUserFullName,
-          otherUserName: result.session.otherUserName,
-          otherUserImage: result.session.otherUserImage,
-          lastMessage: result.message.messageText,
-          lastMessageDate: result.message.messageDate,
-          lastMessageRole: result.message.messageRole,
-          isRead: result.message.isRead,
-          unreadMessagesCount: result.session.unreadMessagesCount,
-        });
-      }
-
-      setMessages((prevMessages) => [newMessageDTO, ...prevMessages]);
       setNewMessage("");
       setResetOnOpen(false);
     } else {
@@ -151,24 +126,27 @@ export default function ChatWindow({
 
   const renderMessages = () => (
     <div className="messages">
-      {messages.map((message, index) => (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3, delay: index * 0.05 }}
-          viewport={{ once: true }}
-          key={index}
-          className={`message ${message.messageRole === "sender" ? "sentMessage" : "receivedMessage"}`}
-        >
-          {message.messageRole === "receiver" && (
-            <>{renderUserImage(message)}</>
-          )}
-          <div className="messageContentContainer">
-            <span className="messageContent">{message.messageText}</span>
-            <span className="timestamp">{message.messageDate}</span>
+      {messages
+        .slice()
+        .reverse()
+        .map((message, index) => (
+          <div
+            key={index}
+            className={`message ${
+              message.messageRole === "sender"
+                ? "sentMessage"
+                : "receivedMessage"
+            }`}
+          >
+            {message.messageRole === "receiver" && (
+              <>{renderUserImage(message)}</>
+            )}
+            <div className="messageContentContainer">
+              <span className="messageContent">{message.messageText}</span>
+              <span className="timestamp">{message.messageDate}</span>
+            </div>
           </div>
-        </motion.div>
-      ))}
+        ))}
     </div>
   );
 
@@ -191,10 +169,13 @@ export default function ChatWindow({
               />
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                className="simpleButton submit messageButton"
+                className={`simpleButton submit messageButton ${
+                  isSubmitting ? "submitting" : ""
+                }`}
                 type="submit"
+                disabled={isSubmitting}
               >
-                Send
+                {isSubmitting ? "Sending.." : "Send"}
               </motion.button>
             </Form>
           </div>

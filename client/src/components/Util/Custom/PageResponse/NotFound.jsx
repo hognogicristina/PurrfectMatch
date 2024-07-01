@@ -16,6 +16,10 @@ function NotFoundPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <>
       <MainNavigation />
@@ -42,7 +46,12 @@ function NotFoundPage() {
             <div className="elementsContainer">
               <h1>404 - Page Not Found</h1>
               <p>Oops! The page you're looking for doesn't exist.</p>
-              <Link to="/">Go Home</Link>
+              <span
+                onClick={handleRefresh}
+                className="simpleButton delete tryAgain"
+              >
+                Try Again
+              </span>
             </div>
           </div>
         </div>

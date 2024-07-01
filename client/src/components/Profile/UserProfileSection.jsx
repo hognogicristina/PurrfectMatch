@@ -68,7 +68,6 @@ function UserProfileSection({ userProfile }) {
 
     const result = await response.json();
     if (response.ok) {
-      console.log(result);
       const user = result.data[0];
       navigate(
         `/inbox?userId=${user.id}&userName=${user.displayName}&image=${user.image}`,

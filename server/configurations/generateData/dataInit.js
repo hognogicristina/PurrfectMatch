@@ -267,7 +267,7 @@ const generateRandomChatSessions = async (numRequests, users) => {
         userId: user2.id,
         textMsg,
         role: "receiver",
-        isRead: false,
+        isRead: true,
       });
 
       let temp = user1;
@@ -276,6 +276,7 @@ const generateRandomChatSessions = async (numRequests, users) => {
     }
   }
 };
+
 const emptyDatabase = () => {
   UserRole.destroy({ truncate: true });
   AdoptionRequest.destroy({ truncate: true });

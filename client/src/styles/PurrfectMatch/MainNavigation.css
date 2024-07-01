@@ -215,6 +215,27 @@
   border-top-right-radius: 6px;
 }
 
+.mainNavigation .controlContainer .links {
+  position: relative;
+}
+
+.unreadCount {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px;
+  font-size: 10px;
+  line-height: 1;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 768px) {
   .mainNavigation {
     flex-direction: column;
@@ -278,11 +299,11 @@
   }
 
   .dropdownContent {
-    width: 200px;
+    width: 250px;
   }
 
   .dropdownContent.userMenu {
-    width: 60px;
+    width: 70px;
   }
 }
 

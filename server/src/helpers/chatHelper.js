@@ -2,7 +2,6 @@ const { ChatSession, User, Message } = require("../../models");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 const chatDTO = require("../dto/chatDTO");
-const { el } = require("@faker-js/faker");
 
 const generateUniqueChatSessionCode = async () => {
   let unique = false;

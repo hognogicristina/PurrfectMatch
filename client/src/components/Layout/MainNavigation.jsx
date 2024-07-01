@@ -20,6 +20,7 @@ import CatsNavigation from "./CatsNavigation.jsx";
 import { extractJwt } from "../../util/auth.js";
 import { IoSearch } from "react-icons/io5";
 import { FaXmark } from "react-icons/fa6";
+import { useWebSocket } from "../../context/WebSocketContext";
 
 function MainNavigation() {
   const token = useRouteLoaderData("root");
@@ -31,6 +32,9 @@ function MainNavigation() {
   const isUserPage = location.pathname === "/user";
   const tokenExtract = token ? extractJwt(token) : null;
   const [searchInput, setSearchInput] = useState("");
+  const [adoptsUnreadCount, setAdoptsUnreadCount] = useState(0);
+  const [inboxUnreadCount, setInboxUnreadCount] = useState(0);
+  const { messages } = useWebSocket(); // Use WebSocket context
 
   const userMenuButtonStyle = {
     border: isUserPage ? "3px solid #AE3D72FF" : "3px solid #e37fb6",
@@ -108,6 +112,67 @@ function MainNavigation() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, isUserMenuOpen]);
+
+  useEffect(() => {
+    const fetchUnreadCounts = async () => {
+      if (token) {
+        const [adoptsResponse, inboxResponse] = await Promise.all([
+          fetch("http://localhost:3000/adopts/unread-count", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch("http://localhost:3000/inbox/unread-count", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+
+        if (adoptsResponse.ok) {
+          const adoptsData = await adoptsResponse.json();
+          setAdoptsUnreadCount(adoptsData.unreadCount);
+        }
+
+        if (inboxResponse.ok) {
+          const inboxData = await inboxResponse.json();
+          setInboxUnreadCount(inboxData.unreadCount);
+        }
+      }
+    };
+
+    fetchUnreadCounts();
+  }, [token, location.pathname]);
+
+  useEffect(() => {
+    const updateUnreadCounts = (message) => {
+      if (
+        message.type === "NEW_ADOPTION_REQUEST" &&
+        message.payload.role === "receiver"
+      ) {
+        setAdoptsUnreadCount(message.payload.unreadCount);
+      } else if (
+        message.type === "ADOPTION_REQUEST_RESPONSE" &&
+        message.payload.role === "sender"
+      ) {
+        setAdoptsUnreadCount(message.payload.unreadCount);
+      } else if (
+        message.type === "DELETE_ADOPTION_REQUEST" &&
+        message.payload.role === "receiver"
+      ) {
+        setAdoptsUnreadCount(message.payload.unreadCount);
+      } else if (
+        message.type === "NEW_CHAT_MESSAGE" &&
+        message.payload.role === "receiver"
+      ) {
+        setInboxUnreadCount(message.payload.unreadCount);
+      }
+    };
+
+    messages.forEach(updateUnreadCounts);
+  }, [messages]);
 
   const handleSearchChange = (event) => {
     setSearchInput(event.target.value);
@@ -207,8 +272,15 @@ function MainNavigation() {
                     isActive ? "links active-link" : "links"
                   }
                 >
-                  <motion.div whileTap={{ scale: 0.9 }}>
+                  <motion.div
+                    whileTap={{ scale: 0.9 }}
+                    className="icon-container"
+                  >
                     <FontAwesomeIcon icon={faEnvelope} />
+                    {location.pathname !== "/adopts" &&
+                      adoptsUnreadCount > 0 && (
+                        <span className="unreadCount">{adoptsUnreadCount}</span>
+                      )}
                   </motion.div>
                 </NavLink>
                 <NavLink
@@ -231,8 +303,14 @@ function MainNavigation() {
                   isActive ? "links active-link" : "links"
                 }
               >
-                <motion.div whileTap={{ scale: 0.9 }}>
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="icon-container"
+                >
                   <FontAwesomeIcon icon={faInbox} />
+                  {location.pathname !== "/inbox" && inboxUnreadCount > 0 && (
+                    <span className="unreadCount">{inboxUnreadCount}</span>
+                  )}
                 </motion.div>
               </NavLink>
               <div>
