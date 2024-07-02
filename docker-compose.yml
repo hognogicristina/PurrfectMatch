@@ -9,7 +9,7 @@ services:
     volumes:
       - ./server:/usr/local/app
       - server_node_modules_vol:/usr/local/app/node_modules
-      - ./db:/usr/local/app/db
+      - ./server/db:/usr/local/app/db
     ports:
       - "3000:3000"
 

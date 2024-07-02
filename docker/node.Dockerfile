@@ -18,4 +18,4 @@ RUN npm install -g nodemon
 
 EXPOSE 3000
 
-CMD ["npx sequelize-cli db:migrate && node ./configurations/generateData/dataInit.js && nodemon"]
+CMD ["sh", "-c", "npx sequelize-cli db:migrate && npm run migrate && node ./configurations/generateData/dataInit.js && nodemon index.js"]

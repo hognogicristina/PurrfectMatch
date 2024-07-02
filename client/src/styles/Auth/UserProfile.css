@@ -163,11 +163,8 @@
   .profileContainer {
     margin-top: 150px;
     flex-direction: column;
+    height: 100%;
     align-items: center;
-  }
-
-  .userSlideDetailsLeft {
-    margin-top: 220px;
   }
 
   .profileForUser, .listsContainer {
@@ -176,10 +173,6 @@
 }
 
 @media (max-width: 992px) {
-  .profileForUser, .listsContainer {
-    padding: 20px;
-  }
-
   .userImageProfile {
     width: 150px;
     height: 150px;
@@ -206,7 +199,54 @@
   }
 
   .catItemList {
-    min-width: 100px;
+    width: 290px;
+    height: 130px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profileContainer {
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+  }
+
+  .profileForUser, .listsContainer {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .titleFontUser {
+    font-size: 16px;
+  }
+
+  .textFontUser, .userPersonalInfo {
+    font-size: 12px;
+  }
+
+  .subtitleFontUser {
+    font-size: 14px;
+  }
+
+  .hobbyTagUser {
+    font-size: 8px;
+  }
+
+  .catGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .userImageProfile {
+    width: 80px;
+    height: 80px;
+  }
+
+  .catItemList {
+    width: 100%;
     height: 100px;
+  }
+
+  .linkButton, .cancelButton {
+    margin: 55px 60px 0 0;
   }
 }

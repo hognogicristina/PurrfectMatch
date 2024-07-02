@@ -107,6 +107,10 @@
     left: 280px;
     top: 30px;
   }
+
+  .authForm.catAddForm {
+    width: 300px;
+  }
 }
 
 @media (max-width: 768px) {
