@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { FaCircle } from "react-icons/fa";
 import { getStatusIcon } from "./MailDetailsSection.jsx";
+import { useEffect, useState } from "react";
+import moment from "moment";
 
 const itemVariants = {
   hidden: { opacity: 0, x: -50, scale: 0.8 },
@@ -9,9 +11,33 @@ const itemVariants = {
 };
 
 export default function MailItem({ mail, isSelected, openMail, isSent }) {
+  const [formattedDate, setFormattedDate] = useState(mail.date);
+
+  useEffect(() => {
+    const updateFormattedDate = () => {
+      const dateSent = moment(mail.dateTime);
+      const now = moment();
+      const diffWeeks = now.diff(dateSent, "weeks");
+
+      let newFormattedDate;
+      if (diffWeeks <= 1) {
+        newFormattedDate = dateSent.fromNow();
+      } else {
+        newFormattedDate = dateSent.format("YYYY-MM-DD");
+      }
+
+      setFormattedDate(newFormattedDate);
+    };
+
+    updateFormattedDate();
+    const intervalId = setInterval(updateFormattedDate, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [mail.dateTime]);
+
   return (
     <motion.div
-      className={`mailItem ${mail.isRead ? "unread" : ""}`}
+      className={`mailItem ${!mail.isRead ? "unreadMail" : ""}`}
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -22,15 +48,13 @@ export default function MailItem({ mail, isSelected, openMail, isSent }) {
         {!mail.isRead && <FaCircle className="unreadIcon" />}
       </div>
       <li
-        className={`adoptionRequestItem ${
-          !mail.isRead ? "unreadMail" : ""
-        } ${isSelected ? "selectedMail" : ""}`}
+        className={`adoptionRequestItem ${isSelected ? "selectedMail" : ""}`}
         onClick={() => openMail(mail.id)}
       >
         <div>
           <div className="header">
             <span className="subject">{mail.subject}</span>
-            <span className="date">{mail.date}</span>
+            <span className="date">{formattedDate}</span>
           </div>
           <div className="details">
             {isSent ? (

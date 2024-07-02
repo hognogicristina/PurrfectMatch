@@ -16,6 +16,15 @@ function AdoptionRequestsInbox({ mails }) {
   const [isReceivedExpanded, setIsReceivedExpanded] = useState(true);
   const [isSentExpanded, setIsSentExpanded] = useState(true);
   const { messages } = useWebSocket();
+  const [receivedRequests, setReceivedRequests] = useState(
+    data.receivedRequests || [],
+  );
+  const [sentRequests, setSentRequests] = useState(data.sentRequests || []);
+
+  useEffect(() => {
+    setReceivedRequests(data.receivedRequests);
+    setSentRequests(data.sentRequests);
+  }, [data]);
 
   useEffect(() => {
     const handleNewMessage = (message) => {
@@ -32,39 +41,13 @@ function AdoptionRequestsInbox({ mails }) {
           setMailDetails({});
         }
 
-        if (data) {
-          data.receivedRequests = receivedRequests;
-          data.sentRequests = sentRequests;
-          if (receivedRequests.length === 0) {
-            data.receivedRequests = { message: "No Mail" };
-          }
-          if (sentRequests.length === 0) {
-            data.sentRequests = { message: "No Mail" };
-          }
-          setMailDetails((prev) => ({
-            ...prev,
-            receivedRequests: data.receivedRequests,
-            sentRequests: data.sentRequests,
-          }));
-        } else {
-          data.receivedRequests = receivedRequests;
-          data.sentRequests = sentRequests;
-          if (receivedRequests.length === 0) {
-            data.receivedRequests = { message: "No Mail" };
-          }
-          if (sentRequests.length === 0) {
-            data.sentRequests = { message: "No Mail" };
-          }
-          setMailDetails({
-            receivedRequests: receivedRequests,
-            sentRequests: sentRequests,
-          });
-        }
+        setReceivedRequests(receivedRequests);
+        setSentRequests(sentRequests);
       }
     };
 
     messages.forEach(handleNewMessage);
-  }, [messages, data, userDetails.id, notifySuccess]);
+  }, [messages, userDetails.id, notifySuccess]);
 
   const openMail = async (id, exception) => {
     if (selectedMailId === id && exception !== "update") {
@@ -95,54 +78,33 @@ function AdoptionRequestsInbox({ mails }) {
   };
 
   const markMailAsRead = (id) => {
-    if (data && Array.isArray(data.receivedRequests)) {
-      data.receivedRequests = data.receivedRequests.map((mail) =>
-        mail.id === id ? { ...mail, isRead: true } : mail,
-      );
-    }
-
-    if (data && Array.isArray(data.sentRequests)) {
-      data.sentRequests = data.sentRequests.map((mail) =>
-        mail.id === id ? { ...mail, isRead: true } : mail,
-      );
-    }
+    setReceivedRequests((prev) =>
+      prev.map((mail) => (mail.id === id ? { ...mail, isRead: true } : mail)),
+    );
+    setSentRequests((prev) =>
+      prev.map((mail) => (mail.id === id ? { ...mail, isRead: true } : mail)),
+    );
   };
 
   const updateMailInList = (updatedMail, id) => {
-    if (data) {
-      if (Array.isArray(data.receivedRequests)) {
-        data.receivedRequests = data.receivedRequests.map((mail) =>
-          mail.id === id ? { ...mail, status: updatedMail.status } : mail,
-        );
-      }
-      if (Array.isArray(data.sentRequests)) {
-        data.sentRequests = data.sentRequests.map((mail) =>
-          mail.id === id ? { ...mail, status: updatedMail.status } : mail,
-        );
-      }
-    }
+    setReceivedRequests((prev) =>
+      prev.map((mail) =>
+        mail.id === id ? { ...mail, status: updatedMail.status } : mail,
+      ),
+    );
+    setSentRequests((prev) =>
+      prev.map((mail) =>
+        mail.id === id ? { ...mail, status: updatedMail.status } : mail,
+      ),
+    );
     setSelectedMailId(id);
     setMailDetails((prev) => ({ ...prev, status: updatedMail.status }));
   };
 
   const removeMailFromList = (id) => {
-    if (data) {
-      if (Array.isArray(data.receivedRequests)) {
-        data.receivedRequests = data.receivedRequests.filter(
-          (mail) => mail.id !== id,
-        );
-        if (data.receivedRequests.length === 0) {
-          data.receivedRequests = { message: "No Mail" };
-        }
-      }
-      if (Array.isArray(data.sentRequests)) {
-        data.sentRequests = data.sentRequests.filter((mail) => mail.id !== id);
-        if (data.sentRequests.length === 0) {
-          data.sentRequests = { message: "No Mail" };
-        }
-      }
-      setSelectedMailId(null);
-    }
+    setReceivedRequests((prev) => prev.filter((mail) => mail.id !== id));
+    setSentRequests((prev) => prev.filter((mail) => mail.id !== id));
+    setSelectedMailId(null);
   };
 
   return (
@@ -152,34 +114,32 @@ function AdoptionRequestsInbox({ mails }) {
         <div
           className={`mailsList ${!selectedMailId ? "fullWidth" : "minWidth"}`}
         >
-          {data && (
-            <>
-              <MailSection
-                title="Received Mails"
-                mails={data.receivedRequests}
-                selectedMailId={selectedMailId}
-                openMail={openMail}
-                itemsToShow={receivedItemsToShow}
-                setItemsToShow={setReceivedItemsToShow}
-                isExpanded={isReceivedExpanded}
-                setIsExpanded={setIsReceivedExpanded}
-                setMailDetails={setMailDetails}
-              />
-              {userDetails.role === "user" && (
-                <MailSection
-                  title="Sent Mails"
-                  mails={data.sentRequests}
-                  selectedMailId={selectedMailId}
-                  openMail={openMail}
-                  itemsToShow={sentItemsToShow}
-                  setItemsToShow={setSentItemsToShow}
-                  isExpanded={isSentExpanded}
-                  setIsExpanded={setIsSentExpanded}
-                  setMailDetails={setMailDetails}
-                  isSent="true"
-                />
-              )}
-            </>
+          {receivedRequests.length > 0 && (
+            <MailSection
+              title="Received Mails"
+              mails={receivedRequests}
+              selectedMailId={selectedMailId}
+              openMail={openMail}
+              itemsToShow={receivedItemsToShow}
+              setItemsToShow={setReceivedItemsToShow}
+              isExpanded={isReceivedExpanded}
+              setIsExpanded={setIsReceivedExpanded}
+              setMailDetails={setMailDetails}
+            />
+          )}
+          {userDetails.role === "user" && sentRequests.length > 0 && (
+            <MailSection
+              title="Sent Mails"
+              mails={sentRequests}
+              selectedMailId={selectedMailId}
+              openMail={openMail}
+              itemsToShow={sentItemsToShow}
+              setItemsToShow={setSentItemsToShow}
+              isExpanded={isSentExpanded}
+              setIsExpanded={setIsSentExpanded}
+              setMailDetails={setMailDetails}
+              isSent="true"
+            />
           )}
           {error && error.field === "server" && notifyError(error.message)}
         </div>
