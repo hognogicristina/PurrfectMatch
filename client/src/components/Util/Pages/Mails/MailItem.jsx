@@ -37,7 +37,7 @@ export default function MailItem({ mail, isSelected, openMail, isSent }) {
 
   return (
     <motion.div
-      className={`mailItem ${!mail.isRead ? "unreadMail" : ""}`}
+      className={`mailItem ${mail.isRead ? "" : "unread"}`}
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -48,7 +48,9 @@ export default function MailItem({ mail, isSelected, openMail, isSent }) {
         {!mail.isRead && <FaCircle className="unreadIcon" />}
       </div>
       <li
-        className={`adoptionRequestItem ${isSelected ? "selectedMail" : ""}`}
+        className={`adoptionRequestItem ${
+          !mail.isRead ? "unreadMail" : ""
+        } ${isSelected ? "selectedMail" : ""}`}
         onClick={() => openMail(mail.id)}
       >
         <div>

@@ -302,14 +302,14 @@ const getAdoptionRequest = async (req, res) => {
     if (await adoptionRequestValidator.getAdoptionRequestsValidator(req, res))
       return;
     const adoptionRequest = await AdoptionRequest.findByPk(req.params.id);
-    const adoptionRequestDetails =
-      await adoptionRequestDTO.adoptionRequestToDTO(adoptionRequest, req.user);
     const userRole = await UserRole.findOne({
       where: { adoptionRequestId: req.params.id, userId: req.user.id },
     });
     if (userRole.isRead === false) {
       await userRole.update({ isRead: true });
     }
+    const adoptionRequestDetails =
+      await adoptionRequestDTO.adoptionRequestToDTO(adoptionRequest, req.user);
     return res.status(200).json({ data: adoptionRequestDetails });
   } catch (error) {
     logger.error(error);

@@ -12,6 +12,7 @@ function MailSection({
   isExpanded,
   setIsExpanded,
   setMailDetails,
+  read,
   isSent,
 }) {
   const handleExpandClick = () => {
@@ -66,6 +67,7 @@ function MailSection({
                       isSelected={selectedMailId === mail.id}
                       openMail={openMail}
                       setMailDetails={setMailDetails}
+                      read={read}
                       isSent={isSent}
                     />
                   ))}

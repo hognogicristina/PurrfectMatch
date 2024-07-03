@@ -6,7 +6,7 @@ const emailHelper = require("../helpers/emailHelper");
 const logger = require("../../logger/logger");
 
 const transporter = nodemailer.createTransport({
-  host: "127.0.0.1",
+  host: "pm_mailcatcher",
   port: 1025,
   secure: false,
   ignoreTLS: true,
@@ -122,7 +122,7 @@ async function sendDeclineAdoption(sender, receiver, cat) {
     subject: "Declined the AdoptionProcess",
     html: compiledFunction({
       sender: { firstName: sender.firstName, lastName: sender.lastName },
-      cat: cat,
+      cat: { name: cat.name },
       receiver: { firstName: receiver.firstName, lastName: receiver.lastName },
     }),
   };

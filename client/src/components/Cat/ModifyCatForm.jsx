@@ -84,7 +84,6 @@ export default function ModifyCatForm({ catDetail, onClose, onSubmit }) {
     const data = await response.json();
     if (response.ok) {
       notifySuccess(data.status);
-      console.log(imageUris);
       const updatedCatDetail = {
         ...catDetail,
         name: e.target.name.value,

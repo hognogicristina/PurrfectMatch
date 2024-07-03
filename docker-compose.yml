@@ -5,13 +5,15 @@ services:
       dockerfile: ./docker/node.Dockerfile
     container_name: pm_node
     working_dir: /usr/local/app
-    command: sh -c "npx sequelize-cli db:migrate && npm run migrate && node ./configurations/generateData/dataInit.js && nodemon index.js"
+    command: sh -c "npx sequelize-cli db:migrate && npm run migrate && node ./configurations/generateData/dataInit.js && nodemon"
     volumes:
       - ./server:/usr/local/app
       - server_node_modules_vol:/usr/local/app/node_modules
       - ./server/db:/usr/local/app/db
     ports:
       - "3000:3000"
+    networks:
+      - pm-network
 
   react:
     image: node:18
@@ -23,6 +25,8 @@ services:
       - client_node_modules_vol:/usr/local/app/node_modules
     ports:
       - "5173:5173"
+    networks:
+      - pm-network
 
   mailcatcher:
     image: schickling/mailcatcher
@@ -30,7 +34,13 @@ services:
     ports:
       - "1080:1080" # web
       - "1025:1025" # smtp
+    networks:
+      - pm-network
 
 volumes:
   server_node_modules_vol:
   client_node_modules_vol:
+
+networks:
+  pm-network:
+    driver: bridge
